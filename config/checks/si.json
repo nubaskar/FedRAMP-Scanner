@@ -2,10 +2,16 @@
   "domain": "SI",
   "name": "System and Information Integrity",
   "checks": {
-    "3.14.1": {
+    "SI-2": {
+      "cmmc_source": "3.14.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "si-3.14.1-aws-001",
+          "check_id": "si-2-aws-001",
           "name": "SSM Patch Manager deployed",
           "service": "SSM",
           "api_call": "ssm.describe_patch_baselines",
@@ -19,10 +25,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-aws-002",
+          "check_id": "si-2-aws-002",
           "name": "Patch compliance within SLA",
           "service": "SSM",
           "api_call": "ssm.describe_instance_patch_states",
@@ -36,10 +43,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-aws-003",
+          "check_id": "si-2-aws-003",
           "name": "Amazon Inspector vulnerability findings addressed",
           "service": "Inspector",
           "api_call": "inspector2.list_findings",
@@ -53,10 +61,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-aws-004",
+          "check_id": "si-2-aws-004",
           "name": "RDS automatic minor version upgrade enabled",
           "service": "RDS",
           "api_call": "rds.describe_db_instances",
@@ -70,12 +79,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.1-azure-001",
+          "check_id": "si-2-azure-001",
           "name": "Azure Update Manager configured",
           "service": "Compute",
           "api_call": "compute.virtual_machines.list",
@@ -89,10 +99,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-azure-002",
+          "check_id": "si-2-azure-002",
           "name": "Defender vulnerability assessment findings addressed",
           "service": "Security Center",
           "api_call": "security.sub_assessments.list",
@@ -106,10 +117,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-azure-003",
+          "check_id": "si-2-azure-003",
           "name": "App Service platform version current",
           "service": "App Service",
           "api_call": "web.web_apps.list",
@@ -123,12 +135,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.1-gcp-001",
+          "check_id": "si-2-gcp-001",
           "name": "OS Config patch management active",
           "service": "OS Config",
           "api_call": "osconfig.projects.patchDeployments.list",
@@ -142,10 +155,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-gcp-002",
+          "check_id": "si-2-gcp-002",
           "name": "GKE cluster auto-upgrade enabled",
           "service": "GKE",
           "api_call": "container.projects.locations.clusters.list",
@@ -159,10 +173,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         },
         {
-          "check_id": "si-3.14.1-gcp-003",
+          "check_id": "si-2-gcp-003",
           "name": "Container vulnerability findings addressed",
           "service": "Container Analysis",
           "api_call": "containeranalysis.projects.occurrences.list",
@@ -176,14 +191,21 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "SI-2"
         }
       ]
     },
-    "3.14.2": {
+    "SI-3": {
+      "cmmc_source": "3.14.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "si-3.14.2-aws-001",
+          "check_id": "si-3-aws-001",
           "name": "GuardDuty malware protection enabled",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector",
@@ -193,10 +215,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         },
         {
-          "check_id": "si-3.14.2-aws-002",
+          "check_id": "si-3-aws-002",
           "name": "EC2 instances have endpoint protection",
           "service": "SSM",
           "api_call": "ssm.list_inventory_entries",
@@ -206,10 +229,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         },
         {
-          "check_id": "si-3.14.2-aws-003",
+          "check_id": "si-3-aws-003",
           "name": "S3 Malware Scanning configured",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector()",
@@ -219,12 +243,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.2-azure-001",
+          "check_id": "si-3-azure-001",
           "name": "Defender for Endpoint deployed",
           "service": "Security Center",
           "api_call": "security.pricings.get",
@@ -234,10 +259,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         },
         {
-          "check_id": "si-3.14.2-azure-002",
+          "check_id": "si-3-azure-002",
           "name": "Microsoft Antimalware extension deployed",
           "service": "Compute",
           "api_call": "compute.virtual_machine_extensions.list",
@@ -247,12 +273,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.2-gcp-001",
+          "check_id": "si-3-gcp-001",
           "name": "Endpoint protection deployed on GCE instances",
           "service": "Compute",
           "api_call": "compute.instances.list",
@@ -262,10 +289,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         },
         {
-          "check_id": "si-3.14.2-gcp-002",
+          "check_id": "si-3-gcp-002",
           "name": "Malware scanning enabled for Cloud Storage",
           "service": "Storage",
           "api_call": "storage.buckets.list",
@@ -275,14 +303,21 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-3"
         }
       ]
     },
-    "3.14.3": {
+    "SI-5": {
+      "cmmc_source": "3.14.3",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "si-3.14.3-aws-001",
+          "check_id": "si-5-aws-001",
           "name": "Security Hub findings notifications configured",
           "service": "Security Hub",
           "api_call": "events.list_rules()",
@@ -293,10 +328,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         },
         {
-          "check_id": "si-3.14.3-aws-002",
+          "check_id": "si-5-aws-002",
           "name": "GuardDuty findings alerting configured",
           "service": "GuardDuty",
           "api_call": "events.list_rules()",
@@ -307,10 +343,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         },
         {
-          "check_id": "si-3.14.3-aws-003",
+          "check_id": "si-5-aws-003",
           "name": "AWS Health Dashboard alerts configured",
           "service": "Health",
           "api_call": "health.describe_events",
@@ -321,12 +358,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.3-azure-001",
+          "check_id": "si-5-azure-001",
           "name": "Defender for Cloud email notifications",
           "service": "Security Center",
           "api_call": "security.security_contacts.list",
@@ -337,10 +375,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         },
         {
-          "check_id": "si-3.14.3-azure-002",
+          "check_id": "si-5-azure-002",
           "name": "Service Health alerts configured",
           "service": "Monitor",
           "api_call": "monitor.activity_log_alerts.list",
@@ -351,12 +390,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.3-gcp-001",
+          "check_id": "si-5-gcp-001",
           "name": "SCC notification config for critical findings",
           "service": "SCC",
           "api_call": "securitycenter.organizations.notificationConfigs.list",
@@ -367,10 +407,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         },
         {
-          "check_id": "si-3.14.3-gcp-002",
+          "check_id": "si-5-gcp-002",
           "name": "Cloud Monitoring alerting for security events",
           "service": "Monitoring",
           "api_call": "monitoring.projects.alertPolicies.list",
@@ -381,14 +422,17 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-5"
         }
       ]
     },
-    "3.14.4": {
+    "SI-3(1)": {
+      "cmmc_source": "3.14.4",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "si-3.14.4-aws-001",
+          "check_id": "si-3-1-aws-001",
           "name": "Endpoint protection auto-update enabled",
           "service": "SSM",
           "api_call": "ssm.describe_instance_information()",
@@ -397,10 +441,11 @@
           "remediation": "Configure endpoint protection for automatic signature and engine updates.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SI-3(1)"
         },
         {
-          "check_id": "si-3.14.4-aws-002",
+          "check_id": "si-3-1-aws-002",
           "name": "GuardDuty threat intelligence auto-updated",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector",
@@ -409,12 +454,13 @@
           "remediation": "GuardDuty threat intelligence is automatically updated by AWS.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SI-3(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.4-azure-001",
+          "check_id": "si-3-1-azure-001",
           "name": "Defender for Endpoint signature updates current",
           "service": "Security Center",
           "api_call": "security.pricings.get",
@@ -423,12 +469,13 @@
           "remediation": "Ensure Defender for Endpoint automatic updates are enabled.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SI-3(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.4-gcp-001",
+          "check_id": "si-3-1-gcp-001",
           "name": "Endpoint protection auto-update configured",
           "service": "Compute",
           "api_call": "compute.instances.list",
@@ -437,14 +484,17 @@
           "remediation": "Configure automatic updates for endpoint protection agents.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SI-3(1)"
         }
       ]
     },
-    "3.14.5": {
+    "SI-3(2)": {
+      "cmmc_source": "3.14.5",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "si-3.14.5-aws-001",
+          "check_id": "si-3-2-aws-001",
           "name": "Periodic vulnerability scanning configured",
           "service": "Inspector",
           "api_call": "inspector2.list_account_permissions",
@@ -455,10 +505,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         },
         {
-          "check_id": "si-3.14.5-aws-002",
+          "check_id": "si-3-2-aws-002",
           "name": "GuardDuty real-time malware scanning",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector",
@@ -469,10 +520,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         },
         {
-          "check_id": "si-3.14.5-aws-003",
+          "check_id": "si-3-2-aws-003",
           "name": "S3 object scanning for uploads",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector()",
@@ -483,12 +535,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.5-azure-001",
+          "check_id": "si-3-2-azure-001",
           "name": "Scheduled VM vulnerability scans configured",
           "service": "Security Center",
           "api_call": "assessments.list",
@@ -499,10 +552,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         },
         {
-          "check_id": "si-3.14.5-azure-002",
+          "check_id": "si-3-2-azure-002",
           "name": "Real-time protection enabled on endpoints",
           "service": "Compute",
           "api_call": "compute.virtual_machine_extensions.list",
@@ -513,12 +567,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.5-gcp-001",
+          "check_id": "si-3-2-gcp-001",
           "name": "Container vulnerability scanning continuous",
           "service": "Container Analysis",
           "api_call": "containeranalysis.projects.occurrences.list",
@@ -529,10 +584,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         },
         {
-          "check_id": "si-3.14.5-gcp-002",
+          "check_id": "si-3-2-gcp-002",
           "name": "Web Security Scanner periodic scans",
           "service": "SCC",
           "api_call": "websecurityscanner.projects.scanConfigs.list",
@@ -543,14 +599,21 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-3(2)"
         }
       ]
     },
-    "3.14.6": {
+    "SI-4": {
+      "cmmc_source": "3.14.6",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "si-3.14.6-aws-001",
+          "check_id": "si-4-aws-001",
           "name": "GuardDuty monitors network traffic",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector",
@@ -561,10 +624,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-aws-002",
+          "check_id": "si-4-aws-002",
           "name": "VPC Flow Logs analyzed for anomalies",
           "service": "VPC",
           "api_call": "ec2.describe_flow_logs",
@@ -575,10 +639,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-aws-003",
+          "check_id": "si-4-aws-003",
           "name": "Network Firewall IDS/IPS rules configured",
           "service": "Network Firewall",
           "api_call": "network-firewall.list_firewall_policies",
@@ -589,12 +654,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.6-azure-001",
+          "check_id": "si-4-azure-001",
           "name": "Defender for Network deployed",
           "service": "Security Center",
           "api_call": "ResourceManagementClient.providers.get('Microsoft.Security')",
@@ -605,10 +671,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-azure-002",
+          "check_id": "si-4-azure-002",
           "name": "Azure Firewall IDPS enabled",
           "service": "Network",
           "api_call": "network.azure_firewalls.list",
@@ -619,10 +686,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-azure-003",
+          "check_id": "si-4-azure-003",
           "name": "NSG flow log analytics enabled",
           "service": "Network",
           "api_call": "network_watchers.list_all + nsgs.list_all",
@@ -633,12 +701,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.6-gcp-001",
+          "check_id": "si-4-gcp-001",
           "name": "Cloud IDS deployed for network monitoring",
           "service": "Cloud IDS",
           "api_call": "ids.projects.locations.endpoints.list",
@@ -649,10 +718,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-gcp-002",
+          "check_id": "si-4-gcp-002",
           "name": "VPC Flow Logs analyzed",
           "service": "VPC",
           "api_call": "compute.subnetworks.list",
@@ -663,10 +733,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         },
         {
-          "check_id": "si-3.14.6-gcp-003",
+          "check_id": "si-4-gcp-003",
           "name": "Event Threat Detection monitors for attacks",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -677,14 +748,17 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SI-4"
         }
       ]
     },
-    "3.14.7": {
+    "SI-4(4)": {
+      "cmmc_source": "3.14.7",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "si-3.14.7-aws-001",
+          "check_id": "si-4-4-aws-001",
           "name": "GuardDuty UnauthorizedAccess findings monitored",
           "service": "GuardDuty",
           "api_call": "guardduty.list_findings",
@@ -694,10 +768,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-aws-002",
+          "check_id": "si-4-4-aws-002",
           "name": "CloudWatch anomaly detection configured",
           "service": "CloudWatch",
           "api_call": "cloudwatch.describe_anomaly_detectors",
@@ -707,10 +782,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-aws-003",
+          "check_id": "si-4-4-aws-003",
           "name": "CloudTrail Insights enabled",
           "service": "CloudTrail",
           "api_call": "cloudtrail.get_insight_selectors",
@@ -720,12 +796,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         }
       ],
       "azure": [
         {
-          "check_id": "si-3.14.7-azure-001",
+          "check_id": "si-4-4-azure-001",
           "name": "Azure AD Identity Protection configured",
           "service": "Azure AD",
           "api_call": "graph.identity_protection.risk_detections.list",
@@ -735,10 +812,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-azure-002",
+          "check_id": "si-4-4-azure-002",
           "name": "Sentinel UEBA enabled",
           "service": "Sentinel",
           "api_call": "sentinel_onboarding_states.list",
@@ -748,10 +826,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-azure-003",
+          "check_id": "si-4-4-azure-003",
           "name": "Anomalous login alerts configured",
           "service": "Azure AD",
           "api_call": "graph.identity_protection.risky_users.list",
@@ -761,12 +840,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         }
       ],
       "gcp": [
         {
-          "check_id": "si-3.14.7-gcp-001",
+          "check_id": "si-4-4-gcp-001",
           "name": "Event Threat Detection for unauthorized access",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -776,10 +856,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-gcp-002",
+          "check_id": "si-4-4-gcp-002",
           "name": "Anomaly detection alerts configured",
           "service": "Monitoring",
           "api_call": "monitoring.projects.alertPolicies.list",
@@ -789,10 +870,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         },
         {
-          "check_id": "si-3.14.7-gcp-003",
+          "check_id": "si-4-4-gcp-003",
           "name": "Access Transparency logs monitored",
           "service": "Logging",
           "api_call": "logging.entries.list",
@@ -802,7 +884,8 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SI-4(4)"
         }
       ]
     }

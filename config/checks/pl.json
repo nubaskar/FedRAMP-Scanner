@@ -1,0 +1,123 @@
+{
+  "domain": "PL",
+  "name": "Planning",
+  "checks": {
+    "PL-2": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "pl-2-aws-001",
+          "name": "Systems Manager documents for security plans exist",
+          "service": "SSM",
+          "api_call": "ssm.list_documents",
+          "expected": "SSM documents exist for system security and privacy plans",
+          "severity": "medium",
+          "remediation": "Document security and privacy plans in AWS Systems Manager Documents.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-2"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "pl-2-azure-001",
+          "name": "Blueprints or Policy definitions for security plans exist",
+          "service": "Blueprint",
+          "api_call": "BlueprintManagementClient.blueprints.list",
+          "expected": "Azure Blueprints or Policy definitions document security requirements",
+          "severity": "medium",
+          "remediation": "Document security and privacy plans using Azure Blueprints or Policy.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-2"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "pl-2-gcp-001",
+          "name": "Organization policies document security requirements",
+          "service": "Organization Policy",
+          "api_call": "orgpolicy.organizations.policies.list",
+          "expected": "Organization policies exist documenting security requirements",
+          "severity": "medium",
+          "remediation": "Document security requirements using GCP Organization Policies.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-2"
+        }
+      ]
+    },
+    "PL-8": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "pl-8-aws-001",
+          "name": "Resources tagged with architecture metadata",
+          "service": "ResourceGroupsTaggingAPI",
+          "api_call": "resourcegroupstaggingapi.get_resources",
+          "expected": "Critical resources tagged with security architecture metadata",
+          "severity": "medium",
+          "remediation": "Tag resources with security architecture and design metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        },
+        {
+          "check_id": "pl-8-aws-002",
+          "name": "VPC architecture documented with flow logs",
+          "service": "EC2",
+          "api_call": "ec2.describe_flow_logs",
+          "expected": "VPC flow logs enabled documenting network architecture",
+          "severity": "medium",
+          "remediation": "Enable VPC Flow Logs to document network security architecture.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "pl-8-azure-001",
+          "name": "Resources tagged with architecture metadata",
+          "service": "Resources",
+          "api_call": "ResourceManagementClient.resources.list",
+          "expected": "Critical resources tagged with security architecture metadata",
+          "severity": "medium",
+          "remediation": "Tag Azure resources with security architecture and design metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        },
+        {
+          "check_id": "pl-8-azure-002",
+          "name": "Network architecture documented with NSG flow logs",
+          "service": "Network",
+          "api_call": "NetworkManagementClient.flow_logs.list",
+          "expected": "NSG flow logs enabled documenting network architecture",
+          "severity": "medium",
+          "remediation": "Enable NSG Flow Logs to document network security architecture.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "pl-8-gcp-001",
+          "name": "Resources labeled with architecture metadata",
+          "service": "Resource Manager",
+          "api_call": "cloudresourcemanager.projects.list",
+          "expected": "Critical resources labeled with security architecture metadata",
+          "severity": "medium",
+          "remediation": "Label GCP resources with security architecture and design metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        },
+        {
+          "check_id": "pl-8-gcp-002",
+          "name": "VPC architecture documented with flow logs",
+          "service": "Compute Engine",
+          "api_call": "compute.subnetworks.list",
+          "expected": "VPC subnets have flow logs enabled documenting network architecture",
+          "severity": "medium",
+          "remediation": "Enable VPC Flow Logs to document network security architecture.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PL-8"
+        }
+      ]
+    }
+  }
+}

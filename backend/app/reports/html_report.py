@@ -30,9 +30,9 @@ def generate_html_report(scan, findings, client) -> str:
     Generate a self-contained HTML compliance report.
 
     Args:
-        scan: Scan ORM object with id, cmmc_level, environment, started_at, completed_at, summary.
+        scan: Scan ORM object with id, fedramp_baseline, environment, started_at, completed_at, summary.
         findings: List of Finding ORM objects.
-        client: Client ORM object with name, environment, cmmc_level.
+        client: Client ORM object with name, environment, fedramp_baseline.
 
     Returns:
         Complete HTML string with inline CSS and no external dependencies.
@@ -105,7 +105,7 @@ def generate_html_report(scan, findings, client) -> str:
     return template.render(
         client_name=client.name,
         environment=environment_display,
-        cmmc_level=scan.cmmc_level,
+        fedramp_baseline=scan.fedramp_baseline,
         scan_id=scan.id,
         scan_date=scan_date,
         completed_date=completed_date,
@@ -145,7 +145,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMMC Compliance Report - {{ client_name }}</title>
+<title>FedRAMP Compliance Report - {{ client_name }}</title>
 <style>
     /* Reset and base */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -434,7 +434,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <!-- Header -->
     <div class="report-header">
         <div>
-            <h1>CMMC Compliance Report</h1>
+            <h1>FedRAMP Compliance Report</h1>
             <div class="subtitle">Cloud Security Assessment Results</div>
         </div>
         <div>
@@ -453,8 +453,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <span class="info-value">{{ client_name }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">CMMC Level:</span>
-                <span class="info-value">{{ cmmc_level }}</span>
+                <span class="info-label">FedRAMP Baseline:</span>
+                <span class="info-value">{{ fedramp_baseline }}</span>
             </div>
             <div class="info-item">
                 <span class="info-label">Environment:</span>
@@ -517,7 +517,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <div class="gauge" style="background: conic-gradient({{ BRAND_BLUE }} 0% {{ overall_coverage_pct }}%, #e0e0e0 {{ overall_coverage_pct }}% 100%);">
                     <div class="gauge-inner">
                         <span class="gauge-pct" style="font-size: 22pt;">{{ covered_objectives }}/{{ total_objectives }}</span>
-                        <span class="gauge-label">800-171A<br>Objectives</span>
+                        <span class="gauge-label">800-53A<br>Objectives</span>
                     </div>
                 </div>
             </div>
@@ -602,7 +602,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <table class="findings-table">
             <thead>
                 <tr>
-                    <th style="width: 60px;">Practice</th>
+                    <th style="width: 60px;">Control ID</th>
                     <th style="width: 45px;">Domain</th>
                     <th>Check</th>
                     <th style="width: 70px;">Status</th>
@@ -616,7 +616,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% set cov = f.objective_coverage if f.objective_coverage else {} %}
                 {% set f_cov_pct = (cov.covered_objectives / cov.total_objectives * 100)|round(0)|int if cov.get('total_objectives', 0) > 0 else 0 %}
                 <tr>
-                    <td style="font-family: monospace;">{{ f.practice_id }}</td>
+                    <td style="font-family: monospace;">{{ f.control_id }}</td>
                     <td><strong>{{ f.domain }}</strong></td>
                     <td>{{ f.check_name }}</td>
                     <td><span class="badge badge-{{ f.status }}">{{ f.status|replace('_', ' ') }}</span></td>
@@ -643,10 +643,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         {% endfor %}
         {% if findings_with_coverage %}
         <div class="page-break"></div>
-        <h2>NIST 800-171A Assessment Objective Coverage</h2>
+        <h2>NIST 800-53A Assessment Objective Coverage</h2>
         <p style="margin-bottom: 16px; color: #666;">
-            Per-practice breakdown of NIST SP 800-171A assessment objectives (the "determine if" statements
-            that C3PAO assessors evaluate). Coverage shows which objectives are tested by automated checks,
+            Per-control breakdown of NIST SP 800-53A assessment objectives (the "determine if" statements
+            that 3PAO assessors evaluate). Coverage shows which objectives are tested by automated checks,
             which require documentation evidence, and which have gaps.
         </p>
         {% for f in findings_with_coverage %}
@@ -655,7 +655,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden;">
             <div style="background: {{ BRAND_LIGHT_BG }}; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <strong style="font-family: monospace;">{{ f.practice_id }}</strong>
+                    <strong style="font-family: monospace;">{{ f.control_id }}</strong>
                     <span style="color: #666; margin-left: 8px;">{{ f.check_name[:80] }}</span>
                 </div>
                 <div>
@@ -691,12 +691,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="page-break"></div>
         <h2>Remediation Guidance</h2>
         <p style="margin-bottom: 16px; color: #666;">
-            The following findings require remediation to achieve CMMC {{ cmmc_level }} compliance.
+            The following findings require remediation to achieve FedRAMP {{ fedramp_baseline }} compliance.
             Items are ordered by severity.
         </p>
         {% for f in not_met_findings|sort(attribute='severity') %}
         <div class="remediation-item">
-            <h4>[{{ f.practice_id }}] {{ f.check_name }} ({{ f.severity|upper }})</h4>
+            <h4>[{{ f.control_id }}] {{ f.check_name }} ({{ f.severity|upper }})</h4>
             {% if f.evidence %}
             <div class="evidence">Evidence: {{ (f.evidence or '')[:500] }}{% if f.evidence and f.evidence|length > 500 %}...{% endif %}</div>
             {% endif %}
@@ -712,7 +712,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <!-- Footer -->
     <div class="report-footer">
         <p>
-            <strong>CONFIDENTIAL</strong> &mdash; This report was generated by Securitybricks CMMC Cloud Compliance Scanner v1.0.
+            <strong>CONFIDENTIAL</strong> &mdash; This report was generated by Securitybricks FedRAMP Cloud Compliance Scanner v1.0.
             <br>
             Report Date: {{ report_date }} | Scan ID: {{ scan_id }}
             <br>

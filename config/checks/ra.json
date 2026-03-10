@@ -2,7 +2,13 @@
   "domain": "RA",
   "name": "Risk Assessment",
   "checks": {
-    "3.11.1": {
+    "RA-3": {
+      "cmmc_source": "3.11.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Request the most recent organizational risk assessment report. Verify it covers all systems processing, storing, or transmitting CUI. Confirm the assessment addresses current threats and vulnerabilities, includes likelihood and impact analysis, is updated at least annually, and incorporates results from vulnerability scans and security assessments.",
       "evidence_requests": [
@@ -25,10 +31,16 @@
         }
       ]
     },
-    "3.11.2": {
+    "RA-5": {
+      "cmmc_source": "3.11.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ra-3.11.2-aws-001",
+          "check_id": "ra-5-aws-001",
           "name": "Amazon Inspector enabled",
           "service": "Inspector",
           "api_call": "inspector2.list_account_permissions",
@@ -41,10 +53,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-aws-002",
+          "check_id": "ra-5-aws-002",
           "name": "ECR image scanning enabled",
           "service": "ECR",
           "api_call": "ecr.describe_repositories",
@@ -57,10 +70,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-aws-003",
+          "check_id": "ra-5-aws-003",
           "name": "Vulnerability findings reviewed regularly",
           "service": "Inspector",
           "api_call": "inspector2.list_findings",
@@ -73,12 +87,13 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         }
       ],
       "azure": [
         {
-          "check_id": "ra-3.11.2-azure-001",
+          "check_id": "ra-5-azure-001",
           "name": "Defender for Cloud vulnerability assessment enabled",
           "service": "Security Center",
           "api_call": "security.sub_assessments.list",
@@ -91,10 +106,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-azure-002",
+          "check_id": "ra-5-azure-002",
           "name": "Container vulnerability scanning enabled",
           "service": "Security Center",
           "api_call": "security.pricings.get",
@@ -107,10 +123,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-azure-003",
+          "check_id": "ra-5-azure-003",
           "name": "SQL vulnerability assessment enabled",
           "service": "SQL",
           "api_call": "sql.server_vulnerability_assessments.get",
@@ -123,12 +140,13 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         }
       ],
       "gcp": [
         {
-          "check_id": "ra-3.11.2-gcp-001",
+          "check_id": "ra-5-gcp-001",
           "name": "Web Security Scanner enabled",
           "service": "SCC",
           "api_call": "websecurityscanner.projects.scanConfigs.list",
@@ -141,10 +159,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-gcp-002",
+          "check_id": "ra-5-gcp-002",
           "name": "Container Analysis vulnerability scanning",
           "service": "Container Analysis",
           "api_call": "containeranalysis.projects.occurrences.list",
@@ -157,10 +176,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         },
         {
-          "check_id": "ra-3.11.2-gcp-003",
+          "check_id": "ra-5-gcp-003",
           "name": "Security Health Analytics enabled",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -173,14 +193,17 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "RA-5"
         }
       ]
     },
-    "3.11.3": {
+    "RA-5(5)": {
+      "cmmc_source": "3.11.3",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ra-3.11.3-aws-001",
+          "check_id": "ra-5-5-aws-001",
           "name": "SSM Patch Manager compliance monitored",
           "service": "SSM",
           "api_call": "ssm.describe_instance_patch_states",
@@ -190,10 +213,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         },
         {
-          "check_id": "ra-3.11.3-aws-002",
+          "check_id": "ra-5-5-aws-002",
           "name": "Inspector critical findings remediated",
           "service": "Inspector",
           "api_call": "inspector2.list_findings",
@@ -203,12 +227,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         }
       ],
       "azure": [
         {
-          "check_id": "ra-3.11.3-azure-001",
+          "check_id": "ra-5-5-azure-001",
           "name": "Update Management compliance tracked",
           "service": "Automation",
           "api_call": "automation_account.list",
@@ -218,10 +243,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         },
         {
-          "check_id": "ra-3.11.3-azure-002",
+          "check_id": "ra-5-5-azure-002",
           "name": "Defender recommendations addressed",
           "service": "Security Center",
           "api_call": "security.assessments.list",
@@ -231,12 +257,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ra-3.11.3-gcp-001",
+          "check_id": "ra-5-5-gcp-001",
           "name": "OS Config patch compliance monitored",
           "service": "OS Config",
           "api_call": "osconfig.patchDeployments.list",
@@ -246,10 +273,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         },
         {
-          "check_id": "ra-3.11.3-gcp-002",
+          "check_id": "ra-5-5-gcp-002",
           "name": "SCC critical findings remediated",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -259,7 +287,8 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "RA-5(5)"
         }
       ]
     }

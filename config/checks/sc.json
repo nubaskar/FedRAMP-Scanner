@@ -2,10 +2,16 @@
   "domain": "SC",
   "name": "System and Communications Protection",
   "checks": {
-    "3.13.1": {
+    "SC-7": {
+      "cmmc_source": "3.13.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.1-aws-001",
+          "check_id": "sc-7-aws-001",
           "name": "WAF deployed on internet-facing resources",
           "service": "WAFv2",
           "api_call": "wafv2.list_web_acls",
@@ -21,10 +27,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-aws-002",
+          "check_id": "sc-7-aws-002",
           "name": "VPC Flow Logs enabled for all VPCs",
           "service": "VPC",
           "api_call": "ec2.describe_flow_logs",
@@ -40,10 +47,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-aws-003",
+          "check_id": "sc-7-aws-003",
           "name": "Network Firewall deployed for CUI VPCs",
           "service": "Network Firewall",
           "api_call": "network-firewall.list_firewalls",
@@ -59,10 +67,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-aws-004",
+          "check_id": "sc-7-aws-004",
           "name": "GuardDuty monitors network anomalies",
           "service": "GuardDuty",
           "api_call": "guardduty.get_detector",
@@ -78,12 +87,13 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.1-azure-001",
+          "check_id": "sc-7-azure-001",
           "name": "Azure Firewall or NVA deployed",
           "service": "Network",
           "api_call": "network.azure_firewalls.list",
@@ -99,10 +109,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-azure-002",
+          "check_id": "sc-7-azure-002",
           "name": "NSG flow logs enabled",
           "service": "Network",
           "api_call": "network_watchers.list_all + nsgs.list_all",
@@ -118,10 +129,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-azure-003",
+          "check_id": "sc-7-azure-003",
           "name": "Azure WAF deployed",
           "service": "Network",
           "api_call": "network.web_application_firewall_policies.list",
@@ -137,12 +149,13 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.1-gcp-001",
+          "check_id": "sc-7-gcp-001",
           "name": "Cloud Armor WAF deployed",
           "service": "Cloud Armor",
           "api_call": "compute.securityPolicies.list",
@@ -158,10 +171,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-gcp-002",
+          "check_id": "sc-7-gcp-002",
           "name": "VPC Flow Logs enabled",
           "service": "VPC",
           "api_call": "compute.subnetworks.list",
@@ -177,10 +191,11 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         },
         {
-          "check_id": "sc-3.13.1-gcp-003",
+          "check_id": "sc-7-gcp-003",
           "name": "Packet Mirroring or IDS configured",
           "service": "VPC",
           "api_call": "compute.packetMirrorings.list",
@@ -196,45 +211,51 @@
             "[f]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "SC-7"
         }
       ]
     },
-    "3.13.2": {
+    "SC-7(5)": {
+      "cmmc_source": "3.13.2",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.2-aws-001",
+          "check_id": "sc-7-5-aws-001",
           "name": "Defense-in-depth architecture layers present",
           "service": "Multiple",
           "api_call": "ec2/guardduty/cloudtrail/kms",
           "expected": "At least 4 of 5 security layers present: network segmentation, GuardDuty, CloudTrail, KMS, VPC Flow Logs",
           "severity": "high",
           "remediation": "Implement multiple security layers: VPC segmentation, threat detection (GuardDuty), audit logging (CloudTrail), encryption (KMS), and network monitoring (VPC Flow Logs).",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "SC-7(5)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.2-azure-001",
+          "check_id": "sc-7-5-azure-001",
           "name": "Defense-in-depth architecture layers present",
           "service": "Multiple",
           "api_call": "network/keyvault/monitor/security",
           "expected": "At least 4 of 5 security layers present: NSGs on subnets, Key Vault, activity log alerts, Defender for Cloud, Network Watcher",
           "severity": "high",
           "remediation": "Implement multiple security layers: NSGs, Key Vault for secrets, Activity Log alerts, Microsoft Defender for Cloud, and Network Watcher.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "SC-7(5)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.2-gcp-001",
+          "check_id": "sc-7-5-gcp-001",
           "name": "Defense-in-depth architecture layers present",
           "service": "Multiple",
           "api_call": "compute/kms/logging/orgpolicy",
           "expected": "At least 3 of 4 security layers present: firewall rules, KMS keys, log sinks, org policy constraints",
           "severity": "high",
           "remediation": "Implement multiple security layers: VPC firewall rules, Cloud KMS encryption, Cloud Logging sinks, and Organization Policy constraints.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "SC-7(5)"
         }
       ],
       "objectives_requiring_documentation": [
@@ -270,10 +291,15 @@
         }
       ]
     },
-    "3.13.3": {
+    "SC-7(7)": {
+      "cmmc_source": [
+        "3.13.3",
+        "3.13.7"
+      ],
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.3-aws-001",
+          "check_id": "sc-7-7-aws-001",
           "name": "Management and data plane separated",
           "service": "VPC",
           "api_call": "ec2.describe_subnets",
@@ -284,10 +310,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-7(7)"
         },
         {
-          "check_id": "sc-3.13.3-aws-002",
+          "check_id": "sc-7-7-aws-002",
           "name": "Systems Manager for management access",
           "service": "SSM",
           "api_call": "ssm.describe_instance_information",
@@ -298,12 +325,26 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-7(7)"
+        },
+        {
+          "check_id": "sc-7-7-aws-001",
+          "name": "Client VPN full tunnel enforced",
+          "service": "VPC",
+          "api_call": "ec2.describe_client_vpn_endpoints",
+          "expected": "Split tunnel disabled on Client VPN endpoints (SplitTunnel=false)",
+          "severity": "high",
+          "remediation": "Disable split tunneling on AWS Client VPN endpoints.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-7(7)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.3-azure-001",
+          "check_id": "sc-7-7-azure-001",
           "name": "Management network isolated",
           "service": "Network",
           "api_call": "network.virtual_networks.list",
@@ -314,12 +355,26 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-7(7)"
+        },
+        {
+          "check_id": "sc-7-7-azure-001",
+          "name": "VPN forced tunneling configured",
+          "service": "Network",
+          "api_call": "network.virtual_network_gateways.list",
+          "expected": "Forced tunneling enabled to prevent split tunnel scenarios",
+          "severity": "high",
+          "remediation": "Enable forced tunneling on VPN gateway connections.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-7(7)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.3-gcp-001",
+          "check_id": "sc-7-7-gcp-001",
           "name": "Management network segmented",
           "service": "VPC",
           "api_call": "compute.subnetworks.list",
@@ -330,14 +385,30 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-7(7)"
+        },
+        {
+          "check_id": "sc-7-7-gcp-001",
+          "name": "VPN full tunnel policy enforced",
+          "service": "VPN",
+          "api_call": "compute.vpnTunnels.list",
+          "expected": "VPN configuration routes all traffic through tunnel (no split tunnel)",
+          "severity": "high",
+          "remediation": "Configure VPN to route all traffic through tunnel, disabling split tunneling.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-7(7)"
         }
       ]
     },
-    "3.13.4": {
+    "SC-7(8)": {
+      "cmmc_source": "3.13.4",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.4-aws-001",
+          "check_id": "sc-7-8-aws-001",
           "name": "EBS volumes not shared across accounts",
           "service": "EC2",
           "api_call": "ec2.describe_snapshot_attribute",
@@ -346,10 +417,11 @@
           "remediation": "Remove public sharing from EBS snapshots and restrict to authorized accounts.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-7(8)"
         },
         {
-          "check_id": "sc-3.13.4-aws-002",
+          "check_id": "sc-7-8-aws-002",
           "name": "AMIs not publicly shared",
           "service": "EC2",
           "api_call": "ec2.describe_images()",
@@ -358,12 +430,13 @@
           "remediation": "Remove public sharing from AMIs.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-7(8)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.4-azure-001",
+          "check_id": "sc-7-8-azure-001",
           "name": "Shared disks restricted",
           "service": "Compute",
           "api_call": "compute.disks.list",
@@ -372,12 +445,13 @@
           "remediation": "Restrict shared disk usage to explicitly approved scenarios.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-7(8)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.4-gcp-001",
+          "check_id": "sc-7-8-gcp-001",
           "name": "Images not publicly shared",
           "service": "Compute",
           "api_call": "compute.images.getIamPolicy",
@@ -386,14 +460,17 @@
           "remediation": "Remove public IAM bindings from custom compute images.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-7(8)"
         }
       ]
     },
-    "3.13.5": {
+    "SC-7(4)": {
+      "cmmc_source": "3.13.5",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.5-aws-001",
+          "check_id": "sc-7-4-aws-001",
           "name": "Public subnets isolated from private subnets",
           "service": "VPC",
           "api_call": "ec2.describe_subnets",
@@ -403,10 +480,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(4)"
         },
         {
-          "check_id": "sc-3.13.5-aws-002",
+          "check_id": "sc-7-4-aws-002",
           "name": "NAT Gateway used for private subnet outbound",
           "service": "VPC",
           "api_call": "ec2.describe_nat_gateways",
@@ -416,12 +494,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(4)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.5-azure-001",
+          "check_id": "sc-7-4-azure-001",
           "name": "DMZ subnet implemented",
           "service": "Network",
           "api_call": "network.virtual_networks.list",
@@ -431,12 +510,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(4)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.5-gcp-001",
+          "check_id": "sc-7-4-gcp-001",
           "name": "Public-facing resources in dedicated subnets",
           "service": "VPC",
           "api_call": "compute.subnetworks.list",
@@ -446,14 +526,17 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(4)"
         }
       ]
     },
-    "3.13.6": {
+    "SC-7(21)": {
+      "cmmc_source": "3.13.6",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.6-aws-001",
+          "check_id": "sc-7-21-aws-001",
           "name": "Default security group restricts all traffic",
           "service": "EC2",
           "api_call": "ec2.describe_security_groups",
@@ -463,10 +546,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         },
         {
-          "check_id": "sc-3.13.6-aws-002",
+          "check_id": "sc-7-21-aws-002",
           "name": "NACLs implement deny-by-default",
           "service": "VPC",
           "api_call": "ec2.describe_network_acls",
@@ -476,12 +560,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.6-azure-001",
+          "check_id": "sc-7-21-azure-001",
           "name": "NSG default deny rules active",
           "service": "Network",
           "api_call": "network.network_security_groups.list",
@@ -491,10 +576,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         },
         {
-          "check_id": "sc-3.13.6-azure-002",
+          "check_id": "sc-7-21-azure-002",
           "name": "Azure Firewall default deny configured",
           "service": "Network",
           "api_call": "network.azure_firewalls.list",
@@ -504,12 +590,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.6-gcp-001",
+          "check_id": "sc-7-21-gcp-001",
           "name": "Default deny ingress firewall rule",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -519,10 +606,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         },
         {
-          "check_id": "sc-3.13.6-gcp-002",
+          "check_id": "sc-7-21-gcp-002",
           "name": "Default allow egress reviewed",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -532,58 +620,21 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-7(21)"
         }
       ]
     },
-    "3.13.7": {
+    "SC-8": {
+      "cmmc_source": "3.13.8",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.7-aws-001",
-          "name": "Client VPN full tunnel enforced",
-          "service": "VPC",
-          "api_call": "ec2.describe_client_vpn_endpoints",
-          "expected": "Split tunnel disabled on Client VPN endpoints (SplitTunnel=false)",
-          "severity": "high",
-          "remediation": "Disable split tunneling on AWS Client VPN endpoints.",
-          "supports_objectives": [
-            "[a]"
-          ]
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "sc-3.13.7-azure-001",
-          "name": "VPN forced tunneling configured",
-          "service": "Network",
-          "api_call": "network.virtual_network_gateways.list",
-          "expected": "Forced tunneling enabled to prevent split tunnel scenarios",
-          "severity": "high",
-          "remediation": "Enable forced tunneling on VPN gateway connections.",
-          "supports_objectives": [
-            "[a]"
-          ]
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "sc-3.13.7-gcp-001",
-          "name": "VPN full tunnel policy enforced",
-          "service": "VPN",
-          "api_call": "compute.vpnTunnels.list",
-          "expected": "VPN configuration routes all traffic through tunnel (no split tunnel)",
-          "severity": "high",
-          "remediation": "Configure VPN to route all traffic through tunnel, disabling split tunneling.",
-          "supports_objectives": [
-            "[a]"
-          ]
-        }
-      ]
-    },
-    "3.13.8": {
-      "aws": [
-        {
-          "check_id": "sc-3.13.8-aws-001",
+          "check_id": "sc-8-aws-001",
           "name": "ALB/NLB listeners use TLS 1.2+",
           "service": "ELB",
           "api_call": "elbv2.describe_listeners",
@@ -594,10 +645,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         },
         {
-          "check_id": "sc-3.13.8-aws-002",
+          "check_id": "sc-8-aws-002",
           "name": "CloudFront uses TLS 1.2+",
           "service": "CloudFront",
           "api_call": "cloudfront.list_distributions",
@@ -608,10 +660,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         },
         {
-          "check_id": "sc-3.13.8-aws-003",
+          "check_id": "sc-8-aws-003",
           "name": "S3 bucket policy enforces TLS",
           "service": "S3",
           "api_call": "s3.get_bucket_policy",
@@ -622,12 +675,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.8-azure-001",
+          "check_id": "sc-8-azure-001",
           "name": "Minimum TLS 1.2 enforced on App Services",
           "service": "App Service",
           "api_call": "web.web_apps.list",
@@ -638,10 +692,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         },
         {
-          "check_id": "sc-3.13.8-azure-002",
+          "check_id": "sc-8-azure-002",
           "name": "Storage accounts enforce TLS 1.2+",
           "service": "Storage",
           "api_call": "storage.storage_accounts.list",
@@ -652,12 +707,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.8-gcp-001",
+          "check_id": "sc-8-gcp-001",
           "name": "SSL policies enforce TLS 1.2+",
           "service": "Compute",
           "api_call": "compute.sslPolicies.list",
@@ -668,10 +724,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         },
         {
-          "check_id": "sc-3.13.8-gcp-002",
+          "check_id": "sc-8-gcp-002",
           "name": "Cloud SQL requires SSL",
           "service": "Cloud SQL",
           "api_call": "sqladmin.instances.list",
@@ -682,14 +739,20 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-8"
         }
       ]
     },
-    "3.13.9": {
+    "SC-10": {
+      "cmmc_source": "3.13.9",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.9-aws-001",
+          "check_id": "sc-10-aws-001",
           "name": "ALB idle timeout configured",
           "service": "ELB",
           "api_call": "elbv2.describe_load_balancer_attributes",
@@ -700,10 +763,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-10"
         },
         {
-          "check_id": "sc-3.13.9-aws-002",
+          "check_id": "sc-10-aws-002",
           "name": "API Gateway timeout configured",
           "service": "API Gateway",
           "api_call": "apigateway.get_rest_apis",
@@ -714,12 +778,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-10"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.9-azure-001",
+          "check_id": "sc-10-azure-001",
           "name": "Application Gateway idle timeout configured",
           "service": "Network",
           "api_call": "network.application_gateways.list",
@@ -730,12 +795,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-10"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.9-gcp-001",
+          "check_id": "sc-10-gcp-001",
           "name": "Load balancer timeout configured",
           "service": "Compute",
           "api_call": "compute.backendServices.list",
@@ -746,14 +812,21 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "SC-10"
         }
       ]
     },
-    "3.13.10": {
+    "SC-12": {
+      "cmmc_source": "3.13.10",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.10-aws-001",
+          "check_id": "sc-12-aws-001",
           "name": "KMS key rotation enabled",
           "service": "KMS",
           "api_call": "kms.get_key_rotation_status",
@@ -763,10 +836,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         },
         {
-          "check_id": "sc-3.13.10-aws-002",
+          "check_id": "sc-12-aws-002",
           "name": "KMS key policies restrict access",
           "service": "KMS",
           "api_call": "kms.get_key_policy",
@@ -776,10 +850,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         },
         {
-          "check_id": "sc-3.13.10-aws-003",
+          "check_id": "sc-12-aws-003",
           "name": "ACM certificates managed and auto-renewed",
           "service": "ACM",
           "api_call": "acm.list_certificates",
@@ -789,12 +864,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.10-azure-001",
+          "check_id": "sc-12-azure-001",
           "name": "Key Vault key rotation configured",
           "service": "Key Vault",
           "api_call": "KeyVaultManagementClient.vaults.list + get",
@@ -804,10 +880,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         },
         {
-          "check_id": "sc-3.13.10-azure-002",
+          "check_id": "sc-12-azure-002",
           "name": "Key Vault access policies follow least privilege",
           "service": "Key Vault",
           "api_call": "keyvault.vaults.list",
@@ -817,12 +894,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.10-gcp-001",
+          "check_id": "sc-12-gcp-001",
           "name": "Cloud KMS key rotation configured",
           "service": "KMS",
           "api_call": "kms_v1.KeyManagementServiceClient.list_key_rings",
@@ -832,10 +910,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         },
         {
-          "check_id": "sc-3.13.10-gcp-002",
+          "check_id": "sc-12-gcp-002",
           "name": "Cloud KMS IAM bindings restricted",
           "service": "KMS",
           "api_call": "cloudkms.projects.locations.keyRings.getIamPolicy",
@@ -845,14 +924,21 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-12"
         }
       ]
     },
-    "3.13.11": {
+    "SC-13": {
+      "cmmc_source": "3.13.11",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.11-aws-001",
+          "check_id": "sc-13-aws-001",
           "name": "FIPS endpoints used in GovCloud",
           "service": "IAM",
           "api_call": "sts.get_caller_identity",
@@ -861,10 +947,11 @@
           "remediation": "Configure SDK/CLI to use FIPS endpoints (e.g., iam-fips.us-gov-west-1.amazonaws.com).",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-13"
         },
         {
-          "check_id": "sc-3.13.11-aws-002",
+          "check_id": "sc-13-aws-002",
           "name": "S3 uses FIPS-validated encryption",
           "service": "S3",
           "api_call": "s3.get_bucket_encryption",
@@ -873,12 +960,13 @@
           "remediation": "Use SSE-KMS encryption which leverages FIPS 140-2 validated HSMs.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-13"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.11-azure-001",
+          "check_id": "sc-13-azure-001",
           "name": "Azure Government FIPS-validated services used",
           "service": "Compute",
           "api_call": "StorageManagementClient.storage_accounts.list",
@@ -887,12 +975,13 @@
           "remediation": "Enable FIPS mode on Windows VMs or use FIPS-validated Linux configurations.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-13"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.11-gcp-001",
+          "check_id": "sc-13-gcp-001",
           "name": "CMEK uses FIPS-validated Cloud KMS",
           "service": "KMS",
           "api_call": "cloudkms.projects.locations.keyRings.cryptoKeys.list",
@@ -901,11 +990,18 @@
           "remediation": "Use Cloud KMS or Cloud HSM for FIPS-validated cryptographic operations.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-13"
         }
       ]
     },
-    "3.13.12": {
+    "SC-15": {
+      "cmmc_source": "3.13.12",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review policies for collaborative computing devices (cameras, microphones, smart displays, conferencing systems). Verify remote activation is disabled by default, physical disconnect options are available, and active indicators (LEDs, on-screen notifications) inform users when devices are in use.",
       "objectives_requiring_documentation": [
@@ -926,10 +1022,15 @@
         }
       ]
     },
-    "3.13.13": {
+    "SC-18": {
+      "cmmc_source": "3.13.13",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.13-aws-001",
+          "check_id": "sc-18-aws-001",
           "name": "WAF rules block malicious scripts",
           "service": "WAFv2",
           "api_call": "wafv2.list_web_acls",
@@ -939,12 +1040,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-18"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.13-azure-001",
+          "check_id": "sc-18-azure-001",
           "name": "WAF OWASP rules enabled",
           "service": "Network",
           "api_call": "network.web_application_firewall_policies.list",
@@ -954,12 +1056,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-18"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.13-gcp-001",
+          "check_id": "sc-18-gcp-001",
           "name": "Cloud Armor preconfigured WAF rules",
           "service": "Cloud Armor",
           "api_call": "compute.securityPolicies.list",
@@ -969,11 +1072,18 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "SC-18"
         }
       ]
     },
-    "3.13.14": {
+    "SC-28": {
+      "cmmc_source": "3.13.14",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review VoIP security policies and configurations. Verify VoIP traffic is encrypted (SRTP/TLS), segregated on dedicated VLANs, and monitored for anomalous activity. Check that VoIP systems used for CUI discussions are assessed for eavesdropping risks.",
       "objectives_requiring_documentation": [
@@ -989,10 +1099,15 @@
         }
       ]
     },
-    "3.13.15": {
+    "SC-23": {
+      "cmmc_source": "3.13.15",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "sc-3.13.15-aws-001",
+          "check_id": "sc-23-aws-001",
           "name": "ACM certificates valid and not expired",
           "service": "ACM",
           "api_call": "acm.list_certificates",
@@ -1001,10 +1116,11 @@
           "remediation": "Renew or replace expiring certificates; use ACM auto-renewal where possible.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-23"
         },
         {
-          "check_id": "sc-3.13.15-aws-002",
+          "check_id": "sc-23-aws-002",
           "name": "DNSSEC enabled on Route 53 hosted zones",
           "service": "Route 53",
           "api_call": "route53.list_hosted_zones",
@@ -1013,12 +1129,13 @@
           "remediation": "Enable DNSSEC signing on public Route 53 hosted zones.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-23"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.15-azure-001",
+          "check_id": "sc-23-azure-001",
           "name": "App Service certificates valid",
           "service": "App Service",
           "api_call": "web.certificates.list",
@@ -1027,12 +1144,13 @@
           "remediation": "Renew expiring certificates or use App Service managed certificates.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-23"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.15-gcp-001",
+          "check_id": "sc-23-gcp-001",
           "name": "Managed SSL certificates valid",
           "service": "Compute",
           "api_call": "compute.sslCertificates.list",
@@ -1041,14 +1159,17 @@
           "remediation": "Use Google-managed SSL certificates for automatic renewal.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-23"
         }
       ]
     },
-    "3.13.16": {
+    "SC-28(1)": {
+      "cmmc_source": "3.13.16",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "sc-3.13.16-aws-001",
+          "check_id": "sc-28-1-aws-001",
           "name": "S3 default encryption enabled",
           "service": "S3",
           "api_call": "s3.get_bucket_encryption",
@@ -1057,10 +1178,11 @@
           "remediation": "Enable default encryption with SSE-KMS on all S3 buckets.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-aws-002",
+          "check_id": "sc-28-1-aws-002",
           "name": "RDS encryption at rest enabled",
           "service": "RDS",
           "api_call": "rds.describe_db_instances",
@@ -1069,10 +1191,11 @@
           "remediation": "Enable encryption at rest on all RDS instances.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-aws-003",
+          "check_id": "sc-28-1-aws-003",
           "name": "DynamoDB encryption enabled",
           "service": "DynamoDB",
           "api_call": "dynamodb.describe_table",
@@ -1081,10 +1204,11 @@
           "remediation": "Enable encryption with customer-managed KMS key on DynamoDB tables.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-aws-004",
+          "check_id": "sc-28-1-aws-004",
           "name": "EBS encryption by default enabled",
           "service": "EC2",
           "api_call": "ec2.get_ebs_encryption_by_default",
@@ -1093,12 +1217,13 @@
           "remediation": "Enable EBS encryption by default in all active regions.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "sc-3.13.16-azure-001",
+          "check_id": "sc-28-1-azure-001",
           "name": "Storage account encryption with CMK",
           "service": "Storage",
           "api_call": "storage.storage_accounts.list",
@@ -1107,10 +1232,11 @@
           "remediation": "Configure storage accounts to use customer-managed keys from Key Vault.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-azure-002",
+          "check_id": "sc-28-1-azure-002",
           "name": "Azure SQL TDE with CMK",
           "service": "SQL",
           "api_call": "sql.encryption_protectors.get",
@@ -1119,10 +1245,11 @@
           "remediation": "Configure TDE with customer-managed key from Key Vault.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-azure-003",
+          "check_id": "sc-28-1-azure-003",
           "name": "VM disk encryption enabled",
           "service": "Compute",
           "api_call": "compute.disks.list",
@@ -1131,12 +1258,13 @@
           "remediation": "Enable disk encryption on all VMs using ADE or SSE with CMK.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "sc-3.13.16-gcp-001",
+          "check_id": "sc-28-1-gcp-001",
           "name": "Cloud Storage CMEK encryption",
           "service": "Storage",
           "api_call": "storage.buckets.get",
@@ -1145,10 +1273,11 @@
           "remediation": "Configure Cloud Storage buckets with CMEK from Cloud KMS.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-gcp-002",
+          "check_id": "sc-28-1-gcp-002",
           "name": "Cloud SQL CMEK encryption",
           "service": "Cloud SQL",
           "api_call": "sqladmin.instances.list",
@@ -1157,10 +1286,11 @@
           "remediation": "Create Cloud SQL instances with CMEK encryption.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         },
         {
-          "check_id": "sc-3.13.16-gcp-003",
+          "check_id": "sc-28-1-gcp-003",
           "name": "BigQuery CMEK encryption",
           "service": "BigQuery",
           "api_call": "bigquery.datasets.list",
@@ -1169,7 +1299,8 @@
           "remediation": "Configure BigQuery datasets with CMEK from Cloud KMS.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "SC-28(1)"
         }
       ]
     }

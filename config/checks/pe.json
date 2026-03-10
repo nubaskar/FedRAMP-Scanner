@@ -1,8 +1,14 @@
 {
   "domain": "PE",
-  "name": "Physical Protection",
+  "name": "Physical and Environmental Protection",
   "checks": {
-    "3.10.1": {
+    "PE-2": {
+      "cmmc_source": "3.10.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review physical access control mechanisms (badge readers, biometrics, cipher locks, key management). Verify authorized access lists are current and reviewed quarterly. Confirm physical access logs are maintained and that access is limited to authorized individuals for areas containing CUI systems. Note: For cloud environments, physical security is the CSP's responsibility under shared responsibility model; verify CSP compliance via FedRAMP authorization.",
       "evidence_requests": [
@@ -35,7 +41,13 @@
         }
       ]
     },
-    "3.10.2": {
+    "PE-6": {
+      "cmmc_source": "3.10.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review physical security monitoring systems including surveillance cameras, intrusion detection alarms, and environmental controls (HVAC, fire suppression, water detection). Verify monitoring coverage of server rooms, network closets, and other areas with CUI systems. For cloud, verify CSP provides appropriate physical monitoring via FedRAMP.",
       "evidence_requests": [
@@ -68,7 +80,13 @@
         }
       ]
     },
-    "3.10.3": {
+    "PE-3": {
+      "cmmc_source": "3.10.3",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review visitor management procedures. Verify visitor sign-in/sign-out logs, identification verification, badge issuance, and escort requirements. Confirm visitors are escorted at all times in areas where CUI is accessible. Check that visitor access areas are clearly delineated.",
       "evidence_requests": [
@@ -91,7 +109,12 @@
         }
       ]
     },
-    "3.10.4": {
+    "PE-5": {
+      "cmmc_source": "3.10.4",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review physical access audit logs and retention periods. Verify logs capture entry and exit times, individual identity, and access point. Confirm logs are retained per organizational policy (minimum 12 months recommended). Check for automated alerting on anomalous access patterns.",
       "evidence_requests": [
@@ -108,7 +131,9 @@
         }
       ]
     },
-    "3.10.5": {
+    "PE-6(1)": {
+      "cmmc_source": "3.10.5",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Review inventory and management of physical access devices (keys, badges, smart cards, combinations, PINs). Verify devices are inventoried regularly, changed when compromised or when personnel are terminated, and that lost/stolen devices trigger immediate reissuance and audit.",
       "evidence_requests": [
@@ -136,7 +161,12 @@
         }
       ]
     },
-    "3.10.6": {
+    "PE-17": {
+      "cmmc_source": "3.10.6",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review telework and alternate work site policies for personnel handling CUI. Verify requirements for physical security at home offices (locked room/cabinet for CUI materials), network security (VPN, encrypted Wi-Fi), and clean desk requirements. Confirm regular assessments of alternate work site security.",
       "evidence_requests": [

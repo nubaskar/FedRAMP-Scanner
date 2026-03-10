@@ -2,10 +2,16 @@
   "domain": "MA",
   "name": "Maintenance",
   "checks": {
-    "3.7.1": {
+    "MA-2": {
+      "cmmc_source": "3.7.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ma-3.7.1-aws-001",
+          "check_id": "ma-2-aws-001",
           "name": "SSM Patch Manager configured",
           "service": "SSM",
           "api_call": "ssm.describe_patch_baselines",
@@ -14,10 +20,11 @@
           "remediation": "Configure SSM Patch Manager with custom patch baselines and maintenance windows.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         },
         {
-          "check_id": "ma-3.7.1-aws-002",
+          "check_id": "ma-2-aws-002",
           "name": "Patch compliance monitored",
           "service": "SSM",
           "api_call": "ssm.describe_instance_patch_states",
@@ -26,10 +33,11 @@
           "remediation": "Review and remediate patch compliance gaps on managed instances.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         },
         {
-          "check_id": "ma-3.7.1-aws-003",
+          "check_id": "ma-2-aws-003",
           "name": "RDS automatic minor version upgrade enabled",
           "service": "RDS",
           "api_call": "rds.describe_db_instances",
@@ -38,12 +46,13 @@
           "remediation": "Enable automatic minor version upgrades on all RDS instances.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         }
       ],
       "azure": [
         {
-          "check_id": "ma-3.7.1-azure-001",
+          "check_id": "ma-2-azure-001",
           "name": "Azure Update Management configured",
           "service": "Automation",
           "api_call": "automation_account.list",
@@ -52,10 +61,11 @@
           "remediation": "Configure Azure Update Management with scheduled update deployments.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         },
         {
-          "check_id": "ma-3.7.1-azure-002",
+          "check_id": "ma-2-azure-002",
           "name": "VM patch assessment enabled",
           "service": "Compute",
           "api_call": "compute.virtual_machines.list",
@@ -64,12 +74,13 @@
           "remediation": "Enable periodic assessment on VMs via Azure Update Manager.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "ma-3.7.1-gcp-001",
+          "check_id": "ma-2-gcp-001",
           "name": "OS Config patch management configured",
           "service": "OS Config",
           "api_call": "osconfig.projects.patchDeployments.list",
@@ -78,10 +89,11 @@
           "remediation": "Configure OS Config patch deployments with recurring schedules.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         },
         {
-          "check_id": "ma-3.7.1-gcp-002",
+          "check_id": "ma-2-gcp-002",
           "name": "Container image vulnerability scanning",
           "service": "Artifact Registry",
           "api_call": "containeranalysis.projects.occurrences.list",
@@ -90,11 +102,17 @@
           "remediation": "Enable vulnerability scanning on Artifact Registry repositories.",
           "supports_objectives": [
             "[a]"
-          ]
+          ],
+          "control_id": "MA-2"
         }
       ]
     },
-    "3.7.2": {
+    "MA-3": {
+      "cmmc_source": "3.7.2",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review maintenance tool inventory and authorization records. Verify that maintenance personnel are vetted, tools are approved and inspected before use, and remote maintenance sessions are logged and monitored.",
       "evidence_requests": [
@@ -126,7 +144,9 @@
         }
       ]
     },
-    "3.7.3": {
+    "MA-3(1)": {
+      "cmmc_source": "3.7.3",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Review media sanitization procedures for equipment sent off-site for maintenance. Verify sanitization records exist for all equipment removed from the CUI environment. Confirm procedures align with NIST 800-88 guidelines.",
       "evidence_requests": [
@@ -142,7 +162,9 @@
         }
       ]
     },
-    "3.7.4": {
+    "MA-3(2)": {
+      "cmmc_source": "3.7.4",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Review procedures for scanning maintenance and diagnostic media before connection to production systems. Verify anti-malware scans are performed on all maintenance media and results are documented.",
       "evidence_requests": [
@@ -158,10 +180,16 @@
         }
       ]
     },
-    "3.7.5": {
+    "MA-4": {
+      "cmmc_source": "3.7.5",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ma-3.7.5-aws-001",
+          "check_id": "ma-4-aws-001",
           "name": "Session Manager requires MFA for remote maintenance",
           "service": "SSM",
           "api_call": "iam.get_policy_version",
@@ -171,10 +199,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "MA-4"
         },
         {
-          "check_id": "ma-3.7.5-aws-002",
+          "check_id": "ma-4-aws-002",
           "name": "VPN connections require MFA",
           "service": "VPC",
           "api_call": "ec2.describe_client_vpn_endpoints",
@@ -184,12 +213,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "MA-4"
         }
       ],
       "azure": [
         {
-          "check_id": "ma-3.7.5-azure-001",
+          "check_id": "ma-4-azure-001",
           "name": "MFA required for Azure Bastion access",
           "service": "Azure AD",
           "api_call": "graph.conditional_access_policies.list",
@@ -199,12 +229,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "MA-4"
         }
       ],
       "gcp": [
         {
-          "check_id": "ma-3.7.5-gcp-001",
+          "check_id": "ma-4-gcp-001",
           "name": "2SV required for admin console access",
           "service": "Workspace Admin",
           "api_call": "admin.directory.users.list",
@@ -214,11 +245,18 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "MA-4"
         }
       ]
     },
-    "3.7.6": {
+    "MA-5": {
+      "cmmc_source": "3.7.6",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review escort and supervision procedures for maintenance personnel without appropriate access authorization. Verify that session recording, direct observation, or escort policies are enforced for uncleared or third-party maintenance staff.",
       "evidence_requests": [

@@ -1,0 +1,580 @@
+{
+  "domain": "CP",
+  "name": "Contingency Planning",
+  "checks": {
+    "CP-2": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-2-aws-001",
+          "name": "Resources tagged with DR plan metadata",
+          "service": "ResourceGroupsTaggingAPI",
+          "api_call": "resourcegroupstaggingapi.get_resources",
+          "expected": "Critical resources tagged with contingency plan identifiers",
+          "severity": "medium",
+          "remediation": "Tag critical resources with DR/contingency plan metadata.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-2"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-2-azure-001",
+          "name": "Resources tagged with DR plan metadata",
+          "service": "Resources",
+          "api_call": "ResourceManagementClient.resources.list",
+          "expected": "Critical resources tagged with contingency plan identifiers",
+          "severity": "medium",
+          "remediation": "Tag critical resources with DR/contingency plan metadata in Azure.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-2"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-2-gcp-001",
+          "name": "Resources labeled with DR plan metadata",
+          "service": "Resource Manager",
+          "api_call": "cloudresourcemanager.projects.list",
+          "expected": "Critical resources labeled with contingency plan identifiers",
+          "severity": "medium",
+          "remediation": "Label critical resources with DR/contingency plan metadata in GCP.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-2"
+        }
+      ]
+    },
+    "CP-4": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-4-aws-001",
+          "name": "AWS Resilience Hub assessments completed",
+          "service": "ResilienceHub",
+          "api_call": "resiliencehub.list_app_assessments",
+          "expected": "Recent resilience assessments exist showing DR testing results",
+          "severity": "medium",
+          "remediation": "Use AWS Resilience Hub to test and document DR plan testing.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-4"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-4-azure-001",
+          "name": "Azure Site Recovery test failover documented",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesClient.replication_protected_items.list",
+          "expected": "Test failover completed within required timeframe",
+          "severity": "medium",
+          "remediation": "Perform and document test failovers in Azure Site Recovery.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-4"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-4-gcp-001",
+          "name": "Disaster recovery test documented in Cloud Logging",
+          "service": "Logging",
+          "api_call": "logging.entries.list",
+          "expected": "DR test logs exist showing recent testing activity",
+          "severity": "medium",
+          "remediation": "Document DR testing activities in Cloud Logging.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-4"
+        }
+      ]
+    },
+    "CP-6": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-6-aws-001",
+          "name": "S3 buckets have cross-region replication enabled",
+          "service": "S3",
+          "api_call": "s3.get_bucket_replication",
+          "expected": "Critical S3 buckets replicate to alternate region",
+          "severity": "high",
+          "remediation": "Enable cross-region replication for critical S3 buckets.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        },
+        {
+          "check_id": "cp-6-aws-002",
+          "name": "RDS databases have cross-region read replicas",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "Critical RDS instances have read replicas in alternate regions",
+          "severity": "high",
+          "remediation": "Configure cross-region read replicas for critical RDS databases.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-6-azure-001",
+          "name": "Storage accounts have geo-redundant replication",
+          "service": "Storage",
+          "api_call": "StorageManagementClient.storage_accounts.list",
+          "expected": "Critical storage accounts use GRS or GZRS replication",
+          "severity": "high",
+          "remediation": "Enable geo-redundant storage (GRS/GZRS) for critical storage accounts.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        },
+        {
+          "check_id": "cp-6-azure-002",
+          "name": "SQL databases have geo-replication configured",
+          "service": "SQL",
+          "api_call": "SqlManagementClient.databases.list",
+          "expected": "Critical SQL databases have active geo-replication",
+          "severity": "high",
+          "remediation": "Configure active geo-replication for critical Azure SQL databases.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-6-gcp-001",
+          "name": "Cloud Storage buckets use multi-region or dual-region",
+          "service": "Storage",
+          "api_call": "storage.buckets.list",
+          "expected": "Critical buckets use MULTI_REGIONAL or DUAL_REGIONAL storage class",
+          "severity": "high",
+          "remediation": "Configure multi-region or dual-region storage for critical buckets.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        },
+        {
+          "check_id": "cp-6-gcp-002",
+          "name": "Cloud SQL instances have HA and cross-region replicas",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "Critical Cloud SQL instances have cross-region read replicas",
+          "severity": "high",
+          "remediation": "Configure cross-region read replicas for critical Cloud SQL instances.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "CP-6"
+        }
+      ]
+    },
+    "CP-7": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-7-aws-001",
+          "name": "Application deployed to multiple regions",
+          "service": "ElasticLoadBalancingV2",
+          "api_call": "elbv2.describe_load_balancers",
+          "expected": "Load balancers exist in multiple regions for failover",
+          "severity": "high",
+          "remediation": "Deploy application infrastructure to multiple AWS regions.",
+          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "control_id": "CP-7"
+        },
+        {
+          "check_id": "cp-7-aws-002",
+          "name": "Route 53 health checks configured for failover",
+          "service": "Route53",
+          "api_call": "route53.list_health_checks",
+          "expected": "Health checks monitor critical endpoints with failover routing",
+          "severity": "high",
+          "remediation": "Configure Route 53 health checks and failover routing policies.",
+          "supports_objectives": ["[a]", "[d]"],
+          "control_id": "CP-7"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-7-azure-001",
+          "name": "Application deployed to multiple regions",
+          "service": "Network",
+          "api_call": "NetworkManagementClient.load_balancers.list_all",
+          "expected": "Load balancers or Application Gateways exist in multiple regions",
+          "severity": "high",
+          "remediation": "Deploy application infrastructure to multiple Azure regions.",
+          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "control_id": "CP-7"
+        },
+        {
+          "check_id": "cp-7-azure-002",
+          "name": "Traffic Manager or Front Door configured for failover",
+          "service": "Network",
+          "api_call": "TrafficManagerManagementClient.profiles.list_by_subscription",
+          "expected": "Traffic Manager profiles with multiple endpoints for regional failover",
+          "severity": "high",
+          "remediation": "Configure Azure Traffic Manager or Front Door with multi-region endpoints.",
+          "supports_objectives": ["[a]", "[d]"],
+          "control_id": "CP-7"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-7-gcp-001",
+          "name": "Application deployed to multiple regions",
+          "service": "Compute Engine",
+          "api_call": "compute.instanceGroupManagers.aggregatedList",
+          "expected": "Managed instance groups exist in multiple regions",
+          "severity": "high",
+          "remediation": "Deploy application infrastructure to multiple GCP regions.",
+          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "control_id": "CP-7"
+        },
+        {
+          "check_id": "cp-7-gcp-002",
+          "name": "Cloud Load Balancing configured with multi-region backends",
+          "service": "Compute Engine",
+          "api_call": "compute.backendServices.list",
+          "expected": "Backend services include instances from multiple regions",
+          "severity": "high",
+          "remediation": "Configure Cloud Load Balancing with backends in multiple regions.",
+          "supports_objectives": ["[a]", "[d]"],
+          "control_id": "CP-7"
+        }
+      ]
+    },
+    "CP-9": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-9-aws-001",
+          "name": "AWS Backup vaults configured with backup plans",
+          "service": "Backup",
+          "api_call": "backup.list_backup_vaults",
+          "expected": "At least one backup vault exists with active backup plans",
+          "severity": "critical",
+          "remediation": "Configure AWS Backup with vaults and backup plans for critical resources.",
+          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-aws-002",
+          "name": "RDS automated backups enabled",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "All RDS instances have automated backups enabled with retention >= 7 days",
+          "severity": "critical",
+          "remediation": "Enable automated backups with minimum 7-day retention for all RDS instances.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-aws-003",
+          "name": "EBS snapshots scheduled for volumes",
+          "service": "EC2",
+          "api_call": "ec2.describe_snapshots",
+          "expected": "Regular EBS snapshots exist for critical volumes",
+          "severity": "high",
+          "remediation": "Configure automated EBS snapshot lifecycle policies for critical volumes.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-aws-004",
+          "name": "DynamoDB point-in-time recovery enabled",
+          "service": "DynamoDB",
+          "api_call": "dynamodb.describe_continuous_backups",
+          "expected": "Point-in-time recovery enabled for all production DynamoDB tables",
+          "severity": "high",
+          "remediation": "Enable point-in-time recovery for all DynamoDB tables.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-9-azure-001",
+          "name": "Azure Backup configured for VMs",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesBackupClient.backup_protected_items.list",
+          "expected": "Critical VMs are protected with backup policies",
+          "severity": "critical",
+          "remediation": "Configure Azure Backup for all critical virtual machines.",
+          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-azure-002",
+          "name": "SQL Database automated backups configured",
+          "service": "SQL",
+          "api_call": "SqlManagementClient.databases.list",
+          "expected": "All SQL databases have automated backups with retention >= 7 days",
+          "severity": "critical",
+          "remediation": "Ensure Azure SQL databases have automated backups with appropriate retention.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-azure-003",
+          "name": "Storage account soft delete enabled",
+          "service": "Storage",
+          "api_call": "StorageManagementClient.blob_services.get_service_properties",
+          "expected": "Blob soft delete enabled with retention >= 7 days",
+          "severity": "high",
+          "remediation": "Enable soft delete for Azure Storage blobs with appropriate retention period.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-9-gcp-001",
+          "name": "Compute Engine persistent disk snapshots scheduled",
+          "service": "Compute Engine",
+          "api_call": "compute.resourcePolicies.list",
+          "expected": "Snapshot schedules exist for critical persistent disks",
+          "severity": "critical",
+          "remediation": "Configure snapshot schedules for critical Compute Engine persistent disks.",
+          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-gcp-002",
+          "name": "Cloud SQL automated backups enabled",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "All Cloud SQL instances have automated backups enabled",
+          "severity": "critical",
+          "remediation": "Enable automated backups for all Cloud SQL instances.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-gcp-003",
+          "name": "Cloud Storage bucket versioning enabled",
+          "service": "Storage",
+          "api_call": "storage.buckets.get",
+          "expected": "Critical buckets have versioning enabled",
+          "severity": "high",
+          "remediation": "Enable object versioning for critical Cloud Storage buckets.",
+          "supports_objectives": ["[a]", "[c]"],
+          "control_id": "CP-9"
+        }
+      ]
+    },
+    "CP-9.1": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-9-1-aws-001",
+          "name": "AWS Backup restore jobs completed successfully",
+          "service": "Backup",
+          "api_call": "backup.list_restore_jobs",
+          "expected": "Recent test restore jobs show successful completion",
+          "severity": "high",
+          "remediation": "Regularly test backup restoration and document successful restores.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(1)"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-9-1-azure-001",
+          "name": "Azure Backup restore jobs tested",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesBackupClient.restore_jobs.list",
+          "expected": "Recent test restore operations completed successfully",
+          "severity": "high",
+          "remediation": "Regularly test Azure Backup restoration and document results.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(1)"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-9-1-gcp-001",
+          "name": "Snapshot restore operations logged and verified",
+          "service": "Logging",
+          "api_call": "logging.entries.list",
+          "expected": "Logs show successful snapshot restore testing",
+          "severity": "high",
+          "remediation": "Regularly test snapshot restoration and log verification results.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(1)"
+        }
+      ]
+    },
+    "CP-9.3": {
+      "baselines": ["High"],
+      "aws": [
+        {
+          "check_id": "cp-9-3-aws-001",
+          "name": "Backups replicated to alternate region",
+          "service": "Backup",
+          "api_call": "backup.list_backup_vaults",
+          "expected": "Backup vaults configured with cross-region copy",
+          "severity": "high",
+          "remediation": "Configure cross-region backup copy for AWS Backup vaults.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(3)"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-9-3-azure-001",
+          "name": "Backup data replicated to separate region",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesClient.vaults.list_by_subscription_id",
+          "expected": "Recovery Services vaults configured with GRS or cross-region replication",
+          "severity": "high",
+          "remediation": "Configure geo-redundant storage for Recovery Services vaults.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(3)"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-9-3-gcp-001",
+          "name": "Snapshots stored in separate region",
+          "service": "Compute Engine",
+          "api_call": "compute.snapshots.list",
+          "expected": "Snapshots stored in multi-region or separate region from source",
+          "severity": "high",
+          "remediation": "Store critical snapshots in separate regions from source resources.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(3)"
+        }
+      ]
+    },
+    "CP-9.8": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-9-8-aws-001",
+          "name": "AWS Backup vault encryption enabled",
+          "service": "Backup",
+          "api_call": "backup.describe_backup_vault",
+          "expected": "All backup vaults encrypted with KMS keys",
+          "severity": "high",
+          "remediation": "Enable KMS encryption for all AWS Backup vaults.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(8)"
+        },
+        {
+          "check_id": "cp-9-8-aws-002",
+          "name": "RDS backup encryption enabled",
+          "service": "RDS",
+          "api_call": "rds.describe_db_snapshots",
+          "expected": "All RDS snapshots are encrypted",
+          "severity": "high",
+          "remediation": "Enable encryption for all RDS instances to ensure encrypted backups.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(8)"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-9-8-azure-001",
+          "name": "Recovery Services vault encryption configured",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesClient.vaults.list_by_subscription_id",
+          "expected": "Recovery Services vaults use customer-managed keys or platform encryption",
+          "severity": "high",
+          "remediation": "Configure encryption for Azure Recovery Services vaults.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(8)"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-9-8-gcp-001",
+          "name": "Snapshots encrypted with Cloud KMS",
+          "service": "Compute Engine",
+          "api_call": "compute.snapshots.list",
+          "expected": "All snapshots encrypted with customer-managed or Google-managed keys",
+          "severity": "high",
+          "remediation": "Ensure all snapshots are encrypted with Cloud KMS keys.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-9(8)"
+        }
+      ]
+    },
+    "CP-10": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-10-aws-001",
+          "name": "System recovery procedures documented in Systems Manager",
+          "service": "SSM",
+          "api_call": "ssm.list_documents",
+          "expected": "SSM documents exist for system recovery procedures",
+          "severity": "medium",
+          "remediation": "Document system recovery procedures in AWS Systems Manager documents.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-10-azure-001",
+          "name": "Azure Site Recovery configured for critical VMs",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesClient.replication_protected_items.list",
+          "expected": "Critical VMs protected with Site Recovery for disaster recovery",
+          "severity": "medium",
+          "remediation": "Configure Azure Site Recovery for critical virtual machines.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-10-gcp-001",
+          "name": "Recovery procedures documented in Cloud Operations",
+          "service": "Logging",
+          "api_call": "logging.entries.list",
+          "expected": "Recovery runbooks and procedures logged in Cloud Operations",
+          "severity": "medium",
+          "remediation": "Document system recovery procedures in Cloud Operations.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10"
+        }
+      ]
+    },
+    "CP-10.2": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "cp-10-2-aws-001",
+          "name": "RDS point-in-time recovery enabled",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "RDS instances have automated backups with point-in-time recovery",
+          "severity": "high",
+          "remediation": "Enable automated backups for transaction recovery on RDS instances.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10(2)"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cp-10-2-azure-001",
+          "name": "SQL Database point-in-time restore available",
+          "service": "SQL",
+          "api_call": "SqlManagementClient.restorable_dropped_databases.list",
+          "expected": "SQL databases support point-in-time restore for transaction recovery",
+          "severity": "high",
+          "remediation": "Ensure Azure SQL databases have automated backups for PITR.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10(2)"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cp-10-2-gcp-001",
+          "name": "Cloud SQL point-in-time recovery enabled",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "Cloud SQL instances have binary logging enabled for PITR",
+          "severity": "high",
+          "remediation": "Enable binary logging on Cloud SQL instances for point-in-time recovery.",
+          "supports_objectives": ["[a]"],
+          "control_id": "CP-10(2)"
+        }
+      ]
+    }
+  }
+}

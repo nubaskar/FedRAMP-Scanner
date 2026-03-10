@@ -2,10 +2,16 @@
   "domain": "CM",
   "name": "Configuration Management",
   "checks": {
-    "3.4.1": {
+    "CM-2": {
+      "cmmc_source": "3.4.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.1-aws-001",
+          "check_id": "cm-2-aws-001",
           "name": "AWS Config enabled in all regions",
           "service": "Config",
           "api_call": "config.describe_configuration_recorders",
@@ -17,10 +23,11 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         },
         {
-          "check_id": "cm-3.4.1-aws-002",
+          "check_id": "cm-2-aws-002",
           "name": "Systems Manager Inventory enabled",
           "service": "SSM",
           "api_call": "ssm.describe_instance_information",
@@ -32,10 +39,11 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         },
         {
-          "check_id": "cm-3.4.1-aws-003",
+          "check_id": "cm-2-aws-003",
           "name": "AMI baseline documented and maintained",
           "service": "EC2",
           "api_call": "ec2.describe_images",
@@ -47,12 +55,13 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.1-azure-001",
+          "check_id": "cm-2-azure-001",
           "name": "Azure Resource Graph inventory available",
           "service": "Resource Graph",
           "api_call": "resourcegraph.resources",
@@ -64,10 +73,11 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         },
         {
-          "check_id": "cm-3.4.1-azure-002",
+          "check_id": "cm-2-azure-002",
           "name": "Azure Policy Guest Configuration enabled",
           "service": "Policy",
           "api_call": "policy_assignments.list",
@@ -79,12 +89,13 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.1-gcp-001",
+          "check_id": "cm-2-gcp-001",
           "name": "Cloud Asset Inventory enabled",
           "service": "Asset Inventory",
           "api_call": "cloudasset.assets.list",
@@ -96,10 +107,11 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         },
         {
-          "check_id": "cm-3.4.1-gcp-002",
+          "check_id": "cm-2-gcp-002",
           "name": "OS Config inventory management enabled",
           "service": "OS Config",
           "api_call": "compute.instances.aggregatedList",
@@ -111,7 +123,8 @@
             "[c]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "CM-2"
         }
       ],
       "objectives_requiring_documentation": [
@@ -127,10 +140,16 @@
         }
       ]
     },
-    "3.4.2": {
+    "CM-6": {
+      "cmmc_source": "3.4.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.2-aws-001",
+          "check_id": "cm-6-aws-001",
           "name": "AWS Config rules for CIS Benchmark",
           "service": "Config",
           "api_call": "config.describe_config_rules",
@@ -140,10 +159,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         },
         {
-          "check_id": "cm-3.4.2-aws-002",
+          "check_id": "cm-6-aws-002",
           "name": "Security Hub CIS standard enabled",
           "service": "Security Hub",
           "api_call": "securityhub.describe_standards_subscriptions",
@@ -153,12 +173,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.2-azure-001",
+          "check_id": "cm-6-azure-001",
           "name": "Azure Policy assignments for security baseline",
           "service": "Policy",
           "api_call": "policy.policy_assignments.list",
@@ -168,10 +189,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         },
         {
-          "check_id": "cm-3.4.2-azure-002",
+          "check_id": "cm-6-azure-002",
           "name": "Defender for Cloud secure score reviewed",
           "service": "Security Center",
           "api_call": "security.secure_scores.list",
@@ -181,12 +203,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.2-gcp-001",
+          "check_id": "cm-6-gcp-001",
           "name": "Organization policies configured",
           "service": "Organization Policy",
           "api_call": "orgpolicy.projects.policies.list",
@@ -196,10 +219,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         },
         {
-          "check_id": "cm-3.4.2-gcp-002",
+          "check_id": "cm-6-gcp-002",
           "name": "SCC findings for CIS compliance",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -209,14 +233,20 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-6"
         }
       ]
     },
-    "3.4.3": {
+    "CM-3": {
+      "cmmc_source": "3.4.3",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.3-aws-001",
+          "check_id": "cm-3-aws-001",
           "name": "AWS Config configuration history enabled",
           "service": "Config",
           "api_call": "config.describe_delivery_channels",
@@ -228,10 +258,11 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "CM-3"
         },
         {
-          "check_id": "cm-3.4.3-aws-002",
+          "check_id": "cm-3-aws-002",
           "name": "CloudTrail captures config changes",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -243,12 +274,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "CM-3"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.3-azure-001",
+          "check_id": "cm-3-azure-001",
           "name": "Activity Log captures resource changes",
           "service": "Monitor",
           "api_call": "diagnostic_settings.list",
@@ -260,12 +292,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "CM-3"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.3-gcp-001",
+          "check_id": "cm-3-gcp-001",
           "name": "Admin Activity logs capture changes",
           "service": "Logging",
           "api_call": "logging.entries.list",
@@ -277,11 +310,14 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "CM-3"
         }
       ]
     },
-    "3.4.4": {
+    "CM-3(4)": {
+      "cmmc_source": "3.4.4",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Review change management process documentation. Verify that security impact analysis is performed as part of the change approval process before implementation. Check for documented risk assessment of changes to CUI systems.",
       "objectives_requiring_documentation": [
@@ -292,10 +328,16 @@
         }
       ]
     },
-    "3.4.5": {
+    "CM-5": {
+      "cmmc_source": "3.4.5",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.5-aws-001",
+          "check_id": "cm-5-aws-001",
           "name": "CI/CD pipeline has approval gates",
           "service": "CodePipeline",
           "api_call": "codepipeline.list_pipelines",
@@ -309,10 +351,11 @@
             "[e]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "CM-5"
         },
         {
-          "check_id": "cm-3.4.5-aws-002",
+          "check_id": "cm-5-aws-002",
           "name": "IAM roles for deployment are scoped",
           "service": "IAM",
           "api_call": "iam.list_roles",
@@ -326,12 +369,13 @@
             "[e]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "CM-5"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.5-azure-001",
+          "check_id": "cm-5-azure-001",
           "name": "Resource locks on critical resources",
           "service": "Resources",
           "api_call": "resources.management_locks.list",
@@ -345,12 +389,13 @@
             "[e]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "CM-5"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.5-gcp-001",
+          "check_id": "cm-5-gcp-001",
           "name": "Project lien configured for critical projects",
           "service": "Resource Manager",
           "api_call": "cloudresourcemanager.liens.list",
@@ -364,7 +409,8 @@
             "[e]",
             "[g]",
             "[h]"
-          ]
+          ],
+          "control_id": "CM-5"
         }
       ],
       "objectives_requiring_documentation": [
@@ -380,10 +426,16 @@
         }
       ]
     },
-    "3.4.6": {
+    "CM-7": {
+      "cmmc_source": "3.4.6",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.6-aws-001",
+          "check_id": "cm-7-aws-001",
           "name": "Unused security groups identified",
           "service": "EC2",
           "api_call": "ec2.describe_security_groups",
@@ -393,10 +445,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-7"
         },
         {
-          "check_id": "cm-3.4.6-aws-002",
+          "check_id": "cm-7-aws-002",
           "name": "Unused IAM roles identified",
           "service": "IAM",
           "api_call": "iam.list_roles",
@@ -406,12 +459,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-7"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.6-azure-001",
+          "check_id": "cm-7-azure-001",
           "name": "Unused resources identified",
           "service": "Advisor",
           "api_call": "advisor.recommendations.list",
@@ -421,12 +475,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-7"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.6-gcp-001",
+          "check_id": "cm-7-gcp-001",
           "name": "Unused firewall rules identified",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -436,14 +491,17 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "CM-7"
         }
       ]
     },
-    "3.4.7": {
+    "CM-7(1)": {
+      "cmmc_source": "3.4.7",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "cm-3.4.7-aws-001",
+          "check_id": "cm-7-1-aws-001",
           "name": "Security groups restrict unnecessary ports",
           "service": "EC2",
           "api_call": "ec2.describe_security_groups",
@@ -466,10 +524,11 @@
             "[m]",
             "[n]",
             "[o]"
-          ]
+          ],
+          "control_id": "CM-7(1)"
         },
         {
-          "check_id": "cm-3.4.7-aws-002",
+          "check_id": "cm-7-1-aws-002",
           "name": "Unnecessary AWS services restricted via SCP",
           "service": "Organizations",
           "api_call": "organizations.list_policies",
@@ -492,12 +551,13 @@
             "[m]",
             "[n]",
             "[o]"
-          ]
+          ],
+          "control_id": "CM-7(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.7-azure-001",
+          "check_id": "cm-7-1-azure-001",
           "name": "NSG rules restrict unnecessary ports",
           "service": "Network",
           "api_call": "network.network_security_groups.list",
@@ -520,12 +580,13 @@
             "[m]",
             "[n]",
             "[o]"
-          ]
+          ],
+          "control_id": "CM-7(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.7-gcp-001",
+          "check_id": "cm-7-1-gcp-001",
           "name": "Firewall rules restrict unnecessary ports",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -548,14 +609,17 @@
             "[m]",
             "[n]",
             "[o]"
-          ]
+          ],
+          "control_id": "CM-7(1)"
         }
       ]
     },
-    "3.4.8": {
+    "CM-7(5)": {
+      "cmmc_source": "3.4.8",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "cm-3.4.8-aws-001",
+          "check_id": "cm-7-5-aws-001",
           "name": "SSM AppManager or application control configured",
           "service": "SSM",
           "api_call": "ssm.list_documents",
@@ -566,12 +630,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-7(5)"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.8-azure-001",
+          "check_id": "cm-7-5-azure-001",
           "name": "Adaptive application controls enabled",
           "service": "Security Center",
           "api_call": "security.adaptive_application_controls.list",
@@ -582,12 +647,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-7(5)"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.8-gcp-001",
+          "check_id": "cm-7-5-gcp-001",
           "name": "Binary Authorization enabled",
           "service": "Binary Authorization",
           "api_call": "binaryauthorization.projects.getPolicy",
@@ -598,14 +664,21 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-7(5)"
         }
       ]
     },
-    "3.4.9": {
+    "CM-8": {
+      "cmmc_source": "3.4.9",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "cm-3.4.9-aws-001",
+          "check_id": "cm-8-aws-001",
           "name": "SSM software inventory collected",
           "service": "SSM",
           "api_call": "ssm.describe_instance_information()",
@@ -616,12 +689,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-8"
         }
       ],
       "azure": [
         {
-          "check_id": "cm-3.4.9-azure-001",
+          "check_id": "cm-8-azure-001",
           "name": "Change Tracking and Inventory enabled",
           "service": "Automation",
           "api_call": "automation.automation_accounts.list",
@@ -632,12 +706,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-8"
         }
       ],
       "gcp": [
         {
-          "check_id": "cm-3.4.9-gcp-001",
+          "check_id": "cm-8-gcp-001",
           "name": "OS Config patch and inventory management",
           "service": "OS Config",
           "api_call": "osconfig.patchDeployments.list",
@@ -648,7 +723,8 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "CM-8"
         }
       ]
     }

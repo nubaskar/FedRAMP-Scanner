@@ -6,7 +6,7 @@ validation checks, and produces a JavaScript file with the HTML content
 for the QA Validation tab in the frontend Help blade.
 
 Usage:
-    cd CMMC-Scanner
+    cd FedRAMP-SCANNER
     python scripts/generate_qa_validation_js.py
 """
 from __future__ import annotations
@@ -41,7 +41,7 @@ def generate() -> str:
     """Run QA checks and build the HTML for the QA Validation tab."""
 
     # --- Run QA checks (same as qa_traceability.main but without console/file output) ---
-    practices = qa.load_practices()
+    controls = qa.load_controls()
     checks = qa.load_all_checks()
     raw_configs = qa.load_check_configs_raw()
     engine_methods = qa.extract_engine_check_methods()
@@ -58,13 +58,13 @@ def generate() -> str:
 
     results: list[qa.QACheckResult] = [
         qa.qa1_1_structural_integrity(checks),
-        qa.qa1_2_objective_crossref(checks, practices),
-        qa.qa1_3_coverage_completeness(checks, practices, raw_configs),
+        qa.qa1_2_objective_crossref(checks, controls),
+        qa.qa1_3_coverage_completeness(checks, controls, raw_configs),
         qa.qa1_4_method_mapping(checks, engine_methods),
         qa.qa1_5_method_existence(engine_methods, scanner_methods),
         qa.qa1_6_check_id_format(checks),
-        qa.qa1_7_practice_completeness(checks, practices, raw_configs),
-        qa.qa1_8_provider_parity(checks, practices),
+        qa.qa1_7_control_completeness(checks, controls, raw_configs),
+        qa.qa1_8_provider_parity(checks, controls),
         qa.qa2_1_api_call_match(checks, engine_methods, scanner_methods, scanner_sources),
         qa.qa2_2_expected_condition_match(checks, engine_methods, scanner_methods, scanner_sources),
     ]
@@ -95,7 +95,7 @@ def generate() -> str:
         {
             "num": "1.2", "name": "Objective Cross-Reference", "tier": "Config",
             "verifies": "Every <code>supports_objectives</code> entry in a check references an objective ID that "
-                        "actually exists in <code>nist_practices.json</code>.",
+                        "actually exists in <code>nist_800_53_controls.json</code>.",
             "why": "Guarantees that check-to-objective mappings are valid  - no check claims to support a non-existent assessment objective.",
         },
         {
@@ -119,18 +119,18 @@ def generate() -> str:
         {
             "num": "1.6", "name": "Check ID Format", "tier": "Config",
             "verifies": "All <code>check_id</code> values match the pattern "
-                        "<code>{domain}-{practice}-{provider}-{seq}</code> (e.g., <code>ac-3.1.1-aws-001</code>).",
+                        "<code>{domain}-{control}-{provider}-{seq}</code> (e.g., <code>ac-3.1.1-aws-001</code>).",
             "why": "Ensures consistent, parseable identifiers across all 393 checks for reporting and traceability.",
         },
         {
-            "num": "1.7", "name": "Practice Completeness", "tier": "Config",
-            "verifies": "All 110 NIST 800-171 practices from <code>nist_practices.json</code> appear in "
+            "num": "1.7", "name": "Control Completeness", "tier": "Config",
+            "verifies": "All 110 NIST 800-53 Rev 5 controls from <code>nist_800_53_controls.json</code> appear in "
                         "<code>config/checks/*.json</code> (either as automated checks or manual-only entries).",
-            "why": "Guarantees full NIST 800-171 coverage  - no practice is omitted from the check configuration.",
+            "why": "Guarantees full NIST 800-53 Rev 5 coverage  - no control is omitted from the check configuration.",
         },
         {
             "num": "1.8", "name": "Provider Parity", "tier": "Config",
-            "verifies": "Every automated practice has checks defined for all three cloud providers (AWS, Azure, GCP).",
+            "verifies": "Every automated control has checks defined for all three cloud providers (AWS, Azure, GCP).",
             "why": "Ensures consistent assessment coverage regardless of which cloud platform the client uses.",
         },
         {
@@ -165,8 +165,8 @@ def generate() -> str:
     a('<div class="card-body">')
     a('<h3 class="help-section-title">Purpose</h3>')
     a('<p class="help-section-desc">')
-    a('This report provides independent, automated verification that the CMMC Cloud Compliance Scanner ')
-    a('correctly implements what it claims. For Certified CMMC Assessors (CCAs) evaluating automated ')
+    a('This report provides independent, automated verification that the FedRAMP Cloud Compliance Scanner ')
+    a('correctly implements what it claims. For FedRAMP Assessors (3PAOs) evaluating automated ')
     a('assessment tools, trust requires proof  - not just documentation. This validation ')
     a('statically analyzes the scanner&rsquo;s configuration files and Python source code to verify ')
     a('the entire traceability chain:')
@@ -175,9 +175,9 @@ def generate() -> str:
     # Traceability chain visualization (reuse methodology pattern)
     a('<div class="help-traceability-chain">')
     chain_steps = [
-        ("CMMC 2.0 Level", "L1 / L2 / L3 certification tier"),
-        ("NIST 800-171 Practice", "One of 110 security requirements"),
-        ("800-171A Assessment Objective", 'Specific "determine if" statement'),
+        ("FedRAMP Level", "L1 / L2 / L3 certification tier"),
+        ("NIST 800-53 Rev 5 Control", "One of 110 security requirements"),
+        ("800-53A Assessment Objective", 'Specific "determine if" statement'),
         ("Scanner Check Definition", "JSON config with check_id, api_call, expected"),
         ("Scanner Python Method", "Actual code that calls cloud APIs"),
         ("Compliance Determination", "Met / Not Met / Manual Review"),
@@ -206,7 +206,7 @@ def generate() -> str:
     a('<h3 class="help-section-title">Validation Scope  - What Is Tested and Why</h3>')
     a('<p class="help-section-desc">')
     a('The 10 QA checks are organized into two tiers. <strong>Config Validation</strong> (QA 1.1&ndash;1.8) ')
-    a('analyzes the JSON check definitions and NIST practice mappings. <strong>Scanner Logic Validation</strong> ')
+    a('analyzes the JSON check definitions and NIST control mappings. <strong>Scanner Logic Validation</strong> ')
     a('(QA 2.1&ndash;2.2) uses Python AST analysis to verify the actual scanner source code matches the config.')
     a('</p>')
 
@@ -240,7 +240,7 @@ def generate() -> str:
     a('<div class="help-stats-grid">')
     stat_items = [
         ("Cloud Checks", str(len(checks)), "config definitions", "total"),
-        ("Practices", str(len(practices)), "NIST 800-171", "practices"),
+        ("Controls", str(len(controls)), "NIST 800-53 Rev 5", "controls"),
         ("CSPs", "3", "AWS + Azure + GCP", "objectives"),
         ("Validations", str(total_validations), "individual tests", "automated"),
         ("QA Checks", f"{checks_passing}/10", "passing", "manual"),
@@ -335,7 +335,7 @@ def generate() -> str:
     a('<h3 class="help-section-title">Cloud Provider Coverage</h3>')
     a('<p class="help-section-desc">')
     a('The scanner implements checks across all three major cloud service providers. ')
-    a(f'All {results[7].passed} automated practices have checks for AWS, Azure, and GCP ')
+    a(f'All {results[7].passed} automated controls have checks for AWS, Azure, and GCP ')
     a('with zero provider parity gaps.')
     a('</p>')
 
@@ -356,7 +356,7 @@ def generate() -> str:
 
     a('<div class="help-info-box mt-md">')
     a('<strong>Provider Parity:</strong> ')
-    a(f'QA check 1.8 verified that all {results[7].passed} automated practices have check definitions ')
+    a(f'QA check 1.8 verified that all {results[7].passed} automated controls have check definitions ')
     a('for every cloud provider. This means a client receives equivalent assessment coverage whether ')
     a('their environment runs on AWS, Azure, or GCP.')
     a('</div>')
@@ -367,7 +367,7 @@ def generate() -> str:
     a('<div class="card-body">')
     a('<h3 class="help-section-title">Assurance for Assessors</h3>')
     a('<p class="help-section-desc">')
-    a('This validation provides the following assurances to Certified CMMC Assessors (CCAs) ')
+    a('This validation provides the following assurances to FedRAMP Assessors (3PAOs) ')
     a('evaluating the scanner as an automated assessment tool:')
     a('</p>')
 
@@ -387,13 +387,13 @@ def generate() -> str:
          "chains up to 2 levels deep) and fuzzy-matches them against the <code>api_call</code> field "
          "in the config. The scanner calls exactly the APIs it documents.",
          "tag-met"),
-        ("Every NIST 800-171 practice is covered",
-         "QA check 1.7 verifies that all 110 NIST SP 800-171 Rev 2 practices appear in the check "
-         "configuration  - either as automated checks or as manual-only entries. No practice "
+        ("Every NIST 800-53 Rev 5 control is covered",
+         "QA check 1.7 verifies that all 110 NIST SP 800-53 Rev 5 controls appear in the check "
+         "configuration  - either as automated checks or as manual-only entries. No control "
          "is omitted from the scanner&rsquo;s scope.",
          "tag-met"),
         ("Every assessment objective is addressed",
-         "QA check 1.3 verifies that every automatable 800-171A assessment objective is either covered "
+         "QA check 1.3 verifies that every automatable 800-53A assessment objective is either covered "
          "by an automated check&rsquo;s <code>supports_objectives</code> list or flagged as requiring "
          "documentation. No blind spots exist in the objective-level coverage.",
          "tag-met"),
@@ -423,7 +423,7 @@ def generate() -> str:
     a('</p>')
 
     a('<div class="help-cli-block">')
-    a('<pre class="help-cli-pre"># From the CMMC-Scanner project root\n'
+    a('<pre class="help-cli-pre"># From the FedRAMP-SCANNER project root\n'
       'cd backend &amp;&amp; python ../scripts/qa_traceability.py</pre>')
     a('</div>')
 
@@ -431,7 +431,7 @@ def generate() -> str:
     a('The script will:')
     a('</p>')
     a('<ol style="margin:0;padding-left:20px;line-height:1.8;">')
-    a('<li>Load all 110 NIST practices from <code>config/nist_practices.json</code></li>')
+    a('<li>Load all 110 NIST controls from <code>config/nist_800_53_controls.json</code></li>')
     a('<li>Load all check definitions from <code>config/checks/*.json</code> (14 domain files)</li>')
     a('<li>Parse <code>engine.py</code> to extract <code>*_CHECK_METHODS</code> dispatch tables</li>')
     a('<li>Parse all three scanner files (<code>aws_scanner.py</code>, <code>azure_scanner.py</code>, '
@@ -441,7 +441,7 @@ def generate() -> str:
 
     a('<div class="help-info-box mt-md">')
     a('<strong>Source files analyzed:</strong> ')
-    a('<code>config/nist_practices.json</code>, ')
+    a('<code>config/nist_800_53_controls.json</code>, ')
     a('<code>config/checks/*.json</code> (14 files), ')
     a('<code>backend/app/scanner/engine.py</code>, ')
     a('<code>backend/app/scanner/aws_scanner.py</code>, ')

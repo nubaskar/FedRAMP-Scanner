@@ -2,10 +2,16 @@
   "domain": "IR",
   "name": "Incident Response",
   "checks": {
-    "3.6.1": {
+    "IR-2": {
+      "cmmc_source": "3.6.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ir-3.6.1-aws-001",
+          "check_id": "ir-2-aws-001",
           "name": "GuardDuty enabled in all regions",
           "service": "GuardDuty",
           "api_call": "guardduty.list_detectors",
@@ -20,10 +26,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-aws-002",
+          "check_id": "ir-2-aws-002",
           "name": "Security Hub enabled with automated findings",
           "service": "Security Hub",
           "api_call": "securityhub.describe_hub",
@@ -38,10 +45,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-aws-003",
+          "check_id": "ir-2-aws-003",
           "name": "EventBridge rules for security events",
           "service": "EventBridge",
           "api_call": "events.list_rules",
@@ -56,10 +64,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-aws-004",
+          "check_id": "ir-2-aws-004",
           "name": "IR playbooks documented in SSM Automation",
           "service": "SSM",
           "api_call": "ssm.list_documents",
@@ -74,12 +83,13 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         }
       ],
       "azure": [
         {
-          "check_id": "ir-3.6.1-azure-001",
+          "check_id": "ir-2-azure-001",
           "name": "Microsoft Defender for Cloud enabled",
           "service": "Security Center",
           "api_call": "security.pricings.list",
@@ -94,10 +104,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-azure-002",
+          "check_id": "ir-2-azure-002",
           "name": "Microsoft Sentinel deployed",
           "service": "Sentinel",
           "api_call": "securityinsight.sentinel_onboarding_states.list",
@@ -112,10 +123,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-azure-003",
+          "check_id": "ir-2-azure-003",
           "name": "Sentinel automation rules configured",
           "service": "Sentinel",
           "api_call": "securityinsight.automation_rules.list",
@@ -130,12 +142,13 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "ir-3.6.1-gcp-001",
+          "check_id": "ir-2-gcp-001",
           "name": "Security Command Center Premium enabled",
           "service": "SCC",
           "api_call": "securitycenter.organizations.getOrganizationSettings",
@@ -150,10 +163,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-gcp-002",
+          "check_id": "ir-2-gcp-002",
           "name": "Event Threat Detection enabled",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -168,10 +182,11 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         },
         {
-          "check_id": "ir-3.6.1-gcp-003",
+          "check_id": "ir-2-gcp-003",
           "name": "Pub/Sub notifications for SCC findings",
           "service": "SCC",
           "api_call": "securitycenter.organizations.notificationConfigs.list",
@@ -186,11 +201,18 @@
             "[e]",
             "[f]",
             "[g]"
-          ]
+          ],
+          "control_id": "IR-2"
         }
       ]
     },
-    "3.6.2": {
+    "IR-4": {
+      "cmmc_source": "3.6.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review incident tracking system and reporting procedures. Verify incident reports include required data elements (timeline, impact, root cause, corrective actions). Confirm incidents are reported to designated officials within required timeframes. Verify external reporting procedures to CISA/DoD CIO as required for CUI incidents.",
       "evidence_requests": [
@@ -232,7 +254,13 @@
         }
       ]
     },
-    "3.6.3": {
+    "IR-5": {
+      "cmmc_source": "3.6.3",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Request records of incident response tests and tabletop exercises. Verify testing occurs at least annually and includes realistic scenarios involving CUI compromise. Check that test results are documented with lessons learned and the IR plan is updated based on findings.",
       "evidence_requests": [

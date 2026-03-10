@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner - Scans View & Scan Detail
+   FedRAMP Cloud Compliance Scanner - Scans View & Scan Detail
    ========================================================================== */
 
 (function () {
@@ -23,21 +23,27 @@
     { value: 'gcp_commercial', label: 'GCP Commercial' },
   ];
 
-  var CMMC_DOMAINS = [
+  var FEDRAMP_FAMILIES = [
     { code: 'AC', name: 'Access Control' },
     { code: 'AT', name: 'Awareness & Training' },
     { code: 'AU', name: 'Audit & Accountability' },
+    { code: 'CA', name: 'Assessment, Authorization & Monitoring' },
     { code: 'CM', name: 'Configuration Management' },
+    { code: 'CP', name: 'Contingency Planning' },
     { code: 'IA', name: 'Identification & Authentication' },
     { code: 'IR', name: 'Incident Response' },
     { code: 'MA', name: 'Maintenance' },
     { code: 'MP', name: 'Media Protection' },
+    { code: 'PE', name: 'Physical & Environmental Protection' },
+    { code: 'PL', name: 'Planning' },
+    { code: 'PM', name: 'Program Management' },
     { code: 'PS', name: 'Personnel Security' },
-    { code: 'PE', name: 'Physical Protection' },
+    { code: 'PT', name: 'PII Processing & Transparency' },
     { code: 'RA', name: 'Risk Assessment' },
-    { code: 'CA', name: 'Security Assessment' },
+    { code: 'SA', name: 'System & Services Acquisition' },
     { code: 'SC', name: 'System & Communications Protection' },
     { code: 'SI', name: 'System & Information Integrity' },
+    { code: 'SR', name: 'Supply Chain Risk Management' },
   ];
 
   /* ================================================================
@@ -79,7 +85,7 @@
         client_id: s.client_id,
         client_name: clientMap[s.client_id] || 'Unknown',
         environment: s.environment,
-        level: s.cmmc_level || s.level,
+        level: s.fedramp_baseline || s.level,
         status: s.status,
         created_at: s.started_at || s.created_at,
         duration: s.completed_at && s.started_at ? Math.round((new Date(s.completed_at) - new Date(s.started_at)) / 1000) : null,
@@ -124,7 +130,7 @@
     return '<div class="flex items-center justify-between mb-lg">' +
       '<div>' +
         '<h2>Compliance Scans</h2>' +
-        '<p class="text-secondary text-small mt-sm">Run and monitor CMMC compliance scans across client environments</p>' +
+        '<p class="text-secondary text-small mt-sm">Run and monitor FedRAMP compliance scans across client environments</p>' +
       '</div>' +
       '<button class="btn btn-primary" id="btn-new-scan" aria-label="Start a new compliance scan">' +
         '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/></svg>' +
@@ -156,11 +162,11 @@
           '<option value="completed">Completed</option>' +
           '<option value="failed">Failed</option>' +
         '</select>' +
-        '<select class="filter-pill" id="scan-filter-level" aria-label="Filter by CMMC level">' +
-          '<option value="">Level</option>' +
-          '<option value="L1">L1</option>' +
-          '<option value="L2">L2</option>' +
-          '<option value="L3">L3</option>' +
+        '<select class="filter-pill" id="scan-filter-level" aria-label="Filter by FedRAMP baseline">' +
+          '<option value="">Baseline</option>' +
+          '<option value="Low">Low</option>' +
+          '<option value="Moderate">Moderate</option>' +
+          '<option value="High">High</option>' +
         '</select>' +
       '</div>' +
       '<span class="search-result-count" id="scan-result-count"></span>' +
@@ -180,7 +186,7 @@
       return '<div class="card"><div class="empty-state">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
         '<h3>No scans yet</h3>' +
-        '<p>Run your first compliance scan to evaluate a client environment against CMMC requirements.</p>' +
+        '<p>Run your first compliance scan to evaluate a client environment against FedRAMP requirements.</p>' +
         '<button class="btn btn-primary" id="btn-new-scan-empty" aria-label="Start first scan">Start Your First Scan</button>' +
       '</div></div>';
     }
@@ -302,12 +308,12 @@
               '<span id="scan-client-env" class="text-small"></span>' +
             '</div>' +
             '<div class="flex items-center justify-between mt-sm">' +
-              '<span class="text-small font-bold">CMMC Level</span>' +
+              '<span class="text-small font-bold">FedRAMP Baseline</span>' +
               '<span id="scan-client-level" class="text-small"></span>' +
             '</div>' +
           '</div>' +
           '<div class="form-hint" style="margin-top:8px">' +
-            'The scan will evaluate all CMMC practices for the selected client\'s environment and level. This typically takes 3-8 minutes.' +
+            'The scan will evaluate all FedRAMP controls for the selected client\'s environment and level. This typically takes 3-8 minutes.' +
           '</div>' +
         '</div>' +
         '<div class="modal-footer">' +
@@ -372,7 +378,7 @@
         try {
           var client = await app.api.get('/clients/' + clientSelect.value);
           if (envSpan) envSpan.innerHTML = app.envDisplay(client.environment);
-          if (levelSpan) levelSpan.innerHTML = app.levelBadge(client.cmmc_level);
+          if (levelSpan) levelSpan.innerHTML = app.levelBadge(client.fedramp_baseline);
           if (infoDiv) infoDiv.classList.remove('hidden');
         } catch (err) {
           if (infoDiv) infoDiv.classList.add('hidden');
@@ -573,7 +579,7 @@
         else if (f.status === 'manual') d.manual++;
         else d.error++;
         d.findings.push({
-          id: f.practice_id,
+          id: f.control_id,
           name: f.check_name,
           status: f.status,
           severity: f.severity,
@@ -582,22 +588,16 @@
         });
       });
 
-      // Sort findings within each domain numerically by practice ID
-      function practiceSort(a, b) {
-        var pa = a.id.split('.').map(Number);
-        var pb = b.id.split('.').map(Number);
-        for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
-          var na = pa[i] || 0, nb = pb[i] || 0;
-          if (na !== nb) return na - nb;
-        }
-        return 0;
+      // Sort findings within each domain by control ID format (AC-2 style)
+      function controlSort(a, b) {
+        return (a.id || '').localeCompare(b.id || '', undefined, { numeric: true });
       }
       Object.keys(domainMap).forEach(function (key) {
-        domainMap[key].findings.sort(practiceSort);
+        domainMap[key].findings.sort(controlSort);
       });
 
       var domains = [];
-      CMMC_DOMAINS.forEach(function (d) {
+      FEDRAMP_FAMILIES.forEach(function (d) {
         var dd = domainMap[d.code];
         if (dd) {
           domains.push({
@@ -622,7 +622,7 @@
         id: scanInfo.id,
         client_name: clientName,
         environment: scanInfo.environment,
-        level: scanInfo.cmmc_level,
+        level: scanInfo.fedramp_baseline,
         status: scanInfo.status,
         created_at: scanInfo.started_at,
         duration: duration,
@@ -672,42 +672,40 @@
 
   function generateDemoDomains() {
     var domains = [];
-    var practiceData = {
-      AC: { total: 22, met: 18, not_met: 3, manual: 1, practices: [
-        { id: '3.1.1', name: 'Limit system access to authorized users', status: 'met', severity: 'HIGH', evidence: 'IAM policies restrict access via role-based controls. MFA enforced on all console access.', remediation: '' },
-        { id: '3.1.2', name: 'Limit system access to permitted transactions', status: 'met', severity: 'HIGH', evidence: 'Service control policies limit API actions per role.', remediation: '' },
-        { id: '3.1.3', name: 'Control CUI flow per approved authorizations', status: 'not_met', severity: 'CRITICAL', evidence: 'VPC flow logs show CUI data traversing non-approved paths to commercial region.', remediation: 'Implement VPC endpoint policies and restrict CUI to GovCloud-only S3 buckets.' },
-        { id: '3.1.4', name: 'Separate duties of individuals', status: 'met', severity: 'MEDIUM', evidence: 'Separate admin and operator roles defined in IAM.', remediation: '' },
-        { id: '3.1.5', name: 'Employ principle of least privilege', status: 'met', severity: 'HIGH', evidence: 'IAM Access Analyzer confirms no wildcard permissions.', remediation: '' },
-        { id: '3.1.6', name: 'Use non-privileged accounts for non-security functions', status: 'manual', severity: 'MEDIUM', evidence: 'Some admin users retain elevated permissions outside working hours. Needs manual review.', remediation: 'Implement time-based access policies.' },
-        { id: '3.1.7', name: 'Prevent non-privileged users from executing privileged functions', status: 'met', severity: 'HIGH', evidence: 'SCP enforced preventing privilege escalation.', remediation: '' },
-        { id: '3.1.8', name: 'Limit unsuccessful logon attempts', status: 'met', severity: 'MEDIUM', evidence: 'Account lockout after 5 failed attempts configured.', remediation: '' },
+    var controlData = {
+      AC: { total: 22, met: 18, not_met: 3, manual: 1, findings: [
+        { id: 'AC-2', name: 'Account Management', status: 'met', severity: 'HIGH', evidence: 'IAM policies restrict access via role-based controls. MFA enforced on all console access.', remediation: '' },
+        { id: 'AC-3', name: 'Access Enforcement', status: 'met', severity: 'HIGH', evidence: 'Service control policies limit API actions per role.', remediation: '' },
+        { id: 'AC-4', name: 'Information Flow Enforcement', status: 'not_met', severity: 'CRITICAL', evidence: 'VPC flow logs show data traversing non-approved paths to commercial region.', remediation: 'Implement VPC endpoint policies and restrict data to GovCloud-only S3 buckets.' },
+        { id: 'AC-5', name: 'Separation of Duties', status: 'met', severity: 'MEDIUM', evidence: 'Separate admin and operator roles defined in IAM.', remediation: '' },
+        { id: 'AC-6', name: 'Least Privilege', status: 'met', severity: 'HIGH', evidence: 'IAM Access Analyzer confirms no wildcard permissions.', remediation: '' },
+        { id: 'AC-7', name: 'Unsuccessful Logon Attempts', status: 'met', severity: 'MEDIUM', evidence: 'Account lockout after 5 failed attempts configured.', remediation: '' },
       ]},
-      AT: { total: 3, met: 3, not_met: 0, manual: 0, practices: [
-        { id: '3.2.1', name: 'Security awareness for system users', status: 'met', severity: 'MEDIUM', evidence: 'Annual security training records present for all users.', remediation: '' },
-        { id: '3.2.2', name: 'Role-based security training', status: 'met', severity: 'MEDIUM', evidence: 'Admin personnel completed CUI handling training.', remediation: '' },
-        { id: '3.2.3', name: 'Insider threat awareness', status: 'met', severity: 'MEDIUM', evidence: 'Insider threat program documentation available.', remediation: '' },
+      AT: { total: 3, met: 3, not_met: 0, manual: 0, findings: [
+        { id: 'AT-2', name: 'Security Awareness Training', status: 'met', severity: 'MEDIUM', evidence: 'Annual security training records present for all users.', remediation: '' },
+        { id: 'AT-3', name: 'Role-Based Security Training', status: 'met', severity: 'MEDIUM', evidence: 'Admin personnel completed security handling training.', remediation: '' },
+        { id: 'AT-4', name: 'Security Training Records', status: 'met', severity: 'MEDIUM', evidence: 'Training documentation available.', remediation: '' },
       ]},
-      AU: { total: 9, met: 7, not_met: 1, manual: 1, practices: [
-        { id: '3.3.1', name: 'Create and retain audit logs', status: 'met', severity: 'HIGH', evidence: 'CloudTrail enabled in all regions with 365-day retention in S3.', remediation: '' },
-        { id: '3.3.2', name: 'Ensure actions are uniquely traced to users', status: 'met', severity: 'HIGH', evidence: 'CloudTrail records include user ARN and source IP.', remediation: '' },
-        { id: '3.3.5', name: 'Correlate audit review and reporting', status: 'not_met', severity: 'HIGH', evidence: 'Centralized log analysis tooling not deployed. Logs exist but are not correlated.', remediation: 'Deploy SIEM integration with CloudWatch and CloudTrail.' },
+      AU: { total: 9, met: 7, not_met: 1, manual: 1, findings: [
+        { id: 'AU-2', name: 'Audit Events', status: 'met', severity: 'HIGH', evidence: 'CloudTrail enabled in all regions with 365-day retention in S3.', remediation: '' },
+        { id: 'AU-3', name: 'Content of Audit Records', status: 'met', severity: 'HIGH', evidence: 'CloudTrail records include user ARN and source IP.', remediation: '' },
+        { id: 'AU-6', name: 'Audit Review, Analysis, and Reporting', status: 'not_met', severity: 'HIGH', evidence: 'Centralized log analysis tooling not deployed. Logs exist but are not correlated.', remediation: 'Deploy SIEM integration with CloudWatch and CloudTrail.' },
       ]},
-      CM: { total: 9, met: 6, not_met: 2, manual: 1, practices: [] },
-      IA: { total: 11, met: 9, not_met: 1, manual: 1, practices: [] },
-      IR: { total: 3, met: 2, not_met: 1, manual: 0, practices: [] },
-      MA: { total: 6, met: 5, not_met: 1, manual: 0, practices: [] },
-      MP: { total: 9, met: 8, not_met: 0, manual: 1, practices: [] },
-      PS: { total: 2, met: 2, not_met: 0, manual: 0, practices: [] },
-      PE: { total: 6, met: 6, not_met: 0, manual: 0, practices: [] },
-      RA: { total: 3, met: 2, not_met: 1, manual: 0, practices: [] },
-      CA: { total: 4, met: 3, not_met: 1, manual: 0, practices: [] },
-      SC: { total: 16, met: 12, not_met: 2, manual: 2, practices: [] },
-      SI: { total: 7, met: 6, not_met: 1, manual: 0, practices: [] },
+      CM: { total: 9, met: 6, not_met: 2, manual: 1, findings: [] },
+      IA: { total: 11, met: 9, not_met: 1, manual: 1, findings: [] },
+      IR: { total: 3, met: 2, not_met: 1, manual: 0, findings: [] },
+      MA: { total: 6, met: 5, not_met: 1, manual: 0, findings: [] },
+      MP: { total: 9, met: 8, not_met: 0, manual: 1, findings: [] },
+      PS: { total: 2, met: 2, not_met: 0, manual: 0, findings: [] },
+      PE: { total: 6, met: 6, not_met: 0, manual: 0, findings: [] },
+      RA: { total: 3, met: 2, not_met: 1, manual: 0, findings: [] },
+      CA: { total: 4, met: 3, not_met: 1, manual: 0, findings: [] },
+      SC: { total: 16, met: 12, not_met: 2, manual: 2, findings: [] },
+      SI: { total: 7, met: 6, not_met: 1, manual: 0, findings: [] },
     };
 
-    CMMC_DOMAINS.forEach(function (d) {
-      var pd = practiceData[d.code] || { total: 5, met: 4, not_met: 1, manual: 0, practices: [] };
+    FEDRAMP_FAMILIES.forEach(function (d) {
+      var pd = controlData[d.code] || { total: 5, met: 4, not_met: 1, manual: 0, findings: [] };
       domains.push({
         code: d.code,
         name: d.name,
@@ -715,7 +713,7 @@
         met: pd.met,
         not_met: pd.not_met,
         manual: pd.manual,
-        findings: pd.practices,
+        findings: pd.findings,
       });
     });
 
@@ -853,7 +851,7 @@
           '<h5 class="mb-sm">Scan Metadata</h5>' +
           '<div class="flex justify-between text-small mb-sm"><span class="text-muted">Scan ID</span><span class="font-mono">' + app.escapeHtml(scan.id) + '</span></div>' +
           '<div class="flex justify-between text-small mb-sm"><span class="text-muted">Engine Version</span><span>v1.0.0</span></div>' +
-          '<div class="flex justify-between text-small mb-sm"><span class="text-muted">API Checks</span><span>110 NIST 800-171</span></div>' +
+          '<div class="flex justify-between text-small mb-sm"><span class="text-muted">API Checks</span><span>496 NIST 800-53 Rev 5</span></div>' +
           '<div class="flex justify-between text-small"><span class="text-muted">Timestamp</span><span>' + app.formatDate(scan.created_at) + '</span></div>' +
         '</div>' +
       '</div>' +
@@ -1054,7 +1052,7 @@
       }
     });
 
-    return '<table class="data-table findings-table" style="width:100%" aria-label="Practice-level findings">' +
+    return '<table class="data-table findings-table" style="width:100%" aria-label="Control-level findings">' +
       '<colgroup>' +
         '<col style="width:120px">' +
         '<col>' +
@@ -1063,7 +1061,7 @@
         '<col style="min-width:170px">' +
       '</colgroup>' +
       '<thead><tr>' +
-        '<th>Practice ID</th>' +
+        '<th>Control ID</th>' +
         '<th>Check Name</th>' +
         '<th>Status</th>' +
         '<th>Severity</th>' +
@@ -1076,7 +1074,7 @@
   function showEvidenceModal(practiceId, data) {
     var title = document.getElementById('evidence-modal-title');
     var body = document.getElementById('evidence-modal-body');
-    if (title) title.textContent = 'API Evidence - Practice ' + practiceId;
+    if (title) title.textContent = 'API Evidence - Control ' + practiceId;
 
     var checks = data.checks || [];
     if (checks.length === 0) {
@@ -1269,7 +1267,7 @@
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
-      a.download = 'cmmc-scan-' + scanId + '.' + format;
+      a.download = 'fedramp-scan-' + scanId + '.' + format;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

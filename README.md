@@ -1,6 +1,6 @@
-# CMMC Cloud Compliance Scanner
+# FedRAMP Cloud Compliance Scanner
 
-A web-based platform that scans client cloud environments against CMMC 2.0 requirements and produces automated Met/Not-Met assessment reports. Built by [Securitybricks](https://securitybricks.com) (a C3PAO, powered by Aprio) for DIB contractor CMMC readiness assessments.
+A web-based platform that scans client cloud environments against FedRAMP requirements and produces automated Met/Not-Met assessment reports. Built by [Securitybricks](https://securitybricks.com) (a 3PAO, powered by Aprio) for CSP FedRAMP readiness assessments.
 
 ---
 
@@ -9,13 +9,13 @@ A web-based platform that scans client cloud environments against CMMC 2.0 requi
 - [1. Introduction](#1-introduction)
   - [1.1 Overview](#11-overview)
   - [1.2 How It Works](#12-how-it-works)
-- [2. CMMC Framework Reference](#2-cmmc-framework-reference)
+- [2. FedRAMP Framework Reference](#2-cmmc-framework-reference)
   - [2.1 Supported Cloud Environments](#21-supported-cloud-environments)
-  - [2.2 CMMC Certification Levels](#22-cmmc-certification-levels)
-  - [2.3 CMMC Domains and Check Coverage](#23-cmmc-domains-and-check-coverage)
-    - [Level 1 — FAR 52.204-21](#level-1--far-52204-21-17-practices)
-    - [Level 2 — NIST SP 800-171](#level-2--nist-sp-800-171-110-practices)
-    - [Level 3 — NIST SP 800-172](#level-3--nist-sp-800-172-enhanced-practices)
+  - [2.2 FedRAMP Certification Levels](#22-cmmc-certification-levels)
+  - [2.3 FedRAMP Familys and Check Coverage](#23-cmmc-domains-and-check-coverage)
+    - [Low — FAR 52.204-21](#level-1--far-52204-21-17-practices)
+    - [Moderate — NIST SP 800-53 Rev 5](#level-2--nist-sp-800-53 Rev 5-110-practices)
+    - [High — NIST SP 800-172](#level-3--nist-sp-800-172-enhanced-practices)
 - [3. Getting Started](#3-getting-started)
   - [3.1 Prerequisites](#31-prerequisites)
   - [3.2 Local Development](#32-local-development)
@@ -90,9 +90,9 @@ A web-based platform that scans client cloud environments against CMMC 2.0 requi
 
 ### 1.1 Overview
 
-The CMMC Cloud Compliance Scanner connects to client cloud environments via read-only IAM roles, evaluates security configurations against NIST 800-171/800-172 practices, and generates professional HTML and XLSX reports.
+The FedRAMP Cloud Compliance Scanner connects to client cloud environments via read-only IAM roles, evaluates security configurations against NIST 800-53 Rev 5 controls, and generates professional HTML and XLSX reports.
 
-The scanner is designed for Securitybricks assessors performing CMMC readiness consulting for Defense Industrial Base (DIB) contractors. It automates the evaluation of approximately 71 of the 110 NIST 800-171 practices and flags the remaining 39 policy/process controls as "Manual Review Required."
+The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Defense Industrial Base (CSP) contractors. It automates the evaluation of approximately 71 of the 110 NIST 800-53 Rev 5 controls and flags the remaining 39 policy/process controls as "Manual Review Required."
 
 ### 1.2 How It Works
 
@@ -109,41 +109,41 @@ IAM Role (read-only) <── assumes ──── Scan Engine
 The workflow proceeds through five stages:
 
 1. **Client onboarding** — The client grants a read-only cross-account role (AWS IAM role, Azure service principal, or GCP service account) using the provided template.
-2. **Scan execution** — A Securitybricks consultant triggers a scan from the Web UI, selecting the client, environment, and CMMC level.
-3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates ~71 automated practices across all 14 CMMC domains.
+2. **Scan execution** — A Securitybricks consultant triggers a scan from the Web UI, selecting the client, environment, and FedRAMP baseline.
+3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates ~71 automated practices across all 14 FedRAMP control families.
 4. **Manual review markers** — ~39 policy/process controls that cannot be automated are flagged as "Manual Review Required."
 5. **Report generation** — Professional HTML and XLSX reports are produced with executive summary, per-domain breakdown, detailed findings, and remediation guidance.
 
-> **Scan scope:** Each client entry scans a single cloud account (AWS account, Azure subscription, or GCP project). If a client has multiple accounts or subscriptions in scope for CMMC assessment, onboard each one as a separate client entry. Reports are generated per scan, so each account/subscription gets its own assessment report.
+> **Scan scope:** Each client entry scans a single cloud account (AWS account, Azure subscription, or GCP project). If a client has multiple accounts or subscriptions in scope for FedRAMP assessment, onboard each one as a separate client entry. Reports are generated per scan, so each account/subscription gets its own assessment report.
 
 ---
 
-## 2. CMMC Framework Reference
+## 2. FedRAMP Framework Reference
 
 ### 2.1 Supported Cloud Environments
 
-| # | Environment | Tier | CMMC Levels | FedRAMP Baseline |
+| # | Environment | Tier | FedRAMP Baselines | FedRAMP Baseline |
 |---|-------------|------|-------------|------------------|
 | 1 | AWS Commercial | Commercial | L1, L2 | Moderate |
-| 2 | AWS GovCloud | Government | L1, L2, L3 | High |
+| 2 | AWS GovCloud | Government | Low, Moderate, High | High |
 | 3 | Azure Commercial | Commercial | L1, L2 | Moderate |
-| 4 | Azure Government | Government | L1, L2, L3 | High |
+| 4 | Azure Government | Government | Low, Moderate, High | High |
 | 5 | GCP Commercial | Commercial | L1, L2 | Moderate |
-| 6 | GCP Assured Workloads | Government | L1, L2, L3 | High |
+| 6 | GCP Assured Workloads | Government | Low, Moderate, High | High |
 
-### 2.2 CMMC Certification Levels
+### 2.2 FedRAMP Certification Levels
 
 | Level | Framework | Practices | Data Type | Assessment |
 |-------|-----------|-----------|-----------|------------|
 | L1 | FAR 52.204-21 | 17 | FCI | Self-assessment |
-| L2 | NIST SP 800-171 Rev 2 | 110 | CUI | C3PAO assessment |
-| L3 | NIST SP 800-172 (enhanced) | 110 + enhanced | CUI (APT-focused) | DIBCAC assessment |
+| L2 | NIST SP 800-53 Rev 5 | 110 | CUI | 3PAO assessment |
+| L3 | NIST SP 800-172 (enhanced) | 110 + enhanced | CUI (APT-focused) | CSPCAC assessment |
 
-### 2.3 CMMC Domains and Check Coverage
+### 2.3 FedRAMP Familys and Check Coverage
 
-#### Level 1 — FAR 52.204-21 (17 practices)
+#### Low — FAR 52.204-21 (17 controls)
 
-L1 covers basic safeguarding of Federal Contract Information (FCI). The 17 FAR practices map to a subset of NIST 800-171 across 6 domains:
+L1 covers basic safeguarding of Federal Contract Information (FCI). The 17 FAR practices map to a subset of NIST 800-53 Rev 5 across 6 domains:
 
 | Domain | Family | Automated | Manual |
 |--------|--------|-----------|--------|
@@ -155,9 +155,9 @@ L1 covers basic safeguarding of Federal Contract Information (FCI). The 17 FAR p
 | SI | System & Info Integrity | 4 | 0 |
 | **Total** | | **12 automated** | **5 manual** |
 
-#### Level 2 — NIST SP 800-171 (110 practices)
+#### Moderate — NIST SP 800-53 Rev 5 (110 controls)
 
-L2 covers all 110 NIST 800-171 practices (which include the 17 L1 practices) across all 14 CMMC domains:
+L2 covers all 110 NIST 800-53 Rev 5 controls (which include the 17 L1 controls) across all 14 FedRAMP control families:
 
 | Domain | Family | Automated | Manual |
 |--------|--------|-----------|--------|
@@ -177,9 +177,9 @@ L2 covers all 110 NIST 800-171 practices (which include the 17 L1 practices) acr
 | SI | System & Info Integrity | 7 | 0 |
 | **Total** | | **71 automated** | **39 manual** |
 
-#### Level 3 — NIST SP 800-172 (enhanced practices)
+#### High — NIST SP 800-172 (enhanced practices)
 
-L3 adds enhanced security requirements from NIST 800-172 on top of the 110 L2 practices, targeting protection against Advanced Persistent Threats (APTs). L3 checks are available only for Government environments (AWS GovCloud, Azure Government, GCP Assured Workloads).
+L3 adds enhanced security requirements from NIST 800-172 on top of the 110 L2 controls, targeting protection against Advanced Persistent Threats (APTs). L3 checks are available only for Government environments (AWS GovCloud, Azure Government, GCP Assured Workloads).
 
 > **Status:** L3 enhanced practice checks are planned but not yet implemented. The scanner currently supports L1 and L2 assessments.
 
@@ -200,7 +200,7 @@ Each automated practice has cloud-specific check implementations for AWS, Azure,
 
 ```bash
 git clone <repo-url>
-cd CMMC-Scanner
+cd FedRAMP-SCANNER
 bash scripts/setup.sh
 ```
 
@@ -224,7 +224,7 @@ Open http://localhost:8000 in your browser. The backend serves the frontend via 
 
 ```bash
 git clone <repo-url>
-cd CMMC-Scanner
+cd FedRAMP-SCANNER
 
 # Create and activate virtual environment
 python3 -m venv .venv
@@ -263,7 +263,7 @@ Open http://localhost:8000 in your browser. The backend serves the frontend via 
 
 ### 3.3 Client Environment Deployment (for Securitybricks Engineers)
 
-For CMMC L2 readiness assessments, Securitybricks engineers deploy the scanner on a VM inside the client's cloud environment. The VM runs the scanner locally, connects to the client's cloud via read-only credentials, and engineers access it from their AVD session at `http://<VM_IP>:8000`. After the assessment is complete, the VM is destroyed — no persistent infrastructure is left behind.
+For FedRAMP L2 readiness assessments, Securitybricks engineers deploy the scanner on a VM inside the client's cloud environment. The VM runs the scanner locally, connects to the client's cloud via read-only credentials, and engineers access it from their AVD session at `http://<VM_IP>:8000`. After the assessment is complete, the VM is destroyed — no persistent infrastructure is left behind.
 
 #### 3.3.1 VM Requirements
 
@@ -332,8 +332,8 @@ sudo dnf install -y python3.12 git
 #### 3.3.4 Step 3 — Download and Set Up
 
 ```bash
-git clone https://github.com/nubaskar/CMMC-Scanner.git
-cd CMMC-Scanner
+git clone https://github.com/nubaskar/FedRAMP-SCANNER.git
+cd FedRAMP-SCANNER
 bash scripts/setup.sh
 ```
 
@@ -360,7 +360,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 1. From your AVD session, open a browser and navigate to `http://<VM_IP>:8000`
 2. Log in with `admin` / `admin`
 3. Add the client (Clients → Add Client) with cloud credentials per the client onboarding guide ([Section 5.1.11](#5111-client-onboarding-azure), [5.2.9](#529-client-onboarding-aws), or [5.3.10](#5310-client-onboarding-gcp))
-4. Run a scan (Scans → New Scan), select the client and CMMC level
+4. Run a scan (Scans → New Scan), select the client and FedRAMP baseline
 5. Download reports (Reports → select scan → Export HTML / XLSX)
 
 #### 3.3.8 Docker Alternative
@@ -455,7 +455,7 @@ When `AZURE_AD_TENANT_ID` and `AZURE_AD_CLIENT_ID` are set and `ENVIRONMENT=prod
 | `GET` | `/api/scans` | List scans (optional `?client_id=` filter) |
 | `GET` | `/api/scans/{id}` | Get scan with all findings |
 | `GET` | `/api/scans/{id}/summary` | Compliance summary by status/domain |
-| `GET` | `/api/scans/{id}/evidence/{practice_id}` | Live API evidence for a practice |
+| `GET` | `/api/scans/{id}/evidence/{control_id}` | Live API evidence for a practice |
 | `DELETE` | `/api/scans/{id}` | Delete scan and findings |
 
 ### 4.4 Reports
@@ -475,7 +475,7 @@ When `AZURE_AD_TENANT_ID` and `AZURE_AD_CLIENT_ID` are set and `ENVIRONMENT=prod
 
 ## 5. Deployment
 
-The CMMC Scanner supports deployment to all three major cloud providers. Each deployment follows the same pattern: provision managed infrastructure (container runtime, PostgreSQL database, static file hosting, secrets management), push the Docker image, and upload the frontend assets. Choose the platform that aligns with your organization's existing cloud footprint.
+The FedRAMP Scanner supports deployment to all three major cloud providers. Each deployment follows the same pattern: provision managed infrastructure (container runtime, PostgreSQL database, static file hosting, secrets management), push the Docker image, and upload the frontend assets. Choose the platform that aligns with your organization's existing cloud footprint.
 
 | Section | Cloud Provider | IaC Tool | Status |
 |---------|---------------|----------|--------|
@@ -685,11 +685,11 @@ Register an App in Microsoft Entra ID (Azure AD) in the client's tenant and gran
 # Run in the client's Azure tenant
 
 # 1. Create an app registration
-az ad app create --display-name "CMMC Scanner" \
+az ad app create --display-name "FedRAMP Scanner" \
   --sign-in-audience AzureADMyOrg
 
 # 2. Create a service principal
-APP_ID=$(az ad app list --display-name "CMMC Scanner" \
+APP_ID=$(az ad app list --display-name "FedRAMP Scanner" \
   --query "[0].appId" -o tsv)
 az ad sp create --id $APP_ID
 
@@ -709,17 +709,17 @@ az role assignment create --assignee $APP_ID \
 
 ##### Via Azure Portal
 
-1. **Entra ID** > **App registrations** > **New registration** > Name: "CMMC Scanner", Single tenant > **Register**
+1. **Entra ID** > **App registrations** > **New registration** > Name: "FedRAMP Scanner", Single tenant > **Register**
 2. **Certificates & secrets** > **New client secret** > set expiry > copy the **Value** immediately
 3. **Subscriptions** > select subscription > **Access control (IAM)** > **Add role assignment**:
-   - Add **Reader** role > assign to the CMMC Scanner app
-   - Add **Security Reader** role > assign to the CMMC Scanner app
+   - Add **Reader** role > assign to the FedRAMP Scanner app
+   - Add **Security Reader** role > assign to the FedRAMP Scanner app
 
 ##### Required Microsoft Graph API Permissions
 
 The scanner queries Microsoft Graph for Entra ID security checks (conditional access, MFA, sign-in logs, identity protection). All 8 permissions below are **Application** type (not Delegated) and require **admin consent**.
 
-| # | Permission | Graph API Endpoints | CMMC Checks |
+| # | Permission | Graph API Endpoints | FedRAMP Checks |
 |---|-----------|-------------------|-------------|
 | 1 | **Policy.Read.All** | `policies/authorizationPolicy`, `policies/identitySecurityDefaultsEnforcementPolicy`, `identity/conditionalAccess/policies`, `policies/tokenLifetimePolicies`, `policies/authenticationMethodsPolicy/*` | Guest access, Security Defaults, Conditional Access, MFA, FIDO2, token lifetime |
 | 2 | **Directory.Read.All** | `settings`, `directoryRoles`, `directoryRoles/{id}/members` | Smart lockout, password protection, global admin count, admin account separation |
@@ -798,7 +798,7 @@ The client provides the following values to Securitybricks for onboarding:
 
 The Securitybricks consultant enters these in the "Add Client" form, selecting **Azure Commercial** or **Azure Government** as the environment.
 
-> **Multi-subscription scope:** Each client entry scans a single Azure subscription. If the client has multiple subscriptions in scope for CMMC, the same App registration can be reused — assign the Reader and Security Reader roles on each additional subscription and create a separate client entry with the same Tenant ID, Client ID, and Client Secret but a different Subscription ID.
+> **Multi-subscription scope:** Each client entry scans a single Azure subscription. If the client has multiple subscriptions in scope for FedRAMP, the same App registration can be reused — assign the Reader and Security Reader roles on each additional subscription and create a separate client entry with the same Tenant ID, Client ID, and Client Secret but a different Subscription ID.
 
 #### 5.1.12 Troubleshooting
 
@@ -1035,14 +1035,14 @@ This creates a read-only IAM role with SecurityAudit policy and explicit deny on
 2. Enter the Securitybricks AWS Account ID and check **Require external ID**
 3. Attach the **SecurityAudit** managed policy
 4. Add an inline policy with the custom permissions below
-5. Name the role `CMMCScannerRole` > **Create role**
+5. Name the role `FedRAMPScannerRole` > **Create role**
 6. Copy the **Role ARN** from the role summary page
 
 ##### Required IAM Permissions
 
 The scanner uses the **SecurityAudit** managed policy plus these additional actions. The CloudFormation template includes all of these. If onboarding manually, create a custom inline policy:
 
-| AWS Service | IAM Actions | CMMC Checks |
+| AWS Service | IAM Actions | FedRAMP Checks |
 |------------|-------------|-------------|
 | **IAM** | `iam:GenerateCredentialReport`, `iam:GetCredentialReport`, `iam:GetAccountSummary`, `iam:GetAccountPasswordPolicy`, `iam:ListUsers`, `iam:ListRoles`, `iam:ListPolicies`, `iam:GetPolicy`, `iam:GetPolicyVersion`, `iam:ListAttachedUserPolicies`, `iam:ListAttachedRolePolicies`, `iam:ListUserPolicies`, `iam:GetUserPolicy`, `iam:ListEntitiesForPolicy`, `iam:ListVirtualMFADevices`, `iam:ListMFADevices`, `iam:ListSAMLProviders`, `iam:ListOpenIDConnectProviders` | Root access keys, MFA, password policy, least privilege, account separation |
 | **STS** | `sts:GetCallerIdentity` | Account identity verification |
@@ -1077,7 +1077,7 @@ The client provides the resulting **Role ARN** and **External ID** to Securitybr
 
 > **Security note:** The External ID prevents the [confused deputy problem](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html). Generate a unique External ID per client.
 
-> **Multi-account scope:** Each client entry scans a single AWS account. If the client has multiple AWS accounts in scope for CMMC (e.g. production, staging, shared services), deploy the cross-account role template in each account and create a separate client entry for each.
+> **Multi-account scope:** Each client entry scans a single AWS account. If the client has multiple AWS accounts in scope for FedRAMP (e.g. production, staging, shared services), deploy the cross-account role template in each account and create a separate client entry for each.
 
 #### 5.2.10 Troubleshooting
 
@@ -1124,7 +1124,7 @@ PROJECT_ID="cmmc-scanner-prod"
 REGION="us-central1"
 
 # Create project (or use an existing one)
-gcloud projects create $PROJECT_ID --name="CMMC Scanner"
+gcloud projects create $PROJECT_ID --name="FedRAMP Scanner"
 gcloud config set project $PROJECT_ID
 
 # Link billing account (required for resource creation)
@@ -1181,7 +1181,7 @@ echo -n '<secure-encryption-key>' | gcloud secrets create encryption-key --data-
 gcloud artifacts repositories create cmmc-scanner \
   --repository-format=docker \
   --location=$REGION \
-  --description="CMMC Scanner container images"
+  --description="FedRAMP Scanner container images"
 
 # Build using Cloud Build (no local Docker needed, builds linux/amd64)
 gcloud builds submit \
@@ -1295,7 +1295,7 @@ PROJECT_ID="<client-project-id>"
 # Create a read-only service account
 gcloud iam service-accounts create cmmc-scanner-readonly \
   --project=$PROJECT_ID \
-  --display-name="CMMC Scanner Read-Only"
+  --display-name="FedRAMP Scanner Read-Only"
 
 # Grant Viewer role on the project
 gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -1314,9 +1314,9 @@ gcloud iam service-accounts keys create sa-key.json \
 
 The client provides the **service account key JSON file** and **Project ID** to Securitybricks for onboarding. The consultant enters these in the "Add Client" form, selecting **GCP Commercial** or **GCP Assured Workloads** as the environment.
 
-> **Security note:** The `roles/viewer` role provides read-only access. The `roles/iam.securityReviewer` role adds visibility into IAM policies and security configurations needed for CMMC checks. Neither role permits any write operations.
+> **Security note:** The `roles/viewer` role provides read-only access. The `roles/iam.securityReviewer` role adds visibility into IAM policies and security configurations needed for FedRAMP checks. Neither role permits any write operations.
 
-> **Multi-project scope:** Each client entry scans a single GCP project. If the client has multiple projects in scope for CMMC, create a service account in each project and add each as a separate client entry.
+> **Multi-project scope:** Each client entry scans a single GCP project. If the client has multiple projects in scope for FedRAMP, create a service account in each project and add each as a separate client entry.
 
 #### 5.3.11 Troubleshooting
 
@@ -1338,13 +1338,13 @@ The client provides the **service account key JSON file** and **Project ID** to 
 ### 6.1 Project Structure
 
 ```
-CMMC-Scanner/
+FedRAMP-SCANNER/
 ├── README.md                     # This document
 ├── Dockerfile                    # Multi-stage container build (python:3.12-slim)
 ├── config/
 │   ├── environments.json         # 6 cloud environment definitions
-│   ├── nist_practices.json       # All 110 NIST 800-171 + 17 FAR practices
-│   └── checks/                   # Check definitions per CMMC domain (14 JSON files)
+│   ├── nist_800_53_controls.json       # All 110 NIST 800-53 Rev 5 + 17 FAR practices
+│   └── checks/                   # Check definitions per FedRAMP family (14 JSON files)
 │       ├── ac.json               # Access Control (3.1.x)
 │       ├── at.json               # Awareness & Training (3.2.x)
 │       ├── au.json               # Audit & Accountability (3.3.x)
@@ -1423,9 +1423,9 @@ CMMC-Scanner/
 
 | Entity | Description | Key Fields |
 |--------|-------------|------------|
-| **Client** | Organization with cloud credentials | UUID PK, name, environment, cmmc_level, credentials_config (JSON) |
+| **Client** | Organization with cloud credentials | UUID PK, name, environment, fedramp_baseline, credentials_config (JSON) |
 | **Scan** | Single assessment run against a client's environment | UUID PK, client_id FK, status (`pending`/`running`/`completed`/`failed`), summary (JSON) |
-| **Finding** | Individual check result | UUID PK, scan_id FK, practice_id, status (`met`/`not_met`/`manual`/`error`), evidence, remediation |
+| **Finding** | Individual check result | UUID PK, scan_id FK, control_id, status (`met`/`not_met`/`manual`/`error`), evidence, remediation |
 
 Relationships: Client has many Scans (cascade delete). Scan has many Findings (cascade delete).
 
@@ -1434,8 +1434,8 @@ Relationships: Client has many Scans (cascade delete). Scan has many Findings (c
 | Decision | Rationale |
 |----------|-----------|
 | **Flexible deployment model** | Scanner runs on Securitybricks infrastructure or as a local dev instance in the client's environment. Connects to client cloud via cross-account read-only roles. |
-| **Scan results are metadata** | Config states, Met/Not-Met statuses, resource ARNs — not CUI. No FedRAMP/CMMC certification needed for the platform. |
-| **~71 of 110 practices automated** | Remaining ~39 are policy/process controls marked "Manual Review Required." |
+| **Scan results are metadata** | Config states, Met/Not-Met statuses, resource ARNs — not CUI. No FedRAMP/FedRAMP certification needed for the platform. |
+| **~71 of 110 controls automated** | Remaining ~39 are policy/process controls marked "Manual Review Required." |
 | **HTML + XLSX reports** | Professional, well-formatted, client-facing deliverables suitable for audit. |
 | **Scan comparison** | Side-by-side delta reports to track remediation progress between scans. |
 | **Triple deployment support** | Azure Commercial (Bicep), AWS Commercial (CloudFormation), or GCP Commercial (gcloud CLI). |

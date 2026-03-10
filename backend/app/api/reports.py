@@ -40,7 +40,7 @@ def _load_scan_data(scan_id: str, db: Session):
     findings = (
         db.query(Finding)
         .filter(Finding.scan_id == scan_id)
-        .order_by(Finding.domain, Finding.practice_id)
+        .order_by(Finding.domain, Finding.control_id)
         .all()
     )
 
@@ -75,7 +75,7 @@ def list_reports(db: Session = Depends(get_db)):
             scan_list.append({
                 "id": s.id,
                 "created_at": s.created_at.isoformat() if s.created_at else s.started_at.isoformat(),
-                "level": s.cmmc_level,
+                "baseline": s.fedramp_baseline,
                 "environment": s.environment,
                 "compliance_pct": compliance_pct,
                 "met": met,
@@ -123,7 +123,7 @@ def get_notifications(db: Session = Depends(get_db)):
             "status": scan.status,
             "completed_at": scan.completed_at.isoformat() if scan.completed_at else None,
             "environment": scan.environment,
-            "cmmc_level": scan.cmmc_level,
+            "fedramp_baseline": scan.fedramp_baseline,
             "compliance_pct": summary.get("compliance_pct", compliance_pct),
             "met": met,
             "not_met": not_met,
@@ -215,13 +215,13 @@ def _build_demo_data():
         id="demo-client-001",
         name="Northrop Systems",
         environment="aws_govcloud",
-        cmmc_level="L2",
+        fedramp_baseline="Moderate",
     )
     scan = SimpleNamespace(
         id="demo-scan-001",
         client_id=client.id,
         status="completed",
-        cmmc_level="L2",
+        fedramp_baseline="Moderate",
         environment="aws_govcloud",
         started_at=now - timedelta(minutes=12),
         completed_at=now,
@@ -236,24 +236,24 @@ def _build_demo_data():
     )
 
     # Load real objectives for demo coverage data
-    practices_file = Path(__file__).resolve().parent.parent.parent.parent / "config" / "nist_practices.json"
-    practice_objectives = {}
+    controls_file = Path(__file__).resolve().parent.parent.parent.parent / "config" / "nist_800_53_controls.json"
+    control_objectives = {}
     try:
-        with open(practices_file) as f:
+        with open(controls_file) as f:
             pdata = json.load(f)
         for fam in pdata.get("families", {}).values():
-            for pid, pd in fam.get("practices", {}).items():
-                practice_objectives[pid] = pd.get("objectives", {})
+            for cid, cd in fam.get("controls", {}).items():
+                control_objectives[cid] = cd.get("objectives", {})
     except Exception:
         pass
 
     findings = []
     for i, row in enumerate(_DEMO_FINDINGS):
-        practice_id = row[0]
+        control_id = row[0]
         status = row[5]
 
         # Build realistic coverage data from real objectives
-        objs = practice_objectives.get(practice_id, {})
+        objs = control_objectives.get(control_id, {})
         if objs:
             details = []
             covered = 0
@@ -295,7 +295,8 @@ def _build_demo_data():
         findings.append(SimpleNamespace(
             id=f"demo-finding-{i:03d}",
             scan_id=scan.id,
-            practice_id=practice_id,
+            control_id=control_id,
+            enhancement=None,
             family=row[1],
             domain=row[2],
             check_id=row[3],
@@ -332,7 +333,7 @@ def get_demo_xlsx_report():
     return Response(
         content=xlsx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": 'attachment; filename="CMMC_Demo_Report_Northrop_Systems.xlsx"'},
+        headers={"Content-Disposition": 'attachment; filename="FedRAMP_Demo_Report_Northrop_Systems.xlsx"'},
     )
 
 
@@ -356,7 +357,7 @@ def get_xlsx_report(scan_id: str, db: Session = Depends(get_db)):
     scan, findings, client = _load_scan_data(scan_id, db)
     xlsx_bytes = generate_xlsx_report(scan, findings, client)
 
-    filename = f"CMMC_Compliance_Report_{client.name}_{scan_id[:8]}.xlsx"
+    filename = f"FedRAMP_Compliance_Report_{client.name}_{scan_id[:8]}.xlsx"
     return Response(
         content=xlsx_bytes,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

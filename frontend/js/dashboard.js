@@ -1,25 +1,31 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner - Dashboard View
+   FedRAMP Cloud Compliance Scanner - Dashboard View
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  const CMMC_DOMAINS = [
+  const FEDRAMP_FAMILIES = [
     { code: 'AC', name: 'Access Control' },
     { code: 'AT', name: 'Awareness & Training' },
     { code: 'AU', name: 'Audit & Accountability' },
+    { code: 'CA', name: 'Assessment, Authorization & Monitoring' },
     { code: 'CM', name: 'Configuration Management' },
+    { code: 'CP', name: 'Contingency Planning' },
     { code: 'IA', name: 'Identification & Authentication' },
     { code: 'IR', name: 'Incident Response' },
     { code: 'MA', name: 'Maintenance' },
     { code: 'MP', name: 'Media Protection' },
+    { code: 'PE', name: 'Physical & Environmental Protection' },
+    { code: 'PL', name: 'Planning' },
+    { code: 'PM', name: 'Program Management' },
     { code: 'PS', name: 'Personnel Security' },
-    { code: 'PE', name: 'Physical Protection' },
+    { code: 'PT', name: 'PII Processing & Transparency' },
     { code: 'RA', name: 'Risk Assessment' },
-    { code: 'CA', name: 'Security Assessment' },
-    { code: 'SC', name: 'System & Communications' },
+    { code: 'SA', name: 'System & Services Acquisition' },
+    { code: 'SC', name: 'System & Communications Protection' },
     { code: 'SI', name: 'System & Information Integrity' },
+    { code: 'SR', name: 'Supply Chain Risk Management' },
   ];
 
   async function renderDashboard(container) {
@@ -63,7 +69,7 @@
         client_id: s.client_id,
         client_name: clientMap[s.client_id] || 'Unknown',
         environment: s.environment,
-        level: s.cmmc_level || s.level,
+        level: s.fedramp_baseline || s.level,
         status: s.status,
         created_at: s.started_at || s.created_at,
         compliance_pct: totalChecks > 0 ? Math.round(((summary.met || 0) / totalChecks) * 1000) / 10 : null,
@@ -110,7 +116,7 @@
       try {
         var summaryData = await app.api.get('/scans/' + latestCompleted.id + '/summary');
         var byDomain = (summaryData && summaryData.by_domain) || {};
-        domainCompliance.domains = CMMC_DOMAINS.map(function (d) {
+        domainCompliance.domains = FEDRAMP_FAMILIES.map(function (d) {
           var counts = byDomain[d.code] || {};
           var met = counts.met || 0;
           var total = (counts.met || 0) + (counts.not_met || 0) + (counts.manual || 0) + (counts.error || 0);
@@ -246,7 +252,7 @@
   function buildDomainChart(domains) {
     var bars = '';
     if (domains.length === 0) {
-      domains = CMMC_DOMAINS.map(function (d) { return { code: d.code, name: d.name, met_pct: 0 }; });
+      domains = FEDRAMP_FAMILIES.map(function (d) { return { code: d.code, name: d.name, met_pct: 0 }; });
     }
     domains.forEach(function (d) {
       var pct = d.met_pct || 0;
@@ -264,7 +270,7 @@
     return '<div class="card">' +
       '<div class="card-header">' +
         '<h4>Compliance by Domain</h4>' +
-        '<span class="text-small text-muted">14 CMMC Domains</span>' +
+        '<span class="text-small text-muted">20 FedRAMP Families</span>' +
       '</div>' +
       '<div class="card-body">' +
         '<div class="domain-chart">' + bars + '</div>' +

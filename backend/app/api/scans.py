@@ -2,7 +2,7 @@
 Scans API — Start, list, and manage compliance scans.
 
 Scans run asynchronously via FastAPI BackgroundTasks. Each scan evaluates
-a client's cloud environment against CMMC practices and stores findings.
+a client's cloud environment against NIST 800-53 controls and stores findings.
 """
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ def start_scan(
 
     scan = Scan(
         client_id=client.id,
-        cmmc_level=client.cmmc_level,
+        fedramp_baseline=client.fedramp_baseline,
         environment=client.environment,
         status="pending",
     )
@@ -88,7 +88,7 @@ def get_scan(scan_id: str, db: Session = Depends(get_db)):
     findings = (
         db.query(Finding)
         .filter(Finding.scan_id == scan_id)
-        .order_by(Finding.domain, Finding.practice_id)
+        .order_by(Finding.domain, Finding.control_id)
         .all()
     )
 
@@ -140,11 +140,11 @@ def get_scan_summary(scan_id: str, db: Session = Depends(get_db)):
 
 
 # ---------------------------------------------------------------------------
-# GET /{scan_id}/evidence/{practice_id} — Fetch live API evidence
+# GET /{scan_id}/evidence/{control_id} — Fetch live API evidence
 # ---------------------------------------------------------------------------
-@router.get("/{scan_id}/evidence/{practice_id}")
-def get_evidence(scan_id: str, practice_id: str, db: Session = Depends(get_db)):
-    """Fetch live API evidence for a specific practice from the client's cloud."""
+@router.get("/{scan_id}/evidence/{control_id}")
+def get_evidence(scan_id: str, control_id: str, db: Session = Depends(get_db)):
+    """Fetch live API evidence for a specific control from the client's cloud."""
     from datetime import datetime, timezone
 
     scan = db.query(Scan).filter(Scan.id == scan_id).first()
@@ -157,9 +157,9 @@ def get_evidence(scan_id: str, practice_id: str, db: Session = Depends(get_db)):
         )
 
     try:
-        results = fetch_evidence(scan_id, practice_id, db)
+        results = fetch_evidence(scan_id, control_id, db)
         return {
-            "practice_id": practice_id,
+            "control_id": control_id,
             "checks": results,
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }

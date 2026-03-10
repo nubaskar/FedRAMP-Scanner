@@ -1,27 +1,27 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner - Clients View
+   FedRAMP Cloud Compliance Scanner - Clients View
    ========================================================================== */
 
 (function () {
   'use strict';
 
   var ENVIRONMENTS = [
-    { value: 'aws_govcloud', label: 'AWS GovCloud', levels: ['L1', 'L2', 'L3'] },
-    { value: 'aws_commercial', label: 'AWS Commercial', levels: ['L1', 'L2'] },
-    { value: 'azure_government', label: 'Azure Government', levels: ['L1', 'L2', 'L3'] },
-    { value: 'azure_commercial', label: 'Azure Commercial', levels: ['L1', 'L2'] },
-    { value: 'gcp_assured_workloads', label: 'GCP Assured Workloads', levels: ['L1', 'L2', 'L3'] },
-    { value: 'gcp_commercial', label: 'GCP Commercial', levels: ['L1', 'L2'] },
+    { value: 'aws_govcloud', label: 'AWS GovCloud', levels: ['Low', 'Moderate', 'High'] },
+    { value: 'aws_commercial', label: 'AWS Commercial', levels: ['Low', 'Moderate'] },
+    { value: 'azure_government', label: 'Azure Government', levels: ['Low', 'Moderate', 'High'] },
+    { value: 'azure_commercial', label: 'Azure Commercial', levels: ['Low', 'Moderate'] },
+    { value: 'gcp_assured_workloads', label: 'GCP Assured Workloads', levels: ['Low', 'Moderate', 'High'] },
+    { value: 'gcp_commercial', label: 'GCP Commercial', levels: ['Low', 'Moderate'] },
   ];
 
   var CREDENTIAL_FIELDS = {
     'aws_govcloud': [
-      { key: 'role_arn', label: 'Role ARN', type: 'text', placeholder: 'arn:aws-us-gov:iam::123456789012:role/CMMCScannerRole' },
-      { key: 'external_id', label: 'External ID', type: 'text', placeholder: 'securitybricks-cmmc-scan' },
+      { key: 'role_arn', label: 'Role ARN', type: 'text', placeholder: 'arn:aws-us-gov:iam::123456789012:role/FedRAMPScannerRole' },
+      { key: 'external_id', label: 'External ID', type: 'text', placeholder: 'securitybricks-fedramp-scan' },
     ],
     'aws_commercial': [
-      { key: 'role_arn', label: 'Role ARN', type: 'text', placeholder: 'arn:aws:iam::123456789012:role/CMMCScannerRole' },
-      { key: 'external_id', label: 'External ID', type: 'text', placeholder: 'securitybricks-cmmc-scan' },
+      { key: 'role_arn', label: 'Role ARN', type: 'text', placeholder: 'arn:aws:iam::123456789012:role/FedRAMPScannerRole' },
+      { key: 'external_id', label: 'External ID', type: 'text', placeholder: 'securitybricks-fedramp-scan' },
     ],
     'azure_government': [
       { key: 'tenant_id', label: 'Tenant ID', type: 'text', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
@@ -92,7 +92,7 @@
     return '<div class="flex items-center justify-between mb-lg">' +
       '<div>' +
         '<h2>Client Management</h2>' +
-        '<p class="text-secondary text-small mt-sm">Manage your DIB contractor clients and their cloud environments</p>' +
+        '<p class="text-secondary text-small mt-sm">Manage your CSP clients and their cloud environments</p>' +
       '</div>' +
       '<button class="btn btn-primary" id="btn-add-client" aria-label="Add a new client">' +
         '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>' +
@@ -117,11 +117,11 @@
       '</div>' +
       '<div class="filter-pills">' +
         '<select class="filter-pill" id="client-filter-env" aria-label="Filter by environment">' + envOptions + '</select>' +
-        '<select class="filter-pill" id="client-filter-level" aria-label="Filter by CMMC level">' +
-          '<option value="">Level</option>' +
-          '<option value="L1">L1</option>' +
-          '<option value="L2">L2</option>' +
-          '<option value="L3">L3</option>' +
+        '<select class="filter-pill" id="client-filter-level" aria-label="Filter by FedRAMP baseline">' +
+          '<option value="">Baseline</option>' +
+          '<option value="Low">Low</option>' +
+          '<option value="Moderate">Moderate</option>' +
+          '<option value="High">High</option>' +
         '</select>' +
       '</div>' +
       '<span class="search-result-count" id="client-result-count"></span>' +
@@ -141,7 +141,7 @@
       return '<div class="card"><div class="empty-state">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
         '<h3>No clients yet</h3>' +
-        '<p>Add your first client to start running CMMC compliance scans against their cloud environments.</p>' +
+        '<p>Add your first client to start running FedRAMP compliance scans against their cloud environments.</p>' +
         '<button class="btn btn-primary" id="btn-add-client-empty" aria-label="Add first client">Add Your First Client</button>' +
       '</div></div>';
     }
@@ -154,7 +154,7 @@
         '<tr>' +
           '<td><strong class="clickable-text" data-client-id="' + app.escapeHtml(c.id) + '" tabindex="0" role="link" aria-label="View scan history for ' + app.escapeHtml(c.name) + '">' + app.escapeHtml(c.name) + '</strong></td>' +
           '<td>' + app.envDisplay(c.environment) + '</td>' +
-          '<td>' + app.levelBadge(c.cmmc_level) + '</td>' +
+          '<td>' + app.levelBadge(c.fedramp_baseline) + '</td>' +
           '<td>' + app.formatDateShort(c.updated_at) + '</td>' +
           '<td><span class="badge ' + statusCls + '">' + statusLabel + '</span></td>' +
           '<td class="cell-actions">' +
@@ -174,7 +174,7 @@
           '<thead><tr>' +
             '<th data-sort="name">Name <span class="sort-icon">\u2195</span></th>' +
             '<th data-sort="env">Environment <span class="sort-icon">\u2195</span></th>' +
-            '<th data-sort="level">CMMC Level <span class="sort-icon">\u2195</span></th>' +
+            '<th data-sort="level">FedRAMP Baseline <span class="sort-icon">\u2195</span></th>' +
             '<th data-sort="scan">Last Scan <span class="sort-icon">\u2195</span></th>' +
             '<th data-sort="status">Status <span class="sort-icon">\u2195</span></th>' +
             '<th class="text-right">Actions</th>' +
@@ -212,7 +212,7 @@
     var filtered = allClients.filter(function (c) {
       if (query && (c.name || '').toLowerCase().indexOf(query) === -1) return false;
       if (envVal && c.environment !== envVal) return false;
-      if (levelVal && c.cmmc_level !== levelVal) return false;
+      if (levelVal && c.fedramp_baseline !== levelVal) return false;
       return true;
     });
 
@@ -257,12 +257,12 @@
                 '<select class="form-select" id="client-env" required aria-required="true">' + envOptions + '</select>' +
               '</div>' +
               '<div class="form-group">' +
-                '<label class="form-label" for="client-level">CMMC Level <span class="required">*</span></label>' +
+                '<label class="form-label" for="client-level">FedRAMP Baseline <span class="required">*</span></label>' +
                 '<select class="form-select" id="client-level" required aria-required="true">' +
-                  '<option value="">Select level...</option>' +
-                  '<option value="L1">Level 1 (Foundational)</option>' +
-                  '<option value="L2">Level 2 (Advanced)</option>' +
-                  '<option value="L3">Level 3 (Expert)</option>' +
+                  '<option value="">Select baseline...</option>' +
+                  '<option value="Low">Low (156 controls)</option>' +
+                  '<option value="Moderate">Moderate (323 controls)</option>' +
+                  '<option value="High">High (410 controls)</option>' +
                 '</select>' +
               '</div>' +
             '</div>' +
@@ -338,8 +338,8 @@
     if (!levelSelect) return;
 
     var envConfig = ENVIRONMENTS.find(function (e) { return e.value === env; });
-    var allowed = envConfig ? envConfig.levels : ['L1', 'L2', 'L3'];
-    var labels = { L1: 'Level 1 (Foundational)', L2: 'Level 2 (Advanced)', L3: 'Level 3 (Expert)' };
+    var allowed = envConfig ? envConfig.levels : ['Low', 'Moderate', 'High'];
+    var labels = { Low: 'Low (156 controls)', Moderate: 'Moderate (323 controls)', High: 'High (410 controls)' };
 
     var currentVal = levelSelect.value;
     levelSelect.innerHTML = '<option value="">Select level...</option>';
@@ -361,13 +361,13 @@
       if (el) credentials[f.key] = el.value.trim();
     });
 
-    return { name: name, environment: env, cmmc_level: level, credentials_config: credentials };
+    return { name: name, environment: env, fedramp_baseline: level, credentials_config: credentials };
   }
 
   function validateForm(data) {
     if (!data.name) return 'Client name is required.';
     if (!data.environment) return 'Please select an environment.';
-    if (!data.cmmc_level) return 'Please select a CMMC level.';
+    if (!data.fedramp_baseline) return 'Please select a FedRAMP baseline.';
 
     var fields = CREDENTIAL_FIELDS[data.environment] || [];
     for (var i = 0; i < fields.length; i++) {
@@ -408,7 +408,7 @@
       updateCredentialFields(client.environment);
       updateLevelOptions(client.environment);
     }
-    if (levelEl) levelEl.value = client.cmmc_level || '';
+    if (levelEl) levelEl.value = client.fedramp_baseline || '';
 
     if (client.credentials_config) {
       Object.keys(client.credentials_config).forEach(function (key) {

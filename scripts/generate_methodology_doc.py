@@ -1,12 +1,12 @@
 """
-Generate the CCA Assessment Methodology document from config data.
+Generate the 3PAO Assessment Methodology document from config data.
 
-Reads config/nist_practices.json and config/checks/*.json to produce:
+Reads config/nist_800_53_controls.json and config/checks/*.json to produce:
   1. docs/assessment-methodology.md
   2. docs/assessment-methodology.docx (if python-docx installed)
 
 Usage:
-    cd CMMC-Scanner
+    cd FedRAMP-SCANNER
     python scripts/generate_methodology_doc.py
 """
 from __future__ import annotations
@@ -24,7 +24,7 @@ DOCS_DIR = ROOT / "docs"
 
 
 def _numeric_key(item):
-    """Sort key for practice/family IDs like '3.1.1' numerically, not lexicographically."""
+    """Sort key for control/family IDs like '3.1.1' numerically, not lexicographically."""
     key = item[0] if isinstance(item, tuple) else item
     return [int(n) for n in key.split(".")]
 DOCS_DIR.mkdir(exist_ok=True)
@@ -33,8 +33,8 @@ DOCS_DIR.mkdir(exist_ok=True)
 # Load data
 # ---------------------------------------------------------------------------
 
-def load_practices() -> dict:
-    with open(CONFIG_DIR / "nist_practices.json") as f:
+def load_controls() -> dict:
+    with open(CONFIG_DIR / "nist_800_53_controls.json") as f:
         return json.load(f)
 
 def load_all_checks() -> dict:
@@ -50,9 +50,9 @@ def load_all_checks() -> dict:
 # Statistics helpers
 # ---------------------------------------------------------------------------
 
-def compute_stats(practices_data, all_checks):
+def compute_stats(controls_data, all_checks):
     stats = {
-        "total_practices": 0,
+        "total_controls": 0,
         "automated": 0,
         "manual": 0,
         "total_objectives": 0,
@@ -67,12 +67,12 @@ def compute_stats(practices_data, all_checks):
         "domains": {},
     }
 
-    for fam_id, family in sorted(practices_data["families"].items(), key=_numeric_key):
+    for fam_id, family in sorted(controls_data["families"].items(), key=_numeric_key):
         domain = family["domain"]
         name = family["name"]
         d = {
             "name": name,
-            "practices": 0,
+            "controls": 0,
             "automated": 0,
             "manual": 0,
             "objectives": 0,
@@ -81,9 +81,9 @@ def compute_stats(practices_data, all_checks):
             "gcp": 0,
         }
 
-        for pid, p in family["practices"].items():
-            stats["total_practices"] += 1
-            d["practices"] += 1
+        for pid, p in family["controls"].items():
+            stats["total_controls"] += 1
+            d["controls"] += 1
             is_auto = p.get("automated", False)
             if is_auto:
                 stats["automated"] += 1
@@ -129,16 +129,16 @@ def compute_stats(practices_data, all_checks):
 # Markdown generation
 # ---------------------------------------------------------------------------
 
-def generate_markdown(practices_data, all_checks, stats) -> str:
+def generate_markdown(controls_data, all_checks, stats) -> str:
     lines = []
     w = lines.append
 
     # --- Title & Frontmatter ---
-    w("# CMMC Cloud Compliance Scanner — Assessment Methodology")
+    w("# FedRAMP Cloud Compliance Scanner — Assessment Methodology")
     w("")
     w("**Document Classification:** For Official Use — Assessment Staff Only")
     w("")
-    w(f"**Version:** 1.0 | **Date:** {datetime.now().strftime('%B %d, %Y')} | **Author:** Securitybricks (C3PAO, powered by Aprio)")
+    w(f"**Version:** 1.0 | **Date:** {datetime.now().strftime('%B %d, %Y')} | **Author:** Securitybricks (3PAO, powered by Aprio)")
     w("")
     w("---")
     w("")
@@ -157,17 +157,17 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("   - 5.1 [Overall Statistics](#51-overall-statistics)")
     w("   - 5.2 [Domain-Level Coverage](#52-domain-level-coverage)")
     w("   - 5.3 [Objective Automatable Classification](#53-objective-automatable-classification)")
-    w("6. [Complete Practice Reference](#6-complete-practice-reference)")
+    w("6. [Complete Control Reference](#6-complete-control-reference)")
 
     # TOC for each domain
-    for fam_idx, (fam_id, family) in enumerate(sorted(practices_data["families"].items(), key=_numeric_key)):
+    for fam_idx, (fam_id, family) in enumerate(sorted(controls_data["families"].items(), key=_numeric_key)):
         domain = family["domain"]
         name = family["name"]
         w(f"   - 6.{fam_idx+1} [{domain} — {name}](#{domain.lower()}--{name.lower().replace(' ', '-').replace('&', '').replace('  ', '-')})")
 
-    w("7. [CCA Manual Assessment Guide](#7-cca-manual-assessment-guide)")
+    w("7. [3PAO Manual Assessment Guide](#7-cca-manual-assessment-guide)")
     w("   - 7.1 [How to Use This Guide](#71-how-to-use-this-guide)")
-    w("   - 7.2 [Manual Practice Reference](#72-manual-practice-reference)")
+    w("   - 7.2 [Manual Control Reference](#72-manual-control-reference)")
     w("8. [Appendix A — API Call Reference](#8-appendix-a--api-call-reference)")
     w("9. [Appendix B — Glossary](#9-appendix-b--glossary)")
     w("")
@@ -177,17 +177,17 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     # --- Section 1: Executive Summary ---
     w("## 1. Executive Summary")
     w("")
-    w("The CMMC Cloud Compliance Scanner is an automated assessment tool built by Securitybricks, a CMMC Third-Party Assessment Organization (C3PAO) powered by Aprio. It evaluates Defense Industrial Base (DIB) contractor cloud environments against CMMC 2.0 requirements by querying cloud service provider (CSP) APIs and comparing configuration states to NIST SP 800-171 Rev 2 security practices.")
+    w("The FedRAMP Cloud Compliance Scanner is an automated assessment tool built by Securitybricks, a FedRAMP Third-Party Assessment Organization (3PAO) powered by Aprio. It evaluates Defense Industrial Base (DIB) contractor cloud environments against FedRAMP requirements by querying cloud service provider (CSP) APIs and comparing configuration states to NIST SP 800-53 Rev 5 security controls.")
     w("")
-    w("This document serves as the **authoritative methodology reference** for Certified CMMC Assessors (CCAs) using the scanner. It explains:")
+    w("This document serves as the **authoritative methodology reference** for FedRAMP Assessors (3PAOs) using the scanner. It explains:")
     w("")
-    w("- **How** each of the 110 NIST 800-171 practices is evaluated")
+    w("- **How** each of the 110 NIST 800-53 Rev 5 controls is evaluated")
     w("- **Which** cloud APIs are queried and what constitutes a passing or failing check")
-    w("- **Why** each check maps to specific NIST SP 800-171A assessment objectives")
-    w("- **What** CCAs must do for the 39 practices that require manual assessment")
+    w("- **Why** each check maps to specific NIST SP 800-53A assessment objectives")
+    w("- **What** 3PAOs must do for the 39 controls that require manual assessment")
     w("- **Where** the authoritative sources and traceability chain originates")
     w("")
-    w(f"The scanner implements **{stats['total_checks']} cloud-specific technical checks** across AWS ({stats['aws_checks']}), Azure ({stats['azure_checks']}), and GCP ({stats['gcp_checks']}), mapped to **{stats['total_objectives']} NIST SP 800-171A assessment objectives** across all 110 practices and 14 CMMC domains.")
+    w(f"The scanner implements **{stats['total_checks']} cloud-specific technical checks** across AWS ({stats['aws_checks']}), Azure ({stats['azure_checks']}), and GCP ({stats['gcp_checks']}), mapped to **{stats['total_objectives']} NIST SP 800-53A assessment objectives** across all 110 controls and 14 FedRAMP control families.")
     w("")
     w("---")
     w("")
@@ -199,17 +199,17 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("| Role | How to Use This Document |")
     w("|------|------------------------|")
-    w("| **Lead CCA** | Validate the scanner's methodology against 800-171A before accepting automated results |")
-    w("| **CCA (Technical)** | Reference during assessment to understand what each check evaluates and which API responses constitute evidence |")
-    w("| **CCA (Policy/Process)** | Use Section 7 as a structured guide for manual practice assessments — interview questions, evidence artifacts, and determination criteria |")
+    w("| **Lead 3PAO** | Validate the scanner's methodology against 800-53A before accepting automated results |")
+    w("| **3PAO (Technical)** | Reference during assessment to understand what each check evaluates and which API responses constitute evidence |")
+    w("| **3PAO (Policy/Process)** | Use Section 7 as a structured guide for manual control assessments — interview questions, evidence artifacts, and determination criteria |")
     w("| **Assessment Team Lead** | Review coverage matrix to understand which objectives are automated vs. manual |")
-    w("| **Quality Assurance** | Verify traceability from check results back to 800-171A objectives |")
+    w("| **Quality Assurance** | Verify traceability from check results back to 800-53A objectives |")
     w("")
     w("### How This Document Builds Trust")
     w("")
-    w("For a CCA to rely on automated tool results in a CMMC assessment, they need to verify:")
+    w("For a 3PAO to rely on automated tool results in a FedRAMP assessment, they need to verify:")
     w("")
-    w("1. **Traceability** — Every automated check traces back to a specific NIST SP 800-171A assessment objective")
+    w("1. **Traceability** — Every automated check traces back to a specific NIST SP 800-53A assessment objective")
     w("2. **Completeness** — The tool identifies which objectives it covers and which require manual assessment")
     w("3. **Accuracy** — Checks query the correct cloud APIs and evaluate the right configuration properties")
     w("4. **Transparency** — The methodology is fully documented, not a black box")
@@ -226,14 +226,14 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("| Source | Version | Purpose | Reference |")
     w("|--------|---------|---------|-----------|")
-    w("| **NIST SP 800-171 Rev 2** | Feb 2020 | 110 security practices across 14 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-171/rev-2/final) |")
-    w("| **NIST SP 800-171A** | Jun 2018 | 319 assessment objectives (\"determine if\" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-171a/final) |")
-    w("| **NIST SP 800-172** | Feb 2021 | Enhanced security practices for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |")
-    w("| **FAR 52.204-21** | 2016 | 17 basic safeguarding practices for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |")
-    w("| **CMMC 2.0 Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/CMMC/) |")
-    w("| **AWS Config Rules** | Current | ~200 rules mapped to NIST 800-171 | [docs.aws.amazon.com](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html) |")
-    w("| **Azure Policy** | Current | ~200 policy definitions for NIST 800-171 R2 | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-171-r2) |")
-    w("| **GCP CIS Benchmark** | Current | GCP security controls aligned to NIST practices | [cloud.google.com](https://cloud.google.com/security/compliance/cis-benchmarks) |")
+    w("| **NIST SP 800-53 Rev 5** | Feb 2020 | 110 security controls across 14 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5/rev-2/final) |")
+    w("| **NIST SP 800-53A** | Jun 2018 | 319 assessment objectives (\"determine if\" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5a/final) |")
+    w("| **NIST SP 800-172** | Feb 2021 | Enhanced security controls for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |")
+    w("| **FAR 52.204-21** | 2016 | 17 basic safeguarding controls for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |")
+    w("| **FedRAMP Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/FedRAMP/) |")
+    w("| **AWS Config Rules** | Current | ~200 rules mapped to NIST 800-53 Rev 5 | [docs.aws.amazon.com](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-controls-for-nist_800-53 Rev 5.html) |")
+    w("| **Azure Policy** | Current | ~200 policy definitions for NIST 800-53 Rev 5 R2 | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-53 Rev 5-r2) |")
+    w("| **GCP CIS Benchmark** | Current | GCP security controls aligned to NIST controls | [cloud.google.com](https://cloud.google.com/security/compliance/cis-benchmarks) |")
     w("")
     w("### Traceability Chain")
     w("")
@@ -241,9 +241,9 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("| Step | Stage | Description |")
     w("|------|-------|-------------|")
-    w("| 1 | **CMMC 2.0 Level** | L1 / L2 / L3 certification tier |")
-    w("| 2 | **NIST SP 800-171 Practice** | One of 110 security requirements |")
-    w("| 3 | **800-171A Assessment Objective** | Specific \"determine if\" statement |")
+    w("| 1 | **FedRAMP Level** | L1 / L2 / L3 certification tier |")
+    w("| 2 | **NIST SP 800-53 Rev 5 Control** | One of 110 security requirements |")
+    w("| 3 | **800-53A Assessment Objective** | Specific \"determine if\" statement |")
     w("| 4 | **Scanner Check** | Cloud-specific configuration test |")
     w("| 5 | **Cloud API Call** | Read-only query to AWS, Azure, or GCP |")
     w("| 6 | **Compliance Determination** | Met / Not Met / Manual Review |")
@@ -258,9 +258,9 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("### 4.1 Check-to-Objective Mapping")
     w("")
-    w("NIST SP 800-171A defines **319 assessment objectives** across the 110 NIST SP 800-171 practices. Each objective is a discrete \"determine if\" statement that an assessor must evaluate.")
+    w("NIST SP 800-53A defines **319 assessment objectives** across the 110 NIST SP 800-53 Rev 5 controls. Each objective is a discrete \"determine if\" statement that an assessor must evaluate.")
     w("")
-    w("The scanner maps every automated check to the specific 800-171A objectives it supports via the `supports_objectives` field. For example:")
+    w("The scanner maps every automated check to the specific 800-53A objectives it supports via the `supports_objectives` field. For example:")
     w("")
     w("```json")
     w("{")
@@ -274,26 +274,26 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("```")
     w("")
-    w("**Objective [d]** for practice 3.1.1 states: *\"system access is limited to authorized users.\"* Disabling root account access keys directly enforces this by preventing the most privileged account from using long-term credentials.")
+    w("**Objective [d]** for control 3.1.1 states: *\"system access is limited to authorized users.\"* Disabling root account access keys directly enforces this by preventing the most privileged account from using long-term credentials.")
     w("")
     w("This mapping enables:")
     w("- **Per-objective coverage scoring** — the report shows which objectives are covered by automated checks, which require documentation, and which are not tested")
-    w("- **Gap identification** — CCAs can immediately see which objectives need manual verification")
-    w("- **Audit traceability** — every Met/Not Met determination links to specific 800-171A language")
+    w("- **Gap identification** — 3PAOs can immediately see which objectives need manual verification")
+    w("- **Audit traceability** — every Met/Not Met determination links to specific 800-53A language")
     w("")
     w("### 4.2 Three-Tier Evaluation Model")
     w("")
-    w("The scanner classifies every 800-171A assessment objective into one of three tiers:")
+    w("The scanner classifies every 800-53A assessment objective into one of three tiers:")
     w("")
     w("| Tier | Classification | Count | Description |")
     w("|------|---------------|-------|-------------|")
     w(f"| **Tier 1** | Fully Automatable | {stats['obj_auto_true']} | Cloud API configuration check provides a definitive Met/Not Met determination |")
-    w(f"| **Tier 2** | Partially Automatable | {stats['obj_auto_partial']} | Cloud API provides supporting evidence, but CCA must verify organizational context |")
+    w(f"| **Tier 2** | Partially Automatable | {stats['obj_auto_partial']} | Cloud API provides supporting evidence, but 3PAO must verify organizational context |")
     w(f"| **Tier 3** | Not Automatable | {stats['obj_auto_false']} | Requires documentation review, interviews, or physical inspection |")
     w("")
     w("**Tier 1 — Fully Automatable:** The API response alone determines compliance. Example: *\"MFA is enabled for all console users\"* — the credential report provides a binary yes/no.")
     w("")
-    w("**Tier 2 — Partially Automatable:** The API response provides evidence that supports a determination, but the CCA must also verify organizational context. Example: *\"Authorized users are identified\"* — IAM user lists show WHO has access, but the CCA must verify this matches the organization's authorized user roster.")
+    w("**Tier 2 — Partially Automatable:** The API response provides evidence that supports a determination, but the 3PAO must also verify organizational context. Example: *\"Authorized users are identified\"* — IAM user lists show WHO has access, but the 3PAO must verify this matches the organization's authorized user roster.")
     w("")
     w("**Tier 3 — Not Automatable:** No cloud API can evaluate this objective. Example: *\"Visitors are escorted\"* (physical security) or *\"Security awareness training is provided\"* (organizational process).")
     w("")
@@ -325,10 +325,10 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("| Metric | Value |")
     w("|--------|-------|")
-    w(f"| NIST 800-171 Practices | {stats['total_practices']} |")
-    w(f"| NIST 800-171A Assessment Objectives | {stats['total_objectives']} |")
-    w(f"| Practices with Automated Checks | {stats['automated']} ({stats['automated']*100//stats['total_practices']}%) |")
-    w(f"| Practices Requiring Manual Assessment | {stats['manual']} ({stats['manual']*100//stats['total_practices']}%) |")
+    w(f"| NIST 800-53 Rev 5 Controls | {stats['total_controls']} |")
+    w(f"| NIST 800-53A Assessment Objectives | {stats['total_objectives']} |")
+    w(f"| Controls with Automated Checks | {stats['automated']} ({stats['automated']*100//stats['total_controls']}%) |")
+    w(f"| Controls Requiring Manual Assessment | {stats['manual']} ({stats['manual']*100//stats['total_controls']}%) |")
     w(f"| Total Cloud-Specific Technical Checks | {stats['total_checks']} |")
     w(f"| AWS Checks | {stats['aws_checks']} |")
     w(f"| Azure Checks | {stats['azure_checks']} |")
@@ -338,20 +338,20 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
 
     w("### 5.2 Domain-Level Coverage")
     w("")
-    w("The table below shows the scanner's coverage across all 14 CMMC domains. Each domain is broken down by the number of NIST 800-171 practices, how many are automated vs. manual, the total 800-171A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of practices in each domain that are fully automated by the scanner.")
+    w("The table below shows the scanner's coverage across all 14 FedRAMP control families. Each domain is broken down by the number of NIST 800-53 Rev 5 controls, how many are automated vs. manual, the total 800-53A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of controls in each domain that are fully automated by the scanner.")
     w("")
-    w("| Domain | Name | Practices | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |")
+    w("| Domain | Name | Controls | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |")
     w("|--------|------|-----------|-----------|--------|------------|-----|-------|-----|-----------------|")
 
     domain_order = ["AC", "AT", "AU", "CM", "IA", "IR", "MA", "MP", "PE", "PS", "RA", "CA", "SC", "SI"]
     for domain_code in domain_order:
         if domain_code in stats["domains"]:
             d = stats["domains"][domain_code]
-            auto_pct = round(d["automated"] * 100 / d["practices"]) if d["practices"] > 0 else 0
-            w(f"| {domain_code} | {d['name']} | {d['practices']} | {d['automated']} | {d['manual']} | {d['objectives']} | {d['aws']} | {d['azure']} | {d['gcp']} | {auto_pct}% |")
+            auto_pct = round(d["automated"] * 100 / d["controls"]) if d["controls"] > 0 else 0
+            w(f"| {domain_code} | {d['name']} | {d['controls']} | {d['automated']} | {d['manual']} | {d['objectives']} | {d['aws']} | {d['azure']} | {d['gcp']} | {auto_pct}% |")
 
-    total_auto_pct = round(stats['automated'] * 100 / stats['total_practices']) if stats['total_practices'] > 0 else 0
-    w(f"| **Total** | | **{stats['total_practices']}** | **{stats['automated']}** | **{stats['manual']}** | **{stats['total_objectives']}** | **{stats['aws_checks']}** | **{stats['azure_checks']}** | **{stats['gcp_checks']}** | **{total_auto_pct}%** |")
+    total_auto_pct = round(stats['automated'] * 100 / stats['total_controls']) if stats['total_controls'] > 0 else 0
+    w(f"| **Total** | | **{stats['total_controls']}** | **{stats['automated']}** | **{stats['manual']}** | **{stats['total_objectives']}** | **{stats['aws_checks']}** | **{stats['azure_checks']}** | **{stats['gcp_checks']}** | **{total_auto_pct}%** |")
     w("")
 
     w("### 5.3 Objective Automatable Classification")
@@ -359,35 +359,35 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("| Classification | Count | Percentage | Scanner Handling |")
     w("|---------------|-------|------------|-----------------|")
     w(f"| Fully Automatable | {stats['obj_auto_true']} | {stats['obj_auto_true']*100//stats['total_objectives']}% | Automated check provides Met/Not Met determination |")
-    w(f"| Partially Automatable | {stats['obj_auto_partial']} | {stats['obj_auto_partial']*100//stats['total_objectives']}% | Automated check provides evidence; CCA verifies context |")
-    w(f"| Not Automatable | {stats['obj_auto_false']} | {stats['obj_auto_false']*100//stats['total_objectives']}% | Flagged as Documentation Required; CCA assesses manually |")
+    w(f"| Partially Automatable | {stats['obj_auto_partial']} | {stats['obj_auto_partial']*100//stats['total_objectives']}% | Automated check provides evidence; 3PAO verifies context |")
+    w(f"| Not Automatable | {stats['obj_auto_false']} | {stats['obj_auto_false']*100//stats['total_objectives']}% | Flagged as Documentation Required; 3PAO assesses manually |")
     w("")
     w("---")
     w("")
 
-    # --- Section 6: Complete Practice Reference (was Section 7) ---
-    w("## 6. Complete Practice Reference")
+    # --- Section 6: Complete Control Reference (was Section 7) ---
+    w("## 6. Complete Control Reference")
     w("")
-    w("This section provides the complete technical reference for every NIST SP 800-171 practice, organized by CMMC domain. For each practice, it shows:")
+    w("This section provides the complete technical reference for every NIST SP 800-53 Rev 5 control, organized by FedRAMP family. For each control, it shows:")
     w("")
-    w("- The requirement text and CMMC level")
-    w("- All NIST SP 800-171A assessment objectives")
+    w("- The requirement text and FedRAMP baseline")
+    w("- All NIST SP 800-53A assessment objectives")
     w("- Cloud-specific automated checks with API calls, services, and severity")
     w("- Objective mapping (which checks support which objectives)")
     w("- Documentation requirements for non-automatable objectives")
     w("")
 
-    for fam_id, family in sorted(practices_data["families"].items(), key=_numeric_key):
+    for fam_id, family in sorted(controls_data["families"].items(), key=_numeric_key):
         domain = family["domain"]
         name = family["name"]
         d = stats["domains"].get(domain, {})
 
         w(f"### {domain} — {name}")
         w("")
-        w(f"**Practices:** {d.get('practices', 0)} | **Automated:** {d.get('automated', 0)} | **Manual:** {d.get('manual', 0)} | **Objectives:** {d.get('objectives', 0)} | **Checks:** AWS {d.get('aws', 0)}, Azure {d.get('azure', 0)}, GCP {d.get('gcp', 0)}")
+        w(f"**Controls:** {d.get('controls', 0)} | **Automated:** {d.get('automated', 0)} | **Manual:** {d.get('manual', 0)} | **Objectives:** {d.get('objectives', 0)} | **Checks:** AWS {d.get('aws', 0)}, Azure {d.get('azure', 0)}, GCP {d.get('gcp', 0)}")
         w("")
 
-        for pid, p in sorted(family["practices"].items(), key=_numeric_key):
+        for pid, p in sorted(family["controls"].items(), key=_numeric_key):
             level = p.get("level", "L2")
             is_auto = p.get("automated", False)
             auto_label = "Automated" if is_auto else "Manual"
@@ -450,7 +450,7 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
 
             # Manual guidance
             if not is_auto and p.get("manual_guidance"):
-                w(f"**CCA Manual Assessment Guidance:** {p['manual_guidance']}")
+                w(f"**3PAO Manual Assessment Guidance:** {p['manual_guidance']}")
                 w("")
 
             w("")
@@ -458,52 +458,52 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("---")
     w("")
 
-    # --- Section 7: CCA Manual Assessment Guide (was Section 6) ---
-    w("## 7. CCA Manual Assessment Guide")
+    # --- Section 7: 3PAO Manual Assessment Guide (was Section 6) ---
+    w("## 7. 3PAO Manual Assessment Guide")
     w("")
     w("### 7.1 How to Use This Guide")
     w("")
-    w("For the 39 practices classified as **Manual Review Required**, the scanner cannot make an automated determination. The CCA must independently assess these practices using the guidance below.")
+    w("For the 39 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.")
     w("")
-    w("For each manual practice, this guide provides:")
+    w("For each manual control, this guide provides:")
     w("")
-    w("1. **Assessment Objectives** — The exact 800-171A \"determine if\" statements the CCA must evaluate")
+    w("1. **Assessment Objectives** — The exact 800-53A \"determine if\" statements the 3PAO must evaluate")
     w("2. **Assessment Guidance** — Specific steps, interview topics, and configuration areas to examine")
-    w("3. **Evidence Artifacts** — Documents, records, and artifacts the CCA should request from the OSC")
+    w("3. **Evidence Artifacts** — Documents, records, and artifacts the 3PAO should request from the OSC")
     w("4. **Determination Criteria** — What constitutes a Met vs. Not Met finding")
     w("")
-    w("**Note:** Some \"manual\" practices have automated checks that provide *supporting evidence* (e.g., cloud configurations). These checks do not determine compliance but give the CCA baseline data to inform their manual assessment.")
+    w("**Note:** Some \"manual\" controls have automated checks that provide *supporting evidence* (e.g., cloud configurations). These checks do not determine compliance but give the 3PAO baseline data to inform their manual assessment.")
     w("")
 
-    w("### 7.2 Manual Practice Reference")
+    w("### 7.2 Manual Control Reference")
     w("")
 
-    # Build manual practices
-    for fam_id, family in sorted(practices_data["families"].items(), key=_numeric_key):
+    # Build manual controls
+    for fam_id, family in sorted(controls_data["families"].items(), key=_numeric_key):
         domain = family["domain"]
         name = family["name"]
 
-        manual_practices = {
+        manual_controls = {
             pid: p
-            for pid, p in sorted(family["practices"].items(), key=_numeric_key)
+            for pid, p in sorted(family["controls"].items(), key=_numeric_key)
             if not p.get("automated", False)
         }
-        if not manual_practices:
+        if not manual_controls:
             continue
 
-        w(f"#### {domain} — {name} (Manual Practices)")
+        w(f"#### {domain} — {name} (Manual Controls)")
         w("")
 
-        for pid, p in sorted(manual_practices.items(), key=_numeric_key):
-            w(f"##### Practice {pid}: {p['requirement']}")
+        for pid, p in sorted(manual_controls.items(), key=_numeric_key):
+            w(f"##### Control {pid}: {p['requirement']}")
             w("")
-            w(f"**CMMC Level:** {p.get('level', 'L2')} | **Domain:** {domain}")
+            w(f"**FedRAMP Baseline:** {p.get('level', 'L2')} | **Domain:** {domain}")
             w("")
 
             # Assessment Objectives
             objs = p.get("objectives", {})
             if objs:
-                w("**Assessment Objectives (NIST SP 800-171A):**")
+                w("**Assessment Objectives (NIST SP 800-53A):**")
                 w("")
                 for oid, obj in sorted(objs.items()):
                     w(f"- **{pid}{oid}**: Determine if {obj['text']}")
@@ -512,7 +512,7 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
             # Assessment Guidance
             mg = p.get("manual_guidance", "")
             if mg:
-                w("**CCA Assessment Guidance:**")
+                w("**3PAO Assessment Guidance:**")
                 w("")
                 w(f"> {mg}")
                 w("")
@@ -537,7 +537,7 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
                         has_supporting = True
                         break
                 if has_supporting:
-                    w("**Supporting Automated Checks** (provide baseline data for CCA review):")
+                    w("**Supporting Automated Checks** (provide baseline data for 3PAO review):")
                     w("")
                     w("| Cloud | Check | API Call | What It Evaluates |")
                     w("|-------|-------|---------|-------------------|")
@@ -580,11 +580,11 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
 
         w(f"### {cloud_label} ({len(api_calls)} unique API calls across {len(services)} services)")
         w("")
-        w("| Service | API Call | Used By (Practices) |")
+        w("| Service | API Call | Used By (Controls) |")
         w("|---------|---------|---------------------|")
 
-        # Build api -> practices mapping
-        api_practices = {}
+        # Build api -> controls mapping
+        api_controls = {}
         for domain_code, domain_data in all_checks.items():
             for pid, pdata in domain_data.get("checks", {}).items():
                 for c in pdata.get(cloud_key, []):
@@ -592,11 +592,11 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
                     svc = c.get("service", "")
                     if api:
                         key = (svc, api)
-                        if key not in api_practices:
-                            api_practices[key] = set()
-                        api_practices[key].add(pid)
+                        if key not in api_controls:
+                            api_controls[key] = set()
+                        api_controls[key].add(pid)
 
-        for (svc, api), pids in sorted(api_practices.items()):
+        for (svc, api), pids in sorted(api_controls.items()):
             pids_str = ", ".join(sorted(pids, key=lambda x: [int(n) for n in x.split(".")])[:5])
             if len(pids) > 5:
                 pids_str += f" (+{len(pids)-5} more)"
@@ -612,17 +612,17 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("| Term | Definition |")
     w("|------|-----------|")
-    w("| **CCA** | Certified CMMC Assessor — individual authorized to conduct CMMC assessments |")
-    w("| **C3PAO** | CMMC Third-Party Assessment Organization — accredited organization that employs CCAs |")
-    w("| **OSC** | Organization Seeking Certification — the DIB contractor being assessed |")
+    w("| **3PAO** | Certified FedRAMP Assessor — individual authorized to conduct FedRAMP assessments |")
+    w("| **3PAO** | FedRAMP Third-Party Assessment Organization — accredited organization that employs 3PAOs |")
+    w("| **OSC** | Organization Seeking Certification — the CSP being assessed |")
     w("| **CUI** | Controlled Unclassified Information — sensitive government information requiring protection |")
     w("| **FCI** | Federal Contract Information — information provided by or generated for the government under contract |")
     w("| **DIB** | Defense Industrial Base — companies that supply products/services to the DoD |")
     w("| **CSP** | Cloud Service Provider — AWS, Azure, or GCP |")
-    w("| **Met** | The practice/objective is fully implemented based on automated or manual evidence |")
-    w("| **Not Met** | The practice/objective is not implemented or has deficiencies |")
-    w("| **Manual Review** | The practice requires CCA manual assessment — cannot be determined by automated checks alone |")
-    w("| **Assessment Objective** | A specific \"determine if\" statement from NIST SP 800-171A that must be evaluated |")
+    w("| **Met** | The control/objective is fully implemented based on automated or manual evidence |")
+    w("| **Not Met** | The control/objective is not implemented or has deficiencies |")
+    w("| **Manual Review** | The control requires 3PAO manual assessment — cannot be determined by automated checks alone |")
+    w("| **Assessment Objective** | A specific \"determine if\" statement from NIST SP 800-53A that must be evaluated |")
     w("| **POA&M** | Plan of Action and Milestones — remediation plan for Not Met findings |")
     w("| **SSP** | System Security Plan — document describing the system boundary, environment, and security controls |")
     w("| **STS** | Security Token Service — AWS service for assuming cross-account roles |")
@@ -632,7 +632,7 @@ def generate_markdown(practices_data, all_checks, stats) -> str:
     w("")
     w("## Document Information")
     w("")
-    w("This methodology reference is auto-generated from the scanner's configuration files (`config/nist_practices.json` and `config/checks/*.json`). All check definitions, objective mappings, and coverage data are derived directly from the scanner's authoritative data sources.")
+    w("This methodology reference is auto-generated from the scanner's configuration files (`config/nist_800_53_controls.json` and `config/checks/*.json`). All check definitions, objective mappings, and coverage data are derived directly from the scanner's authoritative data sources.")
     w("")
     w("For the interactive version of this document, see the **Assessment Methodology** tab in the scanner's Help blade.")
     w("")
@@ -838,19 +838,19 @@ def _add_formatted_run(paragraph, text):
 
 def main():
     print("Loading configuration data...")
-    practices_data = load_practices()
+    controls_data = load_controls()
     all_checks = load_all_checks()
 
     print("Computing statistics...")
-    stats = compute_stats(practices_data, all_checks)
+    stats = compute_stats(controls_data, all_checks)
 
-    print(f"  Practices: {stats['total_practices']}")
+    print(f"  Controls: {stats['total_controls']}")
     print(f"  Objectives: {stats['total_objectives']}")
     print(f"  Checks: {stats['total_checks']} (AWS={stats['aws_checks']}, Azure={stats['azure_checks']}, GCP={stats['gcp_checks']})")
     print(f"  Doc requirements: {stats['doc_requirements']}")
 
     print("\nGenerating Markdown document...")
-    md_content = generate_markdown(practices_data, all_checks, stats)
+    md_content = generate_markdown(controls_data, all_checks, stats)
     md_path = DOCS_DIR / "assessment-methodology.md"
     with open(md_path, "w") as f:
         f.write(md_content)

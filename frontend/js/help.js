@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner  - Help & Documentation View
+   FedRAMP Cloud Compliance Scanner  - Help & Documentation View
    Four tabs: User Guide + API Reference + Assessment Methodology + QA Validation
    ========================================================================== */
 
@@ -82,12 +82,12 @@
         '<div class="card-body">' +
           '<h3 class="help-section-title">Getting Started</h3>' +
           '<p class="help-section-desc">' +
-            'The CMMC Cloud Compliance Scanner evaluates your clients\u2019 cloud environments against ' +
-            'CMMC 2.0 requirements (NIST 800-171 / 800-172). The workflow is simple:' +
+            'The FedRAMP Cloud Compliance Scanner evaluates your clients\u2019 cloud environments against ' +
+            'FedRAMP requirements (NIST 800-53 Rev 5). The workflow is simple:' +
           '</p>' +
           '<div class="help-workflow">' +
             workflowStep('1', 'Add a Client', 'Configure cloud credentials for AWS, Azure, or GCP') +
-            workflowStep('2', 'Run a Scan', 'Select the client and CMMC level, then start the scan') +
+            workflowStep('2', 'Run a Scan', 'Select the client and FedRAMP baseline, then start the scan') +
             workflowStep('3', 'View Results', 'Review findings by domain with live API evidence') +
             workflowStep('4', 'Download Reports', 'Export HTML or XLSX reports for the assessment') +
           '</div>' +
@@ -102,7 +102,7 @@
           '</h3>' +
           '<p class="help-section-desc">' +
             'Navigate to <strong>Clients</strong> and click <strong>Add Client</strong>. ' +
-            'Enter the client name, select the cloud environment and CMMC level, then provide ' +
+            'Enter the client name, select the cloud environment and FedRAMP baseline, then provide ' +
             'the read-only credentials for the target cloud account.' +
           '</p>' +
 
@@ -128,7 +128,7 @@
                       '<li>Select <strong>Another AWS account</strong> and enter your scanner account ID.</li>' +
                       '<li>Check <strong>Require external ID</strong> and enter a unique external ID.</li>' +
                       '<li>Attach the <code>SecurityAudit</code> and <code>ViewOnlyAccess</code> managed policies.</li>' +
-                      '<li>Name the role (e.g. <code>CMMCScannerReadOnly</code>) and create it.</li>' +
+                      '<li>Name the role (e.g. <code>FedRAMPScannerReadOnly</code>) and create it.</li>' +
                       '<li>Copy the <strong>Role ARN</strong> from the role summary page.</li>' +
                     '</ol>' +
                   '</div>' +
@@ -137,23 +137,23 @@
                     '<ol class="help-steps-list">' +
                       '<li>Create the cross-account trust policy and IAM role:</li>' +
                     '</ol>' +
-                    cliBlock('aws iam create-role --role-name CMMCScannerReadOnly \\\n  --assume-role-policy-document \'{\n    "Version": "2012-10-17",\n    "Statement": [{\n      "Effect": "Allow",\n      "Principal": {"AWS": "arn:aws:iam::<SCANNER_ACCOUNT_ID>:root"},\n      "Action": "sts:AssumeRole",\n      "Condition": {"StringEquals": {"sts:ExternalId": "<EXTERNAL_ID>"}}\n    }]\n  }\'') +
+                    cliBlock('aws iam create-role --role-name FedRAMPScannerReadOnly \\\n  --assume-role-policy-document \'{\n    "Version": "2012-10-17",\n    "Statement": [{\n      "Effect": "Allow",\n      "Principal": {"AWS": "arn:aws:iam::<SCANNER_ACCOUNT_ID>:root"},\n      "Action": "sts:AssumeRole",\n      "Condition": {"StringEquals": {"sts:ExternalId": "<EXTERNAL_ID>"}}\n    }]\n  }\'') +
                     '<ol class="help-steps-list" start="2">' +
                       '<li>Attach the <code>SecurityAudit</code> managed policy:</li>' +
                     '</ol>' +
-                    cliBlock('aws iam attach-role-policy --role-name CMMCScannerReadOnly \\\n  --policy-arn arn:aws:iam::aws:policy/SecurityAudit') +
+                    cliBlock('aws iam attach-role-policy --role-name FedRAMPScannerReadOnly \\\n  --policy-arn arn:aws:iam::aws:policy/SecurityAudit') +
                     '<ol class="help-steps-list" start="3">' +
                       '<li>Attach the <code>ViewOnlyAccess</code> managed policy:</li>' +
                     '</ol>' +
-                    cliBlock('aws iam attach-role-policy --role-name CMMCScannerReadOnly \\\n  --policy-arn arn:aws:iam::aws:policy/job-function/ViewOnlyAccess') +
+                    cliBlock('aws iam attach-role-policy --role-name FedRAMPScannerReadOnly \\\n  --policy-arn arn:aws:iam::aws:policy/job-function/ViewOnlyAccess') +
                     '<ol class="help-steps-list" start="4">' +
                       '<li>Retrieve the Role ARN:</li>' +
                     '</ol>' +
-                    cliBlock('aws iam get-role --role-name CMMCScannerReadOnly \\\n  --query "Role.Arn" --output text') +
+                    cliBlock('aws iam get-role --role-name FedRAMPScannerReadOnly \\\n  --query "Role.Arn" --output text') +
                   '</div>' +
                   '<div class="help-cred-fields">' +
                     '<h5>Required Fields</h5>' +
-                    credField('Role ARN', 'arn:aws:iam::123456789012:role/CMMCScannerReadOnly') +
+                    credField('Role ARN', 'arn:aws:iam::123456789012:role/FedRAMPScannerReadOnly') +
                     credField('External ID', 'A unique string shared between you and the client') +
                     credField('Region', 'e.g. us-east-1, us-gov-west-1') +
                   '</div>' +
@@ -182,7 +182,7 @@
                   '<div class="help-method-content active" data-method="console">' +
                     '<ol class="help-steps-list">' +
                       '<li>In the Azure Portal, go to <strong>Entra ID \u2192 App registrations \u2192 New registration</strong>.</li>' +
-                      '<li>Name it (e.g. <code>CMMC Scanner</code>), set single-tenant, and register.</li>' +
+                      '<li>Name it (e.g. <code>FedRAMP Scanner</code>), set single-tenant, and register.</li>' +
                       '<li>Go to <strong>Certificates & secrets \u2192 New client secret</strong> and copy the value.</li>' +
                       '<li>Go to the target <strong>Subscription \u2192 Access control (IAM) \u2192 Add role assignment</strong>.</li>' +
                       '<li>Assign the <strong>Reader</strong> and <strong>Security Reader</strong> roles to the registered app.</li>' +
@@ -198,15 +198,15 @@
                     '<ol class="help-steps-list">' +
                       '<li>Create the app registration:</li>' +
                     '</ol>' +
-                    cliBlock('az ad app create --display-name "CMMC Scanner" \\\n  --sign-in-audience AzureADMyOrg') +
+                    cliBlock('az ad app create --display-name "FedRAMP Scanner" \\\n  --sign-in-audience AzureADMyOrg') +
                     '<ol class="help-steps-list" start="2">' +
                       '<li>Create a service principal for the app:</li>' +
                     '</ol>' +
-                    cliBlock('APP_ID=$(az ad app list --display-name "CMMC Scanner" \\\n  --query "[0].appId" -o tsv)\naz ad sp create --id $APP_ID') +
+                    cliBlock('APP_ID=$(az ad app list --display-name "FedRAMP Scanner" \\\n  --query "[0].appId" -o tsv)\naz ad sp create --id $APP_ID') +
                     '<ol class="help-steps-list" start="3">' +
                       '<li>Create a client secret (save the output):</li>' +
                     '</ol>' +
-                    cliBlock('az ad app credential reset --id $APP_ID --append \\\n  --display-name "cmmc-scanner-secret" --years 1') +
+                    cliBlock('az ad app credential reset --id $APP_ID --append \\\n  --display-name "fedramp-scanner-secret" --years 1') +
                     '<ol class="help-steps-list" start="4">' +
                       '<li>Assign <code>Reader</code> role on the subscription:</li>' +
                     '</ol>' +
@@ -253,7 +253,7 @@
                   '<div class="help-method-content active" data-method="console">' +
                     '<ol class="help-steps-list">' +
                       '<li>In the GCP Console, go to <strong>IAM & Admin \u2192 Service Accounts \u2192 Create Service Account</strong>.</li>' +
-                      '<li>Name it (e.g. <code>cmmc-scanner</code>).</li>' +
+                      '<li>Name it (e.g. <code>fedramp-scanner</code>).</li>' +
                       '<li>Grant the following <strong>IAM roles</strong> at the project level:<br>' +
                         '<code>Viewer</code> (basic read access), ' +
                         '<code>Security Reviewer</code> (Security Command Center), ' +
@@ -276,11 +276,11 @@
                     '<ol class="help-steps-list">' +
                       '<li>Create the service account:</li>' +
                     '</ol>' +
-                    cliBlock('PROJECT_ID=$(gcloud config get-value project)\ngcloud iam service-accounts create cmmc-scanner \\\n  --display-name="CMMC Scanner" \\\n  --project=$PROJECT_ID') +
+                    cliBlock('PROJECT_ID=$(gcloud config get-value project)\ngcloud iam service-accounts create fedramp-scanner \\\n  --display-name="FedRAMP Scanner" \\\n  --project=$PROJECT_ID') +
                     '<ol class="help-steps-list" start="2">' +
                       '<li>Grant <code>Viewer</code> role:</li>' +
                     '</ol>' +
-                    cliBlock('SA_EMAIL=cmmc-scanner@${PROJECT_ID}.iam.gserviceaccount.com\ngcloud projects add-iam-policy-binding $PROJECT_ID \\\n  --member="serviceAccount:$SA_EMAIL" \\\n  --role="roles/viewer"') +
+                    cliBlock('SA_EMAIL=fedramp-scanner@${PROJECT_ID}.iam.gserviceaccount.com\ngcloud projects add-iam-policy-binding $PROJECT_ID \\\n  --member="serviceAccount:$SA_EMAIL" \\\n  --role="roles/viewer"') +
                     '<ol class="help-steps-list" start="3">' +
                       '<li>Grant <code>Security Reviewer</code> role:</li>' +
                     '</ol>' +
@@ -296,7 +296,7 @@
                     '<ol class="help-steps-list" start="6">' +
                       '<li>Create and download the JSON key:</li>' +
                     '</ol>' +
-                    cliBlock('gcloud iam service-accounts keys create cmmc-scanner-key.json \\\n  --iam-account=$SA_EMAIL \\\n  --project=$PROJECT_ID') +
+                    cliBlock('gcloud iam service-accounts keys create fedramp-scanner-key.json \\\n  --iam-account=$SA_EMAIL \\\n  --project=$PROJECT_ID') +
                     '<div class="help-info-box">' +
                       '<strong>Note:</strong> Google Workspace checks (2SV, password policy, login challenges) require ' +
                       'domain-wide delegation with Admin SDK scopes. These checks return "manual" status if delegation is not configured.' +
@@ -323,13 +323,13 @@
           '<ol class="help-steps-list">' +
             '<li>Navigate to <strong>Scans</strong> in the sidebar.</li>' +
             '<li>Click <strong>New Scan</strong> and select the client from the dropdown.</li>' +
-            '<li>Confirm the CMMC level and cloud environment, then click <strong>Start Scan</strong>.</li>' +
+            '<li>Confirm the FedRAMP baseline and cloud environment, then click <strong>Start Scan</strong>.</li>' +
             '<li>The scan runs asynchronously. The status will update from <code>pending</code> \u2192 <code>running</code> \u2192 <code>completed</code>.</li>' +
             '<li>You can navigate away \u2014 the scan continues in the background.</li>' +
           '</ol>' +
           '<div class="help-info-box">' +
-            '<strong>Scan scope:</strong> The scanner evaluates 71 automatable practices across 14 CMMC domains. ' +
-            'The remaining 39 policy/process practices are flagged as "Manual Review Required." ' +
+            '<strong>Scan scope:</strong> The scanner evaluates 496 automated checks across 20 FedRAMP control families. ' +
+            'Policy/process controls that cannot be automated are flagged as "Manual Review Required." ' +
             'A full scan typically completes in 2\u20135 minutes depending on the cloud environment size.' +
           '</div>' +
         '</div>' +
@@ -343,8 +343,8 @@
           '</h3>' +
           '<ol class="help-steps-list">' +
             '<li>Click on a completed scan to open the detail view.</li>' +
-            '<li>Findings are grouped by CMMC domain (AC, AU, CM, etc.) in expandable accordions.</li>' +
-            '<li>Each finding shows the practice ID, check name, status (Met / Not Met / Manual Review), and severity.</li>' +
+            '<li>Findings are grouped by control family (AC, AU, CM, CP, etc.) in expandable accordions.</li>' +
+            '<li>Each finding shows the control ID, check name, status (Met / Not Met / Manual Review), and severity.</li>' +
             '<li>Click the <strong>Evidence</strong> button on any finding to view live API evidence \u2014 the raw cloud configuration data that was evaluated.</li>' +
           '</ol>' +
         '</div>' +
@@ -364,7 +364,7 @@
           '<div class="help-info-box">' +
             '<strong>Demo reports:</strong> To preview the report format without running a scan, visit ' +
             '<code>/api/reports/demo/html</code> or <code>/api/reports/demo/xlsx</code>. ' +
-            'These contain 48 realistic mock findings across all 14 domains.' +
+            'These contain realistic mock findings across all 20 families.' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -383,7 +383,7 @@
         '<div class="card-body">' +
           '<h3 class="help-section-title">API Overview</h3>' +
           '<p class="help-section-desc">' +
-            'The CMMC Scanner exposes a RESTful API for managing clients, scans, and reports. ' +
+            'The FedRAMP Scanner exposes a RESTful API for managing clients, scans, and reports. ' +
             'All endpoints are prefixed with <code>/api</code>.' +
           '</p>' +
           '<div class="help-api-details">' +
@@ -433,7 +433,7 @@
         { method: 'GET', path: '/api/scans', desc: 'List scans (optional ?client_id= filter)' },
         { method: 'GET', path: '/api/scans/{id}', desc: 'Get scan details with all findings' },
         { method: 'GET', path: '/api/scans/{id}/summary', desc: 'Compliance summary grouped by status and domain' },
-        { method: 'GET', path: '/api/scans/{id}/evidence/{practice_id}', desc: 'Retrieve live API evidence for a specific practice' },
+        { method: 'GET', path: '/api/scans/{id}/evidence/{control_id}', desc: 'Retrieve live API evidence for a specific control' },
         { method: 'DELETE', path: '/api/scans/{id}', desc: 'Delete scan and all findings' },
       ]) +
 

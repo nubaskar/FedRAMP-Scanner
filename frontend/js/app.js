@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner - Core Application
+   FedRAMP Cloud Compliance Scanner - Core Application
    Router, API helpers, Auth (Entra ID SSO), and shared utilities
    ========================================================================== */
 
@@ -9,9 +9,9 @@
   /* ---------- Configuration ---------- */
   const isBackendServed = window.location.port === '8000' || window.location.pathname.startsWith('/static/');
   const CONFIG = {
-    API_BASE: isBackendServed ? window.location.origin + '/api' : 'https://cmmc-scanner-prod-api.whitecliff-57323604.eastus2.azurecontainerapps.io/api',
-    TOKEN_KEY: 'cmmc_scanner_token',
-    USER_KEY: 'cmmc_scanner_user',
+    API_BASE: isBackendServed ? window.location.origin + '/api' : 'https://fedramp-scanner-prod-api.whitecliff-57323604.eastus2.azurecontainerapps.io/api',
+    TOKEN_KEY: 'fedramp_scanner_token',
+    USER_KEY: 'fedramp_scanner_user',
     POLL_INTERVAL: 5000,
   };
 
@@ -459,11 +459,11 @@
   }
 
   function levelBadge(level) {
-    const l = (level || '').toUpperCase();
-    if (l === 'L1' || l === 'LEVEL 1') return '<span class="badge badge-l1">L1</span>';
-    if (l === 'L2' || l === 'LEVEL 2') return '<span class="badge badge-l2">L2</span>';
-    if (l === 'L3' || l === 'LEVEL 3') return '<span class="badge badge-l3">L3</span>';
-    return '<span class="badge badge-error">' + escapeHtml(l) + '</span>';
+    const l = (level || '').toLowerCase();
+    if (l === 'low') return '<span class="badge badge-low">Low</span>';
+    if (l === 'moderate') return '<span class="badge badge-moderate">Moderate</span>';
+    if (l === 'high') return '<span class="badge badge-high">High</span>';
+    return '<span class="badge badge-error">' + escapeHtml(level || '') + '</span>';
   }
 
   function envDisplay(env) {
@@ -737,7 +737,7 @@
     var env = envMap[(n.environment || '').toLowerCase()] || n.environment || '';
     var row2 = '';
     if (n.status === 'completed') {
-      row2 = escapeHtml(env) + ' &middot; ' + escapeHtml(n.cmmc_level || '') +
+      row2 = escapeHtml(env) + ' &middot; ' + escapeHtml(n.fedramp_baseline || '') +
         ' &middot; <span class="ndi-pct">' + (n.compliance_pct != null ? n.compliance_pct + '%' : '--') + '</span>';
     } else {
       row2 = '<span class="ndi-pct">' + escapeHtml(n.error_message || 'Scan failed') + '</span>';
@@ -756,7 +756,7 @@
   function updateNotificationDot(items) {
     var dot = document.getElementById('notification-dot');
     if (!dot) return;
-    var lastSeen = localStorage.getItem('cmmc_notification_last_seen') || '';
+    var lastSeen = localStorage.getItem('fedramp_notification_last_seen') || '';
     if (items.length > 0 && items[0].completed_at && items[0].completed_at > lastSeen) {
       dot.classList.remove('hidden');
     } else {
@@ -816,7 +816,7 @@
       } else {
         panel.style.display = 'block';
         fetchNotifications();
-        localStorage.setItem('cmmc_notification_last_seen', new Date().toISOString());
+        localStorage.setItem('fedramp_notification_last_seen', new Date().toISOString());
         var dot = document.getElementById('notification-dot');
         if (dot) dot.classList.add('hidden');
       }

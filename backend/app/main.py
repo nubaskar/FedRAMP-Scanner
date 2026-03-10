@@ -1,5 +1,5 @@
 """
-CMMC Cloud Compliance Scanner — FastAPI application entry point.
+FedRAMP Cloud Compliance Scanner — FastAPI application entry point.
 
 Provides REST API for managing clients, running compliance scans, and
 generating Met/Not-Met reports across AWS GovCloud, Azure Government,
@@ -125,11 +125,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="CMMC Cloud Compliance Scanner",
+    title="FedRAMP Cloud Compliance Scanner",
     description=(
-        "Automated compliance scanning for DIB contractors across "
-        "AWS GovCloud, Azure Government, and GCP Assured Workloads. "
-        "Validates CMMC Level 1/2/3 practices and generates Met/Not-Met reports."
+        "Automated compliance scanning for CSPs across "
+        "AWS, Azure, and GCP cloud environments. "
+        "Validates FedRAMP Low/Moderate/High controls and generates Met/Not-Met reports."
     ),
     version="1.0.0",
     lifespan=lifespan,

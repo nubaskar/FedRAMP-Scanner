@@ -1,6 +1,6 @@
 """
 XLSX Report Generator — Produces a professional Excel workbook with
-Securitybricks branding for CMMC compliance scan results.
+Securitybricks branding for FedRAMP compliance scan results.
 
 Includes Summary tab, Findings tab, and per-domain tabs with conditional
 formatting and auto-adjusted column widths.
@@ -193,7 +193,7 @@ def _create_summary_sheet(wb, scan, client, status_counts, compliance_pct, domai
 
     # Title section
     row = 1
-    ws.cell(row=row, column=1, value="CMMC Compliance Assessment Report").font = TITLE_FONT
+    ws.cell(row=row, column=1, value="FedRAMP Compliance Assessment Report").font = TITLE_FONT
     ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
 
     row = 2
@@ -206,7 +206,7 @@ def _create_summary_sheet(wb, scan, client, status_counts, compliance_pct, domai
     info_items = [
         ("Organization", client.name),
         ("Environment", ENV_NAMES.get(client.environment, client.environment)),
-        ("CMMC Level", scan.cmmc_level),
+        ("FedRAMP Baseline", scan.fedramp_baseline),
         ("Scan ID", scan.id),
         ("Scan Date", scan.started_at.strftime("%Y-%m-%d %H:%M UTC") if scan.started_at else "N/A"),
         ("Completed", scan.completed_at.strftime("%Y-%m-%d %H:%M UTC") if scan.completed_at else "N/A"),
@@ -288,7 +288,7 @@ def _create_findings_sheet(wb, findings):
     ws = wb.create_sheet("All Findings")
 
     headers = [
-        "Practice ID", "Family", "Domain", "Check ID", "Check Name",
+        "Control ID", "Family", "Domain", "Check ID", "Check Name",
         "Status", "Severity", "Obj. Covered", "Obj. Total", "Coverage %",
         "Evidence", "Remediation",
     ]
@@ -300,7 +300,7 @@ def _create_findings_sheet(wb, findings):
         cov_covered = cov.get("covered_objectives", 0) if isinstance(cov, dict) else 0
         cov_pct = cov.get("coverage_pct", 0.0) if isinstance(cov, dict) else 0.0
         values = [
-            f.practice_id,
+            f.control_id,
             f.family,
             f.domain,
             f.check_id,
@@ -333,19 +333,19 @@ OBJ_STATUS_FILLS = {
 
 
 def _create_coverage_sheet(wb, findings):
-    """Create a sheet showing NIST 800-171A objective-level coverage."""
+    """Create a sheet showing NIST 800-53A objective-level coverage."""
     ws = wb.create_sheet("Objective Coverage")
 
     # Title
-    ws.cell(row=1, column=1, value="NIST 800-171A Assessment Objective Coverage").font = TITLE_FONT
+    ws.cell(row=1, column=1, value="NIST 800-53A Assessment Objective Coverage").font = TITLE_FONT
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=7)
 
-    ws.cell(row=2, column=1, value="Per-practice breakdown of assessment objectives coverage").font = Font(
+    ws.cell(row=2, column=1, value="Per-control breakdown of assessment objectives coverage").font = Font(
         name="Aptos", italic=True, color=BRAND_BLUE, size=10
     )
 
     headers = [
-        "Practice ID", "Practice Name", "Domain", "Practice Status",
+        "Control ID", "Control Name", "Domain", "Control Status",
         "Obj. ID", "Objective Text", "Obj. Status",
     ]
     header_row = 4
@@ -362,7 +362,7 @@ def _create_coverage_sheet(wb, findings):
 
         for obj in details:
             values = [
-                f.practice_id,
+                f.control_id,
                 (f.check_name or "")[:60],
                 f.domain,
                 f.status,
@@ -398,7 +398,7 @@ def _create_coverage_sheet(wb, findings):
 # ---------------------------------------------------------------------------
 
 def _create_domain_sheet(wb, domain_code: str, domain_name: str, findings: list):
-    """Create a sheet for a specific CMMC domain."""
+    """Create a sheet for a specific FedRAMP control family."""
     sheet_name = f"{domain_code} - {domain_name}"
     # Sheet names max 31 chars
     if len(sheet_name) > 31:
@@ -429,7 +429,7 @@ def _create_domain_sheet(wb, domain_code: str, domain_name: str, findings: list)
 
     # Findings table
     headers = [
-        "Practice ID", "Check ID", "Check Name", "Status",
+        "Control ID", "Check ID", "Check Name", "Status",
         "Severity", "Evidence", "Remediation",
     ]
     header_row = 4
@@ -437,7 +437,7 @@ def _create_domain_sheet(wb, domain_code: str, domain_name: str, findings: list)
 
     for idx, f in enumerate(findings, start=header_row + 1):
         values = [
-            f.practice_id,
+            f.control_id,
             f.check_id,
             f.check_name,
             f.status,

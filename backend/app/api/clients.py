@@ -1,8 +1,8 @@
 """
-Clients API — CRUD operations for DIB contractor client records.
+Clients API — CRUD operations for CSP client records.
 
-Each client represents a company with a cloud environment that will be
-scanned for CMMC compliance.
+Each client represents a cloud service provider with an environment that
+will be scanned for FedRAMP compliance.
 """
 from __future__ import annotations
 
@@ -31,11 +31,11 @@ router = APIRouter(prefix="/api/clients", tags=["clients"])
 # ---------------------------------------------------------------------------
 @router.post("/", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
 def create_client(payload: ClientCreate, db: Session = Depends(get_db)):
-    """Register a new DIB contractor client."""
+    """Register a new CSP client."""
     client = Client(
         name=payload.name,
         environment=payload.environment,
-        cmmc_level=payload.cmmc_level,
+        fedramp_baseline=payload.fedramp_baseline,
         credentials_config=payload.credentials_config,
     )
     db.add(client)
@@ -73,7 +73,7 @@ def verify_credentials(payload: VerifyRequest):
             sts = boto3.client("sts", region_name=region)
             params = {
                 "RoleArn": role_arn,
-                "RoleSessionName": "cmmc-verify-session",
+                "RoleSessionName": "fedramp-verify-session",
                 "DurationSeconds": 900,
             }
             if external_id:

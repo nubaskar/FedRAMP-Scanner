@@ -1,0 +1,198 @@
+{
+  "domain": "PT",
+  "name": "PII Processing and Transparency",
+  "checks": {
+    "PT-2": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "pt-2-aws-001",
+          "name": "Macie enabled for PII data discovery",
+          "service": "Macie2",
+          "api_call": "macie2.get_macie_session",
+          "expected": "Amazon Macie enabled and actively discovering PII in S3 buckets",
+          "severity": "high",
+          "remediation": "Enable Amazon Macie to discover and classify PII in S3 buckets.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-aws-002",
+          "name": "S3 buckets tagged with data classification",
+          "service": "S3",
+          "api_call": "s3.get_bucket_tagging",
+          "expected": "S3 buckets containing PII tagged with appropriate data classification",
+          "severity": "high",
+          "remediation": "Tag S3 buckets with data classification tags indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-aws-003",
+          "name": "RDS databases tagged with data classification",
+          "service": "RDS",
+          "api_call": "rds.list_tags_for_resource",
+          "expected": "RDS instances containing PII tagged with data classification",
+          "severity": "high",
+          "remediation": "Tag RDS databases with data classification indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "pt-2-azure-001",
+          "name": "Microsoft Purview enabled for data discovery",
+          "service": "Purview",
+          "api_call": "PurviewManagementClient.accounts.list_by_subscription",
+          "expected": "Microsoft Purview actively scanning for PII data",
+          "severity": "high",
+          "remediation": "Enable Microsoft Purview to discover and classify PII data.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-azure-002",
+          "name": "Storage accounts tagged with data classification",
+          "service": "Storage",
+          "api_call": "StorageManagementClient.storage_accounts.list",
+          "expected": "Storage accounts containing PII tagged with data classification",
+          "severity": "high",
+          "remediation": "Tag storage accounts with data classification indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-azure-003",
+          "name": "SQL databases tagged with data classification",
+          "service": "SQL",
+          "api_call": "SqlManagementClient.databases.list",
+          "expected": "SQL databases containing PII tagged with data classification",
+          "severity": "high",
+          "remediation": "Tag Azure SQL databases with data classification indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "pt-2-gcp-001",
+          "name": "Cloud DLP enabled for PII discovery",
+          "service": "DLP",
+          "api_call": "dlp.projects.dlpJobs.list",
+          "expected": "Cloud DLP jobs actively scanning for PII data",
+          "severity": "high",
+          "remediation": "Enable Cloud Data Loss Prevention to discover and classify PII.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-gcp-002",
+          "name": "Storage buckets labeled with data classification",
+          "service": "Storage",
+          "api_call": "storage.buckets.get",
+          "expected": "Storage buckets containing PII labeled with data classification",
+          "severity": "high",
+          "remediation": "Label Cloud Storage buckets with data classification indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        },
+        {
+          "check_id": "pt-2-gcp-003",
+          "name": "BigQuery datasets labeled with data classification",
+          "service": "BigQuery",
+          "api_call": "bigquery.datasets.list",
+          "expected": "BigQuery datasets containing PII labeled with data classification",
+          "severity": "high",
+          "remediation": "Label BigQuery datasets with data classification indicating PII content.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-2"
+        }
+      ]
+    },
+    "PT-3": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "pt-3-aws-001",
+          "name": "Resources tagged with data processing purpose",
+          "service": "ResourceGroupsTaggingAPI",
+          "api_call": "resourcegroupstaggingapi.get_resources",
+          "expected": "Resources processing PII tagged with purpose tags",
+          "severity": "medium",
+          "remediation": "Tag resources with data processing purpose metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-3"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "pt-3-azure-001",
+          "name": "Resources tagged with data processing purpose",
+          "service": "Resources",
+          "api_call": "ResourceManagementClient.resources.list",
+          "expected": "Resources processing PII tagged with purpose metadata",
+          "severity": "medium",
+          "remediation": "Tag Azure resources with data processing purpose metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-3"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "pt-3-gcp-001",
+          "name": "Resources labeled with data processing purpose",
+          "service": "Resource Manager",
+          "api_call": "cloudresourcemanager.projects.list",
+          "expected": "Resources processing PII labeled with purpose metadata",
+          "severity": "medium",
+          "remediation": "Label GCP resources with data processing purpose metadata.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-3"
+        }
+      ]
+    },
+    "PT-4": {
+      "baselines": ["Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "pt-4-aws-001",
+          "name": "API Gateway includes consent mechanism documentation",
+          "service": "API Gateway",
+          "api_call": "apigateway.get_rest_apis",
+          "expected": "API endpoints processing PII document consent mechanisms",
+          "severity": "medium",
+          "remediation": "Document consent mechanisms for APIs that process PII data.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-4"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "pt-4-azure-001",
+          "name": "API Management includes consent documentation",
+          "service": "API Management",
+          "api_call": "ApiManagementClient.api.list_by_service",
+          "expected": "APIs processing PII document consent mechanisms",
+          "severity": "medium",
+          "remediation": "Document consent mechanisms for APIs that process PII data.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-4"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "pt-4-gcp-001",
+          "name": "API Gateway includes consent mechanism documentation",
+          "service": "API Gateway",
+          "api_call": "apigateway.projects.locations.apis.list",
+          "expected": "API endpoints processing PII document consent mechanisms",
+          "severity": "medium",
+          "remediation": "Document consent mechanisms for APIs that process PII data.",
+          "supports_objectives": ["[a]"],
+          "control_id": "PT-4"
+        }
+      ]
+    }
+  }
+}

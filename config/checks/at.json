@@ -2,7 +2,13 @@
   "domain": "AT",
   "name": "Awareness and Training",
   "checks": {
-    "3.2.1": {
+    "AT-2": {
+      "cmmc_source": "3.2.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Request security awareness training records and completion certificates. Verify training covers CUI handling, phishing, social engineering, password security, and organizational security policies. Confirm all personnel with CUI access complete training upon hire and annually thereafter.",
       "evidence_requests": [
@@ -34,7 +40,13 @@
         }
       ]
     },
-    "3.2.2": {
+    "AT-3": {
+      "cmmc_source": "3.2.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Request role-based training records for IT and security staff. Verify training covers specific duties including system administration, incident response, security monitoring, and configuration management. Confirm training is tailored to each role's security responsibilities.",
       "evidence_requests": [
@@ -61,7 +73,9 @@
         }
       ]
     },
-    "3.2.3": {
+    "AT-2(2)": {
+      "cmmc_source": "3.2.3",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Request insider threat training records. Verify training includes indicators of insider threat (behavioral, technical, organizational), reporting procedures, and whistleblower protections. Confirm training is completed annually by all personnel with CUI access.",
       "evidence_requests": [

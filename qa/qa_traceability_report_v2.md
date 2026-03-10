@@ -1,8 +1,8 @@
-# CMMC Scanner - QA Traceability Validation Report
+# FedRAMP Scanner - QA Traceability Validation Report
 
 **Generated:** 2026-03-07 20:07 UTC
 **Config checks analyzed:** 393
-**NIST practices:** 110
+**NIST controls:** 110
 
 ## Summary
 
@@ -123,7 +123,7 @@ and intentionally conservative to surface edge cases for human review.
 
 ## Provider Parity Matrix
 
-Automated practices with check counts per CSP.
+Automated controls with check counts per CSP.
 
 | Practice | Domain | AWS | Azure | GCP |
 |----------|--------|-----|-------|-----|
@@ -200,7 +200,7 @@ Automated practices with check counts per CSP.
 | 3.8.9 | MP | 3 | 2 | 1 |
 | **Total** | **All** | **159** | **110** | **109** |
 
-**Total automated checks in matrix:** 378 of 393 (remaining 15 checks belong to practices
+**Total automated checks in matrix:** 378 of 393 (remaining 15 checks belong to controls
 like SC 3.13.2 "Defense-in-Depth" that have composite API calls with no individual objective mappings)
 
 ## Objective Coverage Gaps

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CMMC Cloud Compliance Scanner - Reports View
+   FedRAMP Cloud Compliance Scanner - Reports View
    ========================================================================== */
 
 (function () {
@@ -93,11 +93,11 @@
       '</div>' +
       '<div class="filter-pills">' +
         '<select class="filter-pill" id="report-env-filter" aria-label="Filter by environment">' + envOptions + '</select>' +
-        '<select class="filter-pill" id="report-level-filter" aria-label="Filter by CMMC level">' +
-          '<option value="">Level</option>' +
-          '<option value="L1">L1</option>' +
-          '<option value="L2">L2</option>' +
-          '<option value="L3">L3</option>' +
+        '<select class="filter-pill" id="report-level-filter" aria-label="Filter by FedRAMP baseline">' +
+          '<option value="">Baseline</option>' +
+          '<option value="Low">Low</option>' +
+          '<option value="Moderate">Moderate</option>' +
+          '<option value="High">High</option>' +
         '</select>' +
       '</div>' +
       '<span class="search-result-count" id="report-result-count"></span>' +

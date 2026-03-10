@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-QA Traceability Validation Script for CMMC Scanner.
+QA Traceability Validation Script for FedRAMP Scanner.
 
 Statically analyzes config files and scanner source code to validate the
 traceability chain:
 
-  CMMC 2.0 Level → NIST 800-171 Practice → 800-171A Objective
+  FedRAMP Level → NIST 800-53 Rev 5 Control → 800-53A Objective
     → Scanner Check → Cloud API Call → Met/Not Met
 
 No cloud credentials or running services needed — purely offline analysis.
@@ -36,7 +36,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 CONFIG_DIR = PROJECT_ROOT / "config"
 CHECKS_DIR = CONFIG_DIR / "checks"
-PRACTICES_FILE = CONFIG_DIR / "nist_practices.json"
+PRACTICES_FILE = CONFIG_DIR / "nist_800_53_controls.json"
 ENGINE_FILE = PROJECT_ROOT / "backend" / "app" / "scanner" / "engine.py"
 SCANNER_FILES = {
     "aws": PROJECT_ROOT / "backend" / "app" / "scanner" / "aws_scanner.py",
@@ -49,10 +49,10 @@ REPORT_DIR = PROJECT_ROOT / "qa"
 REQUIRED_CHECK_FIELDS = {"check_id", "name", "service", "api_call", "expected",
                          "severity", "supports_objectives"}
 
-# Valid check_id pattern: {domain}-{practice}-{provider}-{sequence}
+# Valid check_id pattern: {domain}-{control}-{provider}-{sequence}
 CHECK_ID_RE = re.compile(
     r"^[a-z]{2}-"                    # domain (ac, au, sc, ...)
-    r"\d+\.\d+\.\d+-"               # practice (3.1.1, 3.13.10, ...)
+    r"\d+\.\d+\.\d+-"               # control (3.1.1, 3.13.10, ...)
     r"(aws|azure|gcp)-"             # provider
     r"\d{3}$"                        # sequence (001, 002, ...)
 )
@@ -66,7 +66,7 @@ class Finding:
     """A single QA finding — error, warning, or info."""
     level: str          # "ERROR", "WARNING", "INFO"
     qa_check: str       # e.g., "1.1 Structural Integrity"
-    check_id: str       # config check_id or practice_id affected
+    check_id: str       # config check_id or control_id affected
     message: str
 
 
@@ -83,31 +83,31 @@ class QACheckResult:
 # ---------------------------------------------------------------------------
 # Loaders
 # ---------------------------------------------------------------------------
-def load_practices() -> dict:
-    """Load nist_practices.json → {practice_id: {requirement, level, objectives, automated, ...}}"""
+def load_controls() -> dict:
+    """Load nist_800_53_controls.json → {control_id: {requirement, level, objectives, automated, ...}}"""
     with open(PRACTICES_FILE) as f:
         data = json.load(f)
-    practices: dict = {}
+    controls: dict = {}
     for _fam_id, fam in data.get("families", {}).items():
         domain = fam.get("domain", "")
-        for pid, pdata in fam.get("practices", {}).items():
-            practices[pid] = {**pdata, "domain": domain}
-    return practices
+        for pid, pdata in fam.get("controls", {}).items():
+            controls[pid] = {**pdata, "domain": domain}
+    return controls
 
 
 def load_all_checks() -> list[dict]:
-    """Load every check from config/checks/*.json, preserving practice_id and domain context."""
+    """Load every check from config/checks/*.json, preserving control_id and domain context."""
     checks: list[dict] = []
     for check_file in sorted(CHECKS_DIR.glob("*.json")):
         with open(check_file) as f:
             data = json.load(f)
         domain = data.get("domain", "")
-        for practice_id, practice_data in data.get("checks", {}).items():
-            if practice_data.get("manual_only"):
-                continue  # manual-only practices have no automated checks
+        for control_id, control_data in data.get("checks", {}).items():
+            if control_data.get("manual_only"):
+                continue  # manual-only controls have no automated checks
             for provider in ("aws", "azure", "gcp"):
-                for chk in practice_data.get(provider, []):
-                    chk["_practice_id"] = practice_id
+                for chk in control_data.get(provider, []):
+                    chk["_control_id"] = control_id
                     chk["_domain"] = domain
                     chk["_provider"] = provider
                     chk["_file"] = check_file.name
@@ -362,24 +362,24 @@ def qa1_1_structural_integrity(checks: list[dict]) -> QACheckResult:
     return r
 
 
-def qa1_2_objective_crossref(checks: list[dict], practices: dict) -> QACheckResult:
-    """1.2 — Every supports_objectives entry exists in nist_practices.json."""
+def qa1_2_objective_crossref(checks: list[dict], controls: dict) -> QACheckResult:
+    """1.2 — Every supports_objectives entry exists in nist_800_53_controls.json."""
     r = QACheckResult(name="Objective Cross-Reference")
     for chk in checks:
         check_id = chk.get("check_id", "?")
-        practice_id = chk.get("_practice_id", "")
+        control_id = chk.get("_control_id", "")
         supported = chk.get("supports_objectives", [])
-        practice = practices.get(practice_id)
+        control = controls.get(control_id)
 
-        if not practice:
+        if not control:
             r.failed += 1
             r.findings.append(Finding(
                 "ERROR", r.name, check_id,
-                f"Practice {practice_id} not found in nist_practices.json"
+                f"Control {control_id} not found in nist_800_53_controls.json"
             ))
             continue
 
-        objectives = practice.get("objectives", {})
+        objectives = control.get("objectives", {})
         all_valid = True
         for obj_id in supported:
             if obj_id not in objectives:
@@ -387,7 +387,7 @@ def qa1_2_objective_crossref(checks: list[dict], practices: dict) -> QACheckResu
                 all_valid = False
                 r.findings.append(Finding(
                     "ERROR", r.name, check_id,
-                    f"Objective '{obj_id}' not found in practice {practice_id} "
+                    f"Objective '{obj_id}' not found in control {control_id} "
                     f"(valid: {sorted(objectives.keys())})"
                 ))
         if all_valid:
@@ -395,33 +395,33 @@ def qa1_2_objective_crossref(checks: list[dict], practices: dict) -> QACheckResu
     return r
 
 
-def qa1_3_coverage_completeness(checks: list[dict], practices: dict,
+def qa1_3_coverage_completeness(checks: list[dict], controls: dict,
                                 raw_configs: dict[str, dict]) -> QACheckResult:
-    """1.3 — Every practice's objectives are covered, documented, or non-automatable."""
+    """1.3 — Every control's objectives are covered, documented, or non-automatable."""
     r = QACheckResult(name="Coverage Completeness")
 
-    # Build per-practice coverage from automated checks
-    practice_covered_objs: dict[str, set[str]] = {}
+    # Build per-control coverage from automated checks
+    control_covered_objs: dict[str, set[str]] = {}
     for chk in checks:
-        pid = chk.get("_practice_id", "")
+        pid = chk.get("_control_id", "")
         for obj_id in chk.get("supports_objectives", []):
-            practice_covered_objs.setdefault(pid, set()).add(obj_id)
+            control_covered_objs.setdefault(pid, set()).add(obj_id)
 
-    # Build per-practice documentation requirements
-    practice_doc_objs: dict[str, set[str]] = {}
+    # Build per-control documentation requirements
+    control_doc_objs: dict[str, set[str]] = {}
     for _fname, config in raw_configs.items():
         for pid, pdata in config.get("checks", {}).items():
             for doc in pdata.get("objectives_requiring_documentation", []):
-                practice_doc_objs.setdefault(pid, set()).add(doc.get("id", ""))
+                control_doc_objs.setdefault(pid, set()).add(doc.get("id", ""))
 
-    for pid, pdata in practices.items():
+    for pid, pdata in controls.items():
         objectives = pdata.get("objectives", {})
         if not objectives:
             continue
 
         automated_flag = pdata.get("automated", False)
-        covered = practice_covered_objs.get(pid, set())
-        documented = practice_doc_objs.get(pid, set())
+        covered = control_covered_objs.get(pid, set())
+        documented = control_doc_objs.get(pid, set())
 
         gaps = []
         for obj_id, obj_info in objectives.items():
@@ -444,7 +444,7 @@ def qa1_3_coverage_completeness(checks: list[dict], practices: dict,
                     f"Objectives not covered by checks or documentation: {', '.join(sorted(gaps))}"
                 ))
             else:
-                r.passed += 1  # non-automated practice, gaps are expected
+                r.passed += 1  # non-automated control, gaps are expected
         else:
             r.passed += 1
     return r
@@ -501,51 +501,51 @@ def qa1_6_check_id_format(checks: list[dict]) -> QACheckResult:
             r.findings.append(Finding(
                 "ERROR", r.name, check_id,
                 f"check_id '{check_id}' does not match pattern "
-                f"{{domain}}-{{practice}}-{{provider}}-{{seq}} (in {chk.get('_file', '?')})"
+                f"{{domain}}-{{control}}-{{provider}}-{{seq}} (in {chk.get('_file', '?')})"
             ))
     return r
 
 
-def qa1_7_practice_completeness(checks: list[dict], practices: dict,
+def qa1_7_control_completeness(checks: list[dict], controls: dict,
                                 raw_configs: dict[str, dict]) -> QACheckResult:
-    """1.7 — All 110 practices from nist_practices.json appear in config/checks/*.json."""
-    r = QACheckResult(name="Practice Completeness")
+    """1.7 — All 110 controls from nist_800_53_controls.json appear in config/checks/*.json."""
+    r = QACheckResult(name="Control Completeness")
 
-    # Practices that appear in config (either as manual or automated)
-    config_practices: set[str] = set()
+    # Controls that appear in config (either as manual or automated)
+    config_controls: set[str] = set()
     for _fname, config in raw_configs.items():
         for pid in config.get("checks", {}).keys():
-            config_practices.add(pid)
+            config_controls.add(pid)
 
-    for pid in sorted(practices.keys()):
-        if pid in config_practices:
+    for pid in sorted(controls.keys()):
+        if pid in config_controls:
             r.passed += 1
         else:
             r.failed += 1
             r.findings.append(Finding(
                 "ERROR", r.name, pid,
-                f"Practice {pid} ({practices[pid].get('domain', '?')}) "
+                f"Control {pid} ({controls[pid].get('domain', '?')}) "
                 f"not found in any config/checks/*.json file"
             ))
     return r
 
 
-def qa1_8_provider_parity(checks: list[dict], practices: dict) -> QACheckResult:
-    """1.8 — Flag practices where one CSP has checks but another doesn't."""
+def qa1_8_provider_parity(checks: list[dict], controls: dict) -> QACheckResult:
+    """1.8 — Flag controls where one CSP has checks but another doesn't."""
     r = QACheckResult(name="Provider Parity")
 
-    # Count checks per practice per provider
-    practice_providers: dict[str, dict[str, int]] = {}
+    # Count checks per control per provider
+    control_providers: dict[str, dict[str, int]] = {}
     for chk in checks:
-        pid = chk.get("_practice_id", "")
+        pid = chk.get("_control_id", "")
         prov = chk.get("_provider", "")
-        practice_providers.setdefault(pid, {}).setdefault(prov, 0)
-        practice_providers[pid][prov] += 1
+        control_providers.setdefault(pid, {}).setdefault(prov, 0)
+        control_providers[pid][prov] += 1
 
-    for pid in sorted(practice_providers.keys()):
-        providers = practice_providers[pid]
-        # Only flag automated practices
-        pdata = practices.get(pid, {})
+    for pid in sorted(control_providers.keys()):
+        providers = control_providers[pid]
+        # Only flag automated controls
+        pdata = controls.get(pid, {})
         if not pdata.get("automated", False):
             continue
 
@@ -721,7 +721,7 @@ def generate_console_output(results: list[QACheckResult], findings: list[Finding
     """Print summary to console."""
     print()
     print("=" * 60)
-    print("  CMMC Scanner QA Traceability Validation")
+    print("  FedRAMP Scanner QA Traceability Validation")
     print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 60)
     print()
@@ -768,16 +768,16 @@ def generate_console_output(results: list[QACheckResult], findings: list[Finding
 def generate_markdown_report(results: list[QACheckResult],
                              findings: list[Finding],
                              checks: list[dict],
-                             practices: dict) -> str:
+                             controls: dict) -> str:
     """Generate full markdown report."""
     lines: list[str] = []
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
-    lines.append("# CMMC Scanner — QA Traceability Validation Report")
+    lines.append("# FedRAMP Scanner — QA Traceability Validation Report")
     lines.append("")
     lines.append(f"**Generated:** {now}")
     lines.append(f"**Config checks analyzed:** {len(checks)}")
-    lines.append(f"**NIST practices:** {len(practices)}")
+    lines.append(f"**NIST controls:** {len(controls)}")
     lines.append("")
 
     # Summary table
@@ -815,24 +815,24 @@ def generate_markdown_report(results: list[QACheckResult],
     # Provider parity matrix
     lines.append("## Provider Parity Matrix")
     lines.append("")
-    lines.append("Automated practices with check counts per CSP.")
+    lines.append("Automated controls with check counts per CSP.")
     lines.append("")
-    lines.append("| Practice | Domain | AWS | Azure | GCP |")
+    lines.append("| Control | Domain | AWS | Azure | GCP |")
     lines.append("|----------|--------|-----|-------|-----|")
 
-    practice_counts: dict[str, dict[str, int]] = {}
+    control_counts: dict[str, dict[str, int]] = {}
     for chk in checks:
-        pid = chk.get("_practice_id", "")
+        pid = chk.get("_control_id", "")
         prov = chk.get("_provider", "")
-        practice_counts.setdefault(pid, {}).setdefault(prov, 0)
-        practice_counts[pid][prov] += 1
+        control_counts.setdefault(pid, {}).setdefault(prov, 0)
+        control_counts[pid][prov] += 1
 
-    for pid in sorted(practice_counts.keys()):
-        pdata = practices.get(pid, {})
+    for pid in sorted(control_counts.keys()):
+        pdata = controls.get(pid, {})
         if not pdata.get("automated", False):
             continue
         domain = pdata.get("domain", "?")
-        counts = practice_counts[pid]
+        counts = control_counts[pid]
         aws_c = counts.get("aws", 0)
         azure_c = counts.get("azure", 0)
         gcp_c = counts.get("gcp", 0)
@@ -848,30 +848,30 @@ def generate_markdown_report(results: list[QACheckResult],
     lines.append("")
     lines.append("Automatable objectives not covered by any check or documentation requirement.")
     lines.append("")
-    lines.append("| Practice | Domain | Objective | Text |")
+    lines.append("| Control | Domain | Objective | Text |")
     lines.append("|----------|--------|-----------|------|")
 
     # Re-compute gaps
-    practice_covered: dict[str, set[str]] = {}
+    control_covered: dict[str, set[str]] = {}
     for chk in checks:
-        pid = chk.get("_practice_id", "")
+        pid = chk.get("_control_id", "")
         for obj_id in chk.get("supports_objectives", []):
-            practice_covered.setdefault(pid, set()).add(obj_id)
+            control_covered.setdefault(pid, set()).add(obj_id)
 
     raw_configs = load_check_configs_raw()
-    practice_doc: dict[str, set[str]] = {}
+    control_doc: dict[str, set[str]] = {}
     for _fname, config in raw_configs.items():
         for pid, pdata_cfg in config.get("checks", {}).items():
             for doc in pdata_cfg.get("objectives_requiring_documentation", []):
-                practice_doc.setdefault(pid, set()).add(doc.get("id", ""))
+                control_doc.setdefault(pid, set()).add(doc.get("id", ""))
 
     gap_count = 0
-    for pid in sorted(practices.keys()):
-        pdata = practices[pid]
+    for pid in sorted(controls.keys()):
+        pdata = controls[pid]
         objectives = pdata.get("objectives", {})
         domain = pdata.get("domain", "?")
-        covered = practice_covered.get(pid, set())
-        documented = practice_doc.get(pid, set())
+        covered = control_covered.get(pid, set())
+        documented = control_doc.get(pid, set())
         for obj_id in sorted(objectives.keys()):
             obj_info = objectives[obj_id]
             if obj_info.get("automatable") is False:
@@ -901,11 +901,11 @@ def generate_markdown_report(results: list[QACheckResult],
 def main() -> int:
     """Run all QA checks and produce output."""
     print("Loading config files...")
-    practices = load_practices()
+    controls = load_controls()
     checks = load_all_checks()
     raw_configs = load_check_configs_raw()
 
-    print(f"  {len(practices)} practices from nist_practices.json")
+    print(f"  {len(controls)} controls from nist_800_53_controls.json")
     print(f"  {len(checks)} automated checks from config/checks/")
 
     print("Parsing engine.py...")
@@ -935,13 +935,13 @@ def main() -> int:
     results: list[QACheckResult] = [
         # QA1
         qa1_1_structural_integrity(checks),
-        qa1_2_objective_crossref(checks, practices),
-        qa1_3_coverage_completeness(checks, practices, raw_configs),
+        qa1_2_objective_crossref(checks, controls),
+        qa1_3_coverage_completeness(checks, controls, raw_configs),
         qa1_4_method_mapping(checks, engine_methods),
         qa1_5_method_existence(engine_methods, scanner_methods),
         qa1_6_check_id_format(checks),
-        qa1_7_practice_completeness(checks, practices, raw_configs),
-        qa1_8_provider_parity(checks, practices),
+        qa1_7_control_completeness(checks, controls, raw_configs),
+        qa1_8_provider_parity(checks, controls),
         # QA2
         qa2_1_api_call_match(checks, engine_methods, scanner_methods, scanner_sources),
         qa2_2_expected_condition_match(checks, engine_methods, scanner_methods, scanner_sources),
@@ -958,7 +958,7 @@ def main() -> int:
     # Markdown report
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     report_path = REPORT_DIR / "qa_traceability_report.md"
-    report_content = generate_markdown_report(results, all_findings, checks, practices)
+    report_content = generate_markdown_report(results, all_findings, checks, controls)
     report_path.write_text(report_content)
     print(f"Full report written to: {report_path}")
     print()

@@ -2,7 +2,13 @@
   "domain": "PS",
   "name": "Personnel Security",
   "checks": {
-    "3.9.1": {
+    "PS-3": {
+      "cmmc_source": "3.9.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review personnel screening procedures and background check records. Verify that background investigations are completed before granting access to systems containing CUI. Confirm screening criteria meet organizational and regulatory requirements (NACI, T1, T3 as appropriate). Check for re-investigation schedules.",
       "evidence_requests": [
@@ -20,7 +26,13 @@
         }
       ]
     },
-    "3.9.2": {
+    "PS-4": {
+      "cmmc_source": "3.9.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Review termination and transfer procedures for personnel with CUI access. Verify that: (a) access is revoked within 24 hours of termination, (b) all credentials and authenticators are disabled/collected, (c) equipment/media containing CUI are recovered, (d) exit interviews address CUI handling obligations, and (e) transfers include access review and adjustment.",
       "evidence_requests": [

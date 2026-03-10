@@ -2,8 +2,8 @@
 Scan orchestration engine — the main entry point for running compliance scans.
 
 Called as a BackgroundTask from the scans API. Loads client credentials,
-determines the appropriate cloud scanner, iterates through CMMC practice
-checks, stores findings, and updates scan status.
+determines the appropriate cloud scanner, iterates through NIST 800-53
+control checks, stores findings, and updates scan status.
 """
 from __future__ import annotations
 
@@ -40,40 +40,28 @@ PARALLEL_CHECKS = 8
 CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "config"
 CHECKS_DIR = CONFIG_DIR / "checks"
 
-# CMMC domain metadata
-CMMC_DOMAINS = {
+# NIST 800-53 Rev 5 control families (20 families for FedRAMP)
+FEDRAMP_FAMILIES = {
     "AC": "Access Control",
     "AT": "Awareness and Training",
     "AU": "Audit and Accountability",
+    "CA": "Security Assessment and Authorization",
     "CM": "Configuration Management",
+    "CP": "Contingency Planning",
     "IA": "Identification and Authentication",
     "IR": "Incident Response",
     "MA": "Maintenance",
     "MP": "Media Protection",
-    "PS": "Personnel Security",
     "PE": "Physical and Environmental Protection",
+    "PL": "Planning",
+    "PM": "Program Management",
+    "PS": "Personnel Security",
+    "PT": "PII Processing and Transparency",
     "RA": "Risk Assessment",
-    "CA": "Security Assessment",
+    "SA": "System and Services Acquisition",
     "SC": "System and Communications Protection",
     "SI": "System and Information Integrity",
-}
-
-# NIST 800-171 practice families mapped to CMMC domains
-NIST_FAMILIES = {
-    "3.1":  {"domain": "AC",  "family": "Access Control"},
-    "3.2":  {"domain": "AT",  "family": "Awareness and Training"},
-    "3.3":  {"domain": "AU",  "family": "Audit and Accountability"},
-    "3.4":  {"domain": "CM",  "family": "Configuration Management"},
-    "3.5":  {"domain": "IA",  "family": "Identification and Authentication"},
-    "3.6":  {"domain": "IR",  "family": "Incident Response"},
-    "3.7":  {"domain": "MA",  "family": "Maintenance"},
-    "3.8":  {"domain": "MP",  "family": "Media Protection"},
-    "3.9":  {"domain": "PS",  "family": "Personnel Security"},
-    "3.10": {"domain": "PE",  "family": "Physical and Environmental Protection"},
-    "3.11": {"domain": "RA",  "family": "Risk Assessment"},
-    "3.12": {"domain": "CA",  "family": "Security Assessment"},
-    "3.13": {"domain": "SC",  "family": "System and Communications Protection"},
-    "3.14": {"domain": "SI",  "family": "System and Information Integrity"},
+    "SR": "Supply Chain Risk Management",
 }
 
 # ---------------------------------------------------------------------------
@@ -83,438 +71,544 @@ NIST_FAMILIES = {
 # ---------------------------------------------------------------------------
 AWS_CHECK_METHODS: dict[str, str] = {
     # --- Existing 15 checks ---
-    "ac-3.1.1-aws-001": "check_root_access_keys",
-    "ac-3.1.1-aws-003": "check_password_policy",
-    "ac-3.1.3-aws-001": "check_vpc_flow_logs",
-    "au-3.3.1-aws-001": "check_cloudtrail_enabled",
-    "au-3.3.1-aws-002": "check_cloudtrail_log_validation",
-    "ia-3.5.3-aws-001": "check_mfa_enabled",
-    "sc-3.13.10-aws-001": "check_kms_key_rotation",
-    "sc-3.13.11-aws-002": "check_encryption_at_rest",
-    "si-3.14.6-aws-001": "check_guardduty_enabled",
-    "ac-3.1.14-aws-002": "check_security_groups",
-    "sc-3.13.2-aws-001": "check_defense_in_depth",
-    "ac-3.1.16-aws-001": "check_vpn_remote_access",
-    "ac-3.1.18-aws-001": "check_mobile_device_control",
-    "ac-3.1.19-aws-001": "check_ebs_default_encryption",
-    "ac-3.1.21-aws-001": "check_s3_account_public_access_block",
+    "ac-2-aws-001": "check_root_access_keys",
+    "ac-2-aws-003": "check_password_policy",
+    "ac-4-aws-001": "check_vpc_flow_logs",
+    "au-2-aws-001": "check_cloudtrail_enabled",
+    "au-2-aws-002": "check_cloudtrail_log_validation",
+    "ia-2-1-aws-001": "check_mfa_enabled",
+    "sc-12-aws-001": "check_kms_key_rotation",
+    "sc-13-aws-002": "check_encryption_at_rest",
+    "si-4-aws-001": "check_guardduty_enabled",
+    "ac-17-3-aws-002": "check_security_groups",
+    "sc-7-5-aws-001": "check_defense_in_depth",
+    "ac-19-aws-001": "check_vpn_remote_access",
+    "ac-20-aws-001": "check_mobile_device_control",
+    "ac-20-1-aws-001": "check_ebs_default_encryption",
+    "ac-3-8-aws-001": "check_s3_account_public_access_block",
     # --- Phase 1: IAM Checks (28) ---
-    "ac-3.1.1-aws-002": "check_credential_report_review",
-    "ac-3.1.2-aws-001": "check_least_privilege_policies",
-    "ac-3.1.2-aws-002": "check_permission_boundaries",
-    "ac-3.1.4-aws-001": "check_separation_of_duties_roles",
-    "ac-3.1.4-aws-002": "check_deploy_approve_separation",
-    "ac-3.1.5-aws-001": "check_no_inline_wildcard_policies",
-    "ac-3.1.5-aws-003": "check_no_admin_access_users",
-    "ac-3.1.6-aws-001": "check_admin_standard_role_separation",
-    "ac-3.1.10-aws-001": "check_session_timeout",
-    "ac-3.1.11-aws-001": "check_role_session_duration",
-    "ac-3.1.22-aws-002": "check_no_public_ip_cui_instances",
-    "ia-3.5.1-aws-001": "check_unique_iam_users",
-    "ia-3.5.1-aws-002": "check_service_account_naming",
-    "ia-3.5.1-aws-003": "check_instance_profiles",
-    "ia-3.5.2-aws-001": "check_root_mfa",
-    "ia-3.5.2-aws-002": "check_console_users_mfa",
-    "ia-3.5.3-aws-002": "check_mfa_condition_policies",
-    "ia-3.5.3-aws-003": "check_hardware_mfa_root",
-    "ia-3.5.4-aws-001": "check_fido2_mfa_support",
-    "ia-3.5.4-aws-002": "check_sts_token_duration",
-    "ia-3.5.5-aws-001": "check_no_username_reuse",
-    "ia-3.5.6-aws-001": "check_inactive_users",
-    "ia-3.5.6-aws-002": "check_inactive_access_keys",
-    "ia-3.5.7-aws-001": "check_password_complexity",
-    "ia-3.5.8-aws-001": "check_password_reuse_prevention",
-    "ia-3.5.10-aws-001": "check_tls_api_enforcement",
-    "au-3.3.2-aws-002": "check_no_shared_accounts",
-    "au-3.3.9-aws-001": "check_cloudtrail_access_restricted",
+    "ac-2-aws-002": "check_credential_report_review",
+    "ac-3-aws-001": "check_least_privilege_policies",
+    "ac-3-aws-002": "check_permission_boundaries",
+    "ac-5-aws-001": "check_separation_of_duties_roles",
+    "ac-5-aws-002": "check_deploy_approve_separation",
+    "ac-6-aws-001": "check_no_inline_wildcard_policies",
+    "ac-6-aws-003": "check_no_admin_access_users",
+    "ac-6-3-aws-001": "check_admin_standard_role_separation",
+    "ac-11-aws-001": "check_session_timeout",
+    "ac-12-aws-001": "check_role_session_duration",
+    "ac-4-4-aws-002": "check_no_public_ip_cui_instances",
+    "ia-2-aws-001": "check_unique_iam_users",
+    "ia-2-aws-002": "check_service_account_naming",
+    "ia-2-aws-003": "check_instance_profiles",
+    "ia-3-aws-001": "check_root_mfa",
+    "ia-3-aws-002": "check_console_users_mfa",
+    "ia-2-1-aws-002": "check_mfa_condition_policies",
+    "ia-2-1-aws-003": "check_hardware_mfa_root",
+    "ia-2-2-aws-001": "check_fido2_mfa_support",
+    "ia-2-2-aws-002": "check_sts_token_duration",
+    "ia-4-aws-001": "check_no_username_reuse",
+    "ia-4-4-aws-001": "check_inactive_users",
+    "ia-4-4-aws-002": "check_inactive_access_keys",
+    "ia-5-aws-001": "check_password_complexity",
+    "ia-5-1-aws-001": "check_password_reuse_prevention",
+    "ia-8-aws-001": "check_tls_api_enforcement",
+    "au-3-aws-002": "check_no_shared_accounts",
+    "au-9-4-aws-001": "check_cloudtrail_access_restricted",
     # --- Phase 2: CloudTrail + S3 Deep Checks (12) ---
-    "au-3.3.1-aws-003": "check_cloudtrail_log_retention",
-    "au-3.3.1-aws-004": "check_cloudtrail_data_events",
-    "au-3.3.2-aws-001": "check_cloudtrail_user_identity",
-    "au-3.3.5-aws-002": "check_cloudtrail_cloudwatch_integration",
-    "au-3.3.8-aws-001": "check_cloudtrail_bucket_logging",
-    "au-3.3.8-aws-002": "check_cloudtrail_bucket_encryption",
-    "au-3.3.8-aws-003": "check_cloudtrail_bucket_mfa_delete",
-    "ac-3.1.3-aws-002": "check_s3_public_access_block",
-    "ac-3.1.22-aws-001": "check_no_public_s3_buckets",
-    "mp-3.8.2-aws-001": "check_s3_cui_bucket_policies",
-    "mp-3.8.6-aws-001": "check_s3_bucket_encryption",
-    "sc-3.13.16-aws-001": "check_s3_default_encryption",
+    "au-2-aws-003": "check_cloudtrail_log_retention",
+    "au-2-aws-004": "check_cloudtrail_data_events",
+    "au-3-aws-001": "check_cloudtrail_user_identity",
+    "au-6-aws-002": "check_cloudtrail_cloudwatch_integration",
+    "au-9-aws-001": "check_cloudtrail_bucket_logging",
+    "au-9-aws-002": "check_cloudtrail_bucket_encryption",
+    "au-9-aws-003": "check_cloudtrail_bucket_mfa_delete",
+    "ac-4-aws-002": "check_s3_public_access_block",
+    "ac-4-4-aws-001": "check_no_public_s3_buckets",
+    "mp-4-aws-001": "check_s3_cui_bucket_policies",
+    "mp-5-aws-001": "check_s3_bucket_encryption",
+    "sc-28-1-aws-001": "check_s3_default_encryption",
     # --- Phase 3: EC2/VPC Network Checks (19) ---
-    "ac-3.1.7-aws-001": "check_cloudtrail_management_events",
-    "ac-3.1.12-aws-001": "check_vpn_monitoring",
-    "ac-3.1.13-aws-001": "check_vpn_encryption",
-    "ac-3.1.20-aws-001": "check_vpc_peering_reviewed",
-    "ac-3.1.20-aws-002": "check_transit_gateway_reviewed",
-    "cm-3.4.6-aws-001": "check_unused_security_groups",
-    "cm-3.4.7-aws-001": "check_sg_restrict_unnecessary_ports",
-    "mp-3.8.2-aws-002": "check_ebs_volumes_encrypted",
-    "mp-3.8.2-aws-003": "check_ebs_default_encryption_regions",
-    "sc-3.13.1-aws-002": "check_all_vpc_flow_logs",
-    "sc-3.13.3-aws-001": "check_subnet_separation",
-    "sc-3.13.4-aws-001": "check_ebs_snapshots_private",
-    "sc-3.13.4-aws-002": "check_amis_private",
-    "sc-3.13.5-aws-001": "check_public_private_subnet_isolation",
-    "sc-3.13.5-aws-002": "check_nat_gateway_usage",
-    "sc-3.13.6-aws-001": "check_default_sg_deny_all",
-    "sc-3.13.6-aws-002": "check_nacl_deny_default",
-    "sc-3.13.16-aws-004": "check_ebs_encryption_by_default",
-    "sc-3.13.10-aws-002": "check_kms_key_policy_least_privilege",
+    "ac-2-9-aws-001": "check_cloudtrail_management_events",
+    "ac-17-1-aws-001": "check_vpn_monitoring",
+    "ac-17-2-aws-001": "check_vpn_encryption",
+    "ac-21-aws-001": "check_vpc_peering_reviewed",
+    "ac-21-aws-002": "check_transit_gateway_reviewed",
+    "cm-7-aws-001": "check_unused_security_groups",
+    "cm-7-1-aws-001": "check_sg_restrict_unnecessary_ports",
+    "mp-4-aws-002": "check_ebs_volumes_encrypted",
+    "mp-4-aws-003": "check_ebs_default_encryption_regions",
+    "sc-7-aws-002": "check_all_vpc_flow_logs",
+    "sc-7-7-aws-001": "check_subnet_separation",
+    "sc-7-8-aws-001": "check_ebs_snapshots_private",
+    "sc-7-8-aws-002": "check_amis_private",
+    "sc-7-4-aws-001": "check_public_private_subnet_isolation",
+    "sc-7-4-aws-002": "check_nat_gateway_usage",
+    "sc-7-21-aws-001": "check_default_sg_deny_all",
+    "sc-7-21-aws-002": "check_nacl_deny_default",
+    "sc-28-1-aws-004": "check_ebs_encryption_by_default",
+    "sc-12-aws-002": "check_kms_key_policy_least_privilege",
     # --- Phase 4: SSM + Config + RDS + EFS + Backup (25) ---
-    "ac-3.1.12-aws-002": "check_session_manager_logging",
-    "ac-3.1.15-aws-001": "check_session_manager_usage",
-    "cm-3.4.1-aws-001": "check_config_enabled",
-    "cm-3.4.1-aws-002": "check_ssm_inventory",
-    "cm-3.4.1-aws-003": "check_ami_baseline",
-    "cm-3.4.2-aws-001": "check_config_cis_rules",
-    "cm-3.4.3-aws-001": "check_config_history",
-    "cm-3.4.3-aws-002": "check_cloudtrail_config_changes",
-    "cm-3.4.5-aws-002": "check_deployment_roles_scoped",
-    "cm-3.4.6-aws-002": "check_unused_iam_roles",
-    "cm-3.4.8-aws-001": "check_application_control",
-    "cm-3.4.9-aws-001": "check_software_inventory",
-    "ia-3.5.10-aws-002": "check_rds_ssl_enforcement",
-    "ma-3.7.1-aws-001": "check_patch_manager_configured",
-    "ma-3.7.1-aws-002": "check_patch_compliance",
-    "ma-3.7.1-aws-003": "check_rds_auto_upgrade",
-    "mp-3.8.6-aws-002": "check_rds_encryption",
-    "mp-3.8.6-aws-003": "check_efs_encryption",
-    "mp-3.8.9-aws-001": "check_backup_vault_encryption",
-    "mp-3.8.9-aws-002": "check_backup_vault_access_policy",
-    "mp-3.8.9-aws-003": "check_s3_replication_encryption",
-    "sc-3.13.16-aws-002": "check_rds_encryption_at_rest",
-    "si-3.14.1-aws-001": "check_ssm_patch_deployed",
-    "si-3.14.1-aws-002": "check_patch_compliance_sla",
-    "si-3.14.1-aws-004": "check_rds_auto_minor_upgrade",
+    "ac-17-1-aws-002": "check_session_manager_logging",
+    "ac-18-aws-001": "check_session_manager_usage",
+    "cm-2-aws-001": "check_config_enabled",
+    "cm-2-aws-002": "check_ssm_inventory",
+    "cm-2-aws-003": "check_ami_baseline",
+    "cm-6-aws-001": "check_config_cis_rules",
+    "cm-3-aws-001": "check_config_history",
+    "cm-3-aws-002": "check_cloudtrail_config_changes",
+    "cm-5-aws-002": "check_deployment_roles_scoped",
+    "cm-7-aws-002": "check_unused_iam_roles",
+    "cm-7-5-aws-001": "check_application_control",
+    "cm-8-aws-001": "check_software_inventory",
+    "ia-8-aws-002": "check_rds_ssl_enforcement",
+    "ma-2-aws-001": "check_patch_manager_configured",
+    "ma-2-aws-002": "check_patch_compliance",
+    "ma-2-aws-003": "check_rds_auto_upgrade",
+    "mp-5-aws-002": "check_rds_encryption",
+    "mp-5-aws-003": "check_efs_encryption",
+    "mp-4-2-aws-001": "check_backup_vault_encryption",
+    "mp-4-2-aws-002": "check_backup_vault_access_policy",
+    "mp-4-2-aws-003": "check_s3_replication_encryption",
+    "sc-28-1-aws-002": "check_rds_encryption_at_rest",
+    "si-2-aws-001": "check_ssm_patch_deployed",
+    "si-2-aws-002": "check_patch_compliance_sla",
+    "si-2-aws-004": "check_rds_auto_minor_upgrade",
     # --- Phase 5: SecurityHub + GuardDuty + Inspector (15) ---
-    "au-3.3.5-aws-001": "check_security_hub_enabled",
-    "ca-3.12.3-aws-001": "check_security_hub_monitoring",
-    "ca-3.12.3-aws-002": "check_config_rules_evaluating",
-    "ca-3.12.3-aws-003": "check_guardduty_all_features",
-    "cm-3.4.2-aws-002": "check_security_hub_cis",
-    "ir-3.6.1-aws-001": "check_guardduty_all_regions",
-    "ir-3.6.1-aws-002": "check_security_hub_findings",
-    "ra-3.11.2-aws-001": "check_inspector_enabled",
-    "ra-3.11.2-aws-003": "check_vulnerability_findings_age",
-    "si-3.14.1-aws-003": "check_inspector_findings_addressed",
-    "si-3.14.2-aws-001": "check_guardduty_malware_protection",
-    "si-3.14.3-aws-001": "check_security_hub_notifications",
-    "si-3.14.3-aws-002": "check_guardduty_alerting",
-    "si-3.14.5-aws-001": "check_inspector_continuous_scan",
-    "si-3.14.5-aws-002": "check_guardduty_ebs_scanning",
+    "au-6-aws-001": "check_security_hub_enabled",
+    "ca-7-aws-001": "check_security_hub_monitoring",
+    "ca-7-aws-002": "check_config_rules_evaluating",
+    "ca-7-aws-003": "check_guardduty_all_features",
+    "cm-6-aws-002": "check_security_hub_cis",
+    "ir-2-aws-001": "check_guardduty_all_regions",
+    "ir-2-aws-002": "check_security_hub_findings",
+    "ra-5-aws-001": "check_inspector_enabled",
+    "ra-5-aws-003": "check_vulnerability_findings_age",
+    "si-2-aws-003": "check_inspector_findings_addressed",
+    "si-3-aws-001": "check_guardduty_malware_protection",
+    "si-5-aws-001": "check_security_hub_notifications",
+    "si-5-aws-002": "check_guardduty_alerting",
+    "si-3-2-aws-001": "check_inspector_continuous_scan",
+    "si-3-2-aws-002": "check_guardduty_ebs_scanning",
     # --- Phase 6: WAF + ELB + CloudFront + ACM + Route53 + NF (14) ---
-    "ac-3.1.13-aws-002": "check_tls_on_load_balancers",
-    "sc-3.13.1-aws-001": "check_waf_deployed",
-    "sc-3.13.1-aws-003": "check_network_firewall",
-    "sc-3.13.7-aws-001": "check_vpn_full_tunnel",
-    "sc-3.13.8-aws-001": "check_alb_tls_policy",
-    "sc-3.13.8-aws-002": "check_cloudfront_tls",
-    "sc-3.13.8-aws-003": "check_s3_tls_policy",
-    "sc-3.13.9-aws-001": "check_alb_idle_timeout",
-    "sc-3.13.10-aws-003": "check_acm_certificates",
-    "sc-3.13.11-aws-001": "check_fips_endpoints",
-    "sc-3.13.13-aws-001": "check_waf_xss_sqli_rules",
-    "sc-3.13.15-aws-001": "check_acm_cert_validity",
-    "sc-3.13.15-aws-002": "check_dnssec_enabled",
-    "si-3.14.6-aws-003": "check_network_firewall_ids_ips",
+    "ac-17-2-aws-002": "check_tls_on_load_balancers",
+    "sc-7-aws-001": "check_waf_deployed",
+    "sc-7-aws-003": "check_network_firewall",
+    "sc-7-7-aws-001": "check_vpn_full_tunnel",
+    "sc-8-aws-001": "check_alb_tls_policy",
+    "sc-8-aws-002": "check_cloudfront_tls",
+    "sc-8-aws-003": "check_s3_tls_policy",
+    "sc-10-aws-001": "check_alb_idle_timeout",
+    "sc-12-aws-003": "check_acm_certificates",
+    "sc-13-aws-001": "check_fips_endpoints",
+    "sc-18-aws-001": "check_waf_xss_sqli_rules",
+    "sc-23-aws-001": "check_acm_cert_validity",
+    "sc-23-aws-002": "check_dnssec_enabled",
+    "si-4-aws-003": "check_network_firewall_ids_ips",
     # --- Phase 7: EventBridge + CW + SNS + DynamoDB + ECR + Logs (11) ---
-    "au-3.3.4-aws-001": "check_cloudwatch_cloudtrail_alarm",
-    "au-3.3.4-aws-002": "check_sns_audit_notifications",
-    "au-3.3.6-aws-001": "check_cloudwatch_logs_insights",
-    "ir-3.6.1-aws-003": "check_eventbridge_security_rules",
-    "ra-3.11.2-aws-002": "check_ecr_image_scanning",
-    "sc-3.13.16-aws-003": "check_dynamodb_encryption",
-    "si-3.14.6-aws-002": "check_flow_logs_analysis",
-    "si-3.14.7-aws-001": "check_guardduty_unauthorized_findings",
-    "si-3.14.7-aws-002": "check_cloudwatch_anomaly_detection",
-    "si-3.14.7-aws-003": "check_cloudtrail_insights",
-    "si-3.14.4-aws-002": "check_guardduty_threat_intel",
+    "au-5-aws-001": "check_cloudwatch_cloudtrail_alarm",
+    "au-5-aws-002": "check_sns_audit_notifications",
+    "au-7-aws-001": "check_cloudwatch_logs_insights",
+    "ir-2-aws-003": "check_eventbridge_security_rules",
+    "ra-5-aws-002": "check_ecr_image_scanning",
+    "sc-28-1-aws-003": "check_dynamodb_encryption",
+    "si-4-aws-002": "check_flow_logs_analysis",
+    "si-4-4-aws-001": "check_guardduty_unauthorized_findings",
+    "si-4-4-aws-002": "check_cloudwatch_anomaly_detection",
+    "si-4-4-aws-003": "check_cloudtrail_insights",
+    "si-3-1-aws-002": "check_guardduty_threat_intel",
     # --- Phase 8: Elevated-Permission Services (24) ---
-    "ac-3.1.5-aws-002": "check_access_analyzer",
-    "ac-3.1.7-aws-002": "check_scp_cloudtrail_protection",
-    "ac-3.1.8-aws-001": "check_sso_lockout_policy",
-    "ac-3.1.8-aws-002": "check_guardduty_brute_force",
-    "ac-3.1.11-aws-002": "check_sso_session_timeout",
-    "au-3.3.6-aws-002": "check_athena_cloudtrail_table",
-    "au-3.3.9-aws-002": "check_scp_audit_protection",
-    "cm-3.4.5-aws-001": "check_cicd_approval_gates",
-    "cm-3.4.7-aws-002": "check_scp_service_restrictions",
-    "ia-3.5.9-aws-001": "check_sso_force_password_change",
-    "ir-3.6.1-aws-004": "check_ir_playbooks",
-    "ma-3.7.5-aws-001": "check_session_manager_mfa",
-    "ma-3.7.5-aws-002": "check_vpn_mfa_required",
-    "sc-3.13.1-aws-004": "check_guardduty_vpc_monitoring",
-    "sc-3.13.3-aws-002": "check_ssm_management_access",
-    "sc-3.13.9-aws-002": "check_apigateway_timeout",
-    "si-3.14.2-aws-002": "check_endpoint_protection",
-    "si-3.14.2-aws-003": "check_s3_malware_scanning",
-    "si-3.14.3-aws-003": "check_health_dashboard_alerts",
-    "si-3.14.4-aws-001": "check_endpoint_protection_updates",
-    "si-3.14.5-aws-003": "check_s3_object_scanning",
-    "au-3.3.7-aws-001": "check_ntp_configured",
-    "ra-3.11.3-aws-001": "check_patch_state_compliance",
-    "ra-3.11.3-aws-002": "check_inspector_remediation_sla",
+    "ac-6-aws-002": "check_access_analyzer",
+    "ac-2-9-aws-002": "check_scp_cloudtrail_protection",
+    "ac-7-aws-001": "check_sso_lockout_policy",
+    "ac-7-aws-002": "check_guardduty_brute_force",
+    "ac-12-aws-002": "check_sso_session_timeout",
+    "au-7-aws-002": "check_athena_cloudtrail_table",
+    "au-9-4-aws-002": "check_scp_audit_protection",
+    "cm-5-aws-001": "check_cicd_approval_gates",
+    "cm-7-1-aws-002": "check_scp_service_restrictions",
+    "ia-5-2-aws-001": "check_sso_force_password_change",
+    "ir-2-aws-004": "check_ir_playbooks",
+    "ma-4-aws-001": "check_session_manager_mfa",
+    "ma-4-aws-002": "check_vpn_mfa_required",
+    "sc-7-aws-004": "check_guardduty_vpc_monitoring",
+    "sc-7-7-aws-002": "check_ssm_management_access",
+    "sc-10-aws-002": "check_apigateway_timeout",
+    "si-3-aws-002": "check_endpoint_protection",
+    "si-3-aws-003": "check_s3_malware_scanning",
+    "si-5-aws-003": "check_health_dashboard_alerts",
+    "si-3-1-aws-001": "check_endpoint_protection_updates",
+    "si-3-2-aws-003": "check_s3_object_scanning",
+    "au-8-aws-001": "check_ntp_configured",
+    "ra-5-5-aws-001": "check_patch_state_compliance",
+    "ra-5-5-aws-002": "check_inspector_remediation_sla",
+    # --- New FedRAMP checks: CP, PL, PT, SA, SR ---
+    "cp-2-aws-001": "check_dr_plan_tags",
+    "cp-4-aws-001": "check_resilience_hub_assessments",
+    "cp-6-aws-001": "check_s3_cross_region_replication",
+    "cp-6-aws-002": "check_rds_cross_region_replicas",
+    "cp-7-aws-001": "check_multi_region_deployment",
+    "cp-7-aws-002": "check_route53_health_checks",
+    "cp-9-aws-001": "check_backup_vaults_configured",
+    "cp-9-aws-002": "check_rds_automated_backups",
+    "cp-9-aws-003": "check_ebs_snapshots_scheduled",
+    "cp-9-aws-004": "check_dynamodb_pitr_enabled",
+    "cp-9-1-aws-001": "check_backup_restore_testing",
+    "cp-9-3-aws-001": "check_backup_cross_region_copy",
+    "cp-9-8-aws-001": "check_backup_vault_encryption",
+    "cp-9-8-aws-002": "check_rds_backup_encryption",
+    "cp-10-aws-001": "check_recovery_procedures_documented",
+    "cp-10-2-aws-001": "check_rds_point_in_time_recovery",
+    "pl-2-aws-001": "check_ssm_security_plan_documents",
+    "pl-8-aws-001": "check_architecture_tags",
+    "pl-8-aws-002": "check_vpc_flow_logs_architecture",
+    "pt-2-aws-001": "check_macie_enabled",
+    "pt-2-aws-002": "check_s3_data_classification_tags",
+    "pt-2-aws-003": "check_rds_data_classification_tags",
+    "pt-3-aws-001": "check_data_processing_purpose_tags",
+    "pt-4-aws-001": "check_api_consent_documentation",
+    "sa-3-aws-001": "check_codepipeline_configured",
+    "sa-3-aws-002": "check_codebuild_security_scanning",
+    "sa-4-9-aws-001": "check_security_groups_unused_ports",
+    "sa-9-2-aws-001": "check_api_gateway_documented",
+    "sa-10-aws-001": "check_codecommit_version_control",
+    "sa-10-aws-002": "check_cloudformation_version_control",
+    "sa-11-aws-001": "check_codebuild_test_stages",
+    "sa-11-1-aws-001": "check_codeguru_sast_integrated",
+    "sa-22-aws-001": "check_ssm_inventory_software_versions",
+    "sa-22-aws-002": "check_inspector_eol_software",
+    "sr-2-aws-001": "check_ecr_vulnerability_scanning",
+    "sr-2-aws-002": "check_inspector_sbom",
+    "sr-3-aws-001": "check_codebuild_dependency_scanning",
+    "sr-11-aws-001": "check_ecr_image_signing",
+    "sr-11-aws-002": "check_lambda_code_signing",
 }
 
 AZURE_CHECK_METHODS: dict[str, str] = {
     # --- Original 13 checks ---
-    "ac-3.1.1-azure-001": "check_conditional_access",
-    "ia-3.5.3-azure-001": "check_mfa_enabled",
-    "ac-3.1.14-azure-001": "check_nsg_rules",
-    "au-3.3.1-azure-001": "check_activity_log_alerts",
-    "sc-3.13.11-azure-001": "check_storage_encryption",
-    "sc-3.13.10-azure-001": "check_key_vault_config",
-    "si-3.14.6-azure-001": "check_security_center_enabled",
-    "sc-3.13.16-azure-003": "check_disk_encryption",
-    "sc-3.13.2-azure-001": "check_defense_in_depth",
-    "ac-3.1.16-azure-001": "check_vpn_remote_access",
-    "ac-3.1.18-azure-001": "check_mobile_device_control",
-    "ac-3.1.19-azure-001": "check_vm_disk_encryption",
-    "ac-3.1.21-azure-001": "check_storage_public_access",
+    "ac-2-azure-001": "check_conditional_access",
+    "ia-2-1-azure-001": "check_mfa_enabled",
+    "ac-17-3-azure-001": "check_nsg_rules",
+    "au-2-azure-001": "check_activity_log_alerts",
+    "sc-13-azure-001": "check_storage_encryption",
+    "sc-12-azure-001": "check_key_vault_config",
+    "si-4-azure-001": "check_security_center_enabled",
+    "sc-28-1-azure-003": "check_disk_encryption",
+    "sc-7-5-azure-001": "check_defense_in_depth",
+    "ac-19-azure-001": "check_vpn_remote_access",
+    "ac-20-azure-001": "check_mobile_device_control",
+    "ac-20-1-azure-001": "check_vm_disk_encryption",
+    "ac-3-8-azure-001": "check_storage_public_access",
     # --- Batch 1: Network (18) ---
-    "ac-3.1.3-azure-001": "check_nsg_flow_logs",
-    "ac-3.1.3-azure-002": "check_azure_firewall",
-    "ac-3.1.12-azure-001": "check_bastion_hosts",
-    "ac-3.1.13-azure-001": "check_vpn_encryption",
-    "ac-3.1.20-azure-001": "check_vnet_peering",
-    "sc-3.13.1-azure-001": "check_azure_firewall",
-    "sc-3.13.1-azure-002": "check_nsg_flow_logs_all",
-    "sc-3.13.1-azure-003": "check_waf_policies",
-    "sc-3.13.3-azure-001": "check_management_network_isolation",
-    "sc-3.13.5-azure-001": "check_dmz_subnet",
-    "sc-3.13.6-azure-001": "check_nsg_default_deny",
-    "sc-3.13.6-azure-002": "check_azure_firewall_default_deny",
-    "sc-3.13.7-azure-001": "check_vpn_forced_tunneling",
-    "sc-3.13.9-azure-001": "check_appgw_idle_timeout",
-    "cm-3.4.7-azure-001": "check_nsg_restrict_unnecessary_ports",
-    "sc-3.13.8-azure-001": "check_webapp_min_tls",
-    "si-3.14.1-azure-002": "check_defender_vulnerability_findings",
-    "au-3.3.1-azure-002": "check_network_watcher",
+    "ac-4-azure-001": "check_nsg_flow_logs",
+    "ac-4-azure-002": "check_azure_firewall",
+    "ac-17-1-azure-001": "check_bastion_hosts",
+    "ac-17-2-azure-001": "check_vpn_encryption",
+    "ac-21-azure-001": "check_vnet_peering",
+    "sc-7-azure-001": "check_azure_firewall",
+    "sc-7-azure-002": "check_nsg_flow_logs_all",
+    "sc-7-azure-003": "check_waf_policies",
+    "sc-7-7-azure-001": "check_management_network_isolation",
+    "sc-7-4-azure-001": "check_dmz_subnet",
+    "sc-7-21-azure-001": "check_nsg_default_deny",
+    "sc-7-21-azure-002": "check_azure_firewall_default_deny",
+    "sc-7-7-azure-001": "check_vpn_forced_tunneling",
+    "sc-10-azure-001": "check_appgw_idle_timeout",
+    "cm-7-1-azure-001": "check_nsg_restrict_unnecessary_ports",
+    "sc-8-azure-001": "check_webapp_min_tls",
+    "si-2-azure-002": "check_defender_vulnerability_findings",
+    "au-2-azure-002": "check_network_watcher",
     # --- Batch 2: Compute (8) ---
-    "ia-3.5.1-azure-002": "check_managed_identities",
-    "au-3.3.7-azure-001": "check_vm_time_sync",
-    "mp-3.8.2-azure-002": "check_managed_disk_encryption",
-    "ma-3.7.1-azure-002": "check_vm_patch_assessment",
-    "si-3.14.1-azure-001": "check_vm_update_manager",
-    "mp-3.8.6-azure-001": "check_storage_encryption",
-    "ac-3.1.22-azure-001": "check_storage_no_public_blobs",
-    "sc-3.13.11-azure-002": "check_disk_encryption",
+    "ia-2-azure-002": "check_managed_identities",
+    "au-8-azure-001": "check_vm_time_sync",
+    "mp-4-azure-002": "check_managed_disk_encryption",
+    "ma-2-azure-002": "check_vm_patch_assessment",
+    "si-2-azure-001": "check_vm_update_manager",
+    "mp-5-azure-001": "check_storage_encryption",
+    "ac-4-4-azure-001": "check_storage_no_public_blobs",
+    "sc-13-azure-002": "check_disk_encryption",
     # --- Batch 3: Storage (6) ---
-    "mp-3.8.2-azure-001": "check_storage_private_access",
-    "sc-3.13.16-azure-001": "check_storage_cmk_encryption",
-    "sc-3.13.8-azure-002": "check_storage_tls",
-    "au-3.3.8-azure-002": "check_immutable_audit_storage",
-    "sc-3.13.10-azure-002": "check_keyvault_access_least_privilege",
-    "sc-3.13.16-azure-002": "check_sql_tde_cmk",
+    "mp-4-azure-001": "check_storage_private_access",
+    "sc-28-1-azure-001": "check_storage_cmk_encryption",
+    "sc-8-azure-002": "check_storage_tls",
+    "au-9-azure-002": "check_immutable_audit_storage",
+    "sc-12-azure-002": "check_keyvault_access_least_privilege",
+    "sc-28-1-azure-002": "check_sql_tde_cmk",
     # --- Batch 4: Auth / Resource (5) ---
-    "ac-3.1.2-azure-001": "check_custom_rbac_least_privilege",
-    "ac-3.1.4-azure-001": "check_separation_of_duties",
-    "au-3.3.9-azure-001": "check_diagnostic_settings_restricted",
-    "cm-3.4.5-azure-001": "check_resource_locks",
-    "au-3.3.8-azure-001": "check_log_analytics_access_control",
+    "ac-3-azure-001": "check_custom_rbac_least_privilege",
+    "ac-5-azure-001": "check_separation_of_duties",
+    "au-9-4-azure-001": "check_diagnostic_settings_restricted",
+    "cm-5-azure-001": "check_resource_locks",
+    "au-9-azure-001": "check_log_analytics_access_control",
     # --- Batch 5: Monitor (5) ---
-    "ac-3.1.7-azure-001": "check_privilege_escalation_alerts",
-    "au-3.3.1-azure-003": "check_resource_diagnostic_settings",
-    "au-3.3.4-azure-001": "check_diagnostic_change_alerts",
-    "cm-3.4.3-azure-001": "check_activity_log_captures_changes",
-    "au-3.3.6-azure-001": "check_log_analytics_workspace",
+    "ac-2-9-azure-001": "check_privilege_escalation_alerts",
+    "au-2-azure-003": "check_resource_diagnostic_settings",
+    "au-5-azure-001": "check_diagnostic_change_alerts",
+    "cm-3-azure-001": "check_activity_log_captures_changes",
+    "au-7-azure-001": "check_log_analytics_workspace",
     # --- Batch 6: Security Center (13) ---
-    "ir-3.6.1-azure-001": "check_defender_plans_enabled",
-    "ac-3.1.5-azure-002": "check_jit_vm_access",
-    "cm-3.4.2-azure-002": "check_defender_secure_score",
-    "cm-3.4.8-azure-001": "check_adaptive_app_controls",
-    "ra-3.11.2-azure-001": "check_defender_vulnerability_findings",
-    "ra-3.11.2-azure-002": "check_defender_for_containers",
-    "ra-3.11.2-azure-003": "check_sql_vulnerability_assessment",
-    "ra-3.11.3-azure-002": "check_defender_recommendations",
-    "ca-3.12.3-azure-001": "check_defender_continuous_assessment",
-    "ca-3.12.3-azure-002": "check_policy_compliance_state",
-    "sc-3.13.11-azure-001": "check_storage_encryption",
-    "ac-3.1.5-azure-001": "check_global_admin_count",
-    "mp-3.8.9-azure-001": "check_recovery_vault_encryption",
+    "ir-2-azure-001": "check_defender_plans_enabled",
+    "ac-6-azure-002": "check_jit_vm_access",
+    "cm-6-azure-002": "check_defender_secure_score",
+    "cm-7-5-azure-001": "check_adaptive_app_controls",
+    "ra-5-azure-001": "check_defender_vulnerability_findings",
+    "ra-5-azure-002": "check_defender_for_containers",
+    "ra-5-azure-003": "check_sql_vulnerability_assessment",
+    "ra-5-5-azure-002": "check_defender_recommendations",
+    "ca-7-azure-001": "check_defender_continuous_assessment",
+    "ca-7-azure-002": "check_policy_compliance_state",
+    "sc-13-azure-001": "check_storage_encryption",
+    "ac-6-azure-001": "check_global_admin_count",
+    "mp-4-2-azure-001": "check_recovery_vault_encryption",
     # --- Batch 7: New Management SDKs (19+) ---
-    "mp-3.8.6-azure-002": "check_sql_tde",
-    "ia-3.5.10-azure-001": "check_webapp_https_only",
-    "cm-3.4.2-azure-001": "check_policy_assignments",
-    "mp-3.8.9-azure-002": "check_recovery_vault_soft_delete",
-    "cm-3.4.6-azure-001": "check_advisor_unused_resources",
-    "cm-3.4.1-azure-001": "check_resource_graph_inventory",
-    "ma-3.7.1-azure-001": "check_update_management",
-    "cm-3.4.9-azure-001": "check_change_tracking",
-    "ra-3.11.3-azure-001": "check_update_management_compliance",
-    "au-3.3.5-azure-001": "check_sentinel_enabled",
-    "ir-3.6.1-azure-002": "check_sentinel_deployed",
-    "ir-3.6.1-azure-003": "check_sentinel_automation_rules",
-    "cm-3.4.1-azure-002": "check_guest_configuration",
+    "mp-5-azure-002": "check_sql_tde",
+    "ia-8-azure-001": "check_webapp_https_only",
+    "cm-6-azure-001": "check_policy_assignments",
+    "mp-4-2-azure-002": "check_recovery_vault_soft_delete",
+    "cm-7-azure-001": "check_advisor_unused_resources",
+    "cm-2-azure-001": "check_resource_graph_inventory",
+    "ma-2-azure-001": "check_update_management",
+    "cm-8-azure-001": "check_change_tracking",
+    "ra-5-5-azure-001": "check_update_management_compliance",
+    "au-6-azure-001": "check_sentinel_enabled",
+    "ir-2-azure-002": "check_sentinel_deployed",
+    "ir-2-azure-003": "check_sentinel_automation_rules",
+    "cm-2-azure-002": "check_guest_configuration",
     # --- Batch 8: Graph API (25) ---
-    "ac-3.1.1-azure-002": "check_guest_access_restricted",
-    "ac-3.1.1-azure-003": "check_security_defaults",
-    "ac-3.1.2-azure-002": "check_pim_enabled",
-    "ac-3.1.6-azure-001": "check_admin_accounts_separate",
-    "ac-3.1.8-azure-001": "check_smart_lockout",
-    "ac-3.1.10-azure-001": "check_conditional_access_session_controls",
-    "ac-3.1.11-azure-001": "check_token_lifetime_policy",
-    "ac-3.1.15-azure-001": "check_paw_policy",
-    "ia-3.5.1-azure-001": "check_unique_users",
-    "ia-3.5.2-azure-001": "check_mfa_registration",
-    "ia-3.5.2-azure-002": "check_legacy_auth_blocked",
-    "ia-3.5.3-azure-002": "check_mfa_azure_management",
-    "ia-3.5.4-azure-001": "check_fido2_enabled",
-    "ia-3.5.5-azure-001": "check_deleted_users_soft_delete",
-    "ia-3.5.6-azure-001": "check_inactive_users",
-    "ia-3.5.7-azure-001": "check_password_protection",
-    "ia-3.5.8-azure-001": "check_password_history",
-    "ia-3.5.9-azure-001": "check_force_password_change",
-    "au-3.3.2-azure-001": "check_sign_in_logs",
-    "ma-3.7.5-azure-001": "check_mfa_bastion_access",
-    "ia-3.5.3-azure-001": "check_mfa_conditional_access",
+    "ac-2-azure-002": "check_guest_access_restricted",
+    "ac-2-azure-003": "check_security_defaults",
+    "ac-3-azure-002": "check_pim_enabled",
+    "ac-6-3-azure-001": "check_admin_accounts_separate",
+    "ac-7-azure-001": "check_smart_lockout",
+    "ac-11-azure-001": "check_conditional_access_session_controls",
+    "ac-12-azure-001": "check_token_lifetime_policy",
+    "ac-18-azure-001": "check_paw_policy",
+    "ia-2-azure-001": "check_unique_users",
+    "ia-3-azure-001": "check_mfa_registration",
+    "ia-3-azure-002": "check_legacy_auth_blocked",
+    "ia-2-1-azure-002": "check_mfa_azure_management",
+    "ia-2-2-azure-001": "check_fido2_enabled",
+    "ia-4-azure-001": "check_deleted_users_soft_delete",
+    "ia-4-4-azure-001": "check_inactive_users",
+    "ia-5-azure-001": "check_password_protection",
+    "ia-5-1-azure-001": "check_password_history",
+    "ia-5-2-azure-001": "check_force_password_change",
+    "au-3-azure-001": "check_sign_in_logs",
+    "ma-4-azure-001": "check_mfa_bastion_access",
+    "ia-2-1-azure-001": "check_mfa_conditional_access",
     # --- Additional checks found in config (16) ---
-    "sc-3.13.4-azure-001": "check_shared_disks_restricted",
-    "sc-3.13.13-azure-001": "check_waf_owasp_rules",
-    "sc-3.13.15-azure-001": "check_app_service_certificates",
-    "si-3.14.1-azure-003": "check_webapp_platform_version",
-    "si-3.14.2-azure-001": "check_defender_for_endpoint",
-    "si-3.14.2-azure-002": "check_antimalware_extension",
-    "si-3.14.3-azure-001": "check_security_contacts",
-    "si-3.14.3-azure-002": "check_service_health_alerts",
-    "si-3.14.4-azure-001": "check_defender_signature_updates",
-    "si-3.14.5-azure-001": "check_scheduled_vulnerability_scans",
-    "si-3.14.5-azure-002": "check_realtime_protection",
-    "si-3.14.6-azure-002": "check_azure_firewall_idps",
-    "si-3.14.6-azure-003": "check_nsg_flow_log_analytics",
-    "si-3.14.7-azure-001": "check_identity_protection_risk",
-    "si-3.14.7-azure-002": "check_sentinel_ueba",
-    "si-3.14.7-azure-003": "check_risky_users",
+    "sc-7-8-azure-001": "check_shared_disks_restricted",
+    "sc-18-azure-001": "check_waf_owasp_rules",
+    "sc-23-azure-001": "check_app_service_certificates",
+    "si-2-azure-003": "check_webapp_platform_version",
+    "si-3-azure-001": "check_defender_for_endpoint",
+    "si-3-azure-002": "check_antimalware_extension",
+    "si-5-azure-001": "check_security_contacts",
+    "si-5-azure-002": "check_service_health_alerts",
+    "si-3-1-azure-001": "check_defender_signature_updates",
+    "si-3-2-azure-001": "check_scheduled_vulnerability_scans",
+    "si-3-2-azure-002": "check_realtime_protection",
+    "si-4-azure-002": "check_azure_firewall_idps",
+    "si-4-azure-003": "check_nsg_flow_log_analytics",
+    "si-4-4-azure-001": "check_identity_protection_risk",
+    "si-4-4-azure-002": "check_sentinel_ueba",
+    "si-4-4-azure-003": "check_risky_users",
+    # --- New FedRAMP checks: CP, PL, PT, SA, SR ---
+    "cp-2-azure-001": "check_dr_plan_tags",
+    "cp-4-azure-001": "check_site_recovery_test_failover",
+    "cp-6-azure-001": "check_storage_geo_redundancy",
+    "cp-6-azure-002": "check_sql_geo_replication",
+    "cp-7-azure-001": "check_multi_region_deployment",
+    "cp-7-azure-002": "check_traffic_manager_failover",
+    "cp-9-azure-001": "check_vm_backup_configured",
+    "cp-9-azure-002": "check_sql_automated_backups",
+    "cp-9-azure-003": "check_storage_soft_delete",
+    "cp-9-1-azure-001": "check_backup_restore_testing",
+    "cp-9-3-azure-001": "check_backup_geo_replication",
+    "cp-9-8-azure-001": "check_recovery_vault_encryption",
+    "cp-10-azure-001": "check_site_recovery_configured",
+    "cp-10-2-azure-001": "check_sql_point_in_time_restore",
+    "pl-2-azure-001": "check_blueprint_security_plans",
+    "pl-8-azure-001": "check_architecture_tags",
+    "pl-8-azure-002": "check_nsg_flow_logs_architecture",
+    "pt-2-azure-001": "check_purview_enabled",
+    "pt-2-azure-002": "check_storage_data_classification_tags",
+    "pt-2-azure-003": "check_sql_data_classification_tags",
+    "pt-3-azure-001": "check_data_processing_purpose_tags",
+    "pt-4-azure-001": "check_api_consent_documentation",
+    "sa-3-azure-001": "check_azure_pipelines_configured",
+    "sa-4-9-azure-001": "check_nsg_unused_ports",
+    "sa-9-2-azure-001": "check_api_management_documented",
+    "sa-10-azure-001": "check_azure_repos_branch_policies",
+    "sa-11-azure-001": "check_pipeline_test_stages",
+    "sa-11-1-azure-001": "check_security_devops_sast",
+    "sa-22-azure-001": "check_defender_eol_software",
+    "sr-2-azure-001": "check_acr_vulnerability_scanning",
+    "sr-3-azure-001": "check_pipeline_dependency_scanning",
+    "sr-11-azure-001": "check_acr_content_trust",
 }
 
 GCP_CHECK_METHODS: dict[str, str] = {
     # --- Original 13 checks ---
-    "ac-3.1.1-gcp-001": "check_iam_bindings",
-    "au-3.3.1-gcp-002": "check_audit_logging",
-    "ac-3.1.14-gcp-001": "check_vpc_firewall_rules",
-    "sc-3.13.10-gcp-001": "check_kms_key_rotation",
-    "sc-3.13.11-gcp-001": "check_compute_disk_encryption",
-    "sc-3.13.6-gcp-001": "check_cloud_armor",
-    "au-3.3.1-gcp-003": "check_logging_enabled",
-    "cm-3.4.2-gcp-001": "check_org_policy_constraints",
-    "sc-3.13.2-gcp-001": "check_defense_in_depth",
-    "ac-3.1.16-gcp-001": "check_vpn_remote_access",
-    "ac-3.1.18-gcp-001": "check_mobile_device_control",
-    "ac-3.1.19-gcp-001": "check_cmek_org_policy",
-    "ac-3.1.21-gcp-001": "check_uniform_bucket_access",
+    "ac-2-gcp-001": "check_iam_bindings",
+    "au-2-gcp-002": "check_audit_logging",
+    "ac-17-3-gcp-001": "check_vpc_firewall_rules",
+    "sc-12-gcp-001": "check_kms_key_rotation",
+    "sc-13-gcp-001": "check_compute_disk_encryption",
+    "sc-7-21-gcp-001": "check_cloud_armor",
+    "au-2-gcp-003": "check_logging_enabled",
+    "cm-6-gcp-001": "check_org_policy_constraints",
+    "sc-7-5-gcp-001": "check_defense_in_depth",
+    "ac-19-gcp-001": "check_vpn_remote_access",
+    "ac-20-gcp-001": "check_mobile_device_control",
+    "ac-20-1-gcp-001": "check_cmek_org_policy",
+    "ac-3-8-gcp-001": "check_uniform_bucket_access",
     # --- IAM & Resource Manager ---
-    "ac-3.1.1-gcp-002": "check_service_account_keys_rotated",
-    "ac-3.1.1-gcp-003": "check_default_sa_not_used",
-    "ac-3.1.2-gcp-001": "check_custom_iam_roles_scoped",
-    "ac-3.1.2-gcp-002": "check_primitive_roles_not_assigned",
-    "ac-3.1.4-gcp-001": "check_separation_of_duties",
-    "ac-3.1.5-gcp-001": "check_owner_role_limited",
-    "ac-3.1.5-gcp-002": "check_iam_recommender",
-    "ac-3.1.6-gcp-001": "check_admin_user_separation",
-    "ac-3.1.7-gcp-001": "check_admin_activity_logs",
-    "ac-3.1.7-gcp-002": "check_iam_changes_alerts",
-    "ac-3.1.8-gcp-001": "check_workspace_login_challenge",
-    "ac-3.1.10-gcp-001": "check_session_control_policy",
-    "ac-3.1.11-gcp-001": "check_oauth_token_expiration",
-    "ac-3.1.12-gcp-001": "check_iap_tcp_forwarding",
-    "ac-3.1.13-gcp-001": "check_vpn_ikev2_encryption",
-    "ac-3.1.15-gcp-001": "check_os_login_enabled",
-    "ac-3.1.20-gcp-001": "check_vpc_peering",
-    "ac-3.1.22-gcp-001": "check_no_public_buckets",
+    "ac-2-gcp-002": "check_service_account_keys_rotated",
+    "ac-2-gcp-003": "check_default_sa_not_used",
+    "ac-3-gcp-001": "check_custom_iam_roles_scoped",
+    "ac-3-gcp-002": "check_primitive_roles_not_assigned",
+    "ac-5-gcp-001": "check_separation_of_duties",
+    "ac-6-gcp-001": "check_owner_role_limited",
+    "ac-6-gcp-002": "check_iam_recommender",
+    "ac-6-3-gcp-001": "check_admin_user_separation",
+    "ac-2-9-gcp-001": "check_admin_activity_logs",
+    "ac-2-9-gcp-002": "check_iam_changes_alerts",
+    "ac-7-gcp-001": "check_workspace_login_challenge",
+    "ac-11-gcp-001": "check_session_control_policy",
+    "ac-12-gcp-001": "check_oauth_token_expiration",
+    "ac-17-1-gcp-001": "check_iap_tcp_forwarding",
+    "ac-17-2-gcp-001": "check_vpn_ikev2_encryption",
+    "ac-18-gcp-001": "check_os_login_enabled",
+    "ac-21-gcp-001": "check_vpc_peering",
+    "ac-4-4-gcp-001": "check_no_public_buckets",
     # --- VPC / Network ---
-    "ac-3.1.3-gcp-001": "check_vpc_flow_logs",
-    "ac-3.1.3-gcp-002": "check_firewall_least_privilege",
+    "ac-4-gcp-001": "check_vpc_flow_logs",
+    "ac-4-gcp-002": "check_firewall_least_privilege",
     # --- Audit & Accountability ---
-    "au-3.3.1-gcp-001": "check_admin_activity_logs",
-    "au-3.3.2-gcp-001": "check_audit_logs_principal",
-    "au-3.3.4-gcp-001": "check_alert_log_sink_changes",
-    "au-3.3.5-gcp-001": "check_scc_enabled",
-    "au-3.3.6-gcp-001": "check_log_analytics_enabled",
-    "au-3.3.7-gcp-001": "check_gce_ntp_sync",
-    "au-3.3.8-gcp-001": "check_audit_log_bucket_retention",
-    "au-3.3.8-gcp-002": "check_audit_log_bucket_access",
-    "au-3.3.9-gcp-001": "check_logging_admin_restricted",
+    "au-2-gcp-001": "check_admin_activity_logs",
+    "au-3-gcp-001": "check_audit_logs_principal",
+    "au-5-gcp-001": "check_alert_log_sink_changes",
+    "au-6-gcp-001": "check_scc_enabled",
+    "au-7-gcp-001": "check_log_analytics_enabled",
+    "au-8-gcp-001": "check_gce_ntp_sync",
+    "au-9-gcp-001": "check_audit_log_bucket_retention",
+    "au-9-gcp-002": "check_audit_log_bucket_access",
+    "au-9-4-gcp-001": "check_logging_admin_restricted",
     # --- Security Assessment ---
-    "ca-3.12.3-gcp-001": "check_scc_continuous_monitoring",
-    "ca-3.12.3-gcp-002": "check_org_policy_compliance",
+    "ca-7-gcp-001": "check_scc_continuous_monitoring",
+    "ca-7-gcp-002": "check_org_policy_compliance",
     # --- Configuration Management ---
-    "cm-3.4.1-gcp-001": "check_asset_inventory",
-    "cm-3.4.1-gcp-002": "check_os_config_inventory",
-    "cm-3.4.2-gcp-002": "check_scc_cis_findings",
-    "cm-3.4.3-gcp-001": "check_admin_activity_logs_capture",
-    "cm-3.4.5-gcp-001": "check_project_lien",
-    "cm-3.4.6-gcp-001": "check_unused_firewall_rules",
-    "cm-3.4.7-gcp-001": "check_firewall_restrict_ports",
-    "cm-3.4.8-gcp-001": "check_binary_authorization",
-    "cm-3.4.9-gcp-001": "check_os_config_patch",
+    "cm-2-gcp-001": "check_asset_inventory",
+    "cm-2-gcp-002": "check_os_config_inventory",
+    "cm-6-gcp-002": "check_scc_cis_findings",
+    "cm-3-gcp-001": "check_admin_activity_logs_capture",
+    "cm-5-gcp-001": "check_project_lien",
+    "cm-7-gcp-001": "check_unused_firewall_rules",
+    "cm-7-1-gcp-001": "check_firewall_restrict_ports",
+    "cm-7-5-gcp-001": "check_binary_authorization",
+    "cm-8-gcp-001": "check_os_config_patch",
     # --- Identification & Authentication ---
-    "ia-3.5.1-gcp-001": "check_all_users_identified",
-    "ia-3.5.1-gcp-002": "check_service_accounts_identified",
-    "ia-3.5.2-gcp-001": "check_workspace_2sv",
-    "ia-3.5.3-gcp-001": "check_workspace_2sv_org",
-    "ia-3.5.3-gcp-002": "check_workspace_security_key_admin",
-    "ia-3.5.4-gcp-001": "check_workspace_security_key",
-    "ia-3.5.5-gcp-001": "check_workspace_user_identifiers",
-    "ia-3.5.6-gcp-001": "check_inactive_sa_keys",
-    "ia-3.5.7-gcp-001": "check_workspace_password_policy",
-    "ia-3.5.8-gcp-001": "check_workspace_password_reuse",
-    "ia-3.5.9-gcp-001": "check_workspace_force_password_change",
-    "ia-3.5.10-gcp-001": "check_sql_ssl_enforced",
+    "ia-2-gcp-001": "check_all_users_identified",
+    "ia-2-gcp-002": "check_service_accounts_identified",
+    "ia-3-gcp-001": "check_workspace_2sv",
+    "ia-2-1-gcp-001": "check_workspace_2sv_org",
+    "ia-2-1-gcp-002": "check_workspace_security_key_admin",
+    "ia-2-2-gcp-001": "check_workspace_security_key",
+    "ia-4-gcp-001": "check_workspace_user_identifiers",
+    "ia-4-4-gcp-001": "check_inactive_sa_keys",
+    "ia-5-gcp-001": "check_workspace_password_policy",
+    "ia-5-1-gcp-001": "check_workspace_password_reuse",
+    "ia-5-2-gcp-001": "check_workspace_force_password_change",
+    "ia-8-gcp-001": "check_sql_ssl_enforced",
     # --- Incident Response ---
-    "ir-3.6.1-gcp-001": "check_scc_premium",
-    "ir-3.6.1-gcp-002": "check_event_threat_detection",
-    "ir-3.6.1-gcp-003": "check_scc_notifications",
+    "ir-2-gcp-001": "check_scc_premium",
+    "ir-2-gcp-002": "check_event_threat_detection",
+    "ir-2-gcp-003": "check_scc_notifications",
     # --- Maintenance ---
-    "ma-3.7.1-gcp-001": "check_os_config_patch",
-    "ma-3.7.1-gcp-002": "check_container_vulnerability_scanning",
-    "ma-3.7.5-gcp-001": "check_workspace_2sv_admin_console",
+    "ma-2-gcp-001": "check_os_config_patch",
+    "ma-2-gcp-002": "check_container_vulnerability_scanning",
+    "ma-4-gcp-001": "check_workspace_2sv_admin_console",
     # --- Media Protection ---
-    "mp-3.8.2-gcp-001": "check_bucket_access_restricted",
-    "mp-3.8.2-gcp-002": "check_disk_cmek",
-    "mp-3.8.6-gcp-001": "check_bucket_cmek_encryption",
-    "mp-3.8.6-gcp-002": "check_sql_encrypted",
-    "mp-3.8.9-gcp-001": "check_backup_cmek",
+    "mp-4-gcp-001": "check_bucket_access_restricted",
+    "mp-4-gcp-002": "check_disk_cmek",
+    "mp-5-gcp-001": "check_bucket_cmek_encryption",
+    "mp-5-gcp-002": "check_sql_encrypted",
+    "mp-4-2-gcp-001": "check_backup_cmek",
     # --- Risk Assessment ---
-    "ra-3.11.2-gcp-001": "check_web_security_scanner",
-    "ra-3.11.2-gcp-002": "check_container_vulnerability_scanning",
-    "ra-3.11.2-gcp-003": "check_scc_health_analytics",
-    "ra-3.11.3-gcp-001": "check_os_config_patch_compliance",
-    "ra-3.11.3-gcp-002": "check_scc_critical_remediated",
+    "ra-5-gcp-001": "check_web_security_scanner",
+    "ra-5-gcp-002": "check_container_vulnerability_scanning",
+    "ra-5-gcp-003": "check_scc_health_analytics",
+    "ra-5-5-gcp-001": "check_os_config_patch_compliance",
+    "ra-5-5-gcp-002": "check_scc_critical_remediated",
     # --- System & Communications Protection ---
-    "sc-3.13.1-gcp-001": "check_cloud_armor_waf_rules",
-    "sc-3.13.1-gcp-002": "check_vpc_flow_logs",
-    "sc-3.13.1-gcp-003": "check_packet_mirroring_ids",
-    "sc-3.13.3-gcp-001": "check_management_network_segmented",
-    "sc-3.13.4-gcp-001": "check_images_not_public",
-    "sc-3.13.5-gcp-001": "check_public_subnets_dedicated",
-    "sc-3.13.6-gcp-002": "check_default_egress_reviewed",
-    "sc-3.13.7-gcp-001": "check_vpn_full_tunnel",
-    "sc-3.13.8-gcp-001": "check_ssl_policies_tls12",
-    "sc-3.13.8-gcp-002": "check_sql_ssl_connections",
-    "sc-3.13.9-gcp-001": "check_lb_timeout",
-    "sc-3.13.10-gcp-002": "check_kms_iam_restricted",
-    "sc-3.13.13-gcp-001": "check_cloud_armor_waf_rules",
-    "sc-3.13.15-gcp-001": "check_ssl_certificates",
-    "sc-3.13.16-gcp-001": "check_storage_cmek",
-    "sc-3.13.16-gcp-002": "check_sql_cmek",
-    "sc-3.13.16-gcp-003": "check_bigquery_cmek",
+    "sc-7-gcp-001": "check_cloud_armor_waf_rules",
+    "sc-7-gcp-002": "check_vpc_flow_logs",
+    "sc-7-gcp-003": "check_packet_mirroring_ids",
+    "sc-7-7-gcp-001": "check_management_network_segmented",
+    "sc-7-8-gcp-001": "check_images_not_public",
+    "sc-7-4-gcp-001": "check_public_subnets_dedicated",
+    "sc-7-21-gcp-002": "check_default_egress_reviewed",
+    "sc-7-7-gcp-001": "check_vpn_full_tunnel",
+    "sc-8-gcp-001": "check_ssl_policies_tls12",
+    "sc-8-gcp-002": "check_sql_ssl_connections",
+    "sc-10-gcp-001": "check_lb_timeout",
+    "sc-12-gcp-002": "check_kms_iam_restricted",
+    "sc-18-gcp-001": "check_cloud_armor_waf_rules",
+    "sc-23-gcp-001": "check_ssl_certificates",
+    "sc-28-1-gcp-001": "check_storage_cmek",
+    "sc-28-1-gcp-002": "check_sql_cmek",
+    "sc-28-1-gcp-003": "check_bigquery_cmek",
     # --- System & Information Integrity ---
-    "si-3.14.1-gcp-001": "check_os_config_patch",
-    "si-3.14.1-gcp-002": "check_gke_auto_upgrade",
-    "si-3.14.1-gcp-003": "check_container_findings_addressed",
-    "si-3.14.2-gcp-001": "check_endpoint_protection",
-    "si-3.14.2-gcp-002": "check_malware_scanning_storage",
-    "si-3.14.3-gcp-001": "check_scc_notifications",
-    "si-3.14.3-gcp-002": "check_monitoring_security_alerts",
-    "si-3.14.4-gcp-001": "check_endpoint_auto_update",
-    "si-3.14.5-gcp-001": "check_container_scanning_continuous",
-    "si-3.14.5-gcp-002": "check_web_security_scanner_periodic",
-    "si-3.14.6-gcp-001": "check_cloud_ids_deployed",
-    "si-3.14.6-gcp-002": "check_vpc_flow_logs_analyzed",
-    "si-3.14.6-gcp-003": "check_event_threat_detection",
-    "si-3.14.7-gcp-001": "check_event_threat_detection",
-    "si-3.14.7-gcp-002": "check_anomaly_detection_alerts",
-    "si-3.14.7-gcp-003": "check_access_transparency_logs",
+    "si-2-gcp-001": "check_os_config_patch",
+    "si-2-gcp-002": "check_gke_auto_upgrade",
+    "si-2-gcp-003": "check_container_findings_addressed",
+    "si-3-gcp-001": "check_endpoint_protection",
+    "si-3-gcp-002": "check_malware_scanning_storage",
+    "si-5-gcp-001": "check_scc_notifications",
+    "si-5-gcp-002": "check_monitoring_security_alerts",
+    "si-3-1-gcp-001": "check_endpoint_auto_update",
+    "si-3-2-gcp-001": "check_container_scanning_continuous",
+    "si-3-2-gcp-002": "check_web_security_scanner_periodic",
+    "si-4-gcp-001": "check_cloud_ids_deployed",
+    "si-4-gcp-002": "check_vpc_flow_logs_analyzed",
+    "si-4-gcp-003": "check_event_threat_detection",
+    "si-4-4-gcp-001": "check_event_threat_detection",
+    "si-4-4-gcp-002": "check_anomaly_detection_alerts",
+    "si-4-4-gcp-003": "check_access_transparency_logs",
+    # --- New FedRAMP checks: CP, PL, PT, SA, SR ---
+    "cp-2-gcp-001": "check_dr_plan_labels",
+    "cp-4-gcp-001": "check_dr_test_logging",
+    "cp-6-gcp-001": "check_storage_multi_region",
+    "cp-6-gcp-002": "check_cloudsql_cross_region_replicas",
+    "cp-7-gcp-001": "check_multi_region_deployment",
+    "cp-7-gcp-002": "check_load_balancer_multi_region",
+    "cp-9-gcp-001": "check_disk_snapshot_schedules",
+    "cp-9-gcp-002": "check_cloudsql_automated_backups",
+    "cp-9-gcp-003": "check_storage_versioning",
+    "cp-9-1-gcp-001": "check_snapshot_restore_testing",
+    "cp-9-3-gcp-001": "check_snapshot_separate_region",
+    "cp-9-8-gcp-001": "check_snapshot_encryption",
+    "cp-10-gcp-001": "check_recovery_procedures_documented",
+    "cp-10-2-gcp-001": "check_cloudsql_point_in_time_recovery",
+    "pl-2-gcp-001": "check_org_policy_security_plans",
+    "pl-8-gcp-001": "check_architecture_labels",
+    "pl-8-gcp-002": "check_vpc_flow_logs_architecture",
+    "pt-2-gcp-001": "check_dlp_enabled",
+    "pt-2-gcp-002": "check_storage_data_classification_labels",
+    "pt-2-gcp-003": "check_bigquery_data_classification_labels",
+    "pt-3-gcp-001": "check_data_processing_purpose_labels",
+    "pt-4-gcp-001": "check_api_consent_documentation",
+    "sa-3-gcp-001": "check_cloud_build_triggers",
+    "sa-4-9-gcp-001": "check_firewall_unused_ports",
+    "sa-9-2-gcp-001": "check_api_gateway_documented",
+    "sa-10-gcp-001": "check_source_repos_configured",
+    "sa-11-gcp-001": "check_cloud_build_test_steps",
+    "sa-11-1-gcp-001": "check_cloud_build_sast",
+    "sa-22-gcp-001": "check_scc_eol_software",
+    "sr-2-gcp-001": "check_artifact_registry_scanning",
+    "sr-3-gcp-001": "check_cloud_build_dependency_scanning",
+    "sr-11-gcp-001": "check_binary_authorization",
 }
 
 PLATFORM_CHECK_METHODS: dict[str, dict[str, str]] = {
@@ -571,7 +665,7 @@ def _load_checks(environment: str) -> list[dict]:
     relevant to the current platform.  Each config check is converted to the
     flat dict format expected by ``run_scan()``.
 
-    For manual-only practices the entry has ``check_type="manual"``.
+    For manual-only controls the entry has ``check_type="manual"``.
     For automated checks with a real scanner method, ``method`` is set.
     For automated checks without a scanner method yet, ``method`` is None
     so ``run_scan()`` can flag them as "not yet implemented".
@@ -605,21 +699,21 @@ def _load_checks(environment: str) -> list[dict]:
 
         domain_code = data.get("domain", "")
         domain_name = data.get("name", "")
-        practices = data.get("checks", {})
+        controls = data.get("checks", {})
 
-        for practice_id, practice_data in practices.items():
-            # --- Manual-only practice ---
-            if practice_data.get("manual_only"):
-                guidance = practice_data.get("manual_guidance", "")
-                evidence_reqs = practice_data.get("evidence_requests", [])
+        for control_id, control_data in controls.items():
+            # --- Manual-only control ---
+            if control_data.get("manual_only"):
+                guidance = control_data.get("manual_guidance", "")
+                evidence_reqs = control_data.get("evidence_requests", [])
                 evidence_text = guidance
                 if evidence_reqs:
                     evidence_text += "\n\nEvidence requested:\n- " + "\n- ".join(evidence_reqs)
 
                 checks.append({
-                    "check_id": f"{domain_code.lower()}-{practice_id}-manual",
-                    "practice_id": practice_id,
-                    "check_name": f"{domain_name} — {practice_id} (Manual Review)",
+                    "check_id": f"{domain_code.lower()}-{control_id}-manual",
+                    "control_id": control_id,
+                    "check_name": f"{domain_name} — {control_id} (Manual Review)",
                     "check_type": "manual",
                     "method": None,
                     "severity": "medium",
@@ -629,12 +723,12 @@ def _load_checks(environment: str) -> list[dict]:
                 continue
 
             # --- Platform-specific automated checks ---
-            platform_checks = practice_data.get(platform, [])
+            platform_checks = control_data.get(platform, [])
             for chk in platform_checks:
                 check_id = chk.get("check_id", "")
                 checks.append({
                     "check_id": check_id,
-                    "practice_id": practice_id,
+                    "control_id": control_id,
                     "check_name": chk.get("name", ""),
                     "check_type": "automated",
                     "method": method_map.get(check_id),  # None if not implemented
@@ -665,7 +759,7 @@ def _get_builtin_checks(environment: str) -> list[dict]:
     Return built-in check definitions when config files are not present.
 
     Provides a comprehensive set of checks for each cloud platform covering
-    key CMMC practices across all 14 domains.
+    key FedRAMP controls across all 20 families.
     """
     if environment.startswith("aws"):
         return _get_aws_builtin_checks()
@@ -679,8 +773,8 @@ def _get_builtin_checks(environment: str) -> list[dict]:
 def _get_aws_builtin_checks() -> list[dict]:
     return [
         {
-            "check_id": "ac-3.1.1-aws-001",
-            "practice_id": "3.1.1",
+            "check_id": "ac-2-aws-001",
+            "control_id": "3.1.1",
             "check_name": "Limit system access to authorized users",
             "check_type": "automated",
             "method": "check_root_access_keys",
@@ -688,8 +782,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Remove root account access keys and use IAM users with least privilege.",
         },
         {
-            "check_id": "ac-3.1.1-aws-002",
-            "practice_id": "3.1.1",
+            "check_id": "ac-2-aws-002",
+            "control_id": "3.1.1",
             "check_name": "IAM password policy strength",
             "check_type": "automated",
             "method": "check_password_policy",
@@ -697,8 +791,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Configure IAM password policy with minimum 14 characters, complexity requirements, and 90-day rotation.",
         },
         {
-            "check_id": "ia-3.5.3-aws-001",
-            "practice_id": "3.5.3",
+            "check_id": "ia-2-1-aws-001",
+            "control_id": "3.5.3",
             "check_name": "Multi-factor authentication for privileged accounts",
             "check_type": "automated",
             "method": "check_mfa_enabled",
@@ -706,8 +800,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable MFA for all IAM users, especially those with administrative privileges.",
         },
         {
-            "check_id": "au-3.3.1-aws-001",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-aws-001",
+            "control_id": "3.3.1",
             "check_name": "CloudTrail audit logging enabled",
             "check_type": "automated",
             "method": "check_cloudtrail_enabled",
@@ -715,8 +809,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable AWS CloudTrail in all regions with management event logging.",
         },
         {
-            "check_id": "au-3.3.1-aws-002",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-aws-002",
+            "control_id": "3.3.1",
             "check_name": "CloudTrail log file validation",
             "check_type": "automated",
             "method": "check_cloudtrail_log_validation",
@@ -724,8 +818,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable log file validation on all CloudTrail trails to detect tampering.",
         },
         {
-            "check_id": "sc-3.13.11-aws-001",
-            "practice_id": "3.13.11",
+            "check_id": "sc-13-aws-001",
+            "control_id": "3.13.11",
             "check_name": "Encryption at rest for storage services",
             "check_type": "automated",
             "method": "check_encryption_at_rest",
@@ -733,8 +827,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable default encryption on all S3 buckets and EBS volumes using AES-256 or KMS.",
         },
         {
-            "check_id": "au-3.3.1-aws-003",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-aws-003",
+            "control_id": "3.3.1",
             "check_name": "VPC Flow Logs enabled",
             "check_type": "automated",
             "method": "check_vpc_flow_logs",
@@ -742,8 +836,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable VPC Flow Logs on all VPCs to capture network traffic metadata.",
         },
         {
-            "check_id": "ac-3.1.5-aws-001",
-            "practice_id": "3.1.5",
+            "check_id": "ac-6-aws-001",
+            "control_id": "3.1.5",
             "check_name": "Security groups restrict inbound access",
             "check_type": "automated",
             "method": "check_security_groups",
@@ -751,8 +845,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Remove overly permissive security group rules allowing 0.0.0.0/0 on sensitive ports.",
         },
         {
-            "check_id": "sc-3.13.10-aws-001",
-            "practice_id": "3.13.10",
+            "check_id": "sc-12-aws-001",
+            "control_id": "3.13.10",
             "check_name": "KMS key rotation enabled",
             "check_type": "automated",
             "method": "check_kms_key_rotation",
@@ -760,8 +854,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable automatic annual rotation for all customer-managed KMS keys.",
         },
         {
-            "check_id": "si-3.14.6-aws-001",
-            "practice_id": "3.14.6",
+            "check_id": "si-4-aws-001",
+            "control_id": "3.14.6",
             "check_name": "GuardDuty threat detection enabled",
             "check_type": "automated",
             "method": "check_guardduty_enabled",
@@ -769,8 +863,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Enable Amazon GuardDuty in all regions for continuous threat detection.",
         },
         {
-            "check_id": "at-3.2.1-aws-001",
-            "practice_id": "3.2.1",
+            "check_id": "at-2-aws-001",
+            "control_id": "3.2.1",
             "check_name": "Security awareness training program",
             "check_type": "manual",
             "method": None,
@@ -778,8 +872,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Establish and maintain a security awareness training program for all system users.",
         },
         {
-            "check_id": "ir-3.6.1-aws-001",
-            "practice_id": "3.6.1",
+            "check_id": "ir-2-aws-001",
+            "control_id": "3.6.1",
             "check_name": "Incident response plan established",
             "check_type": "manual",
             "method": None,
@@ -787,8 +881,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Develop and implement an incident response plan that includes preparation, detection, containment, eradication, and recovery.",
         },
         {
-            "check_id": "ma-3.7.1-aws-001",
-            "practice_id": "3.7.1",
+            "check_id": "ma-2-aws-001",
+            "control_id": "3.7.1",
             "check_name": "System maintenance procedures",
             "check_type": "manual",
             "method": None,
@@ -796,8 +890,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Perform maintenance on organizational systems in a timely manner.",
         },
         {
-            "check_id": "mp-3.8.1-aws-001",
-            "practice_id": "3.8.1",
+            "check_id": "mp-2-aws-001",
+            "control_id": "3.8.1",
             "check_name": "Media protection policy",
             "check_type": "manual",
             "method": None,
@@ -805,8 +899,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Protect CUI on digital and non-digital media during transport and storage.",
         },
         {
-            "check_id": "ps-3.9.1-aws-001",
-            "practice_id": "3.9.1",
+            "check_id": "ps-3-aws-001",
+            "control_id": "3.9.1",
             "check_name": "Personnel screening procedures",
             "check_type": "manual",
             "method": None,
@@ -814,8 +908,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Screen individuals prior to authorizing access to systems containing CUI.",
         },
         {
-            "check_id": "pe-3.10.1-aws-001",
-            "practice_id": "3.10.1",
+            "check_id": "pe-2-aws-001",
+            "control_id": "3.10.1",
             "check_name": "Physical access controls",
             "check_type": "manual",
             "method": None,
@@ -823,8 +917,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Limit physical access to organizational systems, equipment, and operating environments.",
         },
         {
-            "check_id": "ra-3.11.1-aws-001",
-            "practice_id": "3.11.1",
+            "check_id": "ra-3-aws-001",
+            "control_id": "3.11.1",
             "check_name": "Risk assessment procedures",
             "check_type": "manual",
             "method": None,
@@ -832,8 +926,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess the risk to organizational operations, assets, and individuals.",
         },
         {
-            "check_id": "ca-3.12.1-aws-001",
-            "practice_id": "3.12.1",
+            "check_id": "ca-2-aws-001",
+            "control_id": "3.12.1",
             "check_name": "Security assessment plan",
             "check_type": "manual",
             "method": None,
@@ -841,8 +935,8 @@ def _get_aws_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess security controls to determine if they are effective.",
         },
         {
-            "check_id": "cm-3.4.1-aws-001",
-            "practice_id": "3.4.1",
+            "check_id": "cm-2-aws-001",
+            "control_id": "3.4.1",
             "check_name": "Configuration baseline documentation",
             "check_type": "manual",
             "method": None,
@@ -855,8 +949,8 @@ def _get_aws_builtin_checks() -> list[dict]:
 def _get_azure_builtin_checks() -> list[dict]:
     return [
         {
-            "check_id": "ac-3.1.1-azure-001",
-            "practice_id": "3.1.1",
+            "check_id": "ac-2-azure-001",
+            "control_id": "3.1.1",
             "check_name": "Conditional access policies enforced",
             "check_type": "automated",
             "method": "check_conditional_access",
@@ -864,8 +958,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Configure Azure AD Conditional Access policies to enforce MFA and restrict access by location and device compliance.",
         },
         {
-            "check_id": "ia-3.5.3-azure-001",
-            "practice_id": "3.5.3",
+            "check_id": "ia-2-1-azure-001",
+            "control_id": "3.5.3",
             "check_name": "MFA enabled for all users",
             "check_type": "automated",
             "method": "check_mfa_enabled",
@@ -873,8 +967,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Enable Azure AD MFA for all users via Conditional Access or Security Defaults.",
         },
         {
-            "check_id": "ac-3.1.5-azure-001",
-            "practice_id": "3.1.5",
+            "check_id": "ac-6-azure-001",
+            "control_id": "3.1.5",
             "check_name": "NSG rules restrict inbound traffic",
             "check_type": "automated",
             "method": "check_nsg_rules",
@@ -882,8 +976,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Review and restrict Network Security Group rules to deny unrestricted inbound access on sensitive ports.",
         },
         {
-            "check_id": "au-3.3.1-azure-001",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-azure-001",
+            "control_id": "3.3.1",
             "check_name": "Activity log alerts configured",
             "check_type": "automated",
             "method": "check_activity_log_alerts",
@@ -891,8 +985,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Configure Activity Log alerts for critical operations (policy changes, role assignments, resource deletions).",
         },
         {
-            "check_id": "sc-3.13.11-azure-001",
-            "practice_id": "3.13.11",
+            "check_id": "sc-13-azure-001",
+            "control_id": "3.13.11",
             "check_name": "Storage account encryption enabled",
             "check_type": "automated",
             "method": "check_storage_encryption",
@@ -900,8 +994,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Ensure all storage accounts use Microsoft-managed or customer-managed keys for encryption at rest.",
         },
         {
-            "check_id": "sc-3.13.10-azure-001",
-            "practice_id": "3.13.10",
+            "check_id": "sc-12-azure-001",
+            "control_id": "3.13.10",
             "check_name": "Key Vault configuration secure",
             "check_type": "automated",
             "method": "check_key_vault_config",
@@ -909,8 +1003,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Enable soft delete and purge protection on all Key Vaults. Use RBAC for access control.",
         },
         {
-            "check_id": "au-3.3.1-azure-002",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-azure-002",
+            "control_id": "3.3.1",
             "check_name": "Network Watcher enabled",
             "check_type": "automated",
             "method": "check_network_watcher",
@@ -918,8 +1012,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Enable Network Watcher in all regions where resources are deployed.",
         },
         {
-            "check_id": "si-3.14.6-azure-001",
-            "practice_id": "3.14.6",
+            "check_id": "si-4-azure-001",
+            "control_id": "3.14.6",
             "check_name": "Microsoft Defender for Cloud enabled",
             "check_type": "automated",
             "method": "check_security_center_enabled",
@@ -927,8 +1021,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Enable Microsoft Defender for Cloud Standard tier on all subscriptions.",
         },
         {
-            "check_id": "sc-3.13.11-azure-002",
-            "practice_id": "3.13.11",
+            "check_id": "sc-13-azure-002",
+            "control_id": "3.13.11",
             "check_name": "Managed disk encryption enabled",
             "check_type": "automated",
             "method": "check_disk_encryption",
@@ -936,8 +1030,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Enable Azure Disk Encryption or server-side encryption with customer-managed keys for all managed disks.",
         },
         {
-            "check_id": "at-3.2.1-azure-001",
-            "practice_id": "3.2.1",
+            "check_id": "at-2-azure-001",
+            "control_id": "3.2.1",
             "check_name": "Security awareness training program",
             "check_type": "manual",
             "method": None,
@@ -945,8 +1039,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Establish and maintain a security awareness training program for all system users.",
         },
         {
-            "check_id": "ir-3.6.1-azure-001",
-            "practice_id": "3.6.1",
+            "check_id": "ir-2-azure-001",
+            "control_id": "3.6.1",
             "check_name": "Incident response plan established",
             "check_type": "manual",
             "method": None,
@@ -954,8 +1048,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Develop and implement an incident response plan.",
         },
         {
-            "check_id": "ma-3.7.1-azure-001",
-            "practice_id": "3.7.1",
+            "check_id": "ma-2-azure-001",
+            "control_id": "3.7.1",
             "check_name": "System maintenance procedures",
             "check_type": "manual",
             "method": None,
@@ -963,8 +1057,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Perform maintenance on organizational systems in a timely manner.",
         },
         {
-            "check_id": "mp-3.8.1-azure-001",
-            "practice_id": "3.8.1",
+            "check_id": "mp-2-azure-001",
+            "control_id": "3.8.1",
             "check_name": "Media protection policy",
             "check_type": "manual",
             "method": None,
@@ -972,8 +1066,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Protect CUI on digital and non-digital media.",
         },
         {
-            "check_id": "ps-3.9.1-azure-001",
-            "practice_id": "3.9.1",
+            "check_id": "ps-3-azure-001",
+            "control_id": "3.9.1",
             "check_name": "Personnel screening procedures",
             "check_type": "manual",
             "method": None,
@@ -981,8 +1075,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Screen individuals prior to authorizing access to systems containing CUI.",
         },
         {
-            "check_id": "pe-3.10.1-azure-001",
-            "practice_id": "3.10.1",
+            "check_id": "pe-2-azure-001",
+            "control_id": "3.10.1",
             "check_name": "Physical access controls",
             "check_type": "manual",
             "method": None,
@@ -990,8 +1084,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Limit physical access to organizational systems.",
         },
         {
-            "check_id": "ra-3.11.1-azure-001",
-            "practice_id": "3.11.1",
+            "check_id": "ra-3-azure-001",
+            "control_id": "3.11.1",
             "check_name": "Risk assessment procedures",
             "check_type": "manual",
             "method": None,
@@ -999,8 +1093,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess the risk to organizational operations.",
         },
         {
-            "check_id": "ca-3.12.1-azure-001",
-            "practice_id": "3.12.1",
+            "check_id": "ca-2-azure-001",
+            "control_id": "3.12.1",
             "check_name": "Security assessment plan",
             "check_type": "manual",
             "method": None,
@@ -1008,8 +1102,8 @@ def _get_azure_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess security controls.",
         },
         {
-            "check_id": "cm-3.4.1-azure-001",
-            "practice_id": "3.4.1",
+            "check_id": "cm-2-azure-001",
+            "control_id": "3.4.1",
             "check_name": "Configuration baseline documentation",
             "check_type": "manual",
             "method": None,
@@ -1022,8 +1116,8 @@ def _get_azure_builtin_checks() -> list[dict]:
 def _get_gcp_builtin_checks() -> list[dict]:
     return [
         {
-            "check_id": "ac-3.1.1-gcp-001",
-            "practice_id": "3.1.1",
+            "check_id": "ac-2-gcp-001",
+            "control_id": "3.1.1",
             "check_name": "IAM bindings follow least privilege",
             "check_type": "automated",
             "method": "check_iam_bindings",
@@ -1031,8 +1125,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Review IAM bindings and remove overly broad roles (Editor, Owner) in favor of predefined or custom roles.",
         },
         {
-            "check_id": "au-3.3.1-gcp-001",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-gcp-001",
+            "control_id": "3.3.1",
             "check_name": "Audit logging enabled for all services",
             "check_type": "automated",
             "method": "check_audit_logging",
@@ -1040,8 +1134,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Enable Data Access audit logs for all services in the project IAM policy.",
         },
         {
-            "check_id": "ac-3.1.5-gcp-001",
-            "practice_id": "3.1.5",
+            "check_id": "ac-6-gcp-001",
+            "control_id": "3.1.5",
             "check_name": "VPC firewall rules restrict inbound access",
             "check_type": "automated",
             "method": "check_vpc_firewall_rules",
@@ -1049,8 +1143,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Remove firewall rules allowing 0.0.0.0/0 ingress on sensitive ports (SSH, RDP, databases).",
         },
         {
-            "check_id": "sc-3.13.10-gcp-001",
-            "practice_id": "3.13.10",
+            "check_id": "sc-12-gcp-001",
+            "control_id": "3.13.10",
             "check_name": "Cloud KMS key rotation configured",
             "check_type": "automated",
             "method": "check_kms_key_rotation",
@@ -1058,8 +1152,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Configure automatic rotation with a period of 365 days or less for all Cloud KMS keys.",
         },
         {
-            "check_id": "sc-3.13.11-gcp-001",
-            "practice_id": "3.13.11",
+            "check_id": "sc-13-gcp-001",
+            "control_id": "3.13.11",
             "check_name": "Compute disk encryption with CMEK",
             "check_type": "automated",
             "method": "check_compute_disk_encryption",
@@ -1067,8 +1161,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Use Customer-Managed Encryption Keys (CMEK) for all Compute Engine persistent disks.",
         },
         {
-            "check_id": "sc-3.13.6-gcp-001",
-            "practice_id": "3.13.6",
+            "check_id": "sc-7-21-gcp-001",
+            "control_id": "3.13.6",
             "check_name": "Cloud Armor WAF policies configured",
             "check_type": "automated",
             "method": "check_cloud_armor",
@@ -1076,8 +1170,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Configure Cloud Armor security policies on all external HTTP(S) load balancers.",
         },
         {
-            "check_id": "au-3.3.1-gcp-002",
-            "practice_id": "3.3.1",
+            "check_id": "au-2-gcp-002",
+            "control_id": "3.3.1",
             "check_name": "Cloud Logging enabled and exported",
             "check_type": "automated",
             "method": "check_logging_enabled",
@@ -1085,8 +1179,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Enable Cloud Logging and configure log sinks to export logs to Cloud Storage or BigQuery for long-term retention.",
         },
         {
-            "check_id": "cm-3.4.2-gcp-001",
-            "practice_id": "3.4.2",
+            "check_id": "cm-6-gcp-001",
+            "control_id": "3.4.2",
             "check_name": "Organization Policy constraints enforced",
             "check_type": "automated",
             "method": "check_org_policy_constraints",
@@ -1094,8 +1188,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Enforce Organization Policy constraints including resource location restriction and uniform bucket-level access.",
         },
         {
-            "check_id": "ia-3.5.3-gcp-001",
-            "practice_id": "3.5.3",
+            "check_id": "ia-2-1-gcp-001",
+            "control_id": "3.5.3",
             "check_name": "MFA enforced for all users",
             "check_type": "manual",
             "method": None,
@@ -1103,8 +1197,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Enforce 2-Step Verification for all users in Google Workspace Admin console.",
         },
         {
-            "check_id": "at-3.2.1-gcp-001",
-            "practice_id": "3.2.1",
+            "check_id": "at-2-gcp-001",
+            "control_id": "3.2.1",
             "check_name": "Security awareness training program",
             "check_type": "manual",
             "method": None,
@@ -1112,8 +1206,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Establish and maintain a security awareness training program.",
         },
         {
-            "check_id": "ir-3.6.1-gcp-001",
-            "practice_id": "3.6.1",
+            "check_id": "ir-2-gcp-001",
+            "control_id": "3.6.1",
             "check_name": "Incident response plan established",
             "check_type": "manual",
             "method": None,
@@ -1121,8 +1215,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Develop and implement an incident response plan.",
         },
         {
-            "check_id": "ma-3.7.1-gcp-001",
-            "practice_id": "3.7.1",
+            "check_id": "ma-2-gcp-001",
+            "control_id": "3.7.1",
             "check_name": "System maintenance procedures",
             "check_type": "manual",
             "method": None,
@@ -1130,8 +1224,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Perform maintenance on organizational systems in a timely manner.",
         },
         {
-            "check_id": "mp-3.8.1-gcp-001",
-            "practice_id": "3.8.1",
+            "check_id": "mp-2-gcp-001",
+            "control_id": "3.8.1",
             "check_name": "Media protection policy",
             "check_type": "manual",
             "method": None,
@@ -1139,8 +1233,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Protect CUI on digital and non-digital media.",
         },
         {
-            "check_id": "ps-3.9.1-gcp-001",
-            "practice_id": "3.9.1",
+            "check_id": "ps-3-gcp-001",
+            "control_id": "3.9.1",
             "check_name": "Personnel screening procedures",
             "check_type": "manual",
             "method": None,
@@ -1148,8 +1242,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Screen individuals prior to authorizing access to systems containing CUI.",
         },
         {
-            "check_id": "pe-3.10.1-gcp-001",
-            "practice_id": "3.10.1",
+            "check_id": "pe-2-gcp-001",
+            "control_id": "3.10.1",
             "check_name": "Physical access controls",
             "check_type": "manual",
             "method": None,
@@ -1157,8 +1251,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Limit physical access to organizational systems.",
         },
         {
-            "check_id": "ra-3.11.1-gcp-001",
-            "practice_id": "3.11.1",
+            "check_id": "ra-3-gcp-001",
+            "control_id": "3.11.1",
             "check_name": "Risk assessment procedures",
             "check_type": "manual",
             "method": None,
@@ -1166,8 +1260,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess the risk to organizational operations.",
         },
         {
-            "check_id": "ca-3.12.1-gcp-001",
-            "practice_id": "3.12.1",
+            "check_id": "ca-2-gcp-001",
+            "control_id": "3.12.1",
             "check_name": "Security assessment plan",
             "check_type": "manual",
             "method": None,
@@ -1175,8 +1269,8 @@ def _get_gcp_builtin_checks() -> list[dict]:
             "remediation": "Periodically assess security controls.",
         },
         {
-            "check_id": "cm-3.4.1-gcp-001",
-            "practice_id": "3.4.1",
+            "check_id": "cm-2-gcp-001",
+            "control_id": "3.4.1",
             "check_name": "Configuration baseline documentation",
             "check_type": "manual",
             "method": None,
@@ -1186,46 +1280,46 @@ def _get_gcp_builtin_checks() -> list[dict]:
     ]
 
 
-def _load_practice_names() -> dict[str, str]:
-    """Load NIST practice requirement text from config/nist_practices.json."""
-    practices_file = CONFIG_DIR / "nist_practices.json"
-    if not practices_file.exists():
+def _load_control_names() -> dict[str, str]:
+    """Load NIST 800-53 control requirement text from config/nist_800_53_controls.json."""
+    controls_file = CONFIG_DIR / "nist_800_53_controls.json"
+    if not controls_file.exists():
         return {}
     try:
-        with open(practices_file, "r") as f:
+        with open(controls_file, "r") as f:
             data = json.load(f)
         names: dict[str, str] = {}
         for _fam_id, fam_data in data.get("families", {}).items():
-            for practice_id, p_data in fam_data.get("practices", {}).items():
+            for control_id, p_data in fam_data.get("controls", {}).items():
                 req = p_data.get("requirement", "")
-                names[practice_id] = req
+                names[control_id] = req
         return names
     except Exception:
         return {}
 
 
-def _load_practice_objectives() -> dict[str, dict]:
+def _load_control_objectives() -> dict[str, dict]:
     """
-    Load NIST 800-171A assessment objectives from config/nist_practices.json.
+    Load NIST 800-53 assessment objectives from config/nist_800_53_controls.json.
 
-    Returns a dict keyed by practice_id, each containing:
+    Returns a dict keyed by control_id, each containing:
         objectives: dict of "[a]" -> {"text": ..., "automatable": ...}
     """
-    practices_file = CONFIG_DIR / "nist_practices.json"
-    if not practices_file.exists():
+    controls_file = CONFIG_DIR / "nist_800_53_controls.json"
+    if not controls_file.exists():
         return {}
     try:
-        with open(practices_file, "r") as f:
+        with open(controls_file, "r") as f:
             data = json.load(f)
         result: dict[str, dict] = {}
         for _fam_id, fam_data in data.get("families", {}).items():
-            for practice_id, p_data in fam_data.get("practices", {}).items():
-                result[practice_id] = {
+            for control_id, p_data in fam_data.get("controls", {}).items():
+                result[control_id] = {
                     "objectives": p_data.get("objectives", {}),
                 }
         return result
     except Exception:
-        logger.warning("Failed to load practice objectives", exc_info=True)
+        logger.warning("Failed to load control objectives", exc_info=True)
         return {}
 
 
@@ -1233,7 +1327,7 @@ def _load_documentation_requirements(environment: str) -> dict[str, list[dict]]:
     """
     Load documentation requirements from check config files.
 
-    Returns a dict keyed by practice_id, each containing a list of
+    Returns a dict keyed by control_id, each containing a list of
     {"id": "[a]", "text": "...", "evidence_needed": "..."} items.
     """
     if not CHECKS_DIR.exists():
@@ -1246,22 +1340,22 @@ def _load_documentation_requirements(environment: str) -> dict[str, list[dict]]:
                 data = json.load(f)
         except (json.JSONDecodeError, OSError):
             continue
-        for practice_id, practice_data in data.get("checks", {}).items():
-            doc_reqs = practice_data.get("objectives_requiring_documentation", [])
+        for control_id, control_data in data.get("checks", {}).items():
+            doc_reqs = control_data.get("objectives_requiring_documentation", [])
             if doc_reqs:
-                result[practice_id] = doc_reqs
+                result[control_id] = doc_reqs
     return result
 
 
 def _compute_coverage(
-    practice_id: str,
+    control_id: str,
     check_results: list[CheckResult],
     check_defs: list[dict],
-    practice_objectives: dict[str, dict],
+    control_objectives: dict[str, dict],
     doc_requirements: dict[str, list[dict]],
 ) -> dict:
     """
-    Compute assessment objective coverage for a single practice.
+    Compute assessment objective coverage for a single control.
 
     Returns a dict with:
         total_objectives: int
@@ -1269,9 +1363,9 @@ def _compute_coverage(
         coverage_pct: float
         objective_details: list of {id, text, status, source}
     """
-    obj_info = practice_objectives.get(practice_id, {})
+    obj_info = control_objectives.get(control_id, {})
     objectives = obj_info.get("objectives", {})
-    doc_reqs = doc_requirements.get(practice_id, [])
+    doc_reqs = doc_requirements.get(control_id, [])
     doc_req_ids = {d["id"] for d in doc_reqs}
 
     if not objectives:
@@ -1350,23 +1444,34 @@ def _compute_coverage(
     }
 
 
-def _practice_to_family(practice_id: str) -> tuple[str, str]:
+def _control_to_family(control_id: str) -> tuple[str, str]:
     """
-    Map a NIST 800-171 practice ID to its CMMC domain and family name.
+    Map a NIST 800-53 control ID to its family domain and name.
 
     Args:
-        practice_id: e.g., "3.1.1"
+        control_id: e.g., "AC-2", "AC-2(1)", or legacy "3.1.1"
 
     Returns:
         Tuple of (domain_code, family_name), e.g., ("AC", "Access Control")
     """
-    parts = practice_id.split(".")
-    if len(parts) >= 2:
-        prefix = f"{parts[0]}.{parts[1]}"
-        info = NIST_FAMILIES.get(prefix)
-        if info:
-            return info["domain"], info["family"]
-    return "AC", "Access Control"  # fallback
+    # Handle NIST 800-53 format: "AC-2", "AC-2(1)"
+    if "-" in control_id:
+        domain = control_id.split("-")[0].upper()
+    elif "." in control_id:
+        # Legacy NIST 800-171 format: "3.1.1" → map prefix to domain
+        _LEGACY_MAP = {
+            "3.1": "AC", "3.2": "AT", "3.3": "AU", "3.4": "CM",
+            "3.5": "IA", "3.6": "IR", "3.7": "MA", "3.8": "MP",
+            "3.9": "PS", "3.10": "PE", "3.11": "RA", "3.12": "CA",
+            "3.13": "SC", "3.14": "SI",
+        }
+        parts = control_id.split(".")
+        prefix = f"{parts[0]}.{parts[1]}" if len(parts) >= 2 else ""
+        domain = _LEGACY_MAP.get(prefix, "AC")
+    else:
+        domain = "AC"
+    family = FEDRAMP_FAMILIES.get(domain, "Access Control")
+    return domain, family
 
 
 def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None):
@@ -1428,7 +1533,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
         except Exception as e:
             logger.warning("Scanner connection failed: %s. Running manual-only checks.", e)
 
-        # 5. Execute checks — run all cloud checks, then aggregate per practice
+        # 5. Execute checks — run all cloud checks, then aggregate per control
         #
         # Checks are split into two groups:
         #   a) Instant checks (manual, no-method, no-connection) — processed
@@ -1437,23 +1542,23 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
         #      cloud API calls run concurrently.  The pool size is kept
         #      moderate (PARALLEL_CHECKS) to avoid Azure rate-limiting.
 
-        practice_results: dict[str, list[CheckResult]] = {}
+        control_results: dict[str, list[CheckResult]] = {}
 
         instant_checks: list[tuple[dict, CheckResult]] = []
         automated_checks: list[dict] = []
 
         for check_def in checks:
-            practice_id = check_def.get("practice_id", "")
+            control_id = check_def.get("control_id", "")
 
             if check_def.get("check_type") == "manual":
                 evidence = check_def.get(
                     "evidence_text",
-                    "This practice requires manual verification by a CMMC assessor "
+                    "This control requires manual verification by a FedRAMP assessor "
                     "and cannot be assessed through automated API scanning.",
                 )
                 instant_checks.append((check_def, CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=practice_id,
+                    control_id=control_id,
                     check_name=check_def["check_name"],
                     status="manual",
                     severity=check_def.get("severity", "medium"),
@@ -1466,7 +1571,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                 exp = check_def.get("expected", "N/A")
                 instant_checks.append((check_def, CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=practice_id,
+                    control_id=control_id,
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def.get("severity", "medium"),
@@ -1479,7 +1584,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             elif not connected:
                 instant_checks.append((check_def, CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=practice_id,
+                    control_id=control_id,
                     check_name=check_def["check_name"],
                     status="error",
                     severity=check_def.get("severity", "medium"),
@@ -1491,8 +1596,8 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
 
         # 5a. Record instant results
         for check_def, result in instant_checks:
-            pid = check_def.get("practice_id", "")
-            practice_results.setdefault(pid, []).append(result)
+            pid = check_def.get("control_id", "")
+            control_results.setdefault(pid, []).append(result)
 
         # 5b. Run automated checks in parallel with enforced per-check timeout
         #
@@ -1502,7 +1607,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
         # takes longer than CHECK_TIMEOUT_SECONDS the inner future is
         # abandoned and the check is marked "error".
         def _run_one(chk: dict) -> tuple[dict, CheckResult]:
-            pid = chk.get("practice_id", "")
+            pid = chk.get("control_id", "")
             t0 = time.time()
             inner = concurrent.futures.ThreadPoolExecutor(max_workers=1)
             try:
@@ -1519,7 +1624,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                     "Check %s timed out after %ds", chk["check_id"], CHECK_TIMEOUT_SECONDS)
                 return chk, CheckResult(
                     check_id=chk["check_id"],
-                    practice_id=pid,
+                    control_id=pid,
                     check_name=chk["check_name"],
                     status="error",
                     severity=chk.get("severity", "medium"),
@@ -1534,7 +1639,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                 logger.error("Check %s failed (%.1fs): %s", chk["check_id"], time.time() - t0, exc)
                 return chk, CheckResult(
                     check_id=chk["check_id"],
-                    practice_id=pid,
+                    control_id=pid,
                     check_name=chk["check_name"],
                     status="error",
                     severity=chk.get("severity", "medium"),
@@ -1558,42 +1663,42 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                 }
                 for future in concurrent.futures.as_completed(future_map):
                     chk = future_map[future]
-                    pid = chk.get("practice_id", "")
+                    pid = chk.get("control_id", "")
                     try:
                         _, result = future.result()
                     except Exception as exc:
                         logger.error("Check %s failed: %s", chk["check_id"], exc)
                         result = CheckResult(
                             check_id=chk["check_id"],
-                            practice_id=pid,
+                            control_id=pid,
                             check_name=chk["check_name"],
                             status="error",
                             severity=chk.get("severity", "medium"),
                             evidence=f"Check execution failed: {str(exc)}",
                             remediation=chk.get("remediation", ""),
                         )
-                    practice_results.setdefault(pid, []).append(result)
+                    control_results.setdefault(pid, []).append(result)
             logger.info(
                 "Automated checks completed in %.0fs", time.time() - checks_start
             )
 
-        # 5b. Aggregate sub-checks into one Finding per practice (110 for L2)
+        # 5b. Aggregate sub-checks into one Finding per control
         SEVERITY_RANK = {"critical": 4, "high": 3, "medium": 2, "low": 1}
         status_counts = {"met": 0, "not_met": 0, "manual": 0, "error": 0}
 
-        # Load practice names and objectives from nist_practices.json
-        practice_names = _load_practice_names()
-        practice_objectives = _load_practice_objectives()
+        # Load control names and objectives from nist_800_53_controls.json
+        control_names = _load_control_names()
+        control_objectives = _load_control_objectives()
         doc_requirements = _load_documentation_requirements(client.environment)
 
-        # Build a lookup: practice_id -> list of check defs (for coverage scoring)
-        practice_check_defs: dict[str, list[dict]] = {}
+        # Build a lookup: control_id -> list of check defs (for coverage scoring)
+        control_check_defs: dict[str, list[dict]] = {}
         for chk_def in checks:
-            pid = chk_def.get("practice_id", "")
-            practice_check_defs.setdefault(pid, []).append(chk_def)
+            pid = chk_def.get("control_id", "")
+            control_check_defs.setdefault(pid, []).append(chk_def)
 
-        for practice_id, results in practice_results.items():
-            domain, family = _practice_to_family(practice_id)
+        for control_id, results in control_results.items():
+            domain, family = _control_to_family(control_id)
 
             # Separate verified results (actually ran) from pending (not implemented)
             # Pending sub-checks have status="not_met" with "pending implementation" evidence
@@ -1605,7 +1710,7 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                 else:
                     verified.append(r)
 
-            # Determine practice status from verified results only
+            # Determine control status from verified results only
             # Pending sub-checks are noted in evidence but don't affect status
             if verified:
                 v_statuses = [r.status for r in verified]
@@ -1629,10 +1734,10 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
 
             # Compute assessment objective coverage
             coverage = _compute_coverage(
-                practice_id,
+                control_id,
                 results,
-                practice_check_defs.get(practice_id, []),
-                practice_objectives,
+                control_check_defs.get(control_id, []),
+                control_objectives,
                 doc_requirements,
             )
 
@@ -1683,14 +1788,14 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             agg_remediation = "\n".join(unique_rems)
 
             # Practice-level check_id and name
-            check_id = f"{domain.lower()}-{practice_id}"
-            check_name = practice_names.get(practice_id, results[0].check_name)
+            check_id = f"{domain.lower()}-{control_id}"
+            check_name = control_names.get(control_id, results[0].check_name)
 
             status_counts[agg_status] = status_counts.get(agg_status, 0) + 1
 
             finding = Finding(
                 scan_id=scan_id,
-                practice_id=practice_id,
+                control_id=control_id,
                 family=family,
                 domain=domain,
                 check_id=check_id,
@@ -1715,15 +1820,15 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
 
         # Aggregate objective coverage across all findings
         all_total_objs = sum(
-            len(practice_objectives.get(pid, {}).get("objectives", {}))
-            for pid in practice_results
+            len(control_objectives.get(pid, {}).get("objectives", {}))
+            for pid in control_results
         )
         all_covered_objs = 0
-        for pid, results in practice_results.items():
+        for pid, results in control_results.items():
             cov = _compute_coverage(
                 pid, results,
-                practice_check_defs.get(pid, []),
-                practice_objectives, doc_requirements,
+                control_check_defs.get(pid, []),
+                control_objectives, doc_requirements,
             )
             all_covered_objs += cov["covered_objectives"]
         obj_coverage_pct = round((all_covered_objs / all_total_objs * 100), 1) if all_total_objs > 0 else 0.0
@@ -1771,12 +1876,12 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             db.close()
 
 
-def fetch_evidence(scan_id: str, practice_id: str, db: Session) -> list[dict]:
+def fetch_evidence(scan_id: str, control_id: str, db: Session) -> list[dict]:
     """
-    Re-run sub-checks for a single practice and return raw API evidence.
+    Re-run sub-checks for a single control and return raw API evidence.
 
     Called on-demand from the evidence endpoint — connects to the client's
-    cloud, re-runs only the checks for the requested practice, and captures
+    cloud, re-runs only the checks for the requested control, and captures
     raw API responses.
     """
     # 1. Load scan → get client
@@ -1788,14 +1893,14 @@ def fetch_evidence(scan_id: str, practice_id: str, db: Session) -> list[dict]:
     if not client:
         raise ValueError("Client not found")
 
-    # 2. Load check defs for this practice only
+    # 2. Load check defs for this control only
     all_checks = _load_checks(client.environment)
-    practice_checks = [
+    control_checks = [
         c for c in all_checks
-        if c["practice_id"] == practice_id and c.get("method")
+        if c["control_id"] == control_id and c.get("method")
     ]
 
-    if not practice_checks:
+    if not control_checks:
         return []
 
     # 3. Connect scanner (fresh session)
@@ -1805,7 +1910,7 @@ def fetch_evidence(scan_id: str, practice_id: str, db: Session) -> list[dict]:
     # 4. Run each sub-check, collect raw evidence
     results = []
     try:
-        for check_def in practice_checks:
+        for check_def in control_checks:
             try:
                 result = scanner.run_check(check_def)
                 evidence_item = {

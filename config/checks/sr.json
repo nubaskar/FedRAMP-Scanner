@@ -1,0 +1,154 @@
+{
+  "domain": "SR",
+  "name": "Supply Chain Risk Management",
+  "checks": {
+    "SR-2": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "sr-2-aws-001",
+          "name": "ECR images scanned for vulnerabilities",
+          "service": "ECR",
+          "api_call": "ecr.describe_image_scan_findings",
+          "expected": "All ECR images have vulnerability scan results",
+          "severity": "high",
+          "remediation": "Enable automated vulnerability scanning for all ECR repositories.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-2"
+        },
+        {
+          "check_id": "sr-2-aws-002",
+          "name": "Inspector scans for software bill of materials",
+          "service": "Inspector2",
+          "api_call": "inspector2.list_coverage",
+          "expected": "Inspector enabled to generate SBOM for EC2 and ECR resources",
+          "severity": "medium",
+          "remediation": "Enable Amazon Inspector for SBOM generation and vulnerability management.",
+          "supports_objectives": ["[a]"],
+          "control_id": "SR-2"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sr-2-azure-001",
+          "name": "Container Registry images scanned",
+          "service": "Container Registry",
+          "api_call": "ContainerRegistryManagementClient.registries.list",
+          "expected": "Container registries have Defender for Containers enabled for scanning",
+          "severity": "high",
+          "remediation": "Enable Microsoft Defender for Containers on Azure Container Registry.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-2"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sr-2-gcp-001",
+          "name": "Artifact Registry images scanned",
+          "service": "Artifact Registry",
+          "api_call": "artifactregistry.projects.locations.repositories.list",
+          "expected": "Container images have vulnerability scanning enabled",
+          "severity": "high",
+          "remediation": "Enable Container Analysis for vulnerability scanning on Artifact Registry.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-2"
+        }
+      ]
+    },
+    "SR-3": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "sr-3-aws-001",
+          "name": "CodeBuild includes dependency scanning",
+          "service": "CodeBuild",
+          "api_call": "codebuild.batch_get_projects",
+          "expected": "CodeBuild projects include dependency vulnerability scanning",
+          "severity": "high",
+          "remediation": "Add dependency scanning tools to CodeBuild project specifications.",
+          "supports_objectives": ["[a]"],
+          "control_id": "SR-3"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sr-3-azure-001",
+          "name": "Azure Pipelines include dependency scanning",
+          "service": "Azure DevOps",
+          "api_call": "azure_devops.pipelines.list",
+          "expected": "Pipelines include dependency vulnerability scanning tasks",
+          "severity": "high",
+          "remediation": "Add dependency scanning to Azure Pipeline definitions.",
+          "supports_objectives": ["[a]"],
+          "control_id": "SR-3"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sr-3-gcp-001",
+          "name": "Cloud Build includes dependency scanning",
+          "service": "Cloud Build",
+          "api_call": "cloudbuild.projects.builds.list",
+          "expected": "Cloud Build includes dependency vulnerability scanning steps",
+          "severity": "high",
+          "remediation": "Add dependency scanning steps to Cloud Build configurations.",
+          "supports_objectives": ["[a]"],
+          "control_id": "SR-3"
+        }
+      ]
+    },
+    "SR-11": {
+      "baselines": ["Low", "Moderate", "High"],
+      "aws": [
+        {
+          "check_id": "sr-11-aws-001",
+          "name": "ECR images signed with AWS Signer",
+          "service": "Signer",
+          "api_call": "signer.list_signing_jobs",
+          "expected": "Container images signed for authenticity verification",
+          "severity": "high",
+          "remediation": "Use AWS Signer to sign container images and verify signatures at deployment.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-11"
+        },
+        {
+          "check_id": "sr-11-aws-002",
+          "name": "Lambda code signing configured",
+          "service": "Lambda",
+          "api_call": "lambda.list_code_signing_configs",
+          "expected": "Lambda functions use code signing configurations",
+          "severity": "high",
+          "remediation": "Configure code signing for Lambda functions to ensure authenticity.",
+          "supports_objectives": ["[a]"],
+          "control_id": "SR-11"
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sr-11-azure-001",
+          "name": "Container Registry content trust enabled",
+          "service": "Container Registry",
+          "api_call": "ContainerRegistryManagementClient.registries.list",
+          "expected": "Container registries have content trust enabled for image signing",
+          "severity": "high",
+          "remediation": "Enable content trust on Azure Container Registry for image signing.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-11"
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sr-11-gcp-001",
+          "name": "Binary Authorization enforced",
+          "service": "Binary Authorization",
+          "api_call": "binaryauthorization.projects.policy.get",
+          "expected": "Binary Authorization policy requires signed images",
+          "severity": "high",
+          "remediation": "Enable Binary Authorization to require signed container images.",
+          "supports_objectives": ["[a]", "[b]"],
+          "control_id": "SR-11"
+        }
+      ]
+    }
+  }
+}

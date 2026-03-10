@@ -1,8 +1,8 @@
-# CMMC Cloud Compliance Scanner — Assessment Methodology
+# FedRAMP Cloud Compliance Scanner — Assessment Methodology
 
 **Document Classification:** For Official Use — Assessment Staff Only
 
-**Version:** 1.0 | **Date:** March 07, 2026 | **Author:** Securitybricks (C3PAO, powered by Aprio)
+**Version:** 1.0 | **Date:** March 07, 2026 | **Author:** Securitybricks (3PAO, powered by Aprio)
 
 ---
 
@@ -44,17 +44,17 @@
 
 ## 1. Executive Summary
 
-The CMMC Cloud Compliance Scanner is an automated assessment tool built by Securitybricks, a CMMC Third-Party Assessment Organization (C3PAO) powered by Aprio. It evaluates Defense Industrial Base (DIB) contractor cloud environments against CMMC 2.0 requirements by querying cloud service provider (CSP) APIs and comparing configuration states to NIST SP 800-171 Rev 2 security practices.
+The FedRAMP Cloud Compliance Scanner is an automated assessment tool built by Securitybricks, a FedRAMP Third-Party Assessment Organization (3PAO) powered by Aprio. It evaluates Defense Industrial Base (CSP) contractor cloud environments against FedRAMP requirements by querying cloud service provider (CSP) APIs and comparing configuration states to NIST SP 800-53 Rev 5 security practices.
 
-This document serves as the **authoritative methodology reference** for Certified CMMC Assessors (CCAs) using the scanner. It explains:
+This document serves as the **authoritative methodology reference** for FedRAMP Assessors (3PAOs) using the scanner. It explains:
 
-- **How** each of the 110 NIST 800-171 practices is evaluated
+- **How** each of the 110 NIST 800-53 Rev 5 controls is evaluated
 - **Which** cloud APIs are queried and what constitutes a passing or failing check
-- **Why** each check maps to specific NIST SP 800-171A assessment objectives
-- **What** CCAs must do for the 39 practices that require manual assessment
+- **Why** each check maps to specific NIST SP 800-53A assessment objectives
+- **What** CCAs must do for the 39 controls that require manual assessment
 - **Where** the authoritative sources and traceability chain originates
 
-The scanner implements **393 cloud-specific technical checks** across AWS (164), Azure (115), and GCP (114), mapped to **319 NIST SP 800-171A assessment objectives** across all 110 practices and 14 CMMC domains.
+The scanner implements **393 cloud-specific technical checks** across AWS (164), Azure (115), and GCP (114), mapped to **319 NIST SP 800-53A assessment objectives** across all 110 controls and 14 FedRAMP control families.
 
 ---
 
@@ -64,17 +64,17 @@ The scanner implements **393 cloud-specific technical checks** across AWS (164),
 
 | Role | How to Use This Document |
 |------|------------------------|
-| **Lead CCA** | Validate the scanner's methodology against 800-171A before accepting automated results |
+| **Lead CCA** | Validate the scanner's methodology against 800-53A before accepting automated results |
 | **CCA (Technical)** | Reference during assessment to understand what each check evaluates and which API responses constitute evidence |
 | **CCA (Policy/Process)** | Use Section 7 as a structured guide for manual practice assessments — interview questions, evidence artifacts, and determination criteria |
 | **Assessment Team Lead** | Review coverage matrix to understand which objectives are automated vs. manual |
-| **Quality Assurance** | Verify traceability from check results back to 800-171A objectives |
+| **Quality Assurance** | Verify traceability from check results back to 800-53A objectives |
 
 ### How This Document Builds Trust
 
-For a CCA to rely on automated tool results in a CMMC assessment, they need to verify:
+For a CCA to rely on automated tool results in a FedRAMP assessment, they need to verify:
 
-1. **Traceability** — Every automated check traces back to a specific NIST SP 800-171A assessment objective
+1. **Traceability** — Every automated check traces back to a specific NIST SP 800-53A assessment objective
 2. **Completeness** — The tool identifies which objectives it covers and which require manual assessment
 3. **Accuracy** — Checks query the correct cloud APIs and evaluate the right configuration properties
 4. **Transparency** — The methodology is fully documented, not a black box
@@ -89,14 +89,14 @@ The scanner's check library is derived from and traceable to the following autho
 
 | Source | Version | Purpose | Reference |
 |--------|---------|---------|-----------|
-| **NIST SP 800-171 Rev 2** | Feb 2020 | 110 security practices across 14 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-171/rev-2/final) |
-| **NIST SP 800-171A** | Jun 2018 | 319 assessment objectives ("determine if" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-171a/final) |
-| **NIST SP 800-172** | Feb 2021 | Enhanced security practices for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |
-| **FAR 52.204-21** | 2016 | 17 basic safeguarding practices for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |
-| **CMMC 2.0 Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/CMMC/) |
-| **AWS Config Rules** | Current | ~200 rules mapped to NIST 800-171 | [docs.aws.amazon.com](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html) |
-| **Azure Policy** | Current | ~200 policy definitions for NIST 800-171 R2 | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-171-r2) |
-| **GCP CIS Benchmark** | Current | GCP security controls aligned to NIST practices | [cloud.google.com](https://cloud.google.com/security/compliance/cis-benchmarks) |
+| **NIST SP 800-53 Rev 5** | Feb 2020 | 110 security practices across 14 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5/rev-2/final) |
+| **NIST SP 800-53A** | Jun 2018 | 319 assessment objectives ("determine if" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5a/final) |
+| **NIST SP 800-172** | Feb 2021 | Enhanced security practices for High | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |
+| **FAR 52.204-21** | 2016 | 17 basic safeguarding practices for Low | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |
+| **FedRAMP Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/FedRAMP/) |
+| **AWS Config Rules** | Current | ~200 rules mapped to NIST 800-53 Rev 5 | [docs.aws.amazon.com](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-53 Rev 5.html) |
+| **Azure Policy** | Current | ~200 policy definitions for NIST 800-53 Rev 5 R2 | [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-53 Rev 5-r2) |
+| **GCP CIS Benchmark** | Current | GCP security controls aligned to NIST controls | [cloud.google.com](https://cloud.google.com/security/compliance/cis-benchmarks) |
 
 ### Traceability Chain
 
@@ -104,9 +104,9 @@ Every check in the scanner traces back through the following chain:
 
 | Step | Stage | Description |
 |------|-------|-------------|
-| 1 | **CMMC 2.0 Level** | L1 / L2 / L3 certification tier |
-| 2 | **NIST SP 800-171 Practice** | One of 110 security requirements |
-| 3 | **800-171A Assessment Objective** | Specific "determine if" statement |
+| 1 | **FedRAMP Baseline** | L1 / L2 / L3 certification tier |
+| 2 | **NIST SP 800-53 Rev 5 Practice** | One of 110 security requirements |
+| 3 | **800-53A Assessment Objective** | Specific "determine if" statement |
 | 4 | **Scanner Check** | Cloud-specific configuration test |
 | 5 | **Cloud API Call** | Read-only query to AWS, Azure, or GCP |
 | 6 | **Compliance Determination** | Met / Not Met / Manual Review |
@@ -119,9 +119,9 @@ Every finding in the scanner report traces back through this chain to the author
 
 ### 4.1 Check-to-Objective Mapping
 
-NIST SP 800-171A defines **319 assessment objectives** across the 110 NIST SP 800-171 practices. Each objective is a discrete "determine if" statement that an assessor must evaluate.
+NIST SP 800-53A defines **319 assessment objectives** across the 110 NIST SP 800-53 Rev 5 controls. Each objective is a discrete "determine if" statement that an assessor must evaluate.
 
-The scanner maps every automated check to the specific 800-171A objectives it supports via the `supports_objectives` field. For example:
+The scanner maps every automated check to the specific 800-53A objectives it supports via the `supports_objectives` field. For example:
 
 ```json
 {
@@ -140,11 +140,11 @@ The scanner maps every automated check to the specific 800-171A objectives it su
 This mapping enables:
 - **Per-objective coverage scoring** — the report shows which objectives are covered by automated checks, which require documentation, and which are not tested
 - **Gap identification** — CCAs can immediately see which objectives need manual verification
-- **Audit traceability** — every Met/Not Met determination links to specific 800-171A language
+- **Audit traceability** — every Met/Not Met determination links to specific 800-53A language
 
 ### 4.2 Three-Tier Evaluation Model
 
-The scanner classifies every 800-171A assessment objective into one of three tiers:
+The scanner classifies every 800-53A assessment objective into one of three tiers:
 
 | Tier | Classification | Count | Description |
 |------|---------------|-------|-------------|
@@ -182,8 +182,8 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 | Metric | Value |
 |--------|-------|
-| NIST 800-171 Practices | 110 |
-| NIST 800-171A Assessment Objectives | 319 |
+| NIST 800-53 Rev 5 Practices | 110 |
+| NIST 800-53A Assessment Objectives | 319 |
 | Practices with Automated Checks | 71 (64%) |
 | Practices Requiring Manual Assessment | 39 (35%) |
 | Total Cloud-Specific Technical Checks | 393 |
@@ -194,7 +194,7 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 ### 5.2 Domain-Level Coverage
 
-The table below shows the scanner's coverage across all 14 CMMC domains. Each domain is broken down by the number of NIST 800-171 practices, how many are automated vs. manual, the total 800-171A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of practices in each domain that are fully automated by the scanner.
+The table below shows the scanner's coverage across all 14 FedRAMP control families. Each domain is broken down by the number of NIST 800-53 Rev 5 controls, how many are automated vs. manual, the total 800-53A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of practices in each domain that are fully automated by the scanner.
 
 | Domain | Name | Practices | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |
 |--------|------|-----------|-----------|--------|------------|-----|-------|-----|-----------------|
@@ -226,10 +226,10 @@ The table below shows the scanner's coverage across all 14 CMMC domains. Each do
 
 ## 6. Complete Practice Reference
 
-This section provides the complete technical reference for every NIST SP 800-171 practice, organized by CMMC domain. For each practice, it shows:
+This section provides the complete technical reference for every NIST SP 800-53 Rev 5 practice, organized by FedRAMP family. For each practice, it shows:
 
-- The requirement text and CMMC level
-- All NIST SP 800-171A assessment objectives
+- The requirement text and FedRAMP baseline
+- All NIST SP 800-53A assessment objectives
 - Cloud-specific automated checks with API calls, services, and severity
 - Objective mapping (which checks support which objectives)
 - Documentation requirements for non-automatable objectives
@@ -2813,11 +2813,11 @@ This section provides the complete technical reference for every NIST SP 800-171
 
 ### 7.1 How to Use This Guide
 
-For the 39 practices classified as **Manual Review Required**, the scanner cannot make an automated determination. The CCA must independently assess these practices using the guidance below.
+For the 39 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The CCA must independently assess these practices using the guidance below.
 
 For each manual practice, this guide provides:
 
-1. **Assessment Objectives** — The exact 800-171A "determine if" statements the CCA must evaluate
+1. **Assessment Objectives** — The exact 800-53A "determine if" statements the CCA must evaluate
 2. **Assessment Guidance** — Specific steps, interview topics, and configuration areas to examine
 3. **Evidence Artifacts** — Documents, records, and artifacts the CCA should request from the OSC
 4. **Determination Criteria** — What constitutes a Met vs. Not Met finding
@@ -2830,9 +2830,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.9: Provide privacy and security notices consistent with applicable CUI rules.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.9[a]**: Determine if privacy and security notices required by CUI-specified rules are identified, consistent, and associated with the specific CUI category
 - **3.1.9[b]**: Determine if privacy and security notices are displayed.
@@ -2857,9 +2857,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.16: Authorize wireless access prior to allowing such connections.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.16[a]**: Determine if wireless access points are identified.
 - **3.1.16[b]**: Determine if wireless access is authorized prior to allowing such connections.
@@ -2892,9 +2892,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.17: Protect wireless access using authentication and encryption.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.17[a]**: Determine if wireless access to the system is protected using encryption.
 - **3.1.17[b]**: Determine if wireless access to the system is protected using authentication.
@@ -2919,9 +2919,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.18: Control connection of mobile devices.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.18[a]**: Determine if mobile devices that process, store, or transmit CUI are identified.
 - **3.1.18[b]**: Determine if the connection of mobile devices is authorized.
@@ -2956,9 +2956,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.19: Encrypt CUI on mobile devices and mobile computing platforms.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.19[a]**: Determine if mobile devices and mobile computing platforms that process, store, or transmit CUI are identified.
 - **3.1.19[b]**: Determine if encryption is employed to protect CUI on identified mobile devices and mobile computing platforms.
@@ -2991,9 +2991,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.1.21: Limit use of organizational portable storage devices on external information systems.
 
-**CMMC Level:** L2 | **Domain:** AC
+**FedRAMP Baseline:** L2 | **Domain:** AC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.1.21[a]**: Determine if use of organizational portable storage devices containing CUI on external systems is identified and documented.
 - **3.1.21[b]**: Determine if limits on the use of organizational portable storage devices containing CUI on external systems are defined.
@@ -3030,9 +3030,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.2.1: Ensure that managers, systems administrators, and users of organizational information systems are made aware of the security risks associated with their activities and of the applicable policies, standards, and procedures related to the security of organizational information systems.
 
-**CMMC Level:** L2 | **Domain:** AT
+**FedRAMP Baseline:** L2 | **Domain:** AT
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.2.1[a]**: Determine if security risks associated with organizational activities involving CUI are identified.
 - **3.2.1[b]**: Determine if policies, standards, and procedures related to the security of the system are identified.
@@ -3061,9 +3061,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.2.2: Ensure that organizational personnel are adequately trained to carry out their assigned information security-related duties and responsibilities.
 
-**CMMC Level:** L2 | **Domain:** AT
+**FedRAMP Baseline:** L2 | **Domain:** AT
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.2.2[a]**: Determine if information security-related duties, roles, and responsibilities are defined.
 - **3.2.2[b]**: Determine if information security-related duties, roles, and responsibilities are assigned to designated personnel.
@@ -3090,9 +3090,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.2.3: Provide security awareness training on recognizing and reporting potential indicators of insider threat.
 
-**CMMC Level:** L2 | **Domain:** AT
+**FedRAMP Baseline:** L2 | **Domain:** AT
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.2.3[a]**: Determine if potential indicators associated with insider threats are identified.
 - **3.2.3[b]**: Determine if security awareness training on recognizing and reporting potential indicators of insider threat is provided to managers and employees.
@@ -3119,9 +3119,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.3.3: Review and update logged events.
 
-**CMMC Level:** L2 | **Domain:** AU
+**FedRAMP Baseline:** L2 | **Domain:** AU
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.3.3[a]**: Determine if a process for determining when to review logged events is defined.
 - **3.3.3[b]**: Determine if event types being logged are reviewed in accordance with the defined review process.
@@ -3150,9 +3150,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.4.4: Analyze the security impact of changes prior to implementation.
 
-**CMMC Level:** L2 | **Domain:** CM
+**FedRAMP Baseline:** L2 | **Domain:** CM
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.4.4[a]**: Determine if the security impact of changes to each organizational system is analyzed prior to implementation.
 
@@ -3177,9 +3177,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.5.11: Obscure feedback of authentication information.
 
-**CMMC Level:** L2 | **Domain:** IA
+**FedRAMP Baseline:** L2 | **Domain:** IA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.5.11[a]**: Determine if authentication information is obscured during the authentication process.
 
@@ -3204,9 +3204,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.6.2: Track, document, and report incidents to designated officials and/or authorities both internal and external to the organization.
 
-**CMMC Level:** L2 | **Domain:** IR
+**FedRAMP Baseline:** L2 | **Domain:** IR
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.6.2[a]**: Determine if incidents are tracked.
 - **3.6.2[b]**: Determine if incidents are documented.
@@ -3239,9 +3239,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.6.3: Test the organizational incident response capability.
 
-**CMMC Level:** L2 | **Domain:** IR
+**FedRAMP Baseline:** L2 | **Domain:** IR
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.6.3[a]**: Determine if the incident response capability is tested.
 
@@ -3266,9 +3266,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.7.2: Provide controls on the tools, techniques, mechanisms, and personnel used to conduct information system maintenance.
 
-**CMMC Level:** L2 | **Domain:** MA
+**FedRAMP Baseline:** L2 | **Domain:** MA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.7.2[a]**: Determine if tools used to conduct system maintenance are controlled.
 - **3.7.2[b]**: Determine if techniques used to conduct system maintenance are controlled.
@@ -3297,9 +3297,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.7.3: Ensure equipment removed for off-site maintenance is sanitized of any CUI.
 
-**CMMC Level:** L2 | **Domain:** MA
+**FedRAMP Baseline:** L2 | **Domain:** MA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.7.3[a]**: Determine if equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI.
 
@@ -3322,9 +3322,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.7.4: Check media containing diagnostic and test programs for malicious code before the media are used in organizational information systems.
 
-**CMMC Level:** L2 | **Domain:** MA
+**FedRAMP Baseline:** L2 | **Domain:** MA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.7.4[a]**: Determine if media containing diagnostic and test programs are checked for malicious code before being used in organizational systems that process, store, or transmit CUI.
 
@@ -3347,9 +3347,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.7.6: Supervise the maintenance activities of maintenance personnel without required access authorization.
 
-**CMMC Level:** L2 | **Domain:** MA
+**FedRAMP Baseline:** L2 | **Domain:** MA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.7.6[a]**: Determine if maintenance personnel without required access authorization are supervised during maintenance activities.
 
@@ -3374,9 +3374,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.1: Protect (i.e., physically control and securely store) information system media containing CUI, both paper and digital.
 
-**CMMC Level:** L2 | **Domain:** MP
+**FedRAMP Baseline:** L2 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.1[a]**: Determine if paper media containing CUI is physically controlled.
 - **3.8.1[b]**: Determine if digital media containing CUI is physically controlled.
@@ -3405,9 +3405,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.3: Sanitize or destroy information system media containing CUI before disposal or release for reuse.
 
-**CMMC Level:** L1 | **Domain:** MP
+**FedRAMP Baseline:** L1 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.3[a]**: Determine if system media containing CUI is sanitized or destroyed before disposal.
 - **3.8.3[b]**: Determine if system media containing CUI is sanitized before it is released for reuse.
@@ -3432,9 +3432,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.4: Mark media with necessary CUI markings and distribution limitations.
 
-**CMMC Level:** L2 | **Domain:** MP
+**FedRAMP Baseline:** L2 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.4[a]**: Determine if media containing CUI is marked with applicable CUI markings.
 - **3.8.4[b]**: Determine if media containing CUI is marked with distribution limitations.
@@ -3459,9 +3459,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.5: Control access to media containing CUI and maintain accountability for media during transport outside of controlled areas.
 
-**CMMC Level:** L2 | **Domain:** MP
+**FedRAMP Baseline:** L2 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.5[a]**: Determine if access to media containing CUI is controlled.
 - **3.8.5[b]**: Determine if accountability for media containing CUI is maintained during transport outside of controlled areas.
@@ -3486,9 +3486,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.7: Control the use of removable media on information system components.
 
-**CMMC Level:** L2 | **Domain:** MP
+**FedRAMP Baseline:** L2 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.7[a]**: Determine if the use of removable media on system components containing CUI is controlled.
 
@@ -3511,9 +3511,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.8.8: Prohibit the use of portable storage devices when such devices have no identifiable owner.
 
-**CMMC Level:** L2 | **Domain:** MP
+**FedRAMP Baseline:** L2 | **Domain:** MP
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.8.8[a]**: Determine if the use of portable storage devices is prohibited when such devices have no identifiable owner.
 
@@ -3538,9 +3538,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.9.1: Screen individuals prior to authorizing access to organizational information systems containing CUI.
 
-**CMMC Level:** L2 | **Domain:** PS
+**FedRAMP Baseline:** L2 | **Domain:** PS
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.9.1[a]**: Determine if individuals are screened prior to authorizing access to organizational systems.
 
@@ -3563,9 +3563,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.9.2: Ensure that organizational information systems containing CUI are protected during and after personnel actions such as terminations and transfers.
 
-**CMMC Level:** L2 | **Domain:** PS
+**FedRAMP Baseline:** L2 | **Domain:** PS
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.9.2[a]**: Determine if a policy and/or process for terminating system access authorization and any credentials coincident with personnel actions is established.
 - **3.9.2[b]**: Determine if system access and credentials are terminated consistent with personnel actions such as termination or transfer.
@@ -3594,9 +3594,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.1: Limit physical access to organizational information systems, equipment, and the respective operating environments to authorized individuals.
 
-**CMMC Level:** L1 | **Domain:** PE
+**FedRAMP Baseline:** L1 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.1[a]**: Determine if authorized individuals allowed physical access are identified.
 - **3.10.1[b]**: Determine if physical access to organizational systems is limited to authorized individuals.
@@ -3625,9 +3625,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.2: Protect and monitor the physical facility and support infrastructure for organizational information systems.
 
-**CMMC Level:** L2 | **Domain:** PE
+**FedRAMP Baseline:** L2 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.2[a]**: Determine if the physical facility where that system resides is protected.
 - **3.10.2[b]**: Determine if the support infrastructure for that system is protected.
@@ -3656,9 +3656,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.3: Escort visitors and monitor visitor activity.
 
-**CMMC Level:** L1 | **Domain:** PE
+**FedRAMP Baseline:** L1 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.3[a]**: Determine if visitors are escorted.
 - **3.10.3[b]**: Determine if visitor activity is monitored.
@@ -3683,9 +3683,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.4: Maintain audit logs of physical access.
 
-**CMMC Level:** L1 | **Domain:** PE
+**FedRAMP Baseline:** L1 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.4[a]**: Determine if audit logs of physical access are maintained.
 
@@ -3708,9 +3708,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.5: Control and manage physical access devices.
 
-**CMMC Level:** L1 | **Domain:** PE
+**FedRAMP Baseline:** L1 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.5[a]**: Determine if physical access devices are identified.
 - **3.10.5[b]**: Determine if physical access devices are controlled.
@@ -3737,9 +3737,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.10.6: Enforce safeguarding measures for CUI at alternate work sites.
 
-**CMMC Level:** L2 | **Domain:** PE
+**FedRAMP Baseline:** L2 | **Domain:** PE
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.10.6[a]**: Determine if safeguarding measures for CUI are defined for alternate work sites.
 - **3.10.6[b]**: Determine if safeguarding measures for CUI are enforced for alternate work sites.
@@ -3766,9 +3766,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.11.1: Periodically assess the risk to organizational operations (including mission, functions, image, or reputation), organizational assets, and individuals, resulting from the operation of organizational information systems and the associated processing, storage, or transmission of CUI.
 
-**CMMC Level:** L2 | **Domain:** RA
+**FedRAMP Baseline:** L2 | **Domain:** RA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.11.1[a]**: Determine if the frequency to assess risk to organizational operations, organizational assets, and individuals is defined.
 - **3.11.1[b]**: Determine if risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency.
@@ -3795,9 +3795,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.12.1: Periodically assess the security controls in organizational information systems to determine if the controls are effective in their application.
 
-**CMMC Level:** L2 | **Domain:** CA
+**FedRAMP Baseline:** L2 | **Domain:** CA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.12.1[a]**: Determine if the frequency of security control assessments is defined.
 - **3.12.1[b]**: Determine if security controls are assessed with the defined frequency to determine if the controls are effective in their application.
@@ -3822,9 +3822,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.12.2: Develop and implement plans of action designed to correct deficiencies and reduce or eliminate vulnerabilities in organizational information systems.
 
-**CMMC Level:** L2 | **Domain:** CA
+**FedRAMP Baseline:** L2 | **Domain:** CA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.12.2[a]**: Determine if deficiencies and vulnerabilities to be addressed by the plan of action are identified.
 - **3.12.2[b]**: Determine if a plan of action is developed to correct identified deficiencies and reduce or eliminate identified vulnerabilities.
@@ -3851,9 +3851,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.12.4: Develop, document, and periodically update system security plans that describe system boundaries, system environments of operation, how security requirements are implemented, and the relationships with or connections to other systems.
 
-**CMMC Level:** L2 | **Domain:** CA
+**FedRAMP Baseline:** L2 | **Domain:** CA
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.12.4[a]**: Determine if a system security plan is developed.
 - **3.12.4[b]**: Determine if the system boundary is described and documented in the system security plan.
@@ -3890,9 +3890,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.13.2: Employ architectural designs, software development techniques, and systems engineering principles that promote effective information security within organizational information systems.
 
-**CMMC Level:** L2 | **Domain:** SC
+**FedRAMP Baseline:** L2 | **Domain:** SC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.13.2[a]**: Determine if architectural designs that promote effective information security are identified.
 - **3.13.2[b]**: Determine if software development techniques that promote effective information security are identified.
@@ -3933,9 +3933,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.13.12: Prohibit remote activation of collaborative computing devices and provide indication of devices in use to users present at the device.
 
-**CMMC Level:** L2 | **Domain:** SC
+**FedRAMP Baseline:** L2 | **Domain:** SC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.13.12[a]**: Determine if collaborative computing devices are identified.
 - **3.13.12[b]**: Determine if collaborative computing devices provide indication to users of devices in use.
@@ -3962,9 +3962,9 @@ For each manual practice, this guide provides:
 
 ##### Practice 3.13.14: Control and monitor the use of Voice over Internet Protocol (VoIP) technologies.
 
-**CMMC Level:** L2 | **Domain:** SC
+**FedRAMP Baseline:** L2 | **Domain:** SC
 
-**Assessment Objectives (NIST SP 800-171A):**
+**Assessment Objectives (NIST SP 800-53A):**
 
 - **3.13.14[a]**: Determine if use of Voice over Internet Protocol (VoIP) technologies is controlled.
 - **3.13.14[b]**: Determine if use of Voice over Internet Protocol (VoIP) technologies is monitored.
@@ -4232,17 +4232,17 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 
 | Term | Definition |
 |------|-----------|
-| **CCA** | Certified CMMC Assessor — individual authorized to conduct CMMC assessments |
-| **C3PAO** | CMMC Third-Party Assessment Organization — accredited organization that employs CCAs |
-| **OSC** | Organization Seeking Certification — the DIB contractor being assessed |
+| **CCA** | Certified FedRAMP Assessor — individual authorized to conduct FedRAMP assessments |
+| **3PAO** | FedRAMP Third-Party Assessment Organization — accredited organization that employs CCAs |
+| **OSC** | Organization Seeking Certification — the CSP being assessed |
 | **CUI** | Controlled Unclassified Information — sensitive government information requiring protection |
 | **FCI** | Federal Contract Information — information provided by or generated for the government under contract |
-| **DIB** | Defense Industrial Base — companies that supply products/services to the DoD |
+| **CSP** | Defense Industrial Base — companies that supply products/services to the DoD |
 | **CSP** | Cloud Service Provider — AWS, Azure, or GCP |
 | **Met** | The practice/objective is fully implemented based on automated or manual evidence |
 | **Not Met** | The practice/objective is not implemented or has deficiencies |
 | **Manual Review** | The practice requires CCA manual assessment — cannot be determined by automated checks alone |
-| **Assessment Objective** | A specific "determine if" statement from NIST SP 800-171A that must be evaluated |
+| **Assessment Objective** | A specific "determine if" statement from NIST SP 800-53A that must be evaluated |
 | **POA&M** | Plan of Action and Milestones — remediation plan for Not Met findings |
 | **SSP** | System Security Plan — document describing the system boundary, environment, and security controls |
 | **STS** | Security Token Service — AWS service for assuming cross-account roles |
@@ -4252,6 +4252,6 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 
 ## Document Information
 
-This methodology reference is auto-generated from the scanner's configuration files (`config/nist_practices.json` and `config/checks/*.json`). All check definitions, objective mappings, and coverage data are derived directly from the scanner's authoritative data sources.
+This methodology reference is auto-generated from the scanner's configuration files (`config/nist_800_53_controls.json` and `config/checks/*.json`). All check definitions, objective mappings, and coverage data are derived directly from the scanner's authoritative data sources.
 
 For the interactive version of this document, see the **Assessment Methodology** tab in the scanner's Help blade.

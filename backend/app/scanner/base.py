@@ -15,23 +15,25 @@ class CheckResult:
     """Result of a single compliance check against a cloud environment."""
 
     check_id: str
-    practice_id: str
+    control_id: str
     check_name: str
     status: str      # "met", "not_met", "manual", "error"
     severity: str    # "critical", "high", "medium", "low"
     evidence: str = ""
     remediation: str = ""
+    enhancement: str | None = None
     raw_evidence: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "check_id": self.check_id,
-            "practice_id": self.practice_id,
+            "control_id": self.control_id,
             "check_name": self.check_name,
             "status": self.status,
             "severity": self.severity,
             "evidence": self.evidence,
             "remediation": self.remediation,
+            "enhancement": self.enhancement,
             "raw_evidence": self.raw_evidence,
         }
 
@@ -66,8 +68,8 @@ class BaseScanner:
 
         Args:
             check_def: Dictionary from config/checks/*.json containing:
-                - check_id: Unique identifier (e.g., "ac-3.1.1-aws-001")
-                - practice_id: NIST practice (e.g., "3.1.1")
+                - check_id: Unique identifier (e.g., "ac-2-aws-001")
+                - control_id: NIST 800-53 control (e.g., "AC-2")
                 - check_name: Human-readable name
                 - check_type: "automated" or "manual"
                 - method: Name of the check method to call
@@ -88,7 +90,7 @@ class BaseScanner:
         """Create a CheckResult from check_def and assessment outcome."""
         return CheckResult(
             check_id=check_def["check_id"],
-            practice_id=check_def["practice_id"],
+            control_id=check_def["control_id"],
             check_name=check_def["check_name"],
             status=status,
             severity=check_def["severity"],

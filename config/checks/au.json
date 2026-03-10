@@ -2,10 +2,16 @@
   "domain": "AU",
   "name": "Audit and Accountability",
   "checks": {
-    "3.3.1": {
+    "AU-2": {
+      "cmmc_source": "3.3.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.1-aws-001",
+          "check_id": "au-2-aws-001",
           "name": "CloudTrail enabled in all regions",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -19,10 +25,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-aws-002",
+          "check_id": "au-2-aws-002",
           "name": "CloudTrail log file validation enabled",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -36,10 +43,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-aws-003",
+          "check_id": "au-2-aws-003",
           "name": "CloudTrail logs retained for at least 365 days",
           "service": "S3",
           "api_call": "s3.get_bucket_lifecycle_configuration",
@@ -53,10 +61,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-aws-004",
+          "check_id": "au-2-aws-004",
           "name": "CloudTrail data events enabled for S3 and Lambda",
           "service": "CloudTrail",
           "api_call": "cloudtrail.get_event_selectors",
@@ -70,12 +79,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.1-azure-001",
+          "check_id": "au-2-azure-001",
           "name": "Azure Activity Log retention configured",
           "service": "Monitor",
           "api_call": "MonitorManagementClient.activity_log_alerts.list_by_subscription_id",
@@ -89,10 +99,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-azure-002",
+          "check_id": "au-2-azure-002",
           "name": "Azure AD audit logs retained",
           "service": "Azure AD",
           "api_call": "NetworkManagementClient.network_watchers.list_all + resources.list",
@@ -106,10 +117,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-azure-003",
+          "check_id": "au-2-azure-003",
           "name": "Resource diagnostic settings enabled",
           "service": "Monitor",
           "api_call": "monitor.diagnostic_settings.list",
@@ -123,12 +135,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.1-gcp-001",
+          "check_id": "au-2-gcp-001",
           "name": "Admin Activity audit logs active",
           "service": "Logging",
           "api_call": "logging.projects.logs.list",
@@ -142,10 +155,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-gcp-002",
+          "check_id": "au-2-gcp-002",
           "name": "Data Access audit logs enabled",
           "service": "Logging",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -159,10 +173,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         },
         {
-          "check_id": "au-3.3.1-gcp-003",
+          "check_id": "au-2-gcp-003",
           "name": "Audit log sink to long-term storage",
           "service": "Logging",
           "api_call": "logging.projects.sinks.list",
@@ -176,14 +191,21 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-2"
         }
       ]
     },
-    "3.3.2": {
+    "AU-3": {
+      "cmmc_source": "3.3.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.2-aws-001",
+          "check_id": "au-3-aws-001",
           "name": "CloudTrail records user identity",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -193,10 +215,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-3"
         },
         {
-          "check_id": "au-3.3.2-aws-002",
+          "check_id": "au-3-aws-002",
           "name": "No shared IAM user accounts",
           "service": "IAM",
           "api_call": "iam.list_users()",
@@ -206,12 +229,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-3"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.2-azure-001",
+          "check_id": "au-3-azure-001",
           "name": "Azure AD sign-in logs available",
           "service": "Azure AD",
           "api_call": "graph.sign_in_logs.list",
@@ -221,12 +245,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-3"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.2-gcp-001",
+          "check_id": "au-3-gcp-001",
           "name": "Audit logs include principal identity",
           "service": "Logging",
           "api_call": "logging.entries.list",
@@ -236,11 +261,14 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-3"
         }
       ]
     },
-    "3.3.3": {
+    "AU-3(1)": {
+      "cmmc_source": "3.3.3",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Review audit logging configuration to verify events of interest are captured. Check for a documented process to periodically review and update which events are logged based on current threat landscape, organizational changes, and incident findings.",
       "objectives_requiring_documentation": [
@@ -261,10 +289,16 @@
         }
       ]
     },
-    "3.3.4": {
+    "AU-5": {
+      "cmmc_source": "3.3.4",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.4-aws-001",
+          "check_id": "au-5-aws-001",
           "name": "CloudWatch alarm for CloudTrail logging changes",
           "service": "CloudWatch",
           "api_call": "cloudwatch.describe_alarms",
@@ -275,10 +309,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-5"
         },
         {
-          "check_id": "au-3.3.4-aws-002",
+          "check_id": "au-5-aws-002",
           "name": "SNS topic configured for audit failure notifications",
           "service": "SNS",
           "api_call": "sns.list_topics()",
@@ -289,12 +324,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-5"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.4-azure-001",
+          "check_id": "au-5-azure-001",
           "name": "Activity log alert for diagnostic settings changes",
           "service": "Monitor",
           "api_call": "monitor.activity_log_alerts.list",
@@ -305,12 +341,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-5"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.4-gcp-001",
+          "check_id": "au-5-gcp-001",
           "name": "Alert policy for log sink changes",
           "service": "Monitoring",
           "api_call": "monitoring.projects.alertPolicies.list",
@@ -321,14 +358,21 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-5"
         }
       ]
     },
-    "3.3.5": {
+    "AU-6": {
+      "cmmc_source": "3.3.5",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.5-aws-001",
+          "check_id": "au-6-aws-001",
           "name": "AWS Security Hub enabled",
           "service": "Security Hub",
           "api_call": "securityhub.describe_hub",
@@ -338,10 +382,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-6"
         },
         {
-          "check_id": "au-3.3.5-aws-002",
+          "check_id": "au-6-aws-002",
           "name": "CloudTrail integrated with CloudWatch Logs",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -351,12 +396,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-6"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.5-azure-001",
+          "check_id": "au-6-azure-001",
           "name": "Microsoft Sentinel enabled",
           "service": "Sentinel",
           "api_call": "securityinsight.sentinel_onboarding_states.list",
@@ -366,12 +412,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-6"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.5-gcp-001",
+          "check_id": "au-6-gcp-001",
           "name": "Security Command Center enabled",
           "service": "SCC",
           "api_call": "securitycenter.securityHealthAnalyticsSettings",
@@ -381,14 +428,20 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-6"
         }
       ]
     },
-    "3.3.6": {
+    "AU-7": {
+      "cmmc_source": "3.3.6",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.6-aws-001",
+          "check_id": "au-7-aws-001",
           "name": "CloudWatch Logs Insights available",
           "service": "CloudWatch",
           "api_call": "logs.describe_log_groups",
@@ -398,10 +451,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-7"
         },
         {
-          "check_id": "au-3.3.6-aws-002",
+          "check_id": "au-7-aws-002",
           "name": "Athena table configured for CloudTrail analysis",
           "service": "Athena",
           "api_call": "athena.list_named_queries",
@@ -411,12 +465,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-7"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.6-azure-001",
+          "check_id": "au-7-azure-001",
           "name": "Log Analytics workspace configured",
           "service": "Monitor",
           "api_call": "operationalinsights.workspaces.list",
@@ -426,12 +481,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-7"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.6-gcp-001",
+          "check_id": "au-7-gcp-001",
           "name": "Log Analytics enabled in Cloud Logging",
           "service": "Logging",
           "api_call": "logging.projects.locations.buckets.list",
@@ -441,14 +497,21 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-7"
         }
       ]
     },
-    "3.3.7": {
+    "AU-8": {
+      "cmmc_source": "3.3.7",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.7-aws-001",
+          "check_id": "au-8-aws-001",
           "name": "NTP configured on EC2 instances",
           "service": "EC2",
           "api_call": "ec2.describe_instances()",
@@ -459,12 +522,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-8"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.7-azure-001",
+          "check_id": "au-8-azure-001",
           "name": "Azure VMs use platform time sync",
           "service": "Compute",
           "api_call": "compute.virtual_machines.list",
@@ -475,12 +539,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-8"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.7-gcp-001",
+          "check_id": "au-8-gcp-001",
           "name": "GCE instances use Google NTP",
           "service": "Compute",
           "api_call": "compute.instances.list",
@@ -491,14 +556,21 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AU-8"
         }
       ]
     },
-    "3.3.8": {
+    "AU-9": {
+      "cmmc_source": "3.3.8",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "au-3.3.8-aws-001",
+          "check_id": "au-9-aws-001",
           "name": "CloudTrail S3 bucket has access logging",
           "service": "S3",
           "api_call": "s3.get_bucket_logging",
@@ -512,10 +584,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         },
         {
-          "check_id": "au-3.3.8-aws-002",
+          "check_id": "au-9-aws-002",
           "name": "CloudTrail S3 bucket encrypted",
           "service": "S3",
           "api_call": "s3.get_bucket_encryption",
@@ -529,10 +602,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         },
         {
-          "check_id": "au-3.3.8-aws-003",
+          "check_id": "au-9-aws-003",
           "name": "CloudTrail S3 bucket MFA Delete enabled",
           "service": "S3",
           "api_call": "s3.get_bucket_versioning",
@@ -546,12 +620,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.8-azure-001",
+          "check_id": "au-9-azure-001",
           "name": "Log Analytics workspace access controlled",
           "service": "Monitor",
           "api_call": "operationalinsights.workspaces.list",
@@ -565,10 +640,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         },
         {
-          "check_id": "au-3.3.8-azure-002",
+          "check_id": "au-9-azure-002",
           "name": "Audit log storage uses immutable blobs",
           "service": "Storage",
           "api_call": "storage_accounts.list",
@@ -582,12 +658,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.8-gcp-001",
+          "check_id": "au-9-gcp-001",
           "name": "Audit log bucket has retention policy",
           "service": "Storage",
           "api_call": "storage.buckets.get",
@@ -601,10 +678,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         },
         {
-          "check_id": "au-3.3.8-gcp-002",
+          "check_id": "au-9-gcp-002",
           "name": "Audit log bucket access restricted",
           "service": "Storage",
           "api_call": "storage.buckets.getIamPolicy",
@@ -618,14 +696,17 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AU-9"
         }
       ]
     },
-    "3.3.9": {
+    "AU-9(4)": {
+      "cmmc_source": "3.3.9",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "au-3.3.9-aws-001",
+          "check_id": "au-9-4-aws-001",
           "name": "CloudTrail management restricted to security team",
           "service": "IAM",
           "api_call": "iam.list_entities_for_policy",
@@ -635,10 +716,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-9(4)"
         },
         {
-          "check_id": "au-3.3.9-aws-002",
+          "check_id": "au-9-4-aws-002",
           "name": "SCP prevents non-security users from modifying audit config",
           "service": "Organizations",
           "api_call": "organizations.list_policies",
@@ -648,12 +730,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-9(4)"
         }
       ],
       "azure": [
         {
-          "check_id": "au-3.3.9-azure-001",
+          "check_id": "au-9-4-azure-001",
           "name": "Diagnostic settings management restricted",
           "service": "Authorization",
           "api_call": "authorization.role_assignments.list",
@@ -663,12 +746,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-9(4)"
         }
       ],
       "gcp": [
         {
-          "check_id": "au-3.3.9-gcp-001",
+          "check_id": "au-9-4-gcp-001",
           "name": "Logging admin role restricted",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -678,7 +762,8 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AU-9(4)"
         }
       ]
     }

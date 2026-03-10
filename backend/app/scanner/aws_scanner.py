@@ -2,7 +2,7 @@
 AWS Scanner — Compliance check implementations using boto3.
 
 Connects to AWS (Commercial or GovCloud) via STS AssumeRole and runs
-automated CMMC practice checks against the target account.
+automated NIST 800-53 control checks against the target account.
 """
 from __future__ import annotations
 
@@ -240,7 +240,7 @@ class AwsScanner(BaseScanner):
         if not method_name:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def.get("practice_id", ""),
+                control_id=check_def.get("control_id", ""),
                 check_name=check_def.get("check_name", ""),
                 status="manual",
                 severity=check_def.get("severity", "medium"),
@@ -252,7 +252,7 @@ class AwsScanner(BaseScanner):
         if method is None:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def.get("practice_id", ""),
+                control_id=check_def.get("control_id", ""),
                 check_name=check_def.get("check_name", ""),
                 status="error",
                 severity=check_def.get("severity", "medium"),
@@ -326,7 +326,7 @@ class AwsScanner(BaseScanner):
         """
         Check if root account has active access keys.
 
-        CMMC Practice: 3.1.1 — Limit system access to authorized users.
+        NIST 800-53 Control: 3.1.1 — Limit system access to authorized users.
         Root access keys are a critical security risk — all access should
         use IAM users/roles with least privilege.
         """
@@ -345,7 +345,7 @@ class AwsScanner(BaseScanner):
             if root_keys == 0:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -355,7 +355,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -366,7 +366,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -378,7 +378,7 @@ class AwsScanner(BaseScanner):
         """
         Check if MFA is enabled for IAM users with console access.
 
-        CMMC Practice: 3.5.3 — Use multifactor authentication for local
+        NIST 800-53 Control: 3.5.3 — Use multifactor authentication for local
         and network access to privileged accounts.
         """
         try:
@@ -425,7 +425,7 @@ class AwsScanner(BaseScanner):
             if not users_without_mfa:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -435,7 +435,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -450,7 +450,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -462,7 +462,7 @@ class AwsScanner(BaseScanner):
         """
         Check if CloudTrail is enabled with multi-region logging.
 
-        CMMC Practice: 3.3.1 — Create and retain system audit logs to
+        NIST 800-53 Control: 3.3.1 — Create and retain system audit logs to
         enable monitoring, analysis, investigation, and reporting.
         """
         try:
@@ -479,7 +479,7 @@ class AwsScanner(BaseScanner):
             if not trail_list:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -502,7 +502,7 @@ class AwsScanner(BaseScanner):
             if multi_region_trails and active_trails:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -520,7 +520,7 @@ class AwsScanner(BaseScanner):
                     issues.append("No trails are actively logging")
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -531,7 +531,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -543,7 +543,7 @@ class AwsScanner(BaseScanner):
         """
         Check if CloudTrail log file validation is enabled.
 
-        CMMC Practice: 3.3.1 — Ensure audit log integrity.
+        NIST 800-53 Control: 3.3.1 — Ensure audit log integrity.
         """
         try:
             trails = self._cloudtrail.describe_trails(includeShadowTrails=False)
@@ -559,7 +559,7 @@ class AwsScanner(BaseScanner):
             if not trail_list:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -576,7 +576,7 @@ class AwsScanner(BaseScanner):
             if not trails_without_validation:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -586,7 +586,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -599,7 +599,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -611,7 +611,7 @@ class AwsScanner(BaseScanner):
         """
         Check encryption at rest for S3 buckets and EBS volumes.
 
-        CMMC Practice: 3.13.11 — Employ FIPS-validated cryptography for CUI.
+        NIST 800-53 Control: 3.13.11 — Employ FIPS-validated cryptography for CUI.
         """
         try:
             issues = []
@@ -665,7 +665,7 @@ class AwsScanner(BaseScanner):
             if not issues:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -678,7 +678,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -689,7 +689,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -701,7 +701,7 @@ class AwsScanner(BaseScanner):
         """
         Check if VPC Flow Logs are enabled on all VPCs.
 
-        CMMC Practice: 3.3.1 — Audit and accountability.
+        NIST 800-53 Control: 3.3.1 — Audit and accountability.
         """
         try:
             vpcs = self._ec2.describe_vpcs()
@@ -710,7 +710,7 @@ class AwsScanner(BaseScanner):
             if not vpc_list:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -748,7 +748,7 @@ class AwsScanner(BaseScanner):
             if not vpcs_without_flow_logs:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -758,7 +758,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -772,7 +772,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -784,7 +784,7 @@ class AwsScanner(BaseScanner):
         """
         Check for overly permissive security group rules (0.0.0.0/0).
 
-        CMMC Practice: 3.1.5 — Employ the principle of least privilege.
+        NIST 800-53 Control: 3.1.5 — Employ the principle of least privilege.
         """
         try:
             sgs = self._ec2.describe_security_groups()
@@ -847,7 +847,7 @@ class AwsScanner(BaseScanner):
             if not overly_permissive:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -860,7 +860,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -875,7 +875,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -885,9 +885,9 @@ class AwsScanner(BaseScanner):
 
     def check_password_policy(self, check_def: dict) -> CheckResult:
         """
-        Check IAM account password policy meets CMMC requirements.
+        Check IAM account password policy meets FedRAMP requirements.
 
-        CMMC Practice: 3.1.1 / 3.5.7 — Enforce minimum password complexity.
+        NIST 800-53 Control: 3.1.1 / 3.5.7 — Enforce minimum password complexity.
         """
         try:
             policy = self._iam.get_account_password_policy()
@@ -925,7 +925,7 @@ class AwsScanner(BaseScanner):
             if not issues:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -939,7 +939,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -950,7 +950,7 @@ class AwsScanner(BaseScanner):
         except self._iam.exceptions.NoSuchEntityException:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="not_met",
                 severity=check_def["severity"],
@@ -961,13 +961,13 @@ class AwsScanner(BaseScanner):
                     cli_command="aws iam get-account-password-policy",
                     response={"error": "NoSuchEntity", "detail": "No account password policy configured"},
                     service="IAM",
-                    assessor_guidance="NoSuchEntity means no password policy exists at all. This is an automatic not_met. A custom policy must be created with CMMC-compliant settings.",
+                    assessor_guidance="NoSuchEntity means no password policy exists at all. This is an automatic not_met. A custom policy must be created with FedRAMP-compliant settings.",
                 ),
             )
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -979,7 +979,7 @@ class AwsScanner(BaseScanner):
         """
         Check if automatic rotation is enabled for customer-managed KMS keys.
 
-        CMMC Practice: 3.13.10 — Establish and manage cryptographic keys.
+        NIST 800-53 Control: 3.13.10 — Establish and manage cryptographic keys.
         """
         try:
             keys_response = self._kms.list_keys()
@@ -1019,7 +1019,7 @@ class AwsScanner(BaseScanner):
             if not customer_keys:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1030,7 +1030,7 @@ class AwsScanner(BaseScanner):
             if not keys_without_rotation:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1043,7 +1043,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1057,7 +1057,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1069,7 +1069,7 @@ class AwsScanner(BaseScanner):
         """
         Check if Amazon GuardDuty is enabled.
 
-        CMMC Practice: 3.14.6 — Monitor organizational systems for attacks.
+        NIST 800-53 Control: 3.14.6 — Monitor organizational systems for attacks.
         """
         try:
             detectors = self._guardduty.list_detectors()
@@ -1085,7 +1085,7 @@ class AwsScanner(BaseScanner):
             if not detector_ids:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1108,7 +1108,7 @@ class AwsScanner(BaseScanner):
             if active_detectors:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1118,7 +1118,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1129,7 +1129,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1141,7 +1141,7 @@ class AwsScanner(BaseScanner):
         """
         Check for defense-in-depth architecture across multiple security layers.
 
-        CMMC Practice: 3.13.2 — Employ architectural designs, software development
+        NIST 800-53 Control: 3.13.2 — Employ architectural designs, software development
         techniques, and systems engineering principles that promote effective
         information security.
 
@@ -1213,7 +1213,7 @@ class AwsScanner(BaseScanner):
             if len(layers) >= 4:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1223,7 +1223,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1234,7 +1234,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1246,7 +1246,7 @@ class AwsScanner(BaseScanner):
         """
         Check if VPN infrastructure exists for controlled remote access.
 
-        CMMC Practice: 3.1.16 — Authorize wireless access prior to allowing
+        NIST 800-53 Control: 3.1.16 — Authorize wireless access prior to allowing
         such connections (interpreted as VPN remote access in cloud).
         """
         try:
@@ -1284,7 +1284,7 @@ class AwsScanner(BaseScanner):
             if vpn_resources:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1294,7 +1294,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1305,7 +1305,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1317,7 +1317,7 @@ class AwsScanner(BaseScanner):
         """
         Check if centralized identity/device management is configured.
 
-        CMMC Practice: 3.1.18 — Control connection of mobile devices.
+        NIST 800-53 Control: 3.1.18 — Control connection of mobile devices.
         Verifies SAML and OIDC identity providers are configured in IAM.
         """
         try:
@@ -1349,7 +1349,7 @@ class AwsScanner(BaseScanner):
             if providers:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1359,7 +1359,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1370,7 +1370,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1382,7 +1382,7 @@ class AwsScanner(BaseScanner):
         """
         Check if EBS encryption by default is enabled.
 
-        CMMC Practice: 3.1.19 — Encrypt CUI on computing platforms.
+        NIST 800-53 Control: 3.1.19 — Encrypt CUI on computing platforms.
         """
         try:
             response = self._ec2.get_ebs_encryption_by_default()
@@ -1398,7 +1398,7 @@ class AwsScanner(BaseScanner):
             if enabled:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1408,7 +1408,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1419,7 +1419,7 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1431,7 +1431,7 @@ class AwsScanner(BaseScanner):
         """
         Check if S3 Block Public Access is enabled at the account level.
 
-        CMMC Practice: 3.1.21 — Limit use of portable storage devices.
+        NIST 800-53 Control: 3.1.21 — Limit use of portable storage devices.
         Verifies all four public access block settings are enabled.
         """
         try:
@@ -1463,7 +1463,7 @@ class AwsScanner(BaseScanner):
             if all_enabled:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="met",
                     severity=check_def["severity"],
@@ -1473,7 +1473,7 @@ class AwsScanner(BaseScanner):
             else:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1489,7 +1489,7 @@ class AwsScanner(BaseScanner):
             if "NoSuchPublicAccessBlockConfiguration" in error_msg:
                 return CheckResult(
                     check_id=check_def["check_id"],
-                    practice_id=check_def["practice_id"],
+                    control_id=check_def["control_id"],
                     check_name=check_def["check_name"],
                     status="not_met",
                     severity=check_def["severity"],
@@ -1505,7 +1505,7 @@ class AwsScanner(BaseScanner):
                 )
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def["practice_id"],
+                control_id=check_def["control_id"],
                 check_name=check_def["check_name"],
                 status="error",
                 severity=check_def["severity"],
@@ -1854,7 +1854,7 @@ class AwsScanner(BaseScanner):
                         cli_command="aws iam list-roles --query 'Roles[].{Name:RoleName,MaxSession:MaxSessionDuration}'",
                         response={"total_roles_checked": len([r for r in roles if r["Path"] != "/aws-service-role/"]), "roles_exceeding_3600s": long_sessions[:20]},
                         service="IAM",
-                        assessor_guidance="Verify 'roles_exceeding_3600s' is empty. Each entry shows 'RoleName=Xs'. Max allowed is 3600s (1 hour) for CMMC compliance.",
+                        assessor_guidance="Verify 'roles_exceeding_3600s' is empty. Each entry shows 'RoleName=Xs'. Max allowed is 3600s (1 hour) for FedRAMP compliance.",
                     ))
             return self._result(check_def, "not_met",
                 f"{len(long_sessions)} role(s) with long sessions: {', '.join(long_sessions[:10])}",
@@ -2042,7 +2042,7 @@ class AwsScanner(BaseScanner):
                         cli_command="aws iam get-account-summary --query 'SummaryMap.AccountMFAEnabled'",
                         response={"AccountMFAEnabled": summary.get("AccountMFAEnabled", 0), "Users": summary.get("Users", 0), "MFADevices": summary.get("MFADevices", 0)},
                         service="IAM",
-                        assessor_guidance="Verify 'AccountMFAEnabled' is 1. Also check 'MFADevices' > 0. Root MFA is a critical CMMC control.",
+                        assessor_guidance="Verify 'AccountMFAEnabled' is 1. Also check 'MFADevices' > 0. Root MFA is a critical FedRAMP control.",
                     ))
             return self._result(check_def, "not_met",
                 "Root account MFA is NOT enabled. AccountMFAEnabled=0.",
@@ -2051,7 +2051,7 @@ class AwsScanner(BaseScanner):
                     cli_command="aws iam get-account-summary --query 'SummaryMap.AccountMFAEnabled'",
                     response={"AccountMFAEnabled": summary.get("AccountMFAEnabled", 0), "Users": summary.get("Users", 0), "MFADevices": summary.get("MFADevices", 0)},
                     service="IAM",
-                    assessor_guidance="CRITICAL: 'AccountMFAEnabled' is 0. Root account has no MFA. Enable hardware MFA on root immediately -- this is a mandatory CMMC control.",
+                    assessor_guidance="CRITICAL: 'AccountMFAEnabled' is 0. Root account has no MFA. Enable hardware MFA on root immediately -- this is a mandatory FedRAMP control.",
                 ))
         except Exception as e:
             return self._result(check_def, "error", f"Error checking root MFA: {e}")
@@ -2395,7 +2395,7 @@ class AwsScanner(BaseScanner):
                     cli_command="aws iam get-account-password-policy",
                     response={"password_policy": _sanitize_response(pp), "issues_found": issues},
                     service="IAM",
-                    assessor_guidance="Review 'issues_found' for specific failures. Each issue must be fixed in IAM password policy. CMMC requires MinLength>=14 + all char types.",
+                    assessor_guidance="Review 'issues_found' for specific failures. Each issue must be fixed in IAM password policy. FedRAMP requires MinLength>=14 + all char types.",
                 ))
         except self._iam.exceptions.NoSuchEntityException:
             return self._result(check_def, "not_met", "No password policy configured.",
@@ -2404,7 +2404,7 @@ class AwsScanner(BaseScanner):
                     cli_command="aws iam get-account-password-policy",
                     response={"password_policy_exists": False},
                     service="IAM",
-                    assessor_guidance="CRITICAL: No password policy exists at all. Create one with 'aws iam update-account-password-policy' meeting CMMC complexity requirements.",
+                    assessor_guidance="CRITICAL: No password policy exists at all. Create one with 'aws iam update-account-password-policy' meeting FedRAMP complexity requirements.",
                 ))
         except Exception as e:
             return self._result(check_def, "error", f"Error checking password policy: {e}")
@@ -2422,7 +2422,7 @@ class AwsScanner(BaseScanner):
                         cli_command="aws iam get-account-password-policy",
                         response={"PasswordReusePrevention": reuse, "password_policy": _sanitize_response(pp)},
                         service="IAM",
-                        assessor_guidance="Verify 'PasswordReusePrevention' >= 24. This prevents reuse of the last 24 passwords. NIST 800-171 3.5.8 requires this control.",
+                        assessor_guidance="Verify 'PasswordReusePrevention' >= 24. This prevents reuse of the last 24 passwords. NIST 800-53 IA-5 requires this control.",
                     ))
             return self._result(check_def, "not_met",
                 f"Password reuse prevention is {reuse} (should be >= 24).",
@@ -4679,7 +4679,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Check that CriticalNonCompliantCount and SecurityNonCompliantCount are zero for all "
                     "instances. Critical patches should be deployed within 15 days, high-severity within 30 days "
-                    "(per CMMC AC.L2-3.1.18). Review OperationEndTime to verify recent patch scans."
+                    "(per FedRAMP AC.L2-3.1.18). Review OperationEndTime to verify recent patch scans."
                 ),
             )
             if not non_compliant:
@@ -4932,7 +4932,7 @@ class AwsScanner(BaseScanner):
                 service="SecurityHub",
                 assessor_guidance=(
                     "Verify that the CIS AWS Foundations Benchmark standard is enabled in Security Hub. "
-                    "CIS provides industry-recognized baseline configurations aligned with CMMC requirements. "
+                    "CIS provides industry-recognized baseline configurations aligned with FedRAMP requirements. "
                     "Look for 'cis' in StandardsArn (e.g., 'arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0')."
                 ),
             )
@@ -5139,7 +5139,7 @@ class AwsScanner(BaseScanner):
                 service="Inspector",
                 assessor_guidance=(
                     "Verify that all critical and high severity vulnerability findings have been remediated "
-                    "within 30 days of discovery. Check firstObservedAt timestamps. CMMC requires timely "
+                    "within 30 days of discovery. Check firstObservedAt timestamps. FedRAMP requires timely "
                     "patching of security flaws—findings older than 30 days indicate remediation SLA violations."
                 ),
             )
@@ -5183,7 +5183,7 @@ class AwsScanner(BaseScanner):
                 service="Inspector",
                 assessor_guidance=(
                     "Verify that all active critical and high severity findings have remediation plans with "
-                    "target dates. CMMC requires documented tracking and timely resolution of security flaws. "
+                    "target dates. FedRAMP requires documented tracking and timely resolution of security flaws. "
                     "Check firstObservedAt to assess age and remediation urgency. Long-standing findings indicate "
                     "gaps in vulnerability management processes."
                 ),
@@ -5272,7 +5272,7 @@ class AwsScanner(BaseScanner):
                 service="EventBridge",
                 assessor_guidance=(
                     "Verify that EventBridge rules route Security Hub findings to notification channels (SNS, "
-                    "Lambda, SIEM, etc.). CMMC requires timely alerting of security events. Look for rules with "
+                    "Lambda, SIEM, etc.). FedRAMP requires timely alerting of security events. Look for rules with "
                     "'securityhub' in EventPattern and State='ENABLED'. Check that target actions send alerts to "
                     "the security operations team."
                 ),
@@ -5308,7 +5308,7 @@ class AwsScanner(BaseScanner):
                 service="EventBridge",
                 assessor_guidance=(
                     "Verify that EventBridge rules route GuardDuty findings to alerting systems (SNS, SIEM, "
-                    "Lambda, security ticketing). CMMC requires security incident detection and response capabilities. "
+                    "Lambda, security ticketing). FedRAMP requires security incident detection and response capabilities. "
                     "Look for rules with 'guardduty' in EventPattern and State='ENABLED'. Check that high-severity "
                     "findings trigger immediate alerts."
                 ),
@@ -5362,7 +5362,7 @@ class AwsScanner(BaseScanner):
                     response=_sanitize_response({"accounts": []}),
                     service="Inspector",
                     assessor_guidance=(
-                        "Inspector v2 is not enabled. Continuous vulnerability scanning is required for CMMC "
+                        "Inspector v2 is not enabled. Continuous vulnerability scanning is required for FedRAMP "
                         "compliance. Verify that an alternative continuous scanning solution is in place."
                     ),
                 ))
@@ -5465,7 +5465,7 @@ class AwsScanner(BaseScanner):
                 service="ELBv2",
                 assessor_guidance=(
                     "Verify all HTTPS listeners use TLS 1.2+ security policies (e.g., ELBSecurityPolicy-TLS-1-2-2017-01 "
-                    "or newer). Policies containing 'TLS-1-0' are non-compliant with CMMC SC.L2-3.13.8 and SC.L2-3.13.11. "
+                    "or newer). Policies containing 'TLS-1-0' are non-compliant with FedRAMP SC.L2-3.13.8 and SC.L2-3.13.11. "
                     "Update SslPolicy to enforce modern cryptographic standards."
                 ),
             )
@@ -5587,7 +5587,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify SplitTunnel=false for all Client VPN endpoints. Full tunnel mode routes all client "
                     "traffic through the VPN, preventing data exfiltration via local internet breakout. Split tunnel "
-                    "is non-compliant with CMMC AC.L2-3.1.12 (remote access control) for CUI environments."
+                    "is non-compliant with FedRAMP AC.L2-3.1.12 (remote access control) for CUI environments."
                 ),
             )
             if not split:
@@ -5644,7 +5644,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify all HTTPS/TLS listeners use TLS 1.2 or TLS 1.3 security policies. Look for policies "
                     "like ELBSecurityPolicy-TLS-1-2-2017-01 or ELBSecurityPolicy-TLS13-1-2-2021-06. Policies with "
-                    "'TLS-1-0' or 'TLS-1-1' are non-compliant with NIST SP 800-52r2 and CMMC SC.L2-3.13.11."
+                    "'TLS-1-0' or 'TLS-1-1' are non-compliant with NIST SP 800-52r2 and FedRAMP SC.L2-3.13.11."
                 ),
             )
             if not issues:
@@ -5699,7 +5699,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify ViewerCertificate.MinimumProtocolVersion is set to TLSv1.2_2021 or newer for all "
                     "distributions. CloudFront distributions serving CUI or handling authentication must use "
-                    "TLS 1.2+ to comply with CMMC SC.L2-3.13.8 and SC.L2-3.13.11."
+                    "TLS 1.2+ to comply with FedRAMP SC.L2-3.13.8 and SC.L2-3.13.11."
                 ),
             )
             if not weak:
@@ -5753,7 +5753,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify all S3 bucket policies include a Deny statement with Condition "
                     "aws:SecureTransport=false to enforce HTTPS-only access. This prevents unencrypted "
-                    "HTTP requests and ensures compliance with CMMC SC.L2-3.13.8 (data in transit)."
+                    "HTTP requests and ensures compliance with FedRAMP SC.L2-3.13.8 (data in transit)."
                 ),
             )
 
@@ -5805,7 +5805,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify ALB idle timeout is configured to 60 seconds or less to minimize session "
                     "persistence and reduce exposure window. Long timeouts can allow attackers to maintain "
-                    "connections during reconnaissance. CMMC SC.L2-3.13.1 (session control)."
+                    "connections during reconnaissance. FedRAMP SC.L2-3.13.1 (session control)."
                 ),
             )
 
@@ -5874,7 +5874,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "For GovCloud: FIPS 140-2 validated endpoints are used by default. "
                     "For Commercial: Verify use_fips_endpoint=true in AWS CLI/SDK config for CUI workloads. "
-                    "FIPS endpoints use format: <service>-fips.<region>.amazonaws.com. Required for CMMC L3."
+                    "FIPS endpoints use format: <service>-fips.<region>.amazonaws.com. Required for FedRAMP High."
                 ),
             )
 
@@ -5931,7 +5931,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify WAF Web ACLs include XSS and SQLi managed rule groups (AWS Managed Rules Core or "
                     "OWASP Top 10). Check that rules are in Count or Block mode (not disabled) and associated "
-                    "with ALB/CloudFront resources. CMMC SI.L2-3.14.7 (flaw remediation)."
+                    "with ALB/CloudFront resources. FedRAMP SI.L2-3.14.7 (flaw remediation)."
                 ),
             )
 
@@ -6031,7 +6031,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify DNSSEC is enabled (Status.ServeSignature=SIGNING) on all Route 53 hosted zones "
                     "serving critical domains. DNSSEC prevents DNS spoofing attacks by cryptographically "
-                    "signing DNS records. CMMC SC.L2-3.13.12 (data origin authentication)."
+                    "signing DNS records. FedRAMP SC.L2-3.13.12 (data origin authentication)."
                 ),
             )
 
@@ -6084,7 +6084,7 @@ class AwsScanner(BaseScanner):
                 assessor_guidance=(
                     "Verify Network Firewall policies include StatefulRuleGroupReferences for IDS/IPS functionality. "
                     "Check that rule groups use Suricata-compatible rules for threat detection and prevention. "
-                    "CMMC SI.L2-3.14.7 (flaw remediation) and SC.L2-3.13.6 (boundary protection)."
+                    "FedRAMP SI.L2-3.14.7 (flaw remediation) and SC.L2-3.13.6 (boundary protection)."
                 ),
             )
 
@@ -7700,6 +7700,1705 @@ class AwsScanner(BaseScanner):
         except Exception as e:
             return self._result(check_def, "error", f"Error: {e}")
 
+    # ---- CP: Contingency Planning ----
+
+    def check_dr_plan_tags(self, check_def: dict) -> CheckResult:
+        """Check for DR plan documentation tags on critical resources."""
+        try:
+            dr_tagged_resources = []
+
+            # Check EC2 instances for DR tags
+            ec2_response = self._ec2.describe_instances(
+                Filters=[
+                    {"Name": "tag-key", "Values": ["DisasterRecovery", "DR-Plan", "DRPlan"]}
+                ]
+            )
+            for reservation in ec2_response.get("Reservations", []):
+                for instance in reservation.get("Instances", []):
+                    dr_tagged_resources.append({
+                        "type": "EC2",
+                        "id": instance.get("InstanceId"),
+                        "tags": instance.get("Tags", [])
+                    })
+
+            # Check RDS instances for DR tags
+            rds_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            for db in rds_instances:
+                db_arn = db.get("DBInstanceArn")
+                if db_arn:
+                    tags_response = self._rds.list_tags_for_resource(ResourceName=db_arn)
+                    tags = tags_response.get("TagList", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["DisasterRecovery", "DR-Plan", "DRPlan"]:
+                            dr_tagged_resources.append({
+                                "type": "RDS",
+                                "id": db.get("DBInstanceIdentifier"),
+                                "tags": tags
+                            })
+                            break
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_instances() + rds.describe_db_instances()",
+                cli_command="aws ec2 describe-instances --filters 'Name=tag-key,Values=DisasterRecovery' && aws rds describe-db-instances",
+                response=_sanitize_response({
+                    "dr_tagged_count": len(dr_tagged_resources),
+                    "resources": dr_tagged_resources[:20]
+                }),
+                service="EC2/RDS",
+                assessor_guidance=(
+                    "Verify critical resources have DR plan documentation tags (DisasterRecovery, DR-Plan, or DRPlan). "
+                    "Confirm tags reference DR procedures, RPO/RTO targets, and recovery priorities. "
+                    "Check that all production and critical resources are properly tagged."
+                ),
+            )
+
+            if len(dr_tagged_resources) > 0:
+                return self._result(check_def, "met",
+                    f"{len(dr_tagged_resources)} resource(s) have DR plan tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No resources found with DR plan tags.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_resilience_hub_assessments(self, check_def: dict) -> CheckResult:
+        """Check AWS Resilience Hub has assessments."""
+        try:
+            if not hasattr(self, '_resilience_hub') or self._resilience_hub is None:
+                self._resilience_hub = self._session.client('resiliencehub', region_name=self.region)
+
+            # List all apps
+            apps = self._resilience_hub.list_apps().get("appSummaries", [])
+
+            assessments = []
+            for app in apps[:10]:  # Check first 10 apps
+                app_arn = app.get("appArn")
+                if app_arn:
+                    app_assessments = self._resilience_hub.list_app_assessments(
+                        appArn=app_arn
+                    ).get("assessmentSummaries", [])
+                    assessments.extend(app_assessments)
+
+            raw = self._build_evidence(
+                api_call="resiliencehub.list_apps() + resiliencehub.list_app_assessments()",
+                cli_command="aws resiliencehub list-apps && aws resiliencehub list-app-assessments",
+                response=_sanitize_response({
+                    "total_apps": len(apps),
+                    "total_assessments": len(assessments),
+                    "apps": apps[:10],
+                    "assessments": assessments[:20]
+                }),
+                service="ResilienceHub",
+                assessor_guidance=(
+                    "Verify AWS Resilience Hub assessments are configured for critical applications. "
+                    "Check that assessments define RPO/RTO targets, identify resilience gaps, and "
+                    "provide actionable recommendations. Confirm assessments are run periodically."
+                ),
+            )
+
+            if len(assessments) > 0:
+                return self._result(check_def, "met",
+                    f"{len(assessments)} Resilience Hub assessment(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No Resilience Hub assessments found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_s3_cross_region_replication(self, check_def: dict) -> CheckResult:
+        """Check S3 buckets have cross-region replication."""
+        try:
+            buckets = self._s3.list_buckets().get("Buckets", [])
+            buckets_with_replication = []
+
+            for bucket in buckets[:50]:  # Check first 50 buckets
+                bucket_name = bucket.get("Name")
+                try:
+                    replication = self._s3.get_bucket_replication(Bucket=bucket_name)
+                    rules = replication.get("ReplicationConfiguration", {}).get("Rules", [])
+                    if rules:
+                        buckets_with_replication.append({
+                            "bucket": bucket_name,
+                            "rules": len(rules)
+                        })
+                except self._s3.exceptions.ReplicationConfigurationNotFoundError:
+                    pass
+                except Exception:
+                    pass
+
+            raw = self._build_evidence(
+                api_call="s3.get_bucket_replication()",
+                cli_command="aws s3api get-bucket-replication",
+                response=_sanitize_response({
+                    "total_buckets": len(buckets),
+                    "buckets_with_replication": len(buckets_with_replication),
+                    "replication_details": buckets_with_replication[:20]
+                }),
+                service="S3",
+                assessor_guidance=(
+                    "Verify S3 buckets containing critical data have cross-region replication enabled. "
+                    "Check that replication rules target a geographically separate region for DR purposes. "
+                    "Confirm replication metrics are monitored and replication lag is acceptable."
+                ),
+            )
+
+            if len(buckets_with_replication) > 0:
+                return self._result(check_def, "met",
+                    f"{len(buckets_with_replication)} of {len(buckets)} bucket(s) have cross-region replication.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No S3 buckets have cross-region replication configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_rds_cross_region_replicas(self, check_def: dict) -> CheckResult:
+        """Check RDS instances have cross-region read replicas."""
+        try:
+            db_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            instances_with_replicas = []
+
+            for db in db_instances:
+                read_replicas = db.get("ReadReplicaDBInstanceIdentifiers", [])
+                if read_replicas:
+                    # Check if any replica is in a different region
+                    db_region = db.get("AvailabilityZone", "")[:-1]  # Remove AZ letter
+                    for replica in read_replicas:
+                        # Replica ARN format contains region info
+                        if replica:
+                            instances_with_replicas.append({
+                                "db_instance": db.get("DBInstanceIdentifier"),
+                                "replicas": read_replicas
+                            })
+                            break
+
+            raw = self._build_evidence(
+                api_call="rds.describe_db_instances()",
+                cli_command="aws rds describe-db-instances",
+                response=_sanitize_response({
+                    "total_instances": len(db_instances),
+                    "instances_with_replicas": len(instances_with_replicas),
+                    "replica_details": instances_with_replicas[:20]
+                }),
+                service="RDS",
+                assessor_guidance=(
+                    "Verify production RDS instances have cross-region read replicas for DR failover. "
+                    "Check that replicas are in a geographically separate region. Confirm replication lag "
+                    "is monitored and within acceptable limits. Validate failover procedures are documented."
+                ),
+            )
+
+            if len(instances_with_replicas) > 0:
+                return self._result(check_def, "met",
+                    f"{len(instances_with_replicas)} RDS instance(s) have read replicas.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No RDS instances have read replicas configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_multi_region_deployment(self, check_def: dict) -> CheckResult:
+        """Check for multi-region EC2 deployment."""
+        try:
+            regions_response = self._ec2.describe_regions()
+            all_regions = [r["RegionName"] for r in regions_response.get("Regions", [])]
+
+            regions_with_instances = []
+            for region in all_regions[:10]:  # Check first 10 regions
+                try:
+                    ec2_client = self._session.client('ec2', region_name=region)
+                    instances = ec2_client.describe_instances(
+                        Filters=[{"Name": "instance-state-name", "Values": ["running"]}]
+                    )
+                    instance_count = sum(len(r.get("Instances", []))
+                                       for r in instances.get("Reservations", []))
+                    if instance_count > 0:
+                        regions_with_instances.append({
+                            "region": region,
+                            "instance_count": instance_count
+                        })
+                except Exception:
+                    pass
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_regions() + ec2.describe_instances()",
+                cli_command="aws ec2 describe-regions && aws ec2 describe-instances",
+                response=_sanitize_response({
+                    "total_regions_checked": len(all_regions[:10]),
+                    "regions_with_instances": len(regions_with_instances),
+                    "deployment_details": regions_with_instances
+                }),
+                service="EC2",
+                assessor_guidance=(
+                    "Verify production workloads are deployed across multiple AWS regions for high availability. "
+                    "Check that at least 2 geographically separate regions have active deployments. "
+                    "Confirm failover mechanisms and load balancing are configured for multi-region traffic."
+                ),
+            )
+
+            if len(regions_with_instances) >= 2:
+                return self._result(check_def, "met",
+                    f"Deployment spans {len(regions_with_instances)} region(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(regions_with_instances)} region(s) with instances. Multi-region deployment recommended.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_route53_health_checks(self, check_def: dict) -> CheckResult:
+        """Check Route 53 health checks configured."""
+        try:
+            health_checks = self._route53.list_health_checks().get("HealthChecks", [])
+
+            raw = self._build_evidence(
+                api_call="route53.list_health_checks()",
+                cli_command="aws route53 list-health-checks",
+                response=_sanitize_response({
+                    "total_health_checks": len(health_checks),
+                    "health_checks": [{"Id": hc.get("Id"), "Type": hc.get("Type")}
+                                     for hc in health_checks[:20]]
+                }),
+                service="Route53",
+                assessor_guidance=(
+                    "Verify Route 53 health checks are configured for critical endpoints. "
+                    "Check that health checks monitor endpoint availability and trigger DNS failover. "
+                    "Confirm CloudWatch alarms are set for health check failures."
+                ),
+            )
+
+            if len(health_checks) > 0:
+                return self._result(check_def, "met",
+                    f"{len(health_checks)} Route 53 health check(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No Route 53 health checks configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_backup_vaults_configured(self, check_def: dict) -> CheckResult:
+        """Check AWS Backup vaults exist with backup plans."""
+        try:
+            vaults = self._backup.list_backup_vaults().get("BackupVaultList", [])
+            plans = self._backup.list_backup_plans().get("BackupPlansList", [])
+
+            raw = self._build_evidence(
+                api_call="backup.list_backup_vaults() + backup.list_backup_plans()",
+                cli_command="aws backup list-backup-vaults && aws backup list-backup-plans",
+                response=_sanitize_response({
+                    "total_vaults": len(vaults),
+                    "total_plans": len(plans),
+                    "vaults": [v.get("BackupVaultName") for v in vaults[:20]],
+                    "plans": [p.get("BackupPlanName") for p in plans[:20]]
+                }),
+                service="Backup",
+                assessor_guidance=(
+                    "Verify AWS Backup vaults and plans are configured for critical resources. "
+                    "Check that backup plans define retention policies, backup frequencies, and "
+                    "lifecycle rules. Confirm backup selections include all production resources."
+                ),
+            )
+
+            if len(vaults) > 0 and len(plans) > 0:
+                return self._result(check_def, "met",
+                    f"{len(vaults)} backup vault(s) and {len(plans)} backup plan(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Insufficient backup configuration: {len(vaults)} vault(s), {len(plans)} plan(s).",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_rds_automated_backups(self, check_def: dict) -> CheckResult:
+        """Check RDS automated backups enabled."""
+        try:
+            db_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            instances_without_backup = []
+
+            for db in db_instances:
+                retention = db.get("BackupRetentionPeriod", 0)
+                if retention == 0:
+                    instances_without_backup.append(db.get("DBInstanceIdentifier"))
+
+            raw = self._build_evidence(
+                api_call="rds.describe_db_instances()",
+                cli_command="aws rds describe-db-instances",
+                response=_sanitize_response({
+                    "total_instances": len(db_instances),
+                    "instances_without_backup": instances_without_backup,
+                    "backup_retention_details": [
+                        {"instance": db.get("DBInstanceIdentifier"),
+                         "retention_days": db.get("BackupRetentionPeriod", 0)}
+                        for db in db_instances[:20]
+                    ]
+                }),
+                service="RDS",
+                assessor_guidance=(
+                    "Verify all RDS instances have automated backups enabled with retention > 0 days. "
+                    "Check that backup retention period meets organizational requirements (typically 7-35 days). "
+                    "Confirm backup windows are scheduled during low-traffic periods."
+                ),
+            )
+
+            if not instances_without_backup:
+                return self._result(check_def, "met",
+                    f"All {len(db_instances)} RDS instance(s) have automated backups enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(instances_without_backup)} RDS instance(s) without automated backups: {', '.join(instances_without_backup[:10])}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_ebs_snapshots_scheduled(self, check_def: dict) -> CheckResult:
+        """Check EBS snapshot schedules via DLM."""
+        try:
+            policies = self._ec2.describe_snapshot_lifecycle_policies().get("Policies", [])
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_snapshot_lifecycle_policies()",
+                cli_command="aws ec2 describe-snapshot-lifecycle-policies",
+                response=_sanitize_response({
+                    "total_policies": len(policies),
+                    "policies": [{"PolicyId": p.get("PolicyId"),
+                                 "Description": p.get("Description"),
+                                 "State": p.get("State")}
+                                for p in policies[:20]]
+                }),
+                service="EC2",
+                assessor_guidance=(
+                    "Verify EBS volumes have automated snapshot schedules via Data Lifecycle Manager (DLM). "
+                    "Check that policies define snapshot frequency, retention, and target resources. "
+                    "Confirm policies are in 'ENABLED' state and cover all critical volumes."
+                ),
+            )
+
+            if len(policies) > 0:
+                return self._result(check_def, "met",
+                    f"{len(policies)} EBS snapshot lifecycle policy/policies configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No EBS snapshot lifecycle policies configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_dynamodb_pitr_enabled(self, check_def: dict) -> CheckResult:
+        """Check DynamoDB PITR enabled."""
+        try:
+            tables = self._dynamodb.list_tables().get("TableNames", [])
+            tables_without_pitr = []
+
+            for table_name in tables[:50]:  # Check first 50 tables
+                try:
+                    pitr_status = self._dynamodb.describe_continuous_backups(
+                        TableName=table_name
+                    )
+                    pitr_enabled = pitr_status.get("ContinuousBackupsDescription", {}).get(
+                        "PointInTimeRecoveryDescription", {}).get("PointInTimeRecoveryStatus") == "ENABLED"
+
+                    if not pitr_enabled:
+                        tables_without_pitr.append(table_name)
+                except Exception:
+                    tables_without_pitr.append(table_name)
+
+            raw = self._build_evidence(
+                api_call="dynamodb.describe_continuous_backups()",
+                cli_command="aws dynamodb describe-continuous-backups",
+                response=_sanitize_response({
+                    "total_tables": len(tables),
+                    "tables_without_pitr": tables_without_pitr[:20]
+                }),
+                service="DynamoDB",
+                assessor_guidance=(
+                    "Verify all DynamoDB tables have Point-in-Time Recovery (PITR) enabled. "
+                    "Check that PITR provides continuous backups for 35 days. "
+                    "Confirm recovery procedures are documented and tested."
+                ),
+            )
+
+            if not tables_without_pitr:
+                return self._result(check_def, "met",
+                    f"All {len(tables)} DynamoDB table(s) have PITR enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(tables_without_pitr)} DynamoDB table(s) without PITR: {', '.join(tables_without_pitr[:10])}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_backup_restore_testing(self, check_def: dict) -> CheckResult:
+        """Check backup restore test jobs exist."""
+        try:
+            # Get restore jobs from the last 90 days
+            restore_jobs = self._backup.list_restore_jobs().get("RestoreJobs", [])
+
+            # Filter for completed restore jobs in last 90 days
+            ninety_days_ago = datetime.now(timezone.utc) - timedelta(days=90)
+            recent_restores = [
+                job for job in restore_jobs
+                if job.get("CreationDate") and job.get("CreationDate") > ninety_days_ago
+            ]
+
+            raw = self._build_evidence(
+                api_call="backup.list_restore_jobs()",
+                cli_command="aws backup list-restore-jobs",
+                response=_sanitize_response({
+                    "total_restore_jobs": len(restore_jobs),
+                    "recent_restore_jobs_90d": len(recent_restores),
+                    "restore_details": [
+                        {"RestoreJobId": j.get("RestoreJobId"),
+                         "Status": j.get("Status"),
+                         "CreationDate": j.get("CreationDate")}
+                        for j in recent_restores[:20]
+                    ]
+                }),
+                service="Backup",
+                assessor_guidance=(
+                    "Verify backup restore testing is performed regularly (at least quarterly). "
+                    "Check that restore jobs complete successfully and meet RTO requirements. "
+                    "Confirm restore tests are documented with results and lessons learned."
+                ),
+            )
+
+            if len(recent_restores) > 0:
+                return self._result(check_def, "met",
+                    f"{len(recent_restores)} backup restore test(s) in the last 90 days.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No backup restore tests found in the last 90 days.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_backup_cross_region_copy(self, check_def: dict) -> CheckResult:
+        """Check backup copy jobs to another region."""
+        try:
+            copy_jobs = self._backup.list_copy_jobs().get("CopyJobs", [])
+
+            raw = self._build_evidence(
+                api_call="backup.list_copy_jobs()",
+                cli_command="aws backup list-copy-jobs",
+                response=_sanitize_response({
+                    "total_copy_jobs": len(copy_jobs),
+                    "copy_details": [
+                        {"CopyJobId": j.get("CopyJobId"),
+                         "DestinationBackupVaultArn": j.get("DestinationBackupVaultArn"),
+                         "State": j.get("State")}
+                        for j in copy_jobs[:20]
+                    ]
+                }),
+                service="Backup",
+                assessor_guidance=(
+                    "Verify backup plans include cross-region copy rules for DR purposes. "
+                    "Check that backups are copied to a geographically separate region. "
+                    "Confirm copy jobs complete successfully and copied backups are retained per policy."
+                ),
+            )
+
+            if len(copy_jobs) > 0:
+                return self._result(check_def, "met",
+                    f"{len(copy_jobs)} backup cross-region copy job(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No backup cross-region copy jobs found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_rds_backup_encryption(self, check_def: dict) -> CheckResult:
+        """Check RDS backups are encrypted."""
+        try:
+            db_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            unencrypted_instances = []
+
+            for db in db_instances:
+                if not db.get("StorageEncrypted", False):
+                    unencrypted_instances.append(db.get("DBInstanceIdentifier"))
+
+            raw = self._build_evidence(
+                api_call="rds.describe_db_instances()",
+                cli_command="aws rds describe-db-instances",
+                response=_sanitize_response({
+                    "total_instances": len(db_instances),
+                    "unencrypted_instances": unencrypted_instances,
+                    "encryption_details": [
+                        {"instance": db.get("DBInstanceIdentifier"),
+                         "encrypted": db.get("StorageEncrypted", False),
+                         "kms_key_id": db.get("KmsKeyId")}
+                        for db in db_instances[:20]
+                    ]
+                }),
+                service="RDS",
+                assessor_guidance=(
+                    "Verify all RDS instances have storage encryption enabled. "
+                    "Check that automated backups inherit encryption from the source instance. "
+                    "Confirm KMS keys used for encryption are properly managed and rotated."
+                ),
+            )
+
+            if not unencrypted_instances:
+                return self._result(check_def, "met",
+                    f"All {len(db_instances)} RDS instance(s) have encrypted storage/backups.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(unencrypted_instances)} RDS instance(s) without encryption: {', '.join(unencrypted_instances[:10])}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_recovery_procedures_documented(self, check_def: dict) -> CheckResult:
+        """Check for recovery documentation tags."""
+        try:
+            tagged_resources = []
+
+            # Check EC2 instances
+            ec2_response = self._ec2.describe_instances(
+                Filters=[
+                    {"Name": "tag-key", "Values": ["RecoveryProcedure", "RecoveryDoc", "RecoveryRunbook"]}
+                ]
+            )
+            for reservation in ec2_response.get("Reservations", []):
+                for instance in reservation.get("Instances", []):
+                    tagged_resources.append({
+                        "type": "EC2",
+                        "id": instance.get("InstanceId")
+                    })
+
+            # Check RDS instances
+            rds_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            for db in rds_instances:
+                db_arn = db.get("DBInstanceArn")
+                if db_arn:
+                    tags_response = self._rds.list_tags_for_resource(ResourceName=db_arn)
+                    tags = tags_response.get("TagList", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["RecoveryProcedure", "RecoveryDoc", "RecoveryRunbook"]:
+                            tagged_resources.append({
+                                "type": "RDS",
+                                "id": db.get("DBInstanceIdentifier")
+                            })
+                            break
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_instances() + rds.describe_db_instances()",
+                cli_command="aws ec2 describe-instances --filters 'Name=tag-key,Values=RecoveryProcedure'",
+                response=_sanitize_response({
+                    "resources_with_recovery_docs": len(tagged_resources),
+                    "resources": tagged_resources[:20]
+                }),
+                service="EC2/RDS",
+                assessor_guidance=(
+                    "Verify critical resources have recovery procedure documentation tags. "
+                    "Check that tags reference runbooks, recovery steps, and contact information. "
+                    "Confirm recovery procedures are tested and up-to-date."
+                ),
+            )
+
+            if len(tagged_resources) > 0:
+                return self._result(check_def, "met",
+                    f"{len(tagged_resources)} resource(s) have recovery procedure documentation tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No resources with recovery procedure documentation tags found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_rds_point_in_time_recovery(self, check_def: dict) -> CheckResult:
+        """Check RDS PITR capability."""
+        try:
+            db_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            instances_without_pitr = []
+
+            for db in db_instances:
+                latest_restorable = db.get("LatestRestorableTime")
+                if not latest_restorable:
+                    instances_without_pitr.append(db.get("DBInstanceIdentifier"))
+
+            raw = self._build_evidence(
+                api_call="rds.describe_db_instances()",
+                cli_command="aws rds describe-db-instances",
+                response=_sanitize_response({
+                    "total_instances": len(db_instances),
+                    "instances_without_pitr": instances_without_pitr,
+                    "pitr_details": [
+                        {"instance": db.get("DBInstanceIdentifier"),
+                         "latest_restorable_time": db.get("LatestRestorableTime"),
+                         "backup_retention_period": db.get("BackupRetentionPeriod")}
+                        for db in db_instances[:20]
+                    ]
+                }),
+                service="RDS",
+                assessor_guidance=(
+                    "Verify all RDS instances support point-in-time recovery with LatestRestorableTime set. "
+                    "Check that backup retention period is > 0 to enable PITR. "
+                    "Confirm PITR windows align with RPO requirements."
+                ),
+            )
+
+            if not instances_without_pitr:
+                return self._result(check_def, "met",
+                    f"All {len(db_instances)} RDS instance(s) support point-in-time recovery.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(instances_without_pitr)} RDS instance(s) without PITR: {', '.join(instances_without_pitr[:10])}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    # ---- PL: Planning ----
+
+    def check_ssm_security_plan_documents(self, check_def: dict) -> CheckResult:
+        """Check SSM Parameter Store has security plan docs."""
+        try:
+            parameters = self._ssm.describe_parameters(
+                Filters=[
+                    {"Key": "Name", "Values": ["SecurityPlan"]}
+                ]
+            ).get("Parameters", [])
+
+            # Also check for parameters with SecurityPlan prefix
+            all_params = self._ssm.describe_parameters(MaxResults=50).get("Parameters", [])
+            security_plan_params = [
+                p for p in all_params
+                if "SecurityPlan" in p.get("Name", "") or "security-plan" in p.get("Name", "").lower()
+            ]
+
+            raw = self._build_evidence(
+                api_call="ssm.describe_parameters()",
+                cli_command="aws ssm describe-parameters --filters 'Key=Name,Values=SecurityPlan'",
+                response=_sanitize_response({
+                    "security_plan_parameters": len(security_plan_params),
+                    "parameters": [p.get("Name") for p in security_plan_params[:20]]
+                }),
+                service="SSM",
+                assessor_guidance=(
+                    "Verify SSM Parameter Store contains security plan documentation references. "
+                    "Check that parameters point to current security plans, policies, and procedures. "
+                    "Confirm parameters are tagged and versioned appropriately."
+                ),
+            )
+
+            if len(security_plan_params) > 0:
+                return self._result(check_def, "met",
+                    f"{len(security_plan_params)} security plan parameter(s) found in SSM.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No security plan parameters found in SSM Parameter Store.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_architecture_tags(self, check_def: dict) -> CheckResult:
+        """Check critical resources have architecture metadata tags."""
+        try:
+            resources_with_arch_tags = []
+
+            # Check EC2 instances
+            ec2_response = self._ec2.describe_instances(
+                Filters=[
+                    {"Name": "tag-key", "Values": ["Architecture", "DataClassification", "SystemType"]}
+                ]
+            )
+            for reservation in ec2_response.get("Reservations", []):
+                for instance in reservation.get("Instances", []):
+                    resources_with_arch_tags.append({
+                        "type": "EC2",
+                        "id": instance.get("InstanceId")
+                    })
+
+            # Check RDS instances
+            rds_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            for db in rds_instances:
+                db_arn = db.get("DBInstanceArn")
+                if db_arn:
+                    tags_response = self._rds.list_tags_for_resource(ResourceName=db_arn)
+                    tags = tags_response.get("TagList", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["Architecture", "DataClassification", "SystemType"]:
+                            resources_with_arch_tags.append({
+                                "type": "RDS",
+                                "id": db.get("DBInstanceIdentifier")
+                            })
+                            break
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_instances() + rds.describe_db_instances()",
+                cli_command="aws ec2 describe-instances --filters 'Name=tag-key,Values=Architecture'",
+                response=_sanitize_response({
+                    "resources_with_architecture_tags": len(resources_with_arch_tags),
+                    "resources": resources_with_arch_tags[:20]
+                }),
+                service="EC2/RDS",
+                assessor_guidance=(
+                    "Verify critical resources have architecture metadata tags (Architecture, DataClassification, SystemType). "
+                    "Check that tags provide context for system design, data sensitivity, and component relationships. "
+                    "Confirm tagging strategy is consistently applied across all resources."
+                ),
+            )
+
+            if len(resources_with_arch_tags) > 0:
+                return self._result(check_def, "met",
+                    f"{len(resources_with_arch_tags)} resource(s) have architecture metadata tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No resources with architecture metadata tags found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_vpc_flow_logs_architecture(self, check_def: dict) -> CheckResult:
+        """Check VPC flow logs support architecture review."""
+        try:
+            vpcs = self._ec2.describe_vpcs().get("Vpcs", [])
+            flow_logs = self._ec2.describe_flow_logs().get("FlowLogs", [])
+
+            vpc_ids = {vpc.get("VpcId") for vpc in vpcs}
+            flow_log_vpcs = {fl.get("ResourceId") for fl in flow_logs
+                           if fl.get("ResourceId") in vpc_ids}
+
+            vpcs_without_logs = vpc_ids - flow_log_vpcs
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_flow_logs()",
+                cli_command="aws ec2 describe-flow-logs",
+                response=_sanitize_response({
+                    "total_vpcs": len(vpcs),
+                    "vpcs_with_flow_logs": len(flow_log_vpcs),
+                    "vpcs_without_flow_logs": list(vpcs_without_logs)[:20],
+                    "flow_log_details": [
+                        {"ResourceId": fl.get("ResourceId"),
+                         "LogDestinationType": fl.get("LogDestinationType"),
+                         "FlowLogStatus": fl.get("FlowLogStatus")}
+                        for fl in flow_logs[:20]
+                    ]
+                }),
+                service="EC2",
+                assessor_guidance=(
+                    "Verify all VPCs have flow logs enabled to support architecture review and security analysis. "
+                    "Check that flow logs capture ACCEPT, REJECT, or ALL traffic patterns. "
+                    "Confirm flow logs are sent to CloudWatch Logs or S3 for long-term retention."
+                ),
+            )
+
+            if not vpcs_without_logs:
+                return self._result(check_def, "met",
+                    f"All {len(vpcs)} VPC(s) have flow logs enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(vpcs_without_logs)} VPC(s) without flow logs: {', '.join(list(vpcs_without_logs)[:10])}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    # ---- PT: PII Processing ----
+
+    def check_macie_enabled(self, check_def: dict) -> CheckResult:
+        """Check Amazon Macie is enabled."""
+        try:
+            if not hasattr(self, '_macie2') or self._macie2 is None:
+                self._macie2 = self._session.client('macie2', region_name=self.region)
+
+            session = self._macie2.get_macie_session()
+            status = session.get("status")
+
+            raw = self._build_evidence(
+                api_call="macie2.get_macie_session()",
+                cli_command="aws macie2 get-macie-session",
+                response=_sanitize_response({
+                    "status": status,
+                    "service_role": session.get("serviceRole"),
+                    "created_at": session.get("createdAt")
+                }),
+                service="Macie",
+                assessor_guidance=(
+                    "Verify Amazon Macie is enabled and actively scanning S3 buckets for PII/PHI. "
+                    "Check that Macie has appropriate service role permissions. "
+                    "Confirm Macie findings are reviewed and sensitive data is properly protected."
+                ),
+            )
+
+            if status == "ENABLED":
+                return self._result(check_def, "met",
+                    "Amazon Macie is enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Amazon Macie status: {status}",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_s3_data_classification_tags(self, check_def: dict) -> CheckResult:
+        """Check S3 buckets have data classification tags."""
+        try:
+            buckets = self._s3.list_buckets().get("Buckets", [])
+            buckets_with_classification = []
+
+            for bucket in buckets[:50]:  # Check first 50 buckets
+                bucket_name = bucket.get("Name")
+                try:
+                    tags_response = self._s3.get_bucket_tagging(Bucket=bucket_name)
+                    tags = tags_response.get("TagSet", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["DataClassification", "DataSensitivity", "Classification"]:
+                            buckets_with_classification.append(bucket_name)
+                            break
+                except self._s3.exceptions.NoSuchTagSet:
+                    pass
+                except Exception:
+                    pass
+
+            raw = self._build_evidence(
+                api_call="s3.get_bucket_tagging()",
+                cli_command="aws s3api get-bucket-tagging",
+                response=_sanitize_response({
+                    "total_buckets": len(buckets),
+                    "buckets_with_classification": len(buckets_with_classification),
+                    "classified_buckets": buckets_with_classification[:20]
+                }),
+                service="S3",
+                assessor_guidance=(
+                    "Verify S3 buckets have data classification tags (DataClassification, DataSensitivity, or Classification). "
+                    "Check that tags accurately reflect data sensitivity levels (Public, Internal, Confidential, Restricted). "
+                    "Confirm bucket policies and encryption align with classification levels."
+                ),
+            )
+
+            if len(buckets_with_classification) > 0:
+                return self._result(check_def, "met",
+                    f"{len(buckets_with_classification)} of {len(buckets)} bucket(s) have data classification tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No S3 buckets have data classification tags.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_rds_data_classification_tags(self, check_def: dict) -> CheckResult:
+        """Check RDS instances have data classification tags."""
+        try:
+            db_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            instances_with_classification = []
+
+            for db in db_instances:
+                db_arn = db.get("DBInstanceArn")
+                if db_arn:
+                    tags_response = self._rds.list_tags_for_resource(ResourceName=db_arn)
+                    tags = tags_response.get("TagList", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["DataClassification", "DataSensitivity", "Classification"]:
+                            instances_with_classification.append(db.get("DBInstanceIdentifier"))
+                            break
+
+            raw = self._build_evidence(
+                api_call="rds.list_tags_for_resource()",
+                cli_command="aws rds list-tags-for-resource",
+                response=_sanitize_response({
+                    "total_instances": len(db_instances),
+                    "instances_with_classification": len(instances_with_classification),
+                    "classified_instances": instances_with_classification[:20]
+                }),
+                service="RDS",
+                assessor_guidance=(
+                    "Verify RDS instances have data classification tags indicating sensitivity level. "
+                    "Check that tags align with data protection requirements (encryption, backup, access controls). "
+                    "Confirm classification drives security controls like encryption-at-rest and IAM policies."
+                ),
+            )
+
+            if len(instances_with_classification) > 0:
+                return self._result(check_def, "met",
+                    f"{len(instances_with_classification)} of {len(db_instances)} RDS instance(s) have data classification tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No RDS instances have data classification tags.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_data_processing_purpose_tags(self, check_def: dict) -> CheckResult:
+        """Check resources have data processing purpose tags."""
+        try:
+            resources_with_purpose = []
+
+            # Check EC2 instances
+            ec2_response = self._ec2.describe_instances(
+                Filters=[
+                    {"Name": "tag-key", "Values": ["DataProcessingPurpose", "ProcessingPurpose", "DataPurpose"]}
+                ]
+            )
+            for reservation in ec2_response.get("Reservations", []):
+                for instance in reservation.get("Instances", []):
+                    resources_with_purpose.append({
+                        "type": "EC2",
+                        "id": instance.get("InstanceId")
+                    })
+
+            # Check RDS instances
+            rds_instances = self._rds.describe_db_instances().get("DBInstances", [])
+            for db in rds_instances:
+                db_arn = db.get("DBInstanceArn")
+                if db_arn:
+                    tags_response = self._rds.list_tags_for_resource(ResourceName=db_arn)
+                    tags = tags_response.get("TagList", [])
+                    for tag in tags:
+                        if tag.get("Key") in ["DataProcessingPurpose", "ProcessingPurpose", "DataPurpose"]:
+                            resources_with_purpose.append({
+                                "type": "RDS",
+                                "id": db.get("DBInstanceIdentifier")
+                            })
+                            break
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_instances() + rds.describe_db_instances()",
+                cli_command="aws ec2 describe-instances --filters 'Name=tag-key,Values=DataProcessingPurpose'",
+                response=_sanitize_response({
+                    "resources_with_purpose_tags": len(resources_with_purpose),
+                    "resources": resources_with_purpose[:20]
+                }),
+                service="EC2/RDS",
+                assessor_guidance=(
+                    "Verify resources processing personal data have purpose tags describing lawful basis. "
+                    "Check that tags document processing purpose (e.g., 'CustomerService', 'Analytics', 'Marketing'). "
+                    "Confirm processing purposes align with privacy policies and consent mechanisms."
+                ),
+            )
+
+            if len(resources_with_purpose) > 0:
+                return self._result(check_def, "met",
+                    f"{len(resources_with_purpose)} resource(s) have data processing purpose tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No resources with data processing purpose tags found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_api_consent_documentation(self, check_def: dict) -> CheckResult:
+        """Check API Gateway has consent/privacy documentation."""
+        try:
+            rest_apis = self._apigateway.get_rest_apis().get("items", [])
+            apis_with_docs = []
+
+            for api in rest_apis[:20]:  # Check first 20 APIs
+                api_id = api.get("id")
+                api_name = api.get("name")
+
+                # Check for documentation
+                try:
+                    doc_parts = self._apigateway.get_documentation_parts(
+                        restApiId=api_id
+                    ).get("items", [])
+
+                    if doc_parts:
+                        apis_with_docs.append({
+                            "api_id": api_id,
+                            "api_name": api_name,
+                            "doc_parts_count": len(doc_parts)
+                        })
+                except Exception:
+                    pass
+
+                # Also check tags for documentation references
+                tags = api.get("tags", {})
+                if any(key in tags for key in ["Documentation", "PrivacyPolicy", "ConsentDoc"]):
+                    if not any(d["api_id"] == api_id for d in apis_with_docs):
+                        apis_with_docs.append({
+                            "api_id": api_id,
+                            "api_name": api_name,
+                            "has_doc_tags": True
+                        })
+
+            raw = self._build_evidence(
+                api_call="apigateway.get_rest_apis() + apigateway.get_documentation_parts()",
+                cli_command="aws apigateway get-rest-apis && aws apigateway get-documentation-parts",
+                response=_sanitize_response({
+                    "total_apis": len(rest_apis),
+                    "apis_with_documentation": len(apis_with_docs),
+                    "documented_apis": apis_with_docs[:20]
+                }),
+                service="APIGateway",
+                assessor_guidance=(
+                    "Verify API Gateway APIs have documentation describing consent and privacy handling. "
+                    "Check that documentation explains data collection, usage, and user rights. "
+                    "Confirm APIs implement consent mechanisms before processing personal data."
+                ),
+            )
+
+            if len(apis_with_docs) > 0:
+                return self._result(check_def, "met",
+                    f"{len(apis_with_docs)} of {len(rest_apis)} API(s) have documentation.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No API Gateway APIs have documentation configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    # ---- SA: System Acquisition ----
+
+    def check_codepipeline_configured(self, check_def: dict) -> CheckResult:
+        """Check CodePipeline exists."""
+        try:
+            pipelines = self._codepipeline.list_pipelines().get("pipelines", [])
+
+            raw = self._build_evidence(
+                api_call="codepipeline.list_pipelines()",
+                cli_command="aws codepipeline list-pipelines",
+                response=_sanitize_response({
+                    "total_pipelines": len(pipelines),
+                    "pipelines": [p.get("name") for p in pipelines[:20]]
+                }),
+                service="CodePipeline",
+                assessor_guidance=(
+                    "Verify CodePipeline is configured for automated build and deployment. "
+                    "Check that pipelines include security scanning stages (SAST, dependency scan). "
+                    "Confirm pipelines enforce approval gates for production deployments."
+                ),
+            )
+
+            if len(pipelines) > 0:
+                return self._result(check_def, "met",
+                    f"{len(pipelines)} CodePipeline pipeline(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodePipeline pipelines configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_codebuild_security_scanning(self, check_def: dict) -> CheckResult:
+        """Check CodeBuild projects have security scanning."""
+        try:
+            if not hasattr(self, '_codebuild') or self._codebuild is None:
+                self._codebuild = self._session.client('codebuild', region_name=self.region)
+
+            project_names = self._codebuild.list_projects().get("projects", [])
+            projects_with_security = []
+
+            if project_names:
+                projects = self._codebuild.batch_get_projects(
+                    names=project_names[:50]
+                ).get("projects", [])
+
+                for project in projects:
+                    # Check buildspec or environment variables for security tools
+                    buildspec = project.get("source", {}).get("buildspec", "")
+                    env_vars = project.get("environment", {}).get("environmentVariables", [])
+
+                    # Look for common security scanning keywords
+                    security_keywords = ["sast", "security", "scan", "sonar", "checkmarx", "snyk", "trivy"]
+                    has_security = any(keyword in buildspec.lower() for keyword in security_keywords)
+                    has_security = has_security or any(
+                        keyword in var.get("name", "").lower() or keyword in var.get("value", "").lower()
+                        for var in env_vars for keyword in security_keywords
+                    )
+
+                    if has_security:
+                        projects_with_security.append(project.get("name"))
+
+            raw = self._build_evidence(
+                api_call="codebuild.list_projects() + codebuild.batch_get_projects()",
+                cli_command="aws codebuild list-projects && aws codebuild batch-get-projects",
+                response=_sanitize_response({
+                    "total_projects": len(project_names),
+                    "projects_with_security_scanning": len(projects_with_security),
+                    "security_projects": projects_with_security[:20]
+                }),
+                service="CodeBuild",
+                assessor_guidance=(
+                    "Verify CodeBuild projects include security scanning stages (SAST, dependency scanning). "
+                    "Check that buildspec includes security tools like SonarQube, Snyk, or Trivy. "
+                    "Confirm security scan results fail builds when critical vulnerabilities are found."
+                ),
+            )
+
+            if len(projects_with_security) > 0:
+                return self._result(check_def, "met",
+                    f"{len(projects_with_security)} of {len(project_names)} CodeBuild project(s) have security scanning.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodeBuild projects with security scanning found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_security_groups_unused_ports(self, check_def: dict) -> CheckResult:
+        """Check security groups don't have unused open ports."""
+        try:
+            security_groups = self._ec2.describe_security_groups().get("SecurityGroups", [])
+            overly_permissive = []
+
+            # Standard ports that are commonly needed
+            standard_ports = {22, 80, 443, 3389, 3306, 5432}
+
+            for sg in security_groups:
+                for rule in sg.get("IpPermissions", []):
+                    # Check for rules open to 0.0.0.0/0
+                    ip_ranges = rule.get("IpRanges", [])
+                    if any(ip_range.get("CidrIp") == "0.0.0.0/0" for ip_range in ip_ranges):
+                        from_port = rule.get("FromPort")
+                        to_port = rule.get("ToPort")
+
+                        # Flag non-standard ports open to the internet
+                        if from_port and from_port not in standard_ports:
+                            overly_permissive.append({
+                                "security_group_id": sg.get("GroupId"),
+                                "group_name": sg.get("GroupName"),
+                                "port": from_port
+                            })
+
+            raw = self._build_evidence(
+                api_call="ec2.describe_security_groups()",
+                cli_command="aws ec2 describe-security-groups",
+                response=_sanitize_response({
+                    "total_security_groups": len(security_groups),
+                    "overly_permissive_rules": len(overly_permissive),
+                    "permissive_details": overly_permissive[:20]
+                }),
+                service="EC2",
+                assessor_guidance=(
+                    "Verify security groups don't have overly permissive rules with unused ports open to 0.0.0.0/0. "
+                    "Check that only necessary ports are exposed and restricted to known IP ranges. "
+                    "Confirm security groups follow least privilege principle."
+                ),
+            )
+
+            if not overly_permissive:
+                return self._result(check_def, "met",
+                    "No overly permissive security group rules with unusual ports found.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(overly_permissive)} security group rule(s) with non-standard ports open to 0.0.0.0/0.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_api_gateway_documented(self, check_def: dict) -> CheckResult:
+        """Check API Gateway has documentation."""
+        try:
+            rest_apis = self._apigateway.get_rest_apis().get("items", [])
+            apis_with_documentation = []
+
+            for api in rest_apis[:20]:  # Check first 20 APIs
+                api_id = api.get("id")
+                try:
+                    doc_parts = self._apigateway.get_documentation_parts(
+                        restApiId=api_id
+                    ).get("items", [])
+
+                    if doc_parts:
+                        apis_with_documentation.append({
+                            "api_id": api_id,
+                            "api_name": api.get("name"),
+                            "doc_count": len(doc_parts)
+                        })
+                except Exception:
+                    pass
+
+            raw = self._build_evidence(
+                api_call="apigateway.get_rest_apis() + apigateway.get_documentation_parts()",
+                cli_command="aws apigateway get-rest-apis && aws apigateway get-documentation-parts",
+                response=_sanitize_response({
+                    "total_apis": len(rest_apis),
+                    "documented_apis": len(apis_with_documentation),
+                    "documentation_details": apis_with_documentation[:20]
+                }),
+                service="APIGateway",
+                assessor_guidance=(
+                    "Verify API Gateway REST APIs have complete documentation for all endpoints. "
+                    "Check that documentation includes request/response schemas, authentication requirements, and examples. "
+                    "Confirm documentation is kept up-to-date with API changes."
+                ),
+            )
+
+            if len(apis_with_documentation) > 0:
+                return self._result(check_def, "met",
+                    f"{len(apis_with_documentation)} of {len(rest_apis)} API(s) have documentation.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No API Gateway APIs with documentation found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_codecommit_version_control(self, check_def: dict) -> CheckResult:
+        """Check CodeCommit repositories exist."""
+        try:
+            if not hasattr(self, '_codecommit') or self._codecommit is None:
+                self._codecommit = self._session.client('codecommit', region_name=self.region)
+
+            repositories = self._codecommit.list_repositories().get("repositories", [])
+
+            raw = self._build_evidence(
+                api_call="codecommit.list_repositories()",
+                cli_command="aws codecommit list-repositories",
+                response=_sanitize_response({
+                    "total_repositories": len(repositories),
+                    "repositories": [r.get("repositoryName") for r in repositories[:20]]
+                }),
+                service="CodeCommit",
+                assessor_guidance=(
+                    "Verify source code is maintained in version control (CodeCommit or other Git service). "
+                    "Check that repositories have branch protection rules and require code reviews. "
+                    "Confirm commit history is preserved and access is logged."
+                ),
+            )
+
+            if len(repositories) > 0:
+                return self._result(check_def, "met",
+                    f"{len(repositories)} CodeCommit repository/repositories found.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodeCommit repositories found (may use external Git service).",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_cloudformation_version_control(self, check_def: dict) -> CheckResult:
+        """Check CloudFormation stacks use version-controlled templates."""
+        try:
+            if not hasattr(self, '_cloudformation') or self._cloudformation is None:
+                self._cloudformation = self._session.client('cloudformation', region_name=self.region)
+
+            stacks = self._cloudformation.list_stacks(
+                StackStatusFilter=[
+                    'CREATE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE'
+                ]
+            ).get("StackSummaries", [])
+
+            raw = self._build_evidence(
+                api_call="cloudformation.list_stacks()",
+                cli_command="aws cloudformation list-stacks",
+                response=_sanitize_response({
+                    "total_stacks": len(stacks),
+                    "stacks": [{"StackName": s.get("StackName"),
+                               "StackStatus": s.get("StackStatus")}
+                              for s in stacks[:20]]
+                }),
+                service="CloudFormation",
+                assessor_guidance=(
+                    "Verify CloudFormation stacks use version-controlled templates from source control. "
+                    "Check that template changes go through code review and CI/CD pipelines. "
+                    "Confirm stack drift detection is enabled and monitored."
+                ),
+            )
+
+            if len(stacks) > 0:
+                return self._result(check_def, "met",
+                    f"{len(stacks)} CloudFormation stack(s) found (verify templates are version-controlled).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No active CloudFormation stacks found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_codebuild_test_stages(self, check_def: dict) -> CheckResult:
+        """Check CodeBuild has test/build stages."""
+        try:
+            if not hasattr(self, '_codebuild') or self._codebuild is None:
+                self._codebuild = self._session.client('codebuild', region_name=self.region)
+
+            project_names = self._codebuild.list_projects().get("projects", [])
+            projects_with_tests = []
+
+            if project_names:
+                projects = self._codebuild.batch_get_projects(
+                    names=project_names[:50]
+                ).get("projects", [])
+
+                for project in projects:
+                    buildspec = project.get("source", {}).get("buildspec", "")
+
+                    # Look for test-related keywords in buildspec
+                    test_keywords = ["test", "junit", "pytest", "npm test", "mvn test", "gradle test"]
+                    has_tests = any(keyword in buildspec.lower() for keyword in test_keywords)
+
+                    if has_tests:
+                        projects_with_tests.append(project.get("name"))
+
+            raw = self._build_evidence(
+                api_call="codebuild.list_projects() + codebuild.batch_get_projects()",
+                cli_command="aws codebuild list-projects && aws codebuild batch-get-projects",
+                response=_sanitize_response({
+                    "total_projects": len(project_names),
+                    "projects_with_tests": len(projects_with_tests),
+                    "test_projects": projects_with_tests[:20]
+                }),
+                service="CodeBuild",
+                assessor_guidance=(
+                    "Verify CodeBuild projects include test stages in buildspec. "
+                    "Check that unit tests, integration tests, and/or end-to-end tests are executed. "
+                    "Confirm builds fail when tests don't pass and test results are published."
+                ),
+            )
+
+            if len(projects_with_tests) > 0:
+                return self._result(check_def, "met",
+                    f"{len(projects_with_tests)} of {len(project_names)} CodeBuild project(s) have test stages.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodeBuild projects with test stages found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_codeguru_sast_integrated(self, check_def: dict) -> CheckResult:
+        """Check CodeGuru Reviewer is configured."""
+        try:
+            if not hasattr(self, '_codeguru') or self._codeguru is None:
+                self._codeguru = self._session.client('codeguru-reviewer', region_name=self.region)
+
+            associations = self._codeguru.list_repository_associations().get(
+                "RepositoryAssociationSummaries", []
+            )
+
+            raw = self._build_evidence(
+                api_call="codeguru-reviewer.list_repository_associations()",
+                cli_command="aws codeguru-reviewer list-repository-associations",
+                response=_sanitize_response({
+                    "total_associations": len(associations),
+                    "associations": [
+                        {"Name": a.get("Name"), "State": a.get("State")}
+                        for a in associations[:20]
+                    ]
+                }),
+                service="CodeGuruReviewer",
+                assessor_guidance=(
+                    "Verify CodeGuru Reviewer is associated with code repositories for automated SAST. "
+                    "Check that associations are in 'Associated' state and actively reviewing pull requests. "
+                    "Confirm CodeGuru recommendations are reviewed and addressed."
+                ),
+            )
+
+            if len(associations) > 0:
+                return self._result(check_def, "met",
+                    f"{len(associations)} CodeGuru repository association(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodeGuru Reviewer repository associations found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_ssm_inventory_software_versions(self, check_def: dict) -> CheckResult:
+        """Check SSM inventory tracks software."""
+        try:
+            # Check for inventory data sync
+            data_syncs = self._ssm.list_resource_data_sync().get("ResourceDataSyncItems", [])
+
+            # Get inventory summary
+            inventory_summary = {}
+            try:
+                inventory = self._ssm.get_inventory_schema(MaxResults=10)
+                inventory_summary = {
+                    "schema_count": len(inventory.get("Schemas", []))
+                }
+            except Exception:
+                pass
+
+            raw = self._build_evidence(
+                api_call="ssm.list_resource_data_sync() + ssm.get_inventory_schema()",
+                cli_command="aws ssm list-resource-data-sync && aws ssm get-inventory-schema",
+                response=_sanitize_response({
+                    "data_sync_count": len(data_syncs),
+                    "data_syncs": [ds.get("SyncName") for ds in data_syncs],
+                    "inventory_summary": inventory_summary
+                }),
+                service="SSM",
+                assessor_guidance=(
+                    "Verify SSM Inventory is configured to track software versions on managed instances. "
+                    "Check that inventory includes applications, patches, and custom metadata. "
+                    "Confirm inventory data is centralized via resource data sync for analysis."
+                ),
+            )
+
+            if len(data_syncs) > 0 or inventory_summary.get("schema_count", 0) > 0:
+                return self._result(check_def, "met",
+                    f"SSM Inventory configured with {len(data_syncs)} data sync(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No SSM Inventory data syncs configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_inspector_eol_software(self, check_def: dict) -> CheckResult:
+        """Check Inspector findings for EOL software."""
+        try:
+            findings = self._inspector2.list_findings(
+                filterCriteria={
+                    "findingStatus": [{"comparison": "EQUALS", "value": "ACTIVE"}],
+                    "findingType": [{"comparison": "EQUALS", "value": "PACKAGE_VULNERABILITY"}]
+                },
+                maxResults=50
+            ).get("findings", [])
+
+            # Look for EOL-related findings
+            eol_keywords = ["end-of-life", "eol", "unsupported", "deprecated"]
+            eol_findings = [
+                f for f in findings
+                if any(keyword in f.get("title", "").lower() or
+                      keyword in f.get("description", "").lower()
+                      for keyword in eol_keywords)
+            ]
+
+            raw = self._build_evidence(
+                api_call="inspector2.list_findings()",
+                cli_command="aws inspector2 list-findings",
+                response=_sanitize_response({
+                    "total_package_findings": len(findings),
+                    "eol_related_findings": len(eol_findings),
+                    "findings": [
+                        {"findingArn": f.get("findingArn"),
+                         "title": f.get("title"),
+                         "severity": f.get("severity")}
+                        for f in eol_findings[:20]
+                    ]
+                }),
+                service="Inspector",
+                assessor_guidance=(
+                    "Verify Inspector scans identify end-of-life (EOL) software packages. "
+                    "Check that EOL software findings are prioritized for remediation. "
+                    "Confirm process exists to upgrade or replace EOL software components."
+                ),
+            )
+
+            if not eol_findings:
+                return self._result(check_def, "met",
+                    "No active Inspector findings for EOL software.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(eol_findings)} Inspector finding(s) related to EOL software.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    # ---- SR: Supply Chain ----
+
+    def check_ecr_vulnerability_scanning(self, check_def: dict) -> CheckResult:
+        """Check ECR repositories have scanning enabled."""
+        try:
+            repositories = self._ecr.describe_repositories().get("repositories", [])
+
+            # Check registry scanning configuration
+            registry_config = {}
+            try:
+                registry_config = self._ecr.get_registry_scanning_configuration()
+            except Exception:
+                pass
+
+            repos_with_scanning = [
+                r for r in repositories
+                if r.get("imageScanningConfiguration", {}).get("scanOnPush", False)
+            ]
+
+            raw = self._build_evidence(
+                api_call="ecr.describe_repositories() + ecr.get_registry_scanning_configuration()",
+                cli_command="aws ecr describe-repositories && aws ecr get-registry-scanning-configuration",
+                response=_sanitize_response({
+                    "total_repositories": len(repositories),
+                    "repos_with_scan_on_push": len(repos_with_scanning),
+                    "registry_scanning": registry_config.get("scanningConfiguration", {}),
+                    "repositories": [r.get("repositoryName") for r in repos_with_scanning[:20]]
+                }),
+                service="ECR",
+                assessor_guidance=(
+                    "Verify ECR repositories have image scanning enabled (scan-on-push or enhanced scanning). "
+                    "Check that scan findings are reviewed and vulnerabilities are remediated. "
+                    "Confirm high/critical vulnerabilities block image deployment."
+                ),
+            )
+
+            if len(repos_with_scanning) > 0 or registry_config.get("scanningConfiguration"):
+                return self._result(check_def, "met",
+                    f"{len(repos_with_scanning)} of {len(repositories)} ECR repository/repositories have scan-on-push enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No ECR repositories with vulnerability scanning enabled.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_inspector_sbom(self, check_def: dict) -> CheckResult:
+        """Check Inspector SBOM generation."""
+        try:
+            # Check Inspector coverage for SBOM
+            coverage = self._inspector2.list_coverage(
+                filterCriteria={
+                    "resourceType": [{"comparison": "EQUALS", "value": "AWS_ECR_CONTAINER_IMAGE"}]
+                },
+                maxResults=50
+            ).get("coveredResources", [])
+
+            raw = self._build_evidence(
+                api_call="inspector2.list_coverage()",
+                cli_command="aws inspector2 list-coverage",
+                response=_sanitize_response({
+                    "covered_resources": len(coverage),
+                    "coverage_details": [
+                        {"resourceId": c.get("resourceId"),
+                         "resourceType": c.get("resourceType"),
+                         "scanStatus": c.get("scanStatus", {})}
+                        for c in coverage[:20]
+                    ]
+                }),
+                service="Inspector",
+                assessor_guidance=(
+                    "Verify Inspector v2 generates SBOM for container images and instances. "
+                    "Check that SBOM data includes all software packages and dependencies. "
+                    "Confirm SBOM is used for vulnerability tracking and compliance reporting."
+                ),
+            )
+
+            if len(coverage) > 0:
+                return self._result(check_def, "met",
+                    f"Inspector coverage configured for {len(coverage)} resource(s) (SBOM generation).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No Inspector coverage for SBOM generation found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_codebuild_dependency_scanning(self, check_def: dict) -> CheckResult:
+        """Check CodeBuild projects scan dependencies."""
+        try:
+            if not hasattr(self, '_codebuild') or self._codebuild is None:
+                self._codebuild = self._session.client('codebuild', region_name=self.region)
+
+            project_names = self._codebuild.list_projects().get("projects", [])
+            projects_with_dep_scan = []
+
+            if project_names:
+                projects = self._codebuild.batch_get_projects(
+                    names=project_names[:50]
+                ).get("projects", [])
+
+                for project in projects:
+                    buildspec = project.get("source", {}).get("buildspec", "")
+
+                    # Look for dependency scanning keywords
+                    dep_scan_keywords = ["npm audit", "pip check", "dependency-check", "snyk", "trivy", "safety"]
+                    has_dep_scan = any(keyword in buildspec.lower() for keyword in dep_scan_keywords)
+
+                    if has_dep_scan:
+                        projects_with_dep_scan.append(project.get("name"))
+
+            raw = self._build_evidence(
+                api_call="codebuild.list_projects() + codebuild.batch_get_projects()",
+                cli_command="aws codebuild list-projects && aws codebuild batch-get-projects",
+                response=_sanitize_response({
+                    "total_projects": len(project_names),
+                    "projects_with_dependency_scanning": len(projects_with_dep_scan),
+                    "dep_scan_projects": projects_with_dep_scan[:20]
+                }),
+                service="CodeBuild",
+                assessor_guidance=(
+                    "Verify CodeBuild projects include dependency scanning stages. "
+                    "Check that tools like npm audit, Snyk, or OWASP Dependency-Check are used. "
+                    "Confirm builds fail when high/critical vulnerabilities are found in dependencies."
+                ),
+            )
+
+            if len(projects_with_dep_scan) > 0:
+                return self._result(check_def, "met",
+                    f"{len(projects_with_dep_scan)} of {len(project_names)} CodeBuild project(s) have dependency scanning.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CodeBuild projects with dependency scanning found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_ecr_image_signing(self, check_def: dict) -> CheckResult:
+        """Check ECR image signing is configured."""
+        try:
+            # Check if registry has signing configuration
+            registry_policy = {}
+            try:
+                registry_policy = self._ecr.get_registry_policy()
+            except self._ecr.exceptions.RegistryPolicyNotFoundException:
+                pass
+            except Exception:
+                pass
+
+            repositories = self._ecr.describe_repositories().get("repositories", [])
+
+            raw = self._build_evidence(
+                api_call="ecr.get_registry_policy() + ecr.describe_repositories()",
+                cli_command="aws ecr get-registry-policy && aws ecr describe-repositories",
+                response=_sanitize_response({
+                    "total_repositories": len(repositories),
+                    "has_registry_policy": bool(registry_policy.get("policyText")),
+                    "registry_policy": registry_policy.get("policyText", "")[:500] if registry_policy else None
+                }),
+                service="ECR",
+                assessor_guidance=(
+                    "Verify ECR images are signed using AWS Signer or Notary for supply chain security. "
+                    "Check that only signed images are allowed to be deployed. "
+                    "Confirm image signature verification is enforced in deployment pipelines."
+                ),
+            )
+
+            if registry_policy.get("policyText"):
+                return self._result(check_def, "met",
+                    "ECR registry has policy configured (verify image signing requirements).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No ECR registry policy for image signing found.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
+    def check_lambda_code_signing(self, check_def: dict) -> CheckResult:
+        """Check Lambda functions use code signing."""
+        try:
+            if not hasattr(self, '_lambda_client') or self._lambda_client is None:
+                self._lambda_client = self._session.client('lambda', region_name=self.region)
+
+            functions = self._lambda_client.list_functions().get("Functions", [])
+            functions_with_signing = []
+
+            for func in functions:
+                if func.get("CodeSigningConfigArn"):
+                    functions_with_signing.append({
+                        "function_name": func.get("FunctionName"),
+                        "signing_config_arn": func.get("CodeSigningConfigArn")
+                    })
+
+            raw = self._build_evidence(
+                api_call="lambda.list_functions()",
+                cli_command="aws lambda list-functions",
+                response=_sanitize_response({
+                    "total_functions": len(functions),
+                    "functions_with_code_signing": len(functions_with_signing),
+                    "signed_functions": functions_with_signing[:20]
+                }),
+                service="Lambda",
+                assessor_guidance=(
+                    "Verify Lambda functions use code signing configurations for supply chain integrity. "
+                    "Check that signing profiles enforce trusted sources for deployment packages. "
+                    "Confirm unsigned code is blocked from deployment."
+                ),
+            )
+
+            if len(functions_with_signing) > 0:
+                return self._result(check_def, "met",
+                    f"{len(functions_with_signing)} of {len(functions)} Lambda function(s) use code signing.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No Lambda functions with code signing configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Error: {e}")
+
     def disconnect(self):
         """Clean up boto3 clients."""
         self._iam = None
@@ -7735,6 +9434,14 @@ class AwsScanner(BaseScanner):
         self._apigateway = None
         self._athena = None
         self._health = None
+        # New clients for CP, PL, PT, SA, SR checks
+        self._resilience_hub = None
+        self._macie2 = None
+        self._codebuild = None
+        self._codecommit = None
+        self._cloudformation = None
+        self._codeguru = None
+        self._lambda_client = None
         self._credential_report_cache = None
         self._trails_cache = None
         self._s3_buckets_cache = None

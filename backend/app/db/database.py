@@ -1,5 +1,5 @@
 """
-Database configuration and session management for CMMC Cloud Compliance Scanner.
+Database configuration and session management for FedRAMP Cloud Compliance Scanner.
 
 Uses SQLite for development, PostgreSQL for production via DATABASE_URL env var.
 """

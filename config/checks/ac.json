@@ -2,10 +2,16 @@
   "domain": "AC",
   "name": "Access Control",
   "checks": {
-    "3.1.1": {
+    "AC-2": {
+      "cmmc_source": "3.1.1",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.1-aws-001",
+          "check_id": "ac-2-aws-001",
           "name": "Root account access keys disabled",
           "service": "IAM",
           "api_call": "iam.get_account_summary",
@@ -14,10 +20,11 @@
           "remediation": "Delete root account access keys via IAM console.",
           "supports_objectives": [
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-aws-002",
+          "check_id": "ac-2-aws-002",
           "name": "IAM users have active credentials reviewed",
           "service": "IAM",
           "api_call": "iam.generate_credential_report",
@@ -27,10 +34,11 @@
           "supports_objectives": [
             "[a]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-aws-003",
+          "check_id": "ac-2-aws-003",
           "name": "IAM password policy enforced",
           "service": "IAM",
           "api_call": "iam.get_account_password_policy",
@@ -40,12 +48,13 @@
           "supports_objectives": [
             "[a]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.1-azure-001",
+          "check_id": "ac-2-azure-001",
           "name": "Conditional Access policies configured",
           "service": "Authorization",
           "api_call": "AuthorizationManagementClient.role_assignments.list_for_scope",
@@ -56,10 +65,11 @@
             "[a]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-azure-002",
+          "check_id": "ac-2-azure-002",
           "name": "Guest user access restricted",
           "service": "Azure AD",
           "api_call": "graph.authorization_policy.get",
@@ -69,10 +79,11 @@
           "supports_objectives": [
             "[a]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-azure-003",
+          "check_id": "ac-2-azure-003",
           "name": "Security defaults or Conditional Access enabled",
           "service": "Azure AD",
           "api_call": "graph.identity_security_defaults_enforcement_policy.get",
@@ -83,12 +94,13 @@
             "[a]",
             "[d]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-2"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.1-gcp-001",
+          "check_id": "ac-2-gcp-001",
           "name": "Organization-level IAM bindings reviewed",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -98,10 +110,11 @@
           "supports_objectives": [
             "[a]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-gcp-002",
+          "check_id": "ac-2-gcp-002",
           "name": "Service account keys rotated",
           "service": "IAM",
           "api_call": "iam.projects.serviceAccounts.keys.list",
@@ -111,10 +124,11 @@
           "supports_objectives": [
             "[b]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-2"
         },
         {
-          "check_id": "ac-3.1.1-gcp-003",
+          "check_id": "ac-2-gcp-003",
           "name": "Default service account not used",
           "service": "IAM",
           "api_call": "compute.instances.list",
@@ -124,14 +138,21 @@
           "supports_objectives": [
             "[b]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-2"
         }
       ]
     },
-    "3.1.2": {
+    "AC-3": {
+      "cmmc_source": "3.1.2",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.2-aws-001",
+          "check_id": "ac-3-aws-001",
           "name": "IAM policies follow least privilege",
           "service": "IAM",
           "api_call": "iam.list_policies",
@@ -140,10 +161,11 @@
           "remediation": "Replace wildcard permissions with specific actions and resources.",
           "supports_objectives": [
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         },
         {
-          "check_id": "ac-3.1.2-aws-002",
+          "check_id": "ac-3-aws-002",
           "name": "IAM permission boundaries configured for delegated admin",
           "service": "IAM",
           "api_call": "iam.list_users",
@@ -153,12 +175,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.2-azure-001",
+          "check_id": "ac-3-azure-001",
           "name": "Custom RBAC roles use least privilege",
           "service": "Authorization",
           "api_call": "authorization.role_definitions.list",
@@ -168,10 +191,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         },
         {
-          "check_id": "ac-3.1.2-azure-002",
+          "check_id": "ac-3-azure-002",
           "name": "PIM enabled for privileged roles",
           "service": "Azure AD",
           "api_call": "graph/roleManagement/directory/roleAssignmentScheduleInstances",
@@ -181,12 +205,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.2-gcp-001",
+          "check_id": "ac-3-gcp-001",
           "name": "Custom IAM roles scoped appropriately",
           "service": "IAM",
           "api_call": "iam.projects.roles.list",
@@ -196,10 +221,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         },
         {
-          "check_id": "ac-3.1.2-gcp-002",
+          "check_id": "ac-3-gcp-002",
           "name": "Primitive roles not assigned to users",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -209,14 +235,20 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-3"
         }
       ]
     },
-    "3.1.3": {
+    "AC-4": {
+      "cmmc_source": "3.1.3",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.3-aws-001",
+          "check_id": "ac-4-aws-001",
           "name": "VPC Flow Logs enabled",
           "service": "VPC",
           "api_call": "ec2.describe_flow_logs",
@@ -228,10 +260,11 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         },
         {
-          "check_id": "ac-3.1.3-aws-002",
+          "check_id": "ac-4-aws-002",
           "name": "S3 Block Public Access enabled at account level",
           "service": "S3",
           "api_call": "s3control.get_public_access_block",
@@ -243,12 +276,13 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.3-azure-001",
+          "check_id": "ac-4-azure-001",
           "name": "NSG flow logs enabled",
           "service": "Network",
           "api_call": "network_watchers.list_all + nsgs.list_all",
@@ -260,10 +294,11 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         },
         {
-          "check_id": "ac-3.1.3-azure-002",
+          "check_id": "ac-4-azure-002",
           "name": "Azure Firewall or Network Virtual Appliance deployed",
           "service": "Network",
           "api_call": "network.azure_firewalls.list",
@@ -275,12 +310,13 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.3-gcp-001",
+          "check_id": "ac-4-gcp-001",
           "name": "VPC Flow Logs enabled",
           "service": "VPC",
           "api_call": "compute.subnetworks.list",
@@ -292,10 +328,11 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         },
         {
-          "check_id": "ac-3.1.3-gcp-002",
+          "check_id": "ac-4-gcp-002",
           "name": "Firewall rules reviewed for least privilege",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -307,7 +344,8 @@
             "[b]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4"
         }
       ],
       "objectives_requiring_documentation": [
@@ -318,10 +356,15 @@
         }
       ]
     },
-    "3.1.4": {
+    "AC-5": {
+      "cmmc_source": "3.1.4",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.4-aws-001",
+          "check_id": "ac-5-aws-001",
           "name": "Separate IAM roles for admin and operational tasks",
           "service": "IAM",
           "api_call": "iam.list_roles",
@@ -332,10 +375,11 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-5"
         },
         {
-          "check_id": "ac-3.1.4-aws-002",
+          "check_id": "ac-5-aws-002",
           "name": "No single user has both deploy and approve permissions",
           "service": "IAM",
           "api_call": "iam.get_policy_version",
@@ -346,12 +390,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-5"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.4-azure-001",
+          "check_id": "ac-5-azure-001",
           "name": "Separation of duties for subscription management",
           "service": "Authorization",
           "api_call": "authorization.role_assignments.list",
@@ -362,12 +407,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-5"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.4-gcp-001",
+          "check_id": "ac-5-gcp-001",
           "name": "Separation of duties for project management",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -378,14 +424,20 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-5"
         }
       ]
     },
-    "3.1.5": {
+    "AC-6": {
+      "cmmc_source": "3.1.5",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.5-aws-001",
+          "check_id": "ac-6-aws-001",
           "name": "No inline IAM policies with wildcard permissions",
           "service": "IAM",
           "api_call": "iam.list_user_policies",
@@ -394,10 +446,11 @@
           "remediation": "Replace inline wildcard policies with scoped managed policies.",
           "supports_objectives": [
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6"
         },
         {
-          "check_id": "ac-3.1.5-aws-002",
+          "check_id": "ac-6-aws-002",
           "name": "IAM Access Analyzer enabled",
           "service": "IAM",
           "api_call": "accessanalyzer.list_analyzers",
@@ -407,10 +460,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6"
         },
         {
-          "check_id": "ac-3.1.5-aws-003",
+          "check_id": "ac-6-aws-003",
           "name": "No IAM users with AdministratorAccess policy",
           "service": "IAM",
           "api_call": "iam.list_entities_for_policy",
@@ -422,12 +476,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-6"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.5-azure-001",
+          "check_id": "ac-6-azure-001",
           "name": "Global Administrator role limited",
           "service": "Azure AD",
           "api_call": "graph.directory_roles.members.list",
@@ -439,10 +494,11 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-6"
         },
         {
-          "check_id": "ac-3.1.5-azure-002",
+          "check_id": "ac-6-azure-002",
           "name": "JIT VM access configured",
           "service": "Security Center",
           "api_call": "security.jit_network_access_policies.list",
@@ -453,12 +509,13 @@
             "[a]",
             "[b]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-6"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.5-gcp-001",
+          "check_id": "ac-6-gcp-001",
           "name": "No user has Owner role on multiple projects",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -468,10 +525,11 @@
           "supports_objectives": [
             "[a]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-6"
         },
         {
-          "check_id": "ac-3.1.5-gcp-002",
+          "check_id": "ac-6-gcp-002",
           "name": "IAM recommender reviewed",
           "service": "IAM",
           "api_call": "recommender.projects.locations.recommenders.recommendations.list",
@@ -480,14 +538,17 @@
           "remediation": "Review and apply IAM Recommender suggestions to reduce excess permissions.",
           "supports_objectives": [
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6"
         }
       ]
     },
-    "3.1.6": {
+    "AC-6(3)": {
+      "cmmc_source": "3.1.6",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.6-aws-001",
+          "check_id": "ac-6-3-aws-001",
           "name": "Separate admin and standard user roles defined",
           "service": "IAM",
           "api_call": "iam.list_roles",
@@ -497,12 +558,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6(3)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.6-azure-001",
+          "check_id": "ac-6-3-azure-001",
           "name": "Admin accounts separate from daily-use accounts",
           "service": "Azure AD",
           "api_call": "graph/directoryRoles/*/members",
@@ -512,12 +574,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6(3)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.6-gcp-001",
+          "check_id": "ac-6-3-gcp-001",
           "name": "Admin and user roles separated",
           "service": "IAM",
           "api_call": "cloudresourcemanager.projects.getIamPolicy",
@@ -527,14 +590,17 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-6(3)"
         }
       ]
     },
-    "3.1.7": {
+    "AC-2(9)": {
+      "cmmc_source": "3.1.7",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.7-aws-001",
+          "check_id": "ac-2-9-aws-001",
           "name": "CloudTrail logging enabled for all management events",
           "service": "CloudTrail",
           "api_call": "cloudtrail.describe_trails",
@@ -545,10 +611,11 @@
             "[a]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2(9)"
         },
         {
-          "check_id": "ac-3.1.7-aws-002",
+          "check_id": "ac-2-9-aws-002",
           "name": "SCP prevents disabling CloudTrail",
           "service": "Organizations",
           "api_call": "organizations.list_policies",
@@ -559,12 +626,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2(9)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.7-azure-001",
+          "check_id": "ac-2-9-azure-001",
           "name": "Activity Log alerts for privilege escalation",
           "service": "Monitor",
           "api_call": "monitor.activity_log_alerts.list",
@@ -576,12 +644,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2(9)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.7-gcp-001",
+          "check_id": "ac-2-9-gcp-001",
           "name": "Admin Activity audit logs enabled",
           "service": "Logging",
           "api_call": "logging.projects.logs.list",
@@ -591,10 +660,11 @@
           "supports_objectives": [
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2(9)"
         },
         {
-          "check_id": "ac-3.1.7-gcp-002",
+          "check_id": "ac-2-9-gcp-002",
           "name": "Log-based metrics and alerts for IAM changes",
           "service": "Monitoring",
           "api_call": "monitoring.projects.alertPolicies.list",
@@ -605,14 +675,21 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-2(9)"
         }
       ]
     },
-    "3.1.8": {
+    "AC-7": {
+      "cmmc_source": "3.1.8",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.8-aws-001",
+          "check_id": "ac-7-aws-001",
           "name": "Account lockout policy configured in IAM Identity Center",
           "service": "IAM Identity Center",
           "api_call": "sso-admin.list_instances()",
@@ -622,10 +699,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-7"
         },
         {
-          "check_id": "ac-3.1.8-aws-002",
+          "check_id": "ac-7-aws-002",
           "name": "GuardDuty brute force finding type enabled",
           "service": "GuardDuty",
           "api_call": "guardduty.list_detectors",
@@ -635,12 +713,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-7"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.8-azure-001",
+          "check_id": "ac-7-azure-001",
           "name": "Smart lockout configured in Azure AD",
           "service": "Azure AD",
           "api_call": "graph.settings.list",
@@ -650,12 +729,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-7"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.8-gcp-001",
+          "check_id": "ac-7-gcp-001",
           "name": "Google Workspace login challenge enabled",
           "service": "Workspace Admin",
           "api_call": "admin.directory.users.list",
@@ -665,11 +745,18 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-7"
         }
       ]
     },
-    "3.1.9": {
+    "AC-8": {
+      "cmmc_source": "3.1.9",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "manual_only": true,
       "manual_guidance": "Verify system use notification banners are configured on all CUI systems. Check login banners include required language about authorized use, monitoring, and consent to recording.",
       "objectives_requiring_documentation": [
@@ -685,10 +772,15 @@
         }
       ]
     },
-    "3.1.10": {
+    "AC-11": {
+      "cmmc_source": "3.1.10",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.10-aws-001",
+          "check_id": "ac-11-aws-001",
           "name": "Console session timeout configured",
           "service": "IAM",
           "api_call": "iam.get_role",
@@ -699,12 +791,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-11"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.10-azure-001",
+          "check_id": "ac-11-azure-001",
           "name": "Conditional Access session controls configured",
           "service": "Azure AD",
           "api_call": "graph.conditional_access_policies.list",
@@ -715,12 +808,13 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-11"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.10-gcp-001",
+          "check_id": "ac-11-gcp-001",
           "name": "Session control policy configured",
           "service": "OrgPolicy",
           "api_call": "BeyondCorp / session management",
@@ -731,14 +825,20 @@
             "[a]",
             "[b]",
             "[c]"
-          ]
+          ],
+          "control_id": "AC-11"
         }
       ]
     },
-    "3.1.11": {
+    "AC-12": {
+      "cmmc_source": "3.1.11",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.11-aws-001",
+          "check_id": "ac-12-aws-001",
           "name": "IAM role session duration limited",
           "service": "IAM",
           "api_call": "iam.list_roles",
@@ -748,10 +848,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-12"
         },
         {
-          "check_id": "ac-3.1.11-aws-002",
+          "check_id": "ac-12-aws-002",
           "name": "SSO session timeout configured",
           "service": "IAM Identity Center",
           "api_call": "sso-admin.describe_instance",
@@ -761,12 +862,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-12"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.11-azure-001",
+          "check_id": "ac-12-azure-001",
           "name": "Token lifetime policy configured",
           "service": "Azure AD",
           "api_call": "graph.token_lifetime_policies.list",
@@ -776,12 +878,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-12"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.11-gcp-001",
+          "check_id": "ac-12-gcp-001",
           "name": "OAuth token expiration configured",
           "service": "IAM",
           "api_call": "iam.projects.serviceAccounts.list",
@@ -791,14 +894,17 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-12"
         }
       ]
     },
-    "3.1.12": {
+    "AC-17(1)": {
+      "cmmc_source": "3.1.12",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.12-aws-001",
+          "check_id": "ac-17-1-aws-001",
           "name": "VPN connections use CloudWatch monitoring",
           "service": "VPC",
           "api_call": "ec2.describe_vpn_connections",
@@ -810,10 +916,11 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-17(1)"
         },
         {
-          "check_id": "ac-3.1.12-aws-002",
+          "check_id": "ac-17-1-aws-002",
           "name": "Systems Manager Session Manager logging enabled",
           "service": "SSM",
           "api_call": "ssm.describe_document",
@@ -825,12 +932,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-17(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.12-azure-001",
+          "check_id": "ac-17-1-azure-001",
           "name": "Azure Bastion deployed for remote access",
           "service": "Network",
           "api_call": "network.bastion_hosts.list",
@@ -842,12 +950,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-17(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.12-gcp-001",
+          "check_id": "ac-17-1-gcp-001",
           "name": "IAP for TCP forwarding enabled",
           "service": "Compute",
           "api_call": "compute.firewalls.list",
@@ -859,14 +968,17 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-17(1)"
         }
       ]
     },
-    "3.1.13": {
+    "AC-17(2)": {
+      "cmmc_source": "3.1.13",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.13-aws-001",
+          "check_id": "ac-17-2-aws-001",
           "name": "VPN uses approved encryption",
           "service": "VPC",
           "api_call": "ec2.describe_vpn_connections",
@@ -876,10 +988,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(2)"
         },
         {
-          "check_id": "ac-3.1.13-aws-002",
+          "check_id": "ac-17-2-aws-002",
           "name": "TLS 1.2+ enforced on all load balancers",
           "service": "ELB",
           "api_call": "elbv2.describe_load_balancers() + describe_listeners()",
@@ -889,12 +1002,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(2)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.13-azure-001",
+          "check_id": "ac-17-2-azure-001",
           "name": "VPN Gateway uses IKEv2 with strong encryption",
           "service": "Network",
           "api_call": "network.virtual_network_gateway_connections.list",
@@ -904,12 +1018,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(2)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.13-gcp-001",
+          "check_id": "ac-17-2-gcp-001",
           "name": "Cloud VPN uses IKEv2 with strong ciphers",
           "service": "VPN",
           "api_call": "compute.vpnTunnels.list",
@@ -919,14 +1034,17 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(2)"
         }
       ]
     },
-    "3.1.14": {
+    "AC-17(3)": {
+      "cmmc_source": "3.1.14",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.14-aws-001",
+          "check_id": "ac-17-3-aws-001",
           "name": "Client VPN endpoint configured",
           "service": "VPC",
           "api_call": "ec2.describe_client_vpn_endpoints",
@@ -936,10 +1054,11 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(3)"
         },
         {
-          "check_id": "ac-3.1.14-aws-002",
+          "check_id": "ac-17-3-aws-002",
           "name": "No direct SSH/RDP access from internet",
           "service": "EC2",
           "api_call": "ec2.describe_security_groups",
@@ -949,12 +1068,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(3)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.14-azure-001",
+          "check_id": "ac-17-3-azure-001",
           "name": "No direct RDP/SSH from internet",
           "service": "Network",
           "api_call": "network.network_security_groups.list",
@@ -964,12 +1084,13 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(3)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.14-gcp-001",
+          "check_id": "ac-17-3-gcp-001",
           "name": "No direct SSH from internet via firewall rules",
           "service": "VPC",
           "api_call": "compute.firewalls.list",
@@ -979,14 +1100,21 @@
           "supports_objectives": [
             "[a]",
             "[b]"
-          ]
+          ],
+          "control_id": "AC-17(3)"
         }
       ]
     },
-    "3.1.15": {
+    "AC-18": {
+      "cmmc_source": "3.1.15",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.15-aws-001",
+          "check_id": "ac-18-aws-001",
           "name": "Session Manager used for privileged remote access",
           "service": "SSM",
           "api_call": "ssm.describe_instance_information",
@@ -998,12 +1126,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-18"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.15-azure-001",
+          "check_id": "ac-18-azure-001",
           "name": "Privileged Access Workstation policy enforced",
           "service": "Azure AD",
           "api_call": "graph.conditional_access_policies.list",
@@ -1015,12 +1144,13 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-18"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.15-gcp-001",
+          "check_id": "ac-18-gcp-001",
           "name": "OS Login enabled for privileged access",
           "service": "Compute",
           "api_call": "compute.projects.get",
@@ -1032,45 +1162,55 @@
             "[b]",
             "[c]",
             "[d]"
-          ]
+          ],
+          "control_id": "AC-18"
         }
       ]
     },
-    "3.1.16": {
+    "AC-19": {
+      "cmmc_source": "3.1.16",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.16-aws-001",
+          "check_id": "ac-19-aws-001",
           "name": "VPN infrastructure for remote access authorization",
           "service": "VPC",
           "api_call": "ec2.describe_vpn_connections/describe_client_vpn_endpoints",
           "expected": "Site-to-site VPN connections or Client VPN endpoints configured for controlled remote access",
           "severity": "high",
           "remediation": "Deploy AWS Site-to-Site VPN or Client VPN endpoints to control and authorize remote access.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-19"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.16-azure-001",
+          "check_id": "ac-19-azure-001",
           "name": "VPN gateway for remote access authorization",
           "service": "Network",
           "api_call": "network.virtual_network_gateways.list",
           "expected": "VPN gateways configured for controlled remote access",
           "severity": "high",
           "remediation": "Deploy Azure VPN Gateway to control and authorize remote access connections.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-19"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.16-gcp-001",
+          "check_id": "ac-19-gcp-001",
           "name": "Cloud VPN for remote access authorization",
           "service": "VPN",
           "api_call": "compute.vpnGateways.list/vpnTunnels.list",
           "expected": "Cloud VPN gateways and tunnels configured for controlled remote access",
           "severity": "high",
           "remediation": "Deploy Cloud VPN gateways and tunnels to control and authorize remote access.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-19"
         }
       ],
       "objectives_requiring_documentation": [
@@ -1086,7 +1226,9 @@
         }
       ]
     },
-    "3.1.17": {
+    "AC-19(5)": {
+      "cmmc_source": "3.1.17",
+      "baselines": [],
       "manual_only": true,
       "manual_guidance": "Verify wireless networks use WPA2/WPA3-Enterprise with 802.1X authentication and FIPS 140-2 validated encryption. Check that wireless infrastructure is configured according to organizational security standards.",
       "objectives_requiring_documentation": [
@@ -1102,41 +1244,50 @@
         }
       ]
     },
-    "3.1.18": {
+    "AC-20": {
+      "cmmc_source": "3.1.18",
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.18-aws-001",
+          "check_id": "ac-20-aws-001",
           "name": "Centralized identity providers for device control",
           "service": "IAM",
           "api_call": "iam.list_saml_providers/list_open_id_connect_providers",
           "expected": "SAML or OIDC identity providers configured for centralized authentication and device control",
           "severity": "high",
           "remediation": "Configure SAML or OIDC identity providers in IAM for centralized identity and device management.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.18-azure-001",
+          "check_id": "ac-20-azure-001",
           "name": "Defender for Cloud and managed identity for device control",
           "service": "Security/Authorization",
           "api_call": "resource_client.providers.get/auth_client.role_assignments.list",
           "expected": "Microsoft Defender for Cloud enabled and managed identity role assignments present",
           "severity": "high",
           "remediation": "Enable Microsoft Defender for Cloud and use managed identities for centralized device and identity management.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.18-gcp-001",
+          "check_id": "ac-20-gcp-001",
           "name": "OS Login and device security org policies",
           "service": "OrgPolicy",
           "api_call": "orgpolicy.projects.policies.get",
           "expected": "At least 2 of 3 device security org policies enforced: OS Login, serial port disabled, shielded VM required",
           "severity": "high",
           "remediation": "Enforce org policy constraints: compute.requireOsLogin, compute.disableSerialPortAccess, compute.requireShieldedVm.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20"
         }
       ],
       "objectives_requiring_documentation": [
@@ -1157,41 +1308,46 @@
         }
       ]
     },
-    "3.1.19": {
+    "AC-20(1)": {
+      "cmmc_source": "3.1.19",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.19-aws-001",
+          "check_id": "ac-20-1-aws-001",
           "name": "EBS default encryption enabled for compute platforms",
           "service": "EC2",
           "api_call": "ec2.get_ebs_encryption_by_default",
           "expected": "EBS encryption by default is enabled in the account",
           "severity": "high",
           "remediation": "Enable EBS encryption by default to ensure all new EBS volumes are automatically encrypted.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.19-azure-001",
+          "check_id": "ac-20-1-azure-001",
           "name": "All managed disks encrypted",
           "service": "Compute",
           "api_call": "compute.disks.list",
           "expected": "All managed disks have encryption enabled (platform-managed or customer-managed keys)",
           "severity": "high",
           "remediation": "Enable disk encryption on all managed disks using Azure Disk Encryption or server-side encryption.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.19-gcp-001",
+          "check_id": "ac-20-1-gcp-001",
           "name": "CMEK org policy or disk-level CMEK enforced",
           "service": "OrgPolicy/Compute",
           "api_call": "orgpolicy/compute.disks.list",
           "expected": "CMEK org policy enforced, or all compute disks use customer-managed encryption keys",
           "severity": "high",
           "remediation": "Enforce CMEK via org policy constraint or ensure all Compute Engine disks use CMEK from Cloud KMS.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-20(1)"
         }
       ],
       "objectives_requiring_documentation": [
@@ -1207,10 +1363,15 @@
         }
       ]
     },
-    "3.1.20": {
+    "AC-21": {
+      "cmmc_source": "3.1.20",
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3.1.20-aws-001",
+          "check_id": "ac-21-aws-001",
           "name": "VPC peering connections reviewed",
           "service": "VPC",
           "api_call": "ec2.describe_vpc_peering_connections",
@@ -1224,10 +1385,11 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-21"
         },
         {
-          "check_id": "ac-3.1.20-aws-002",
+          "check_id": "ac-21-aws-002",
           "name": "Transit Gateway attachments reviewed",
           "service": "VPC",
           "api_call": "ec2.describe_transit_gateway_attachments",
@@ -1241,12 +1403,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-21"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.20-azure-001",
+          "check_id": "ac-21-azure-001",
           "name": "VNet peering connections reviewed",
           "service": "Network",
           "api_call": "network.virtual_network_peerings.list",
@@ -1260,12 +1423,13 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-21"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.20-gcp-001",
+          "check_id": "ac-21-gcp-001",
           "name": "VPC peering connections reviewed",
           "service": "VPC",
           "api_call": "compute.networks.listPeering",
@@ -1279,45 +1443,51 @@
             "[d]",
             "[e]",
             "[f]"
-          ]
+          ],
+          "control_id": "AC-21"
         }
       ]
     },
-    "3.1.21": {
+    "AC-3(8)": {
+      "cmmc_source": "3.1.21",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.21-aws-001",
+          "check_id": "ac-3-8-aws-001",
           "name": "S3 Block Public Access enabled at account level",
           "service": "S3",
           "api_call": "s3control.get_public_access_block",
           "expected": "All four S3 Block Public Access settings enabled at account level",
           "severity": "high",
           "remediation": "Enable all four S3 Block Public Access settings at the account level to prevent public exposure of stored data.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-3(8)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.21-azure-001",
+          "check_id": "ac-3-8-azure-001",
           "name": "Storage accounts block public blob access",
           "service": "Storage",
           "api_call": "storage.storage_accounts.list",
           "expected": "AllowBlobPublicAccess is false on all storage accounts",
           "severity": "high",
           "remediation": "Disable public blob access on all storage accounts to prevent unauthorized data exposure.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-3(8)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.21-gcp-001",
+          "check_id": "ac-3-8-gcp-001",
           "name": "Uniform bucket-level access org policy enforced",
           "service": "OrgPolicy",
           "api_call": "orgpolicy.projects.policies.get",
           "expected": "uniformBucketLevelAccess org policy constraint enforced to prevent per-object ACLs",
           "severity": "high",
           "remediation": "Enforce the storage.uniformBucketLevelAccess org policy constraint to prevent fine-grained ACLs on Cloud Storage.",
-          "supports_objectives": []
+          "supports_objectives": [],
+          "control_id": "AC-3(8)"
         }
       ],
       "objectives_requiring_documentation": [
@@ -1338,10 +1508,12 @@
         }
       ]
     },
-    "3.1.22": {
+    "AC-4(4)": {
+      "cmmc_source": "3.1.22",
+      "baselines": [],
       "aws": [
         {
-          "check_id": "ac-3.1.22-aws-001",
+          "check_id": "ac-4-4-aws-001",
           "name": "No S3 buckets publicly accessible",
           "service": "S3",
           "api_call": "s3.get_bucket_policy_status",
@@ -1354,10 +1526,11 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4(4)"
         },
         {
-          "check_id": "ac-3.1.22-aws-002",
+          "check_id": "ac-4-4-aws-002",
           "name": "No EC2 instances with public IPs in CUI subnets",
           "service": "EC2",
           "api_call": "ec2.describe_instances",
@@ -1370,12 +1543,13 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4(4)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3.1.22-azure-001",
+          "check_id": "ac-4-4-azure-001",
           "name": "No storage accounts with public blob access",
           "service": "Storage",
           "api_call": "storage.storage_accounts.list",
@@ -1388,12 +1562,13 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4(4)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3.1.22-gcp-001",
+          "check_id": "ac-4-4-gcp-001",
           "name": "No Cloud Storage buckets publicly accessible",
           "service": "Storage",
           "api_call": "storage.buckets.getIamPolicy",
@@ -1406,7 +1581,8 @@
             "[c]",
             "[d]",
             "[e]"
-          ]
+          ],
+          "control_id": "AC-4(4)"
         }
       ]
     }

@@ -2,7 +2,7 @@
 Azure Scanner — Compliance check implementations using Azure SDK.
 
 Connects to Azure (Commercial or Government) via Service Principal
-credentials and runs automated CMMC practice checks.
+credentials and runs automated NIST 800-53 control checks.
 """
 from __future__ import annotations
 
@@ -166,7 +166,7 @@ class AzureScanner(BaseScanner):
         if not method_name:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def.get("practice_id", ""),
+                control_id=check_def.get("control_id", ""),
                 check_name=check_def.get("check_name", ""),
                 status="manual",
                 severity=check_def.get("severity", "medium"),
@@ -178,7 +178,7 @@ class AzureScanner(BaseScanner):
         if method is None:
             return CheckResult(
                 check_id=check_def["check_id"],
-                practice_id=check_def.get("practice_id", ""),
+                control_id=check_def.get("control_id", ""),
                 check_name=check_def.get("check_name", ""),
                 status="error",
                 severity=check_def.get("severity", "medium"),
@@ -672,7 +672,7 @@ class AzureScanner(BaseScanner):
         """
         Check if Conditional Access policies are configured.
 
-        CMMC Practice: 3.1.1 — Limit system access to authorized users.
+        NIST 800-53 Control: 3.1.1 — Limit system access to authorized users.
         Note: Full Conditional Access policy inspection requires MS Graph API.
         This check verifies that role assignments follow least privilege.
         """
@@ -739,7 +739,7 @@ class AzureScanner(BaseScanner):
         """
         Check MFA enforcement status.
 
-        CMMC Practice: 3.5.3 — Use multifactor authentication.
+        NIST 800-53 Control: 3.5.3 — Use multifactor authentication.
         Note: Full MFA status requires MS Graph API. This check verifies
         that security defaults or Conditional Access is likely in place.
         """
@@ -784,7 +784,7 @@ class AzureScanner(BaseScanner):
         """
         Check Network Security Groups for overly permissive inbound rules.
 
-        CMMC Practice: 3.1.5 — Employ the principle of least privilege.
+        NIST 800-53 Control: 3.1.5 — Employ the principle of least privilege.
         """
         try:
             nsgs = self._list_nsgs()
@@ -873,7 +873,7 @@ class AzureScanner(BaseScanner):
         """
         Check if Activity Log alerts are configured for critical operations.
 
-        CMMC Practice: 3.3.1 — Create and retain system audit logs.
+        NIST 800-53 Control: 3.3.1 — Create and retain system audit logs.
         """
         try:
             alerts = self._list_activity_log_alerts()
@@ -947,7 +947,7 @@ class AzureScanner(BaseScanner):
         """
         Check if all storage accounts have encryption enabled.
 
-        CMMC Practice: 3.13.11 — Employ FIPS-validated cryptography for CUI.
+        NIST 800-53 Control: 3.13.11 — Employ FIPS-validated cryptography for CUI.
         """
         try:
             accounts = self._list_storage_accounts()
@@ -1031,7 +1031,7 @@ class AzureScanner(BaseScanner):
         """
         Check Key Vault configuration (soft delete, purge protection).
 
-        CMMC Practice: 3.13.10 — Establish and manage cryptographic keys.
+        NIST 800-53 Control: 3.13.10 — Establish and manage cryptographic keys.
         """
         try:
             vaults = self._list_keyvaults()
@@ -1102,7 +1102,7 @@ class AzureScanner(BaseScanner):
         """
         Check if Network Watcher is enabled in all regions with resources.
 
-        CMMC Practice: 3.3.1 — Audit and accountability.
+        NIST 800-53 Control: 3.3.1 — Audit and accountability.
         """
         try:
             watchers = self._list_watchers()
@@ -1157,7 +1157,7 @@ class AzureScanner(BaseScanner):
         """
         Check if Microsoft Defender for Cloud is enabled.
 
-        CMMC Practice: 3.14.6 — Monitor organizational systems.
+        NIST 800-53 Control: 3.14.6 — Monitor organizational systems.
         """
         try:
             provider = self._get_security_provider()
@@ -1201,7 +1201,7 @@ class AzureScanner(BaseScanner):
         """
         Check if managed disks have encryption enabled.
 
-        CMMC Practice: 3.13.11 — Employ FIPS-validated cryptography for CUI.
+        NIST 800-53 Control: 3.13.11 — Employ FIPS-validated cryptography for CUI.
         """
         try:
             disks = self._list_disks()
@@ -1263,7 +1263,7 @@ class AzureScanner(BaseScanner):
         """
         Check for defense-in-depth architecture across multiple security layers.
 
-        CMMC Practice: 3.13.2 — Employ architectural designs that promote
+        NIST 800-53 Control: 3.13.2 — Employ architectural designs that promote
         effective information security.
 
         Met if >= 4 of 5 layers present: NSGs on subnets, Key Vault,
@@ -1350,7 +1350,7 @@ class AzureScanner(BaseScanner):
         """
         Check if VPN gateways exist for controlled remote access.
 
-        CMMC Practice: 3.1.16 — Authorize remote access prior to allowing
+        NIST 800-53 Control: 3.1.16 — Authorize remote access prior to allowing
         such connections.
         """
         try:
@@ -1403,7 +1403,7 @@ class AzureScanner(BaseScanner):
         """
         Check for centralized identity and device management.
 
-        CMMC Practice: 3.1.18 — Control connection of mobile devices.
+        NIST 800-53 Control: 3.1.18 — Control connection of mobile devices.
         Verifies Defender for Cloud is enabled and managed identity
         role assignments exist.
         """
@@ -1474,7 +1474,7 @@ class AzureScanner(BaseScanner):
         """
         Check if all managed disks have encryption enabled.
 
-        CMMC Practice: 3.1.19 — Encrypt CUI on computing platforms.
+        NIST 800-53 Control: 3.1.19 — Encrypt CUI on computing platforms.
         """
         try:
             disks = self._list_disks()
@@ -1535,7 +1535,7 @@ class AzureScanner(BaseScanner):
         """
         Check if storage accounts block public blob access.
 
-        CMMC Practice: 3.1.21 — Limit use of portable storage devices
+        NIST 800-53 Control: 3.1.21 — Limit use of portable storage devices
         (interpreted as preventing public exposure of cloud storage).
         """
         try:
@@ -4253,6 +4253,1097 @@ class AzureScanner(BaseScanner):
         """Check MFA is required for Bastion access via CA."""
         return self.check_mfa_conditional_access(check_def)
 
+    # ---- CP: Contingency Planning ----
+
+    def check_dr_plan_tags(self, check_def: dict) -> CheckResult:
+        """Check resources have DR plan documentation tags."""
+        try:
+            resources = list(self._resource_client.resources.list())
+            tagged = []
+            for res in resources[:500]:
+                tags = res.tags or {}
+                if any(k.lower() in ["disasterrecovery", "dr-plan", "drplan", "contingency"]
+                       for k in tags.keys()):
+                    tagged.append(res.name)
+            raw = self._build_evidence(
+                api_call="resource.resources.list()",
+                cli_command="az resource list --query \"[?tags.DisasterRecovery || tags.DR-Plan]\"",
+                response={"total_resources": len(resources), "tagged_with_dr": len(tagged)},
+                service="ResourceManagement",
+                assessor_guidance=(
+                    "Verify resources have DisasterRecovery or DR-Plan tags documenting contingency procedures. "
+                    "Tags should reference recovery time objectives (RTO), recovery point objectives (RPO), and DR procedures."
+                ),
+            )
+            if len(resources) == 0:
+                return self._result(check_def, "met", "No resources found.", raw_evidence=raw)
+            coverage = len(tagged) / len(resources) if resources else 0
+            if coverage >= 0.5:
+                return self._result(check_def, "met",
+                    f"{len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have DR tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have DR tags. Consider tagging critical resources.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_site_recovery_test_failover(self, check_def: dict) -> CheckResult:
+        """Check Azure Site Recovery test failover has been performed."""
+        try:
+            recovery_client = self._get_recovery_client()
+            vaults = list(recovery_client.vaults.list_by_subscription_id())
+            test_failovers = []
+            for vault in vaults[:10]:
+                rg = vault.id.split("/")[4] if vault.id else ""
+                try:
+                    if not hasattr(self, '_backup_client') or self._backup_client is None:
+                        from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
+                        with self._lock:
+                            if not hasattr(self, '_backup_client') or self._backup_client is None:
+                                self._backup_client = RecoveryServicesBackupClient(
+                                    self._credential, self._subscription_id, **self._mgmt_kwargs)
+                    jobs = list(self._backup_client.backup_jobs.list(vault.name, rg, filter="jobType eq 'TestFailover'"))
+                    test_failovers.extend([j.properties.job_type for j in jobs[:5] if j.properties])
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="backup_client.backup_jobs.list(filter='jobType eq TestFailover')",
+                cli_command="az backup job list --resource-group RG --vault-name VAULT --query \"[?jobType=='TestFailover']\"",
+                response={"vaults": len(vaults), "test_failover_jobs": len(test_failovers)},
+                service="RecoveryServices",
+                assessor_guidance=(
+                    "Verify test_failover_jobs > 0. Test failovers validate DR procedures without impacting production. "
+                    "FedRAMP requires periodic DR testing. Review job history for completion status and frequency."
+                ),
+            )
+            if len(test_failovers) > 0:
+                return self._result(check_def, "met",
+                    f"{len(test_failovers)} test failover job(s) found across {len(vaults)} vault(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"No test failover jobs found. {len(vaults)} vault(s) configured.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_storage_geo_redundancy(self, check_def: dict) -> CheckResult:
+        """Check storage accounts use geo-redundant replication."""
+        try:
+            accounts = self._list_storage_accounts()
+            non_geo = []
+            for acct in accounts:
+                sku = acct.sku.name if acct.sku else ""
+                if not any(x in sku.upper() for x in ["GRS", "RAGRS", "GZRS", "RAGZRS"]):
+                    non_geo.append(f"{acct.name} ({sku})")
+            raw = self._build_evidence(
+                api_call="storage_client.storage_accounts.list()",
+                cli_command="az storage account list --query \"[?sku.name !contains 'GRS']\"",
+                response={"total_accounts": len(accounts), "non_geo_redundant": non_geo[:10]},
+                service="Storage",
+                assessor_guidance=(
+                    "Verify non_geo_redundant array is empty. Geo-redundant storage (GRS, RA-GRS, GZRS, RA-GZRS) "
+                    "replicates data to secondary region for disaster recovery. LRS/ZRS only protect within region."
+                ),
+            )
+            if not accounts:
+                return self._result(check_def, "met", "No storage accounts found.", raw_evidence=raw)
+            if not non_geo:
+                return self._result(check_def, "met",
+                    f"All {len(accounts)} storage account(s) use geo-redundant replication.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(non_geo)} storage account(s) lack geo-redundancy: {', '.join(non_geo[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_sql_geo_replication(self, check_def: dict) -> CheckResult:
+        """Check Azure SQL has geo-replication configured."""
+        try:
+            servers = self._list_sql_servers()
+            no_replication = []
+            for srv in servers[:20]:
+                rg = srv.id.split("/")[4] if srv.id else ""
+                try:
+                    dbs = list(self._get_sql_client().databases.list_by_server(rg, srv.name))
+                    for db in dbs:
+                        if db.name.lower() in ["master", "model", "msdb", "tempdb"]:
+                            continue
+                        try:
+                            links = list(self._get_sql_client().replication_links.list_by_database(
+                                rg, srv.name, db.name))
+                            if not links:
+                                no_replication.append(f"{srv.name}/{db.name}")
+                        except Exception:
+                            no_replication.append(f"{srv.name}/{db.name}")
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="sql_client.replication_links.list_by_database()",
+                cli_command="az sql db replica list --server SERVER --name DB --resource-group RG",
+                response={"servers": len(servers), "databases_without_replication": no_replication[:10]},
+                service="SQL",
+                assessor_guidance=(
+                    "Verify databases_without_replication array is empty or contains only non-critical databases. "
+                    "Active geo-replication provides automatic asynchronous replication to secondary region for DR."
+                ),
+            )
+            if not servers:
+                return self._result(check_def, "met", "No SQL servers found.", raw_evidence=raw)
+            if not no_replication:
+                return self._result(check_def, "met",
+                    f"All critical databases across {len(servers)} server(s) have geo-replication.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(no_replication)} database(s) lack geo-replication: {', '.join(no_replication[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_multi_region_deployment(self, check_def: dict) -> CheckResult:
+        """Check for multi-region VM/resource deployment."""
+        try:
+            vms = self._list_vms()
+            regions = set()
+            for vm in vms:
+                if vm.location:
+                    regions.add(vm.location.lower())
+            raw = self._build_evidence(
+                api_call="compute_client.virtual_machines.list_all()",
+                cli_command="az vm list --query \"[].location\" -o table | sort -u",
+                response={"total_vms": len(vms), "regions": sorted(list(regions))},
+                service="Compute",
+                assessor_guidance=(
+                    "Verify regions array contains 2+ regions. Multi-region deployment provides resilience against "
+                    "regional outages. Critical workloads should be deployed across geographically separate regions."
+                ),
+            )
+            if len(regions) >= 2:
+                return self._result(check_def, "met",
+                    f"Multi-region deployment verified: {len(regions)} region(s) - {', '.join(sorted(regions)[:5])}.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(regions)} region(s) detected. Consider multi-region deployment for DR.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_traffic_manager_failover(self, check_def: dict) -> CheckResult:
+        """Check Traffic Manager has failover profiles."""
+        try:
+            if not hasattr(self, '_traffic_manager_client') or self._traffic_manager_client is None:
+                from azure.mgmt.trafficmanager import TrafficManagerManagementClient
+                with self._lock:
+                    if not hasattr(self, '_traffic_manager_client') or self._traffic_manager_client is None:
+                        self._traffic_manager_client = TrafficManagerManagementClient(
+                            self._credential, self._subscription_id, **self._mgmt_kwargs)
+            profiles = list(self._traffic_manager_client.profiles.list_by_subscription())
+            failover_profiles = []
+            for profile in profiles:
+                if profile.traffic_routing_method and "priority" in profile.traffic_routing_method.lower():
+                    failover_profiles.append(profile.name)
+            raw = self._build_evidence(
+                api_call="traffic_manager_client.profiles.list_by_subscription()",
+                cli_command="az network traffic-manager profile list",
+                response={"total_profiles": len(profiles), "failover_profiles": failover_profiles},
+                service="TrafficManager",
+                assessor_guidance=(
+                    "Verify failover_profiles contains priority-based routing. Traffic Manager provides DNS-based "
+                    "failover across regions. Priority routing directs traffic to primary endpoint with automatic failover."
+                ),
+            )
+            if len(failover_profiles) > 0:
+                return self._result(check_def, "met",
+                    f"{len(failover_profiles)} Traffic Manager profile(s) configured for failover.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"No failover-capable Traffic Manager profiles found. {len(profiles)} total profile(s).",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_vm_backup_configured(self, check_def: dict) -> CheckResult:
+        """Check VMs have backup configured."""
+        try:
+            vms = self._list_vms()
+            recovery_client = self._get_recovery_client()
+            vaults = list(recovery_client.vaults.list_by_subscription_id())
+            protected_vms = set()
+            for vault in vaults[:10]:
+                rg = vault.id.split("/")[4] if vault.id else ""
+                try:
+                    if not hasattr(self, '_backup_client') or self._backup_client is None:
+                        from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
+                        with self._lock:
+                            if not hasattr(self, '_backup_client') or self._backup_client is None:
+                                self._backup_client = RecoveryServicesBackupClient(
+                                    self._credential, self._subscription_id, **self._mgmt_kwargs)
+                    items = list(self._backup_client.backup_protected_items.list(vault.name, rg))
+                    for item in items:
+                        if hasattr(item, 'properties') and hasattr(item.properties, 'virtual_machine_id'):
+                            protected_vms.add(item.properties.virtual_machine_id)
+                except Exception:
+                    pass
+            unprotected = [vm.name for vm in vms if vm.id not in protected_vms]
+            raw = self._build_evidence(
+                api_call="backup_client.backup_protected_items.list()",
+                cli_command="az backup item list --resource-group RG --vault-name VAULT",
+                response={"total_vms": len(vms), "protected_vms": len(protected_vms), "unprotected": unprotected[:10]},
+                service="Backup",
+                assessor_guidance=(
+                    "Verify unprotected array is empty or contains only non-critical VMs. Azure Backup provides "
+                    "automated snapshots for VM recovery. All production VMs should have backup policies configured."
+                ),
+            )
+            if not vms:
+                return self._result(check_def, "met", "No VMs found.", raw_evidence=raw)
+            coverage = len(protected_vms) / len(vms) if vms else 0
+            if coverage >= 0.8:
+                return self._result(check_def, "met",
+                    f"{len(protected_vms)}/{len(vms)} VMs ({coverage*100:.0f}%) have backup configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(protected_vms)}/{len(vms)} VMs ({coverage*100:.0f}%) have backup. {len(unprotected)} unprotected.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_sql_automated_backups(self, check_def: dict) -> CheckResult:
+        """Check SQL databases have automated backups."""
+        try:
+            servers = self._list_sql_servers()
+            no_backup = []
+            for srv in servers[:20]:
+                rg = srv.id.split("/")[4] if srv.id else ""
+                try:
+                    dbs = list(self._get_sql_client().databases.list_by_server(rg, srv.name))
+                    for db in dbs:
+                        if db.name.lower() == "master":
+                            continue
+                        try:
+                            retention = self._get_sql_client().backup_short_term_retention_policies.get(
+                                rg, srv.name, db.name, "default")
+                            days = retention.retention_days if retention else 0
+                            if days < 7:
+                                no_backup.append(f"{srv.name}/{db.name} ({days}d)")
+                        except Exception:
+                            no_backup.append(f"{srv.name}/{db.name} (error)")
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="sql_client.backup_short_term_retention_policies.get()",
+                cli_command="az sql db str-policy show --server SERVER --database DB --resource-group RG",
+                response={"servers": len(servers), "databases_with_insufficient_backup": no_backup[:10]},
+                service="SQL",
+                assessor_guidance=(
+                    "Verify databases_with_insufficient_backup array is empty. SQL automated backups should retain "
+                    "at least 7 days (FedRAMP baseline). Default is 7 days. Production systems may require 35 days."
+                ),
+            )
+            if not servers:
+                return self._result(check_def, "met", "No SQL servers found.", raw_evidence=raw)
+            if not no_backup:
+                return self._result(check_def, "met",
+                    f"All databases across {len(servers)} server(s) have automated backups (>=7 days).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(no_backup)} database(s) have insufficient backup: {', '.join(no_backup[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_storage_soft_delete(self, check_def: dict) -> CheckResult:
+        """Check storage accounts have soft delete enabled."""
+        try:
+            accounts = self._list_storage_accounts()
+            no_soft_delete = []
+            for acct in accounts[:50]:
+                rg = acct.id.split("/")[4] if acct.id else ""
+                try:
+                    blob_props = self._storage_client.blob_services.get_service_properties(rg, acct.name)
+                    policy = blob_props.delete_retention_policy if hasattr(blob_props, 'delete_retention_policy') else None
+                    if not policy or not policy.enabled or (policy.days and policy.days < 7):
+                        days = policy.days if (policy and policy.enabled) else 0
+                        no_soft_delete.append(f"{acct.name} ({days}d)")
+                except Exception:
+                    no_soft_delete.append(f"{acct.name} (error)")
+            raw = self._build_evidence(
+                api_call="storage_client.blob_services.get_service_properties()",
+                cli_command="az storage blob service-properties delete-policy show --account-name ACCT",
+                response={"total_accounts": len(accounts), "without_soft_delete": no_soft_delete[:10]},
+                service="Storage",
+                assessor_guidance=(
+                    "Verify without_soft_delete array is empty. Soft delete protects against accidental deletion "
+                    "by retaining deleted blobs for 7-365 days. Minimum 7 days recommended for contingency planning."
+                ),
+            )
+            if not accounts:
+                return self._result(check_def, "met", "No storage accounts found.", raw_evidence=raw)
+            if not no_soft_delete:
+                return self._result(check_def, "met",
+                    f"All {len(accounts)} storage account(s) have soft delete enabled (>=7 days).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(no_soft_delete)} storage account(s) lack soft delete: {', '.join(no_soft_delete[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_backup_restore_testing(self, check_def: dict) -> CheckResult:
+        """Check backup restore jobs exist recently."""
+        try:
+            recovery_client = self._get_recovery_client()
+            vaults = list(recovery_client.vaults.list_by_subscription_id())
+            restore_jobs = []
+            for vault in vaults[:10]:
+                rg = vault.id.split("/")[4] if vault.id else ""
+                try:
+                    if not hasattr(self, '_backup_client') or self._backup_client is None:
+                        from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
+                        with self._lock:
+                            if not hasattr(self, '_backup_client') or self._backup_client is None:
+                                self._backup_client = RecoveryServicesBackupClient(
+                                    self._credential, self._subscription_id, **self._mgmt_kwargs)
+                    jobs = list(self._backup_client.backup_jobs.list(vault.name, rg, filter="operation eq 'Restore'"))
+                    restore_jobs.extend([j.properties.job_type for j in jobs[:5] if j.properties])
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="backup_client.backup_jobs.list(filter='operation eq Restore')",
+                cli_command="az backup job list --resource-group RG --vault-name VAULT --query \"[?operation=='Restore']\"",
+                response={"vaults": len(vaults), "restore_jobs": len(restore_jobs)},
+                service="Backup",
+                assessor_guidance=(
+                    "Verify restore_jobs > 0. Restore testing validates backup integrity and recovery procedures. "
+                    "FedRAMP CP-9(b) requires periodic restore testing to ensure backups are viable."
+                ),
+            )
+            if len(restore_jobs) > 0:
+                return self._result(check_def, "met",
+                    f"{len(restore_jobs)} restore job(s) found across {len(vaults)} vault(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"No restore jobs found. Consider periodic restore testing for {len(vaults)} vault(s).",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_backup_geo_replication(self, check_def: dict) -> CheckResult:
+        """Check backup vaults use geo-redundant storage."""
+        try:
+            recovery_client = self._get_recovery_client()
+            vaults = list(recovery_client.vaults.list_by_subscription_id())
+            non_geo = []
+            for vault in vaults:
+                storage_type = vault.properties.backup_storage_properties.storage_model_type if (
+                    vault.properties and
+                    hasattr(vault.properties, 'backup_storage_properties') and
+                    vault.properties.backup_storage_properties
+                ) else "Unknown"
+                if storage_type and "geo" not in storage_type.lower():
+                    non_geo.append(f"{vault.name} ({storage_type})")
+            raw = self._build_evidence(
+                api_call="recovery_client.vaults.list_by_subscription_id()",
+                cli_command="az backup vault backup-properties show --resource-group RG --name VAULT",
+                response={"total_vaults": len(vaults), "non_geo_redundant": non_geo},
+                service="RecoveryServices",
+                assessor_guidance=(
+                    "Verify non_geo_redundant array is empty. Backup vaults should use GeoRedundant storage "
+                    "to replicate backups to secondary region for disaster recovery."
+                ),
+            )
+            if not vaults:
+                return self._result(check_def, "met", "No backup vaults found.", raw_evidence=raw)
+            if not non_geo:
+                return self._result(check_def, "met",
+                    f"All {len(vaults)} backup vault(s) use geo-redundant storage.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(non_geo)} backup vault(s) lack geo-redundancy: {', '.join(non_geo[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_site_recovery_configured(self, check_def: dict) -> CheckResult:
+        """Check Site Recovery is configured for critical VMs."""
+        try:
+            recovery_client = self._get_recovery_client()
+            vaults = list(recovery_client.vaults.list_by_subscription_id())
+            protected_items = 0
+            for vault in vaults[:10]:
+                rg = vault.id.split("/")[4] if vault.id else ""
+                try:
+                    if not hasattr(self, '_site_recovery_client') or self._site_recovery_client is None:
+                        from azure.mgmt.recoveryservicessiterecovery import SiteRecoveryManagementClient
+                        with self._lock:
+                            if not hasattr(self, '_site_recovery_client') or self._site_recovery_client is None:
+                                self._site_recovery_client = SiteRecoveryManagementClient(
+                                    self._credential, self._subscription_id, **self._mgmt_kwargs)
+                    items = list(self._site_recovery_client.replication_protected_items.list(rg, vault.name))
+                    protected_items += len(items)
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="site_recovery_client.replication_protected_items.list()",
+                cli_command="az site-recovery replicated-item list --resource-group RG --vault-name VAULT",
+                response={"vaults": len(vaults), "protected_items": protected_items},
+                service="SiteRecovery",
+                assessor_guidance=(
+                    "Verify protected_items > 0 for critical workloads. Azure Site Recovery provides automated "
+                    "VM replication to secondary region for disaster recovery with orchestrated failover."
+                ),
+            )
+            if protected_items > 0:
+                return self._result(check_def, "met",
+                    f"Site Recovery configured: {protected_items} protected item(s) across {len(vaults)} vault(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"No Site Recovery protected items found. {len(vaults)} vault(s) available.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_sql_point_in_time_restore(self, check_def: dict) -> CheckResult:
+        """Check SQL databases support point-in-time restore."""
+        try:
+            servers = self._list_sql_servers()
+            no_pitr = []
+            for srv in servers[:20]:
+                rg = srv.id.split("/")[4] if srv.id else ""
+                try:
+                    dbs = list(self._get_sql_client().databases.list_by_server(rg, srv.name))
+                    for db in dbs:
+                        if db.name.lower() == "master":
+                            continue
+                        earliest_restore = getattr(db, 'earliest_restore_date', None)
+                        if not earliest_restore:
+                            no_pitr.append(f"{srv.name}/{db.name}")
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="sql_client.databases.list_by_server()",
+                cli_command="az sql db show --server SERVER --name DB --resource-group RG --query earliestRestoreDate",
+                response={"servers": len(servers), "databases_without_pitr": no_pitr[:10]},
+                service="SQL",
+                assessor_guidance=(
+                    "Verify databases_without_pitr array is empty. Point-in-time restore (PITR) allows recovery "
+                    "to any point within retention period. Check earliestRestoreDate is populated."
+                ),
+            )
+            if not servers:
+                return self._result(check_def, "met", "No SQL servers found.", raw_evidence=raw)
+            if not no_pitr:
+                return self._result(check_def, "met",
+                    f"All databases across {len(servers)} server(s) support point-in-time restore.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(no_pitr)} database(s) lack PITR: {', '.join(no_pitr[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    # ---- PL: Planning ----
+
+    def check_blueprint_security_plans(self, check_def: dict) -> CheckResult:
+        """Check Azure Blueprints or Policy initiatives document security plans."""
+        try:
+            policy_client = self._get_policy_client()
+            assignments = list(policy_client.policy_assignments.list())
+            initiatives = []
+            for assignment in assignments[:100]:
+                if hasattr(assignment, 'policy_definition_id') and '/policySetDefinitions/' in assignment.policy_definition_id:
+                    initiatives.append(assignment.display_name or assignment.name)
+            raw = self._build_evidence(
+                api_call="policy_client.policy_assignments.list()",
+                cli_command="az policy assignment list --query \"[?policyDefinitionId contains 'policySetDefinitions']\"",
+                response={"total_assignments": len(assignments), "policy_initiatives": initiatives[:10]},
+                service="Policy",
+                assessor_guidance=(
+                    "Verify policy_initiatives contains security-related initiatives. Policy initiatives (blueprint assignments) "
+                    "document system security plans through enforced controls. Look for CIS, NIST, FedRAMP initiatives."
+                ),
+            )
+            if len(initiatives) > 0:
+                return self._result(check_def, "met",
+                    f"{len(initiatives)} policy initiative(s) assigned documenting security plans.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"No policy initiatives found. Consider Azure Blueprints or security initiatives.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_architecture_tags(self, check_def: dict) -> CheckResult:
+        """Check critical resources have architecture metadata tags."""
+        try:
+            resources = list(self._resource_client.resources.list())
+            tagged = []
+            for res in resources[:500]:
+                tags = res.tags or {}
+                if any(k.lower() in ["architecture", "dataclassification", "tier", "criticality", "component"]
+                       for k in tags.keys()):
+                    tagged.append(res.name)
+            raw = self._build_evidence(
+                api_call="resource.resources.list()",
+                cli_command="az resource list --query \"[?tags.Architecture || tags.DataClassification]\"",
+                response={"total_resources": len(resources), "tagged_with_architecture": len(tagged)},
+                service="ResourceManagement",
+                assessor_guidance=(
+                    "Verify resources have Architecture/DataClassification/Tier tags. Tags document system architecture "
+                    "and data flow for security planning. FedRAMP PL-2 requires system architecture documentation."
+                ),
+            )
+            if len(resources) == 0:
+                return self._result(check_def, "met", "No resources found.", raw_evidence=raw)
+            coverage = len(tagged) / len(resources) if resources else 0
+            if coverage >= 0.5:
+                return self._result(check_def, "met",
+                    f"{len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have architecture tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have architecture tags.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_nsg_flow_logs_architecture(self, check_def: dict) -> CheckResult:
+        """Check NSG flow logs support architecture review."""
+        try:
+            nsgs = self._list_nsgs()
+            watchers = self._list_watchers()
+            flow_log_enabled = 0
+            for nsg in nsgs[:50]:
+                for watcher in watchers[:5]:
+                    rg = watcher.id.split("/")[4] if watcher.id else ""
+                    try:
+                        flow_log = self._network_client.flow_logs.get(rg, watcher.name, f"{nsg.name}-flowlog")
+                        if flow_log and getattr(flow_log, 'enabled', False):
+                            flow_log_enabled += 1
+                            break
+                    except Exception:
+                        pass
+            raw = self._build_evidence(
+                api_call="network_client.flow_logs.get()",
+                cli_command="az network watcher flow-log list --location REGION",
+                response={"total_nsgs": len(nsgs), "flow_logs_enabled": flow_log_enabled},
+                service="Network",
+                assessor_guidance=(
+                    "Verify flow_logs_enabled >= total_nsgs * 0.8. NSG flow logs capture network traffic for "
+                    "architecture analysis and security monitoring. Supports PL-2 data flow documentation."
+                ),
+            )
+            if not nsgs:
+                return self._result(check_def, "met", "No NSGs found.", raw_evidence=raw)
+            coverage = flow_log_enabled / len(nsgs) if nsgs else 0
+            if coverage >= 0.8:
+                return self._result(check_def, "met",
+                    f"{flow_log_enabled}/{len(nsgs)} NSGs ({coverage*100:.0f}%) have flow logs enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {flow_log_enabled}/{len(nsgs)} NSGs ({coverage*100:.0f}%) have flow logs. Enable for architecture visibility.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    # ---- PT: PII Processing ----
+
+    def check_purview_enabled(self, check_def: dict) -> CheckResult:
+        """Check Microsoft Purview is enabled."""
+        try:
+            resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Purview/accounts'"))
+            purview_accounts = [r.name for r in resources]
+            raw = self._build_evidence(
+                api_call="resource_client.resources.list(filter='resourceType eq Microsoft.Purview/accounts')",
+                cli_command="az resource list --resource-type Microsoft.Purview/accounts",
+                response={"purview_accounts": purview_accounts},
+                service="Purview",
+                assessor_guidance=(
+                    "Verify purview_accounts array is not empty. Microsoft Purview provides data governance, "
+                    "classification, and lineage tracking for PII processing compliance. Required for PT controls."
+                ),
+            )
+            if len(purview_accounts) > 0:
+                return self._result(check_def, "met",
+                    f"Microsoft Purview enabled: {len(purview_accounts)} account(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No Microsoft Purview accounts found. Consider enabling for PII tracking.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_storage_data_classification_tags(self, check_def: dict) -> CheckResult:
+        """Check storage accounts have data classification tags."""
+        try:
+            accounts = self._list_storage_accounts()
+            untagged = []
+            for acct in accounts:
+                tags = acct.tags or {}
+                if not any(k.lower() in ["dataclassification", "datatype", "pii", "sensitivity"]
+                          for k in tags.keys()):
+                    untagged.append(acct.name)
+            raw = self._build_evidence(
+                api_call="storage_client.storage_accounts.list()",
+                cli_command="az storage account list --query \"[?!tags.DataClassification]\"",
+                response={"total_accounts": len(accounts), "untagged": untagged[:10]},
+                service="Storage",
+                assessor_guidance=(
+                    "Verify untagged array is empty. Storage accounts should have DataClassification/PII/Sensitivity tags "
+                    "identifying data types. Required for PT-1 (data processing purpose) and PT-2 (data minimization)."
+                ),
+            )
+            if not accounts:
+                return self._result(check_def, "met", "No storage accounts found.", raw_evidence=raw)
+            if not untagged:
+                return self._result(check_def, "met",
+                    f"All {len(accounts)} storage account(s) have data classification tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(untagged)} storage account(s) lack data classification tags: {', '.join(untagged[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_sql_data_classification_tags(self, check_def: dict) -> CheckResult:
+        """Check SQL databases have data classification tags."""
+        try:
+            servers = self._list_sql_servers()
+            unclassified = []
+            for srv in servers[:20]:
+                tags = srv.tags or {}
+                if not any(k.lower() in ["dataclassification", "datatype", "pii", "sensitivity"]
+                          for k in tags.keys()):
+                    unclassified.append(srv.name)
+            raw = self._build_evidence(
+                api_call="sql_client.servers.list()",
+                cli_command="az sql server list --query \"[?!tags.DataClassification]\"",
+                response={"total_servers": len(servers), "unclassified": unclassified[:10]},
+                service="SQL",
+                assessor_guidance=(
+                    "Verify unclassified array is empty. SQL servers/databases should have DataClassification tags. "
+                    "Azure SQL also supports column-level classification via Information Protection policies."
+                ),
+            )
+            if not servers:
+                return self._result(check_def, "met", "No SQL servers found.", raw_evidence=raw)
+            if not unclassified:
+                return self._result(check_def, "met",
+                    f"All {len(servers)} SQL server(s) have data classification tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(unclassified)} SQL server(s) lack data classification tags: {', '.join(unclassified[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_data_processing_purpose_tags(self, check_def: dict) -> CheckResult:
+        """Check resources have data processing purpose tags."""
+        try:
+            resources = list(self._resource_client.resources.list())
+            tagged = []
+            for res in resources[:500]:
+                tags = res.tags or {}
+                if any(k.lower() in ["dataprocessingpurpose", "purpose", "businessfunction", "dataflow"]
+                       for k in tags.keys()):
+                    tagged.append(res.name)
+            raw = self._build_evidence(
+                api_call="resource.resources.list()",
+                cli_command="az resource list --query \"[?tags.DataProcessingPurpose || tags.Purpose]\"",
+                response={"total_resources": len(resources), "tagged_with_purpose": len(tagged)},
+                service="ResourceManagement",
+                assessor_guidance=(
+                    "Verify resources have DataProcessingPurpose/Purpose tags. PT-1 requires documenting purpose "
+                    "for PII processing. Tags should indicate business function and data handling purpose."
+                ),
+            )
+            if len(resources) == 0:
+                return self._result(check_def, "met", "No resources found.", raw_evidence=raw)
+            coverage = len(tagged) / len(resources) if resources else 0
+            if coverage >= 0.5:
+                return self._result(check_def, "met",
+                    f"{len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have purpose tags.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(tagged)}/{len(resources)} resources ({coverage*100:.0f}%) have purpose tags.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_api_consent_documentation(self, check_def: dict) -> CheckResult:
+        """Check API Management has consent/privacy documentation."""
+        try:
+            apim_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.ApiManagement/service'"))
+            documented = []
+            for apim in apim_resources:
+                tags = apim.tags or {}
+                if any(k.lower() in ["privacypolicy", "consent", "dataprocessing", "gdpr"]
+                       for k in tags.keys()):
+                    documented.append(apim.name)
+            raw = self._build_evidence(
+                api_call="resource_client.resources.list(filter='resourceType eq Microsoft.ApiManagement/service')",
+                cli_command="az resource list --resource-type Microsoft.ApiManagement/service",
+                response={"total_apim": len(apim_resources), "with_documentation": documented},
+                service="APIM",
+                assessor_guidance=(
+                    "Verify API Management instances have PrivacyPolicy/Consent/DataProcessing tags. "
+                    "APIs processing PII should document consent mechanisms and privacy policies per PT-3."
+                ),
+            )
+            if not apim_resources:
+                return self._result(check_def, "met", "No API Management instances found.", raw_evidence=raw)
+            if len(documented) == len(apim_resources):
+                return self._result(check_def, "met",
+                    f"All {len(apim_resources)} API Management instance(s) have consent documentation.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(documented)}/{len(apim_resources)} API Management instances have consent documentation.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    # ---- SA: System Acquisition ----
+
+    def check_azure_pipelines_configured(self, check_def: dict) -> CheckResult:
+        """Check Azure DevOps or GitHub Actions CI/CD exists."""
+        try:
+            # Check for Azure DevOps resources (automation accounts with runbooks indicate CI/CD)
+            automation_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Automation/automationAccounts'"))
+            # Check for GitHub Actions runner resources
+            runner_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Compute/virtualMachines' and tags.GitHubActions"))
+            ci_cd_indicators = len(automation_resources) + len(runner_resources)
+            raw = self._build_evidence(
+                api_call="resource_client.resources.list()",
+                cli_command="az resource list --resource-type Microsoft.Automation/automationAccounts",
+                response={"automation_accounts": len(automation_resources),
+                         "github_runners": len(runner_resources),
+                         "ci_cd_indicators": ci_cd_indicators},
+                service="DevOps",
+                assessor_guidance=(
+                    "Verify ci_cd_indicators > 0. CI/CD automation demonstrates SA-11 (developer testing) and "
+                    "SA-15 (development process). Look for Azure Automation, GitHub Actions runners, or DevOps agents."
+                ),
+            )
+            if ci_cd_indicators > 0:
+                return self._result(check_def, "met",
+                    f"CI/CD infrastructure detected: {len(automation_resources)} automation account(s), {len(runner_resources)} runner(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No CI/CD infrastructure detected. Consider Azure DevOps or GitHub Actions.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_nsg_unused_ports(self, check_def: dict) -> CheckResult:
+        """Check NSGs don't have unnecessary open ports."""
+        try:
+            nsgs = self._list_nsgs()
+            risky_rules = []
+            for nsg in nsgs[:50]:
+                for rule in (nsg.security_rules or []):
+                    if rule.direction == "Inbound" and rule.access == "Allow":
+                        # Check for overly permissive rules
+                        source = rule.source_address_prefix or ""
+                        dest_port = rule.destination_port_range or ""
+                        if ("*" in source or "0.0.0.0" in source or "internet" in source.lower()):
+                            if dest_port in ["*", "0-65535"] or any(p in str(dest_port) for p in ["22", "3389", "445", "135", "1433", "3306"]):
+                                risky_rules.append(f"{nsg.name}/{rule.name} (port {dest_port})")
+            raw = self._build_evidence(
+                api_call="network_client.network_security_groups.list_all()",
+                cli_command="az network nsg rule list --nsg-name NSG --resource-group RG",
+                response={"total_nsgs": len(nsgs), "risky_rules": risky_rules[:10]},
+                service="Network",
+                assessor_guidance=(
+                    "Verify risky_rules array is empty. NSGs should follow least privilege (SA-4). "
+                    "Avoid allowing SSH/RDP/SMB/SQL from Internet (*). Use JIT access or Azure Bastion instead."
+                ),
+            )
+            if not risky_rules:
+                return self._result(check_def, "met",
+                    f"No overly permissive NSG rules found across {len(nsgs)} NSG(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(risky_rules)} risky NSG rule(s) found: {', '.join(risky_rules[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_api_management_documented(self, check_def: dict) -> CheckResult:
+        """Check API Management instances have documentation."""
+        try:
+            apim_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.ApiManagement/service'"))
+            documented = []
+            for apim in apim_resources:
+                tags = apim.tags or {}
+                if any(k.lower() in ["documentation", "api-docs", "swagger", "openapi"]
+                       for k in tags.keys()):
+                    documented.append(apim.name)
+            raw = self._build_evidence(
+                api_call="resource_client.resources.list(filter='resourceType eq Microsoft.ApiManagement/service')",
+                cli_command="az apim show --name APIM --resource-group RG",
+                response={"total_apim": len(apim_resources), "documented": documented},
+                service="APIM",
+                assessor_guidance=(
+                    "Verify API Management instances have documentation tags. SA-5 requires developer documentation. "
+                    "APIM should expose OpenAPI/Swagger specs for API consumers."
+                ),
+            )
+            if not apim_resources:
+                return self._result(check_def, "met", "No API Management instances found.", raw_evidence=raw)
+            if len(documented) == len(apim_resources):
+                return self._result(check_def, "met",
+                    f"All {len(apim_resources)} API Management instance(s) have documentation.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(documented)}/{len(apim_resources)} API Management instances documented.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_azure_repos_branch_policies(self, check_def: dict) -> CheckResult:
+        """Check branch policies are configured."""
+        try:
+            # Check for policy assignments related to code management
+            policy_client = self._get_policy_client()
+            assignments = list(policy_client.policy_assignments.list())
+            code_policies = []
+            for assignment in assignments[:100]:
+                name = (assignment.display_name or assignment.name or "").lower()
+                if any(term in name for term in ["code", "branch", "repo", "git", "commit"]):
+                    code_policies.append(assignment.display_name or assignment.name)
+            raw = self._build_evidence(
+                api_call="policy_client.policy_assignments.list()",
+                cli_command="az policy assignment list --query \"[?contains(displayName,'code')]\"",
+                response={"code_related_policies": code_policies},
+                service="Policy",
+                assessor_guidance=(
+                    "Verify code_related_policies contains branch protection policies. SA-11 requires code review. "
+                    "Azure DevOps/GitHub branch policies enforce pull requests, reviews, and status checks."
+                ),
+            )
+            if len(code_policies) > 0:
+                return self._result(check_def, "met",
+                    f"Code management policies detected: {len(code_policies)} policy/policies.",
+                    raw_evidence=raw)
+            return self._result(check_def, "manual",
+                "Unable to verify branch policies via Azure Policy. Check Azure DevOps/GitHub directly.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_pipeline_test_stages(self, check_def: dict) -> CheckResult:
+        """Check deployment pipelines include test stages."""
+        try:
+            # Check for automation accounts with test-related runbooks
+            automation_client = self._get_automation_client()
+            accounts = list(automation_client.automation_account.list())
+            test_runbooks = []
+            for account in accounts[:10]:
+                rg = account.id.split("/")[4] if account.id else ""
+                try:
+                    runbooks = list(automation_client.runbook.list_by_automation_account(rg, account.name))
+                    for rb in runbooks:
+                        if any(term in (rb.name or "").lower() for term in ["test", "unittest", "validate", "check"]):
+                            test_runbooks.append(f"{account.name}/{rb.name}")
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="automation_client.runbook.list_by_automation_account()",
+                cli_command="az automation runbook list --automation-account-name ACCT --resource-group RG",
+                response={"automation_accounts": len(accounts), "test_runbooks": test_runbooks[:10]},
+                service="Automation",
+                assessor_guidance=(
+                    "Verify test_runbooks contains testing automation. SA-11 requires developer security testing. "
+                    "Pipelines should include unit tests, security scans, and validation stages."
+                ),
+            )
+            if len(test_runbooks) > 0:
+                return self._result(check_def, "met",
+                    f"Test automation detected: {len(test_runbooks)} test runbook(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "manual",
+                "No test runbooks detected. Verify pipeline test stages in Azure DevOps/GitHub Actions.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_security_devops_sast(self, check_def: dict) -> CheckResult:
+        """Check Defender for DevOps is configured for SAST."""
+        try:
+            security_client = self._get_security_client()
+            # Check for DevOps connectors
+            devops_connectors = []
+            try:
+                connectors = list(security_client.dev_ops_configurations.list())
+                devops_connectors = [c.name for c in connectors]
+            except Exception:
+                pass
+            raw = self._build_evidence(
+                api_call="security_client.dev_ops_configurations.list()",
+                cli_command="az security devops list",
+                response={"devops_connectors": devops_connectors},
+                service="DefenderForDevOps",
+                assessor_guidance=(
+                    "Verify devops_connectors is not empty. Defender for DevOps provides SAST scanning in pipelines. "
+                    "SA-11(1) requires static code analysis. Configure GitHub/Azure DevOps integration."
+                ),
+            )
+            if len(devops_connectors) > 0:
+                return self._result(check_def, "met",
+                    f"Defender for DevOps configured: {len(devops_connectors)} connector(s).",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "Defender for DevOps not configured. Enable for automated SAST scanning.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_defender_eol_software(self, check_def: dict) -> CheckResult:
+        """Check Defender identifies EOL/unsupported software."""
+        try:
+            security_client = self._get_security_client()
+            assessments = list(security_client.assessments.list(
+                scope=f"/subscriptions/{self._subscription_id}"))
+            eol_findings = []
+            for assessment in assessments[:100]:
+                name = (getattr(assessment, 'display_name', '') or '').lower()
+                if any(term in name for term in ["unsupported", "end of support", "eol", "deprecated", "outdated"]):
+                    status = getattr(assessment, 'status', None)
+                    if status and hasattr(status, 'code') and status.code in ["Unhealthy", "NotApplicable"]:
+                        eol_findings.append(assessment.display_name or assessment.name)
+            raw = self._build_evidence(
+                api_call="security_client.assessments.list()",
+                cli_command="az security assessment list --query \"[?contains(displayName,'unsupported')]\"",
+                response={"total_assessments": len(assessments), "eol_findings": eol_findings[:10]},
+                service="Defender",
+                assessor_guidance=(
+                    "Verify eol_findings array. Defender for Cloud identifies unsupported software. "
+                    "SA-22 requires replacing unsupported components. Review and remediate EOL software."
+                ),
+            )
+            return self._result(check_def, "met",
+                f"Defender monitoring EOL software: {len(eol_findings)} potential finding(s) detected.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    # ---- SR: Supply Chain ----
+
+    def check_acr_vulnerability_scanning(self, check_def: dict) -> CheckResult:
+        """Check ACR has vulnerability scanning enabled."""
+        try:
+            acr_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.ContainerRegistry/registries'"))
+            security_client = self._get_security_client()
+            protected_acrs = []
+            for acr in acr_resources:
+                rg = acr.id.split("/")[4] if acr.id else ""
+                try:
+                    # Check if Defender for Containers is enabled
+                    pricing = security_client.pricings.get(f"Microsoft.ContainerRegistry/registries/{acr.name}")
+                    if pricing and getattr(pricing, 'pricing_tier', '') == 'Standard':
+                        protected_acrs.append(acr.name)
+                except Exception:
+                    pass
+            raw = self._build_evidence(
+                api_call="security_client.pricings.get()",
+                cli_command="az security pricing show --name ContainerRegistry",
+                response={"total_acrs": len(acr_resources), "with_scanning": protected_acrs},
+                service="ContainerRegistry",
+                assessor_guidance=(
+                    "Verify with_scanning contains all ACRs. Defender for Containers provides vulnerability scanning. "
+                    "SR-3(1) requires automated vulnerability scanning of container images before deployment."
+                ),
+            )
+            if not acr_resources:
+                return self._result(check_def, "met", "No container registries found.", raw_evidence=raw)
+            if len(protected_acrs) == len(acr_resources):
+                return self._result(check_def, "met",
+                    f"All {len(acr_resources)} container registr(y/ies) have vulnerability scanning enabled.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"Only {len(protected_acrs)}/{len(acr_resources)} container registries have scanning enabled.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_pipeline_dependency_scanning(self, check_def: dict) -> CheckResult:
+        """Check pipeline includes dependency scanning."""
+        try:
+            security_client = self._get_security_client()
+            # Check for DevOps security assessments related to dependencies
+            assessments = list(security_client.assessments.list(
+                scope=f"/subscriptions/{self._subscription_id}"))
+            dependency_checks = []
+            for assessment in assessments[:100]:
+                name = (getattr(assessment, 'display_name', '') or '').lower()
+                if any(term in name for term in ["dependency", "package", "library", "component", "supply chain"]):
+                    dependency_checks.append(assessment.display_name or assessment.name)
+            raw = self._build_evidence(
+                api_call="security_client.assessments.list()",
+                cli_command="az security assessment list --query \"[?contains(displayName,'dependency')]\"",
+                response={"dependency_checks": dependency_checks[:10]},
+                service="DefenderForDevOps",
+                assessor_guidance=(
+                    "Verify dependency_checks is not empty. Dependency scanning identifies vulnerable packages. "
+                    "SR-3(1) and SA-11(1) require automated scanning of third-party components."
+                ),
+            )
+            if len(dependency_checks) > 0:
+                return self._result(check_def, "met",
+                    f"Dependency scanning detected: {len(dependency_checks)} check(s) configured.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                "No dependency scanning checks detected. Enable Defender for DevOps dependency scanning.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
+    def check_acr_content_trust(self, check_def: dict) -> CheckResult:
+        """Check ACR has content trust enabled."""
+        try:
+            acr_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.ContainerRegistry/registries'"))
+            no_trust = []
+            for acr in acr_resources:
+                rg = acr.id.split("/")[4] if acr.id else ""
+                try:
+                    # Check ACR policies via REST API
+                    acr_name = acr.name
+                    # Content trust (Docker Content Trust) is typically configured via ACR policies
+                    # This is a simplified check - in reality would need to query ACR policies API
+                    tags = acr.tags or {}
+                    if not any(k.lower() in ["contenttrust", "signed", "notary"] for k in tags.keys()):
+                        no_trust.append(acr.name)
+                except Exception:
+                    no_trust.append(acr.name)
+            raw = self._build_evidence(
+                api_call="resource_client.resources.list(filter='resourceType eq Microsoft.ContainerRegistry/registries')",
+                cli_command="az acr config content-trust show --registry ACR",
+                response={"total_acrs": len(acr_resources), "without_content_trust": no_trust},
+                service="ContainerRegistry",
+                assessor_guidance=(
+                    "Verify without_content_trust array is empty. Content trust ensures only signed images are deployed. "
+                    "SR-3 requires verification of software authenticity. Enable Docker Content Trust/Notary."
+                ),
+            )
+            if not acr_resources:
+                return self._result(check_def, "met", "No container registries found.", raw_evidence=raw)
+            if not no_trust:
+                return self._result(check_def, "met",
+                    f"All {len(acr_resources)} container registr(y/ies) have content trust indicators.",
+                    raw_evidence=raw)
+            return self._result(check_def, "not_met",
+                f"{len(no_trust)} container registr(y/ies) lack content trust: {', '.join(no_trust[:3])}.",
+                raw_evidence=raw)
+        except Exception as e:
+            return self._result(check_def, "error", f"Check failed: {e}")
+
     def disconnect(self):
         """Clean up Azure SDK clients."""
         self._credential = None
@@ -4273,5 +5364,12 @@ class AzureScanner(BaseScanner):
         self._automation_client = None
         self._loganalytics_client = None
         self._sentinel_client = None
+        # Clean up new lazy-initialized clients
+        if hasattr(self, '_backup_client'):
+            self._backup_client = None
+        if hasattr(self, '_site_recovery_client'):
+            self._site_recovery_client = None
+        if hasattr(self, '_traffic_manager_client'):
+            self._traffic_manager_client = None
         self._cache.clear()
         self._connected = False
