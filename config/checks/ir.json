@@ -1,0 +1,253 @@
+{
+  "domain": "IR",
+  "name": "Incident Response",
+  "checks": {
+    "3.6.1": {
+      "aws": [
+        {
+          "check_id": "ir-3.6.1-aws-001",
+          "name": "GuardDuty enabled in all regions",
+          "service": "GuardDuty",
+          "api_call": "guardduty.list_detectors",
+          "expected": "GuardDuty detector enabled in all active regions",
+          "severity": "critical",
+          "remediation": "Enable Amazon GuardDuty in all active regions.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-aws-002",
+          "name": "Security Hub enabled with automated findings",
+          "service": "Security Hub",
+          "api_call": "securityhub.describe_hub",
+          "expected": "Security Hub enabled and receiving findings from integrated services",
+          "severity": "high",
+          "remediation": "Enable AWS Security Hub and integrate GuardDuty, Inspector, and Macie.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-aws-003",
+          "name": "EventBridge rules for security events",
+          "service": "EventBridge",
+          "api_call": "events.list_rules",
+          "expected": "EventBridge rules configured to route security findings to response team",
+          "severity": "high",
+          "remediation": "Create EventBridge rules to route GuardDuty/Security Hub findings to SNS/Lambda.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-aws-004",
+          "name": "IR playbooks documented in SSM Automation",
+          "service": "SSM",
+          "api_call": "ssm.list_documents",
+          "expected": "SSM Automation documents exist for common IR scenarios",
+          "severity": "medium",
+          "remediation": "Create SSM Automation runbooks for incident response playbooks.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ir-3.6.1-azure-001",
+          "name": "Microsoft Defender for Cloud enabled",
+          "service": "Security Center",
+          "api_call": "security.pricings.list",
+          "expected": "Defender plans enabled for all resource types",
+          "severity": "critical",
+          "remediation": "Enable Microsoft Defender for Cloud on all resource types.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-azure-002",
+          "name": "Microsoft Sentinel deployed",
+          "service": "Sentinel",
+          "api_call": "securityinsight.sentinel_onboarding_states.list",
+          "expected": "Sentinel workspace deployed with data connectors configured",
+          "severity": "high",
+          "remediation": "Deploy Microsoft Sentinel and configure relevant data connectors.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-azure-003",
+          "name": "Sentinel automation rules configured",
+          "service": "Sentinel",
+          "api_call": "securityinsight.automation_rules.list",
+          "expected": "Automation rules configured for incident triage and response",
+          "severity": "medium",
+          "remediation": "Create Sentinel automation rules and playbooks for common incident types.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ir-3.6.1-gcp-001",
+          "name": "Security Command Center Premium enabled",
+          "service": "SCC",
+          "api_call": "securitycenter.organizations.getOrganizationSettings",
+          "expected": "SCC Premium tier enabled with threat detection active",
+          "severity": "critical",
+          "remediation": "Enable Security Command Center Premium for threat detection capabilities.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-gcp-002",
+          "name": "Event Threat Detection enabled",
+          "service": "SCC",
+          "api_call": "securitycenter.securityHealthAnalyticsSettings",
+          "expected": "Event Threat Detection module active in SCC",
+          "severity": "high",
+          "remediation": "Enable Event Threat Detection in Security Command Center.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        },
+        {
+          "check_id": "ir-3.6.1-gcp-003",
+          "name": "Pub/Sub notifications for SCC findings",
+          "service": "SCC",
+          "api_call": "securitycenter.organizations.notificationConfigs.list",
+          "expected": "Notification configs route critical findings to Pub/Sub",
+          "severity": "high",
+          "remediation": "Configure SCC notification channels to Pub/Sub for automated response.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]"
+          ]
+        }
+      ]
+    },
+    "3.6.2": {
+      "manual_only": true,
+      "manual_guidance": "Review incident tracking system and reporting procedures. Verify incident reports include required data elements (timeline, impact, root cause, corrective actions). Confirm incidents are reported to designated officials within required timeframes. Verify external reporting procedures to CISA/DoD CIO as required for CUI incidents.",
+      "evidence_requests": [
+        "Incident tracking system access or exports",
+        "Incident reporting procedures and escalation matrix",
+        "Sample incident reports from past 12 months",
+        "External reporting procedures and contacts"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "incidents are tracked.",
+          "evidence_needed": "Provide documentation or process evidence: incidents are tracked."
+        },
+        {
+          "id": "[b]",
+          "text": "incidents are documented.",
+          "evidence_needed": "Provide documentation or process evidence: incidents are documented."
+        },
+        {
+          "id": "[c]",
+          "text": "authorities to whom incidents are to be reported are identified.",
+          "evidence_needed": "Provide documentation showing that authorities to whom incidents are to be reported are identified and documented."
+        },
+        {
+          "id": "[d]",
+          "text": "organizational officials to whom incidents are to be reported are identified.",
+          "evidence_needed": "Provide documentation showing that organizational officials to whom incidents are to be reported are identified and documented."
+        },
+        {
+          "id": "[e]",
+          "text": "identified authorities are notified of incidents.",
+          "evidence_needed": "Provide documentation or process evidence: identified authorities are notified of incidents."
+        },
+        {
+          "id": "[f]",
+          "text": "identified organizational officials are notified of incidents.",
+          "evidence_needed": "Provide documentation or process evidence: identified organizational officials are notified of incidents."
+        }
+      ]
+    },
+    "3.6.3": {
+      "manual_only": true,
+      "manual_guidance": "Request records of incident response tests and tabletop exercises. Verify testing occurs at least annually and includes realistic scenarios involving CUI compromise. Check that test results are documented with lessons learned and the IR plan is updated based on findings.",
+      "evidence_requests": [
+        "IR test/exercise schedule and records",
+        "Tabletop exercise scenarios and after-action reports",
+        "Lessons learned documentation",
+        "IR plan update history based on test findings"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the incident response capability is tested.",
+          "evidence_needed": "Provide documentation or process evidence: the incident response capability is tested."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,402 @@
+{
+  "domain": "MP",
+  "name": "Media Protection",
+  "checks": {
+    "3.8.1": {
+      "manual_only": true,
+      "manual_guidance": "Review media storage and handling procedures for both paper and digital media containing CUI. Verify physical security controls for media storage areas including locked cabinets, access logs, and environmental protections.",
+      "evidence_requests": [
+        "Media handling and storage procedures",
+        "Physical security controls for media storage",
+        "Media inventory and tracking records",
+        "Access logs for media storage areas"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "paper media containing CUI is physically controlled.",
+          "evidence_needed": "Provide physical security evidence: paper media containing CUI is physically controlled."
+        },
+        {
+          "id": "[b]",
+          "text": "digital media containing CUI is physically controlled.",
+          "evidence_needed": "Provide physical security evidence: digital media containing CUI is physically controlled."
+        },
+        {
+          "id": "[c]",
+          "text": "paper media containing CUI is securely stored.",
+          "evidence_needed": "Provide documentation or process evidence: paper media containing CUI is securely stored."
+        },
+        {
+          "id": "[d]",
+          "text": "digital media containing CUI is securely stored.",
+          "evidence_needed": "Provide documentation or process evidence: digital media containing CUI is securely stored."
+        }
+      ]
+    },
+    "3.8.2": {
+      "aws": [
+        {
+          "check_id": "mp-3.8.2-aws-001",
+          "name": "S3 bucket policies restrict CUI access",
+          "service": "S3",
+          "api_call": "s3.get_bucket_policy",
+          "expected": "S3 buckets containing CUI have explicit deny for unauthorized principals",
+          "severity": "high",
+          "remediation": "Configure S3 bucket policies to restrict access to authorized IAM principals.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.2-aws-002",
+          "name": "EBS volumes encrypted",
+          "service": "EC2",
+          "api_call": "ec2.describe_volumes",
+          "expected": "All EBS volumes are encrypted with KMS keys",
+          "severity": "high",
+          "remediation": "Enable EBS encryption by default and encrypt existing unencrypted volumes.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.2-aws-003",
+          "name": "EBS default encryption enabled",
+          "service": "EC2",
+          "api_call": "ec2.get_ebs_encryption_by_default",
+          "expected": "EBS encryption by default enabled in all regions",
+          "severity": "high",
+          "remediation": "Enable EBS encryption by default in all active regions.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "mp-3.8.2-azure-001",
+          "name": "Storage account access restricted",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "Storage accounts use private endpoints or service endpoints only",
+          "severity": "high",
+          "remediation": "Configure storage accounts with private endpoints and restrict public access.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.2-azure-002",
+          "name": "Managed disk encryption enabled",
+          "service": "Compute",
+          "api_call": "compute.disks.list",
+          "expected": "All managed disks use platform or customer-managed encryption",
+          "severity": "high",
+          "remediation": "Ensure all managed disks use Azure Disk Encryption or server-side encryption.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "mp-3.8.2-gcp-001",
+          "name": "Cloud Storage bucket access restricted",
+          "service": "Storage",
+          "api_call": "storage.buckets.getIamPolicy",
+          "expected": "Buckets containing CUI restrict access to authorized principals only",
+          "severity": "high",
+          "remediation": "Configure bucket IAM policies to restrict access to authorized users and services.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.2-gcp-002",
+          "name": "Persistent disk encryption with CMEK",
+          "service": "Compute",
+          "api_call": "compute.disks.list",
+          "expected": "All persistent disks use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Encrypt persistent disks with customer-managed encryption keys (CMEK).",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.8.3": {
+      "manual_only": true,
+      "manual_guidance": "Review media sanitization procedures and destruction records. Verify NIST SP 800-88 compliant sanitization methods (Clear, Purge, or Destroy) are used based on media type and security categorization. Check disposal vendor certifications and certificates of destruction.",
+      "evidence_requests": [
+        "Media sanitization procedures aligned with NIST 800-88",
+        "Certificates of destruction for disposed media",
+        "Disposal vendor certifications and contracts",
+        "Media sanitization tracking records"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "system media containing CUI is sanitized or destroyed before disposal.",
+          "evidence_needed": "Provide documentation or process evidence: system media containing CUI is sanitized or destroyed before disposal."
+        },
+        {
+          "id": "[b]",
+          "text": "system media containing CUI is sanitized before it is released for reuse.",
+          "evidence_needed": "Provide documentation or process evidence: system media containing CUI is sanitized before it is released for reuse."
+        }
+      ]
+    },
+    "3.8.4": {
+      "manual_only": true,
+      "manual_guidance": "Verify CUI marking procedures exist and are followed. Check that digital and physical media containing CUI are marked with appropriate CUI designations (CUI//SP-CTI, CUI//ITAR, etc.) and distribution statements.",
+      "evidence_requests": [
+        "CUI marking procedures and guidelines",
+        "Sample marked media (digital headers/footers, physical labels)",
+        "CUI category and marking reference guide",
+        "Distribution statement templates"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "media containing CUI is marked with applicable CUI markings.",
+          "evidence_needed": "Provide documentation or process evidence: media containing CUI is marked with applicable CUI markings."
+        },
+        {
+          "id": "[b]",
+          "text": "media containing CUI is marked with distribution limitations.",
+          "evidence_needed": "Provide documentation or process evidence: media containing CUI is marked with distribution limitations."
+        }
+      ]
+    },
+    "3.8.5": {
+      "manual_only": true,
+      "manual_guidance": "Review media transport procedures and chain-of-custody records. Verify encryption requirements for media in transit, tamper-evident packaging requirements, and accountability tracking from origin to destination.",
+      "evidence_requests": [
+        "Media transport procedures",
+        "Chain-of-custody forms and records",
+        "Tamper-evident packaging requirements",
+        "Media courier authorization records"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "access to media containing CUI is controlled.",
+          "evidence_needed": "Provide documentation or process evidence: access to media containing CUI is controlled."
+        },
+        {
+          "id": "[b]",
+          "text": "accountability for media containing CUI is maintained during transport outside of controlled areas.",
+          "evidence_needed": "Provide documentation or process evidence: accountability for media containing CUI is maintained during transport outside of controlled areas."
+        }
+      ]
+    },
+    "3.8.6": {
+      "aws": [
+        {
+          "check_id": "mp-3.8.6-aws-001",
+          "name": "S3 buckets encrypted with KMS",
+          "service": "S3",
+          "api_call": "s3.get_bucket_encryption",
+          "expected": "All S3 buckets use SSE-KMS or SSE-S3 encryption",
+          "severity": "high",
+          "remediation": "Enable default encryption with KMS on all S3 buckets.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.6-aws-002",
+          "name": "RDS instances encrypted",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "StorageEncrypted=true on all RDS instances",
+          "severity": "high",
+          "remediation": "Enable encryption on all RDS instances (requires recreation for existing unencrypted).",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.6-aws-003",
+          "name": "EFS file systems encrypted",
+          "service": "EFS",
+          "api_call": "efs.describe_file_systems",
+          "expected": "Encrypted=true on all EFS file systems",
+          "severity": "high",
+          "remediation": "Enable encryption on EFS file systems at creation time.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "mp-3.8.6-azure-001",
+          "name": "Storage accounts enforce encryption",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "All storage accounts use Microsoft-managed or customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Azure Storage is encrypted by default; verify customer-managed keys for CUI data.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.6-azure-002",
+          "name": "SQL Database TDE enabled",
+          "service": "SQL",
+          "api_call": "sql.transparent_data_encryptions.get",
+          "expected": "Transparent Data Encryption enabled on all SQL databases",
+          "severity": "high",
+          "remediation": "Enable TDE on all Azure SQL databases.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "mp-3.8.6-gcp-001",
+          "name": "Cloud Storage buckets use CMEK",
+          "service": "Storage",
+          "api_call": "storage.buckets.get",
+          "expected": "Buckets containing CUI use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure Cloud Storage buckets with CMEK via Cloud KMS.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.6-gcp-002",
+          "name": "Cloud SQL instances encrypted",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "All Cloud SQL instances use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure Cloud SQL instances with CMEK encryption.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.8.7": {
+      "manual_only": true,
+      "manual_guidance": "Review removable media policies and endpoint DLP configurations. Verify USB device restrictions, authorized device whitelists, and logging of removable media connections to systems processing CUI.",
+      "evidence_requests": [
+        "Removable media policy",
+        "Endpoint DLP/device control configuration",
+        "Authorized removable media device list",
+        "Removable media access logs"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the use of removable media on system components containing CUI is controlled.",
+          "evidence_needed": "Provide documentation or process evidence: the use of removable media on system components containing CUI is controlled."
+        }
+      ]
+    },
+    "3.8.8": {
+      "manual_only": true,
+      "manual_guidance": "Review portable storage device policies. Verify that all authorized portable storage devices are registered, assigned to specific individuals, and tracked. Confirm that unidentified/unregistered devices are not permitted on CUI systems.",
+      "evidence_requests": [
+        "Portable storage device registration records",
+        "Device-to-owner assignment tracking",
+        "Policy for handling unidentified storage devices",
+        "Periodic device inventory records"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the use of portable storage devices is prohibited when such devices have no identifiable owner.",
+          "evidence_needed": "Provide documentation or process evidence: the use of portable storage devices is prohibited when such devices have no identifiable owner."
+        }
+      ]
+    },
+    "3.8.9": {
+      "aws": [
+        {
+          "check_id": "mp-3.8.9-aws-001",
+          "name": "Backup vault encrypted with KMS",
+          "service": "Backup",
+          "api_call": "backup.list_backup_vaults",
+          "expected": "All backup vaults use KMS encryption",
+          "severity": "high",
+          "remediation": "Configure AWS Backup vaults with KMS encryption.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.9-aws-002",
+          "name": "Backup vault access policy restricts access",
+          "service": "Backup",
+          "api_call": "backup.get_backup_vault_access_policy",
+          "expected": "Backup vault access policies restrict access to authorized roles",
+          "severity": "high",
+          "remediation": "Configure backup vault access policies to restrict access.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.9-aws-003",
+          "name": "S3 cross-region replication encrypted",
+          "service": "S3",
+          "api_call": "s3.get_bucket_replication",
+          "expected": "Cross-region replication uses KMS encryption for replicated objects",
+          "severity": "medium",
+          "remediation": "Configure S3 replication rules to use KMS encryption for destination.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "mp-3.8.9-azure-001",
+          "name": "Recovery Services vault encrypted",
+          "service": "Recovery Services",
+          "api_call": "recoveryservices.vaults.list",
+          "expected": "All Recovery Services vaults use platform or customer-managed encryption",
+          "severity": "high",
+          "remediation": "Configure Recovery Services vaults with appropriate encryption settings.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "mp-3.8.9-azure-002",
+          "name": "Backup vault soft delete enabled",
+          "service": "Recovery Services",
+          "api_call": "recoveryservices.vaults.list",
+          "expected": "Soft delete enabled on all backup vaults to protect against deletion",
+          "severity": "medium",
+          "remediation": "Enable soft delete on Recovery Services vaults.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "mp-3.8.9-gcp-001",
+          "name": "Backup encrypted with CMEK",
+          "service": "Backup and DR",
+          "api_call": "backupdr.projects.locations.backupVaults.list",
+          "expected": "Backup vaults use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure backup vaults with CMEK encryption.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    }
+  }
+}

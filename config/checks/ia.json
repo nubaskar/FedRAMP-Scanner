@@ -1,0 +1,681 @@
+{
+  "domain": "IA",
+  "name": "Identification and Authentication",
+  "checks": {
+    "3.5.1": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.1-aws-001",
+          "name": "All IAM users uniquely identified",
+          "service": "IAM",
+          "api_call": "iam.list_users",
+          "expected": "All IAM users have unique usernames mapping to individual personnel",
+          "severity": "high",
+          "remediation": "Ensure all IAM users are uniquely named and map to individual personnel.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.1-aws-002",
+          "name": "Service accounts have descriptive names",
+          "service": "IAM",
+          "api_call": "iam.list_roles",
+          "expected": "Service roles/accounts are clearly identifiable with purpose descriptions",
+          "severity": "medium",
+          "remediation": "Name service accounts descriptively and add tags identifying their purpose.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.1-aws-003",
+          "name": "EC2 instances use instance profiles",
+          "service": "EC2",
+          "api_call": "ec2.describe_instances",
+          "expected": "All EC2 instances use IAM instance profiles instead of embedded credentials",
+          "severity": "high",
+          "remediation": "Attach IAM instance profiles to EC2 instances; remove embedded credentials.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.1-azure-001",
+          "name": "All Azure AD users uniquely identified",
+          "service": "Azure AD",
+          "api_call": "graph.users.list",
+          "expected": "All users have unique UPNs mapping to individual personnel",
+          "severity": "high",
+          "remediation": "Ensure all Azure AD accounts are uniquely identified to individuals.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.1-azure-002",
+          "name": "Managed identities used for service authentication",
+          "service": "Compute",
+          "api_call": "compute.virtual_machines.list",
+          "expected": "VMs and services use managed identities instead of service principal secrets",
+          "severity": "high",
+          "remediation": "Enable managed identities for Azure resources instead of using secrets.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.1-gcp-001",
+          "name": "All users identified via Google Cloud Identity",
+          "service": "IAM",
+          "api_call": "cloudresourcemanager.projects.getIamPolicy",
+          "expected": "All user bindings use organizational Google accounts, not personal gmail",
+          "severity": "high",
+          "remediation": "Ensure all IAM bindings use organizational Cloud Identity accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.1-gcp-002",
+          "name": "Service accounts clearly identified",
+          "service": "IAM",
+          "api_call": "iam.projects.serviceAccounts.list",
+          "expected": "All service accounts have descriptive display names and descriptions",
+          "severity": "medium",
+          "remediation": "Add descriptive names and descriptions to all service accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.5.2": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.2-aws-001",
+          "name": "Root account has MFA enabled",
+          "service": "IAM",
+          "api_call": "iam.get_account_summary",
+          "expected": "AccountMFAEnabled == 1",
+          "severity": "critical",
+          "remediation": "Enable hardware MFA on the root account immediately.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.2-aws-002",
+          "name": "All IAM users with console access have MFA",
+          "service": "IAM",
+          "api_call": "iam.generate_credential_report",
+          "expected": "All users with password_enabled=true have mfa_active=true",
+          "severity": "critical",
+          "remediation": "Enable MFA for all IAM users with console access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.2-azure-001",
+          "name": "MFA registration required for all users",
+          "service": "Azure AD",
+          "api_call": "graph.reports.credential_user_registration_details.list",
+          "expected": "All users registered for MFA",
+          "severity": "critical",
+          "remediation": "Require MFA registration for all Azure AD users.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.2-azure-002",
+          "name": "Legacy authentication blocked",
+          "service": "Azure AD",
+          "api_call": "graph.conditional_access_policies.list",
+          "expected": "Conditional Access policy blocks legacy authentication protocols",
+          "severity": "high",
+          "remediation": "Create Conditional Access policy to block legacy authentication.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.2-gcp-001",
+          "name": "2-Step Verification enforced",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "2-Step Verification enforced for all users in the organization",
+          "severity": "critical",
+          "remediation": "Enforce 2-Step Verification in Google Workspace admin console.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.5.3": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.3-aws-001",
+          "name": "MFA enforced for all console access",
+          "service": "IAM",
+          "api_call": "iam.generate_credential_report",
+          "expected": "100% of console users have MFA enabled",
+          "severity": "critical",
+          "remediation": "Enable MFA for all IAM users with console access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.3-aws-002",
+          "name": "MFA required for privileged API actions",
+          "service": "IAM",
+          "api_call": "iam.get_policy_version",
+          "expected": "IAM policies require MFA (aws:MultiFactorAuthPresent) for sensitive actions",
+          "severity": "high",
+          "remediation": "Add MFA condition to IAM policies for privileged actions.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.3-aws-003",
+          "name": "Hardware MFA used for root account",
+          "service": "IAM",
+          "api_call": "iam.list_virtual_mfa_devices",
+          "expected": "Root account uses hardware MFA token (not virtual)",
+          "severity": "high",
+          "remediation": "Replace virtual MFA with hardware MFA token for root account.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.3-azure-001",
+          "name": "MFA required via Conditional Access",
+          "service": "Azure AD",
+          "api_call": "graph.conditional_access_policies.list",
+          "expected": "Conditional Access policy requires MFA for all users on all cloud apps",
+          "severity": "critical",
+          "remediation": "Create Conditional Access policy requiring MFA for all cloud applications.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.3-azure-002",
+          "name": "MFA required for Azure management",
+          "service": "Azure AD",
+          "api_call": "graph.conditional_access_policies.list",
+          "expected": "MFA required for Azure portal, CLI, and PowerShell access",
+          "severity": "critical",
+          "remediation": "Configure Conditional Access to require MFA for Azure management.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.3-gcp-001",
+          "name": "2-Step Verification enforced organization-wide",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "2-Step Verification enforced for all users, not just encouraged",
+          "severity": "critical",
+          "remediation": "Set 2-Step Verification to 'Enforced' in Google Workspace admin console.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.3-gcp-002",
+          "name": "Security key required for admin accounts",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "Super admin accounts require security key for 2SV",
+          "severity": "high",
+          "remediation": "Require security keys for all super admin accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ]
+    },
+    "3.5.4": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.4-aws-001",
+          "name": "FIDO2/WebAuthn supported for MFA",
+          "service": "IAM",
+          "api_call": "iam.list_mfa_devices",
+          "expected": "FIDO2 security keys supported and preferred for MFA",
+          "severity": "medium",
+          "remediation": "Support FIDO2 security keys as MFA devices for replay resistance.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.4-aws-002",
+          "name": "STS tokens are time-limited",
+          "service": "STS",
+          "api_call": "iam.list_roles",
+          "expected": "All role session durations are appropriately limited",
+          "severity": "medium",
+          "remediation": "Configure STS token durations to minimize replay attack window.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.4-azure-001",
+          "name": "FIDO2 authentication method enabled",
+          "service": "Azure AD",
+          "api_call": "graph.authentication_method_configurations.get",
+          "expected": "FIDO2 security key authentication method enabled",
+          "severity": "medium",
+          "remediation": "Enable FIDO2 security key authentication method in Azure AD.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.4-gcp-001",
+          "name": "Security key enforcement available",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "Security key 2SV option available for all users",
+          "severity": "medium",
+          "remediation": "Enable security key support for replay-resistant authentication.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.5.5": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.5-aws-001",
+          "name": "Deleted IAM user names not reused within 90 days",
+          "service": "IAM",
+          "api_call": "iam.list_users",
+          "expected": "Organizational process prevents reuse of IAM user names within defined period",
+          "severity": "medium",
+          "remediation": "Implement naming convention that prevents identifier reuse (e.g., include date suffix).",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.5-azure-001",
+          "name": "Soft-deleted user accounts not reused",
+          "service": "Azure AD",
+          "api_call": "graph.deleted_users.list",
+          "expected": "Deleted user UPNs are in soft-delete state preventing reuse for 30 days",
+          "severity": "medium",
+          "remediation": "Azure AD retains deleted users for 30 days; extend organizational policy for 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.5-gcp-001",
+          "name": "User account identifiers not reused",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "Suspended/deleted user accounts not reassigned within 90 days",
+          "severity": "medium",
+          "remediation": "Implement policy to prevent reuse of user identifiers within defined period.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.5.6": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.6-aws-001",
+          "name": "IAM users inactive for 90 days identified",
+          "service": "IAM",
+          "api_call": "iam.generate_credential_report",
+          "expected": "No IAM users with last activity > 90 days ago",
+          "severity": "high",
+          "remediation": "Disable IAM users inactive for more than 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.6-aws-002",
+          "name": "Access keys inactive for 90 days identified",
+          "service": "IAM",
+          "api_call": "iam.generate_credential_report",
+          "expected": "No active access keys unused for more than 90 days",
+          "severity": "high",
+          "remediation": "Deactivate access keys not used in the last 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.6-azure-001",
+          "name": "Inactive Azure AD accounts identified",
+          "service": "Azure AD",
+          "api_call": "graph.users.list",
+          "expected": "No user accounts with last sign-in > 90 days ago",
+          "severity": "high",
+          "remediation": "Disable Azure AD accounts inactive for more than 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.6-gcp-001",
+          "name": "Inactive service account keys identified",
+          "service": "IAM",
+          "api_call": "iam.projects.serviceAccounts.keys.list",
+          "expected": "No service account keys unused for more than 90 days",
+          "severity": "high",
+          "remediation": "Delete service account keys inactive for more than 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.5.7": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.7-aws-001",
+          "name": "IAM password policy enforces complexity",
+          "service": "IAM",
+          "api_call": "iam.get_account_password_policy",
+          "expected": "MinimumPasswordLength >= 14, RequireSymbols=true, RequireNumbers=true, RequireUppercaseCharacters=true, RequireLowercaseCharacters=true",
+          "severity": "high",
+          "remediation": "Configure IAM password policy with minimum 14 characters and complexity requirements.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.7-azure-001",
+          "name": "Azure AD password protection enabled",
+          "service": "Azure AD",
+          "api_call": "graph.settings.list",
+          "expected": "Custom banned password lists enabled and enforced",
+          "severity": "high",
+          "remediation": "Enable Azure AD Password Protection with custom banned password list.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.7-gcp-001",
+          "name": "Password policy enforced in Workspace",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "Minimum password length of 14 characters enforced with complexity requirements",
+          "severity": "high",
+          "remediation": "Configure password policy in Google Workspace with minimum 14 characters.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ]
+    },
+    "3.5.8": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.8-aws-001",
+          "name": "Password reuse prevention configured",
+          "service": "IAM",
+          "api_call": "iam.get_account_password_policy",
+          "expected": "PasswordReusePrevention >= 24",
+          "severity": "high",
+          "remediation": "Set IAM password policy to remember at least 24 previous passwords.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.8-azure-001",
+          "name": "Password history enforced",
+          "service": "Azure AD",
+          "api_call": "graph.settings.list",
+          "expected": "Password history enforcement prevents reuse of recent passwords",
+          "severity": "high",
+          "remediation": "Azure AD enforces password history by default; verify no custom policy disables it.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.8-gcp-001",
+          "name": "Password reuse restricted in Workspace",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "Password reuse prevention enabled in Workspace admin settings",
+          "severity": "high",
+          "remediation": "Configure password reuse prevention in Google Workspace admin.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.5.9": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.9-aws-001",
+          "name": "IAM Identity Center force password change on first login",
+          "service": "IAM Identity Center",
+          "api_call": "sso-admin.list_instances()",
+          "expected": "New users are required to change password on first login",
+          "severity": "medium",
+          "remediation": "Configure IAM Identity Center to require password change on first login.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.9-azure-001",
+          "name": "Force password change on new accounts",
+          "service": "Azure AD",
+          "api_call": "graph.users.list",
+          "expected": "New users created with forceChangePasswordNextSignIn=true",
+          "severity": "medium",
+          "remediation": "Ensure all new user accounts require password change at first login.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.9-gcp-001",
+          "name": "Force password change for new users",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "New users required to change password on first sign-in",
+          "severity": "medium",
+          "remediation": "Configure Google Workspace to require password change on first sign-in.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.5.10": {
+      "aws": [
+        {
+          "check_id": "ia-3.5.10-aws-001",
+          "name": "TLS enforced for all API communication",
+          "service": "IAM",
+          "api_call": "iam.get_credential_report()",
+          "expected": "All AWS API calls use TLS 1.2+ (enforced by AWS)",
+          "severity": "high",
+          "remediation": "AWS enforces TLS 1.2+ for API calls; verify client-side TLS configuration.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ia-3.5.10-aws-002",
+          "name": "Database passwords encrypted in transit",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "SSL/TLS enforcement enabled on all RDS instances",
+          "severity": "high",
+          "remediation": "Enable require_ssl parameter on all RDS instances.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ia-3.5.10-azure-001",
+          "name": "HTTPS-only access enforced",
+          "service": "App Service",
+          "api_call": "web.web_apps.list",
+          "expected": "HttpsOnly=true on all web apps",
+          "severity": "high",
+          "remediation": "Enable HTTPS Only on all Azure App Service web applications.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ia-3.5.10-gcp-001",
+          "name": "SSL enforced on Cloud SQL instances",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "requireSsl=true on all Cloud SQL instances",
+          "severity": "high",
+          "remediation": "Enable SSL enforcement on all Cloud SQL instances.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.5.11": {
+      "manual_only": true,
+      "manual_guidance": "Verify that authentication interfaces mask password input fields. Confirm that error messages do not reveal whether the username or password was incorrect (use generic messages like 'Invalid credentials'). Check web applications, API endpoints, and CLI tools.",
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "authentication information is obscured during the authentication process.",
+          "evidence_needed": "Provide documentation or process evidence: authentication information is obscured during the authentication process."
+        }
+      ]
+    }
+  }
+}

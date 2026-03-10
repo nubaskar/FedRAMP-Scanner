@@ -1,0 +1,267 @@
+{
+  "domain": "RA",
+  "name": "Risk Assessment",
+  "checks": {
+    "3.11.1": {
+      "manual_only": true,
+      "manual_guidance": "Request the most recent organizational risk assessment report. Verify it covers all systems processing, storing, or transmitting CUI. Confirm the assessment addresses current threats and vulnerabilities, includes likelihood and impact analysis, is updated at least annually, and incorporates results from vulnerability scans and security assessments.",
+      "evidence_requests": [
+        "Risk assessment report (most recent)",
+        "Risk assessment methodology documentation",
+        "Risk register/risk matrix",
+        "Risk treatment/mitigation plans",
+        "Annual review and update records"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the frequency to assess risk to organizational operations, organizational assets, and individuals is defined.",
+          "evidence_needed": "Provide documentation showing that the frequency to assess risk to organizational operations, organizational assets, and individuals are defined."
+        },
+        {
+          "id": "[b]",
+          "text": "risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency.",
+          "evidence_needed": "Provide documentation or process evidence: risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency."
+        }
+      ]
+    },
+    "3.11.2": {
+      "aws": [
+        {
+          "check_id": "ra-3.11.2-aws-001",
+          "name": "Amazon Inspector enabled",
+          "service": "Inspector",
+          "api_call": "inspector2.list_account_permissions",
+          "expected": "Inspector v2 enabled for EC2, ECR, and Lambda scanning",
+          "severity": "high",
+          "remediation": "Enable Amazon Inspector v2 for EC2, ECR, and Lambda vulnerability scanning.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-aws-002",
+          "name": "ECR image scanning enabled",
+          "service": "ECR",
+          "api_call": "ecr.describe_repositories",
+          "expected": "Image scanning on push enabled for all ECR repositories",
+          "severity": "high",
+          "remediation": "Enable image scan on push for all ECR repositories.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-aws-003",
+          "name": "Vulnerability findings reviewed regularly",
+          "service": "Inspector",
+          "api_call": "inspector2.list_findings",
+          "expected": "No critical/high vulnerability findings older than 30 days unresolved",
+          "severity": "high",
+          "remediation": "Review and remediate critical/high Inspector findings within 30 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ra-3.11.2-azure-001",
+          "name": "Defender for Cloud vulnerability assessment enabled",
+          "service": "Security Center",
+          "api_call": "security.sub_assessments.list",
+          "expected": "Vulnerability assessment solution deployed on all VMs",
+          "severity": "high",
+          "remediation": "Enable Defender for Cloud built-in vulnerability assessment on all VMs.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-azure-002",
+          "name": "Container vulnerability scanning enabled",
+          "service": "Security Center",
+          "api_call": "security.pricings.get",
+          "expected": "Defender for Containers enabled with vulnerability scanning",
+          "severity": "high",
+          "remediation": "Enable Defender for Containers for container image vulnerability scanning.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-azure-003",
+          "name": "SQL vulnerability assessment enabled",
+          "service": "SQL",
+          "api_call": "sql.server_vulnerability_assessments.get",
+          "expected": "Vulnerability assessment enabled on all SQL servers",
+          "severity": "high",
+          "remediation": "Enable SQL vulnerability assessment on all Azure SQL servers.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ra-3.11.2-gcp-001",
+          "name": "Web Security Scanner enabled",
+          "service": "SCC",
+          "api_call": "websecurityscanner.projects.scanConfigs.list",
+          "expected": "Web Security Scanner configured for web applications",
+          "severity": "high",
+          "remediation": "Configure Web Security Scanner for all web applications.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-gcp-002",
+          "name": "Container Analysis vulnerability scanning",
+          "service": "Container Analysis",
+          "api_call": "containeranalysis.projects.occurrences.list",
+          "expected": "Vulnerability scanning enabled for all container registries",
+          "severity": "high",
+          "remediation": "Enable Container Analysis vulnerability scanning on Artifact Registry.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.2-gcp-003",
+          "name": "Security Health Analytics enabled",
+          "service": "SCC",
+          "api_call": "securitycenter.securityHealthAnalyticsSettings",
+          "expected": "Security Health Analytics active and findings reviewed",
+          "severity": "high",
+          "remediation": "Ensure Security Health Analytics is enabled in Security Command Center.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ]
+        }
+      ]
+    },
+    "3.11.3": {
+      "aws": [
+        {
+          "check_id": "ra-3.11.3-aws-001",
+          "name": "SSM Patch Manager compliance monitored",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_patch_states",
+          "expected": "All instances show compliant patch state within policy timeframes",
+          "severity": "high",
+          "remediation": "Remediate non-compliant patches per SSM Patch Manager baseline.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.3-aws-002",
+          "name": "Inspector critical findings remediated",
+          "service": "Inspector",
+          "api_call": "inspector2.list_findings",
+          "expected": "Critical findings remediated within 15 days, high within 30 days",
+          "severity": "high",
+          "remediation": "Establish and follow vulnerability remediation SLAs by severity.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ra-3.11.3-azure-001",
+          "name": "Update Management compliance tracked",
+          "service": "Automation",
+          "api_call": "automation_account.list",
+          "expected": "All VMs show compliant update status",
+          "severity": "high",
+          "remediation": "Address update compliance gaps identified by Azure Update Manager.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.3-azure-002",
+          "name": "Defender recommendations addressed",
+          "service": "Security Center",
+          "api_call": "security.assessments.list",
+          "expected": "No unaddressed critical security recommendations older than 30 days",
+          "severity": "high",
+          "remediation": "Address Defender for Cloud recommendations within defined SLAs.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ra-3.11.3-gcp-001",
+          "name": "OS Config patch compliance monitored",
+          "service": "OS Config",
+          "api_call": "osconfig.patchDeployments.list",
+          "expected": "All instances show compliant patch state",
+          "severity": "high",
+          "remediation": "Remediate non-compliant patches identified by OS Config.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ra-3.11.3-gcp-002",
+          "name": "SCC critical findings remediated",
+          "service": "SCC",
+          "api_call": "securitycenter.securityHealthAnalyticsSettings",
+          "expected": "No critical SCC findings in active/unresolved state older than 15 days",
+          "severity": "high",
+          "remediation": "Remediate critical Security Command Center findings within 15 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    }
+  }
+}

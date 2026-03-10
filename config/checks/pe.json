@@ -1,0 +1,162 @@
+{
+  "domain": "PE",
+  "name": "Physical Protection",
+  "checks": {
+    "3.10.1": {
+      "manual_only": true,
+      "manual_guidance": "Review physical access control mechanisms (badge readers, biometrics, cipher locks, key management). Verify authorized access lists are current and reviewed quarterly. Confirm physical access logs are maintained and that access is limited to authorized individuals for areas containing CUI systems. Note: For cloud environments, physical security is the CSP's responsibility under shared responsibility model; verify CSP compliance via FedRAMP authorization.",
+      "evidence_requests": [
+        "Physical access control policy",
+        "Authorized access list for CUI areas",
+        "Physical access control system configuration",
+        "CSP FedRAMP authorization documentation (for cloud)",
+        "Data center security certifications"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "authorized individuals allowed physical access are identified.",
+          "evidence_needed": "Provide documentation showing that authorized individuals allowed physical access are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "physical access to organizational systems is limited to authorized individuals.",
+          "evidence_needed": "Provide physical security evidence: physical access to organizational systems is limited to authorized individuals."
+        },
+        {
+          "id": "[c]",
+          "text": "physical access to equipment is limited to authorized individuals.",
+          "evidence_needed": "Provide physical security evidence: physical access to equipment is limited to authorized individuals."
+        },
+        {
+          "id": "[d]",
+          "text": "physical access to operating environments is limited to authorized individuals.",
+          "evidence_needed": "Provide physical security evidence: physical access to operating environments is limited to authorized individuals."
+        }
+      ]
+    },
+    "3.10.2": {
+      "manual_only": true,
+      "manual_guidance": "Review physical security monitoring systems including surveillance cameras, intrusion detection alarms, and environmental controls (HVAC, fire suppression, water detection). Verify monitoring coverage of server rooms, network closets, and other areas with CUI systems. For cloud, verify CSP provides appropriate physical monitoring via FedRAMP.",
+      "evidence_requests": [
+        "Physical security monitoring system documentation",
+        "Surveillance camera coverage maps",
+        "Intrusion detection system configuration",
+        "Environmental monitoring and controls documentation",
+        "CSP physical security attestations"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the physical facility where that system resides is protected.",
+          "evidence_needed": "Provide physical security evidence: the physical facility where that system resides is protected."
+        },
+        {
+          "id": "[b]",
+          "text": "the support infrastructure for that system is protected.",
+          "evidence_needed": "Provide documentation or process evidence: the support infrastructure for that system is protected."
+        },
+        {
+          "id": "[c]",
+          "text": "the physical facility where that system resides is monitored.",
+          "evidence_needed": "Provide physical security evidence: the physical facility where that system resides is monitored."
+        },
+        {
+          "id": "[d]",
+          "text": "the support infrastructure for that system is monitored.",
+          "evidence_needed": "Provide documentation or process evidence: the support infrastructure for that system is monitored."
+        }
+      ]
+    },
+    "3.10.3": {
+      "manual_only": true,
+      "manual_guidance": "Review visitor management procedures. Verify visitor sign-in/sign-out logs, identification verification, badge issuance, and escort requirements. Confirm visitors are escorted at all times in areas where CUI is accessible. Check that visitor access areas are clearly delineated.",
+      "evidence_requests": [
+        "Visitor management policy and procedures",
+        "Visitor log samples",
+        "Visitor badge issuance and tracking records",
+        "Escort procedures and assignment records",
+        "Restricted area signage documentation"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "visitors are escorted.",
+          "evidence_needed": "Provide documentation or process evidence: visitors are escorted."
+        },
+        {
+          "id": "[b]",
+          "text": "visitor activity is monitored.",
+          "evidence_needed": "Provide documentation or process evidence: visitor activity is monitored."
+        }
+      ]
+    },
+    "3.10.4": {
+      "manual_only": true,
+      "manual_guidance": "Review physical access audit logs and retention periods. Verify logs capture entry and exit times, individual identity, and access point. Confirm logs are retained per organizational policy (minimum 12 months recommended). Check for automated alerting on anomalous access patterns.",
+      "evidence_requests": [
+        "Physical access log system documentation",
+        "Sample physical access logs (recent 30 days)",
+        "Log retention policy and configuration",
+        "Anomalous access alerting configuration"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "audit logs of physical access are maintained.",
+          "evidence_needed": "Provide physical security evidence: audit logs of physical access are maintained."
+        }
+      ]
+    },
+    "3.10.5": {
+      "manual_only": true,
+      "manual_guidance": "Review inventory and management of physical access devices (keys, badges, smart cards, combinations, PINs). Verify devices are inventoried regularly, changed when compromised or when personnel are terminated, and that lost/stolen devices trigger immediate reissuance and audit.",
+      "evidence_requests": [
+        "Physical access device inventory",
+        "Key and badge management procedures",
+        "Device deactivation records for terminated personnel",
+        "Lost/stolen device response procedures",
+        "Periodic access device audit records"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "physical access devices are identified.",
+          "evidence_needed": "Provide documentation showing that physical access devices are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "physical access devices are controlled.",
+          "evidence_needed": "Provide physical security evidence: physical access devices are controlled."
+        },
+        {
+          "id": "[c]",
+          "text": "physical access devices are managed.",
+          "evidence_needed": "Provide physical security evidence: physical access devices are managed."
+        }
+      ]
+    },
+    "3.10.6": {
+      "manual_only": true,
+      "manual_guidance": "Review telework and alternate work site policies for personnel handling CUI. Verify requirements for physical security at home offices (locked room/cabinet for CUI materials), network security (VPN, encrypted Wi-Fi), and clean desk requirements. Confirm regular assessments of alternate work site security.",
+      "evidence_requests": [
+        "Telework and remote work security policy",
+        "Alternate work site security assessment form",
+        "Employee telework agreements with security provisions",
+        "Remote work security requirements checklist"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "safeguarding measures for CUI are defined for alternate work sites.",
+          "evidence_needed": "Provide documentation showing that safeguarding measures for cui are defined."
+        },
+        {
+          "id": "[b]",
+          "text": "safeguarding measures for CUI are enforced for alternate work sites.",
+          "evidence_needed": "Provide documentation or process evidence: safeguarding measures for CUI are enforced for alternate work sites."
+        }
+      ]
+    }
+  }
+}

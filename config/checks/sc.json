@@ -1,0 +1,1177 @@
+{
+  "domain": "SC",
+  "name": "System and Communications Protection",
+  "checks": {
+    "3.13.1": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.1-aws-001",
+          "name": "WAF deployed on internet-facing resources",
+          "service": "WAFv2",
+          "api_call": "wafv2.list_web_acls",
+          "expected": "WAF web ACLs deployed on all internet-facing ALBs, API Gateways, and CloudFront",
+          "severity": "high",
+          "remediation": "Deploy AWS WAF on all internet-facing Application Load Balancers and API Gateways.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-aws-002",
+          "name": "VPC Flow Logs enabled for all VPCs",
+          "service": "VPC",
+          "api_call": "ec2.describe_flow_logs",
+          "expected": "Flow logs enabled for all VPCs capturing ACCEPT and REJECT traffic",
+          "severity": "high",
+          "remediation": "Enable VPC Flow Logs on all VPCs in ACCEPT and REJECT mode.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-aws-003",
+          "name": "Network Firewall deployed for CUI VPCs",
+          "service": "Network Firewall",
+          "api_call": "network-firewall.list_firewalls",
+          "expected": "AWS Network Firewall deployed for traffic inspection on CUI VPCs",
+          "severity": "high",
+          "remediation": "Deploy AWS Network Firewall for deep packet inspection on CUI VPCs.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-aws-004",
+          "name": "GuardDuty monitors network anomalies",
+          "service": "GuardDuty",
+          "api_call": "guardduty.get_detector",
+          "expected": "GuardDuty enabled with VPC Flow Log monitoring active",
+          "severity": "high",
+          "remediation": "Enable GuardDuty with VPC Flow Logs data source.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.1-azure-001",
+          "name": "Azure Firewall or NVA deployed",
+          "service": "Network",
+          "api_call": "network.azure_firewalls.list",
+          "expected": "Azure Firewall deployed with threat intelligence-based filtering enabled",
+          "severity": "high",
+          "remediation": "Deploy Azure Firewall Premium with threat intelligence-based filtering.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-azure-002",
+          "name": "NSG flow logs enabled",
+          "service": "Network",
+          "api_call": "network_watchers.list_all + nsgs.list_all",
+          "expected": "NSG flow logs enabled for all Network Security Groups",
+          "severity": "high",
+          "remediation": "Enable NSG flow logs with Traffic Analytics for all NSGs.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-azure-003",
+          "name": "Azure WAF deployed",
+          "service": "Network",
+          "api_call": "network.web_application_firewall_policies.list",
+          "expected": "WAF policies deployed on all internet-facing Application Gateways and Front Doors",
+          "severity": "high",
+          "remediation": "Deploy Azure WAF on Application Gateways and Front Door.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.1-gcp-001",
+          "name": "Cloud Armor WAF deployed",
+          "service": "Cloud Armor",
+          "api_call": "compute.securityPolicies.list",
+          "expected": "Cloud Armor security policies deployed on internet-facing load balancers",
+          "severity": "high",
+          "remediation": "Deploy Cloud Armor security policies on all internet-facing HTTP(S) load balancers.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-gcp-002",
+          "name": "VPC Flow Logs enabled",
+          "service": "VPC",
+          "api_call": "compute.subnetworks.list",
+          "expected": "VPC Flow Logs enabled on all subnets",
+          "severity": "high",
+          "remediation": "Enable VPC Flow Logs on all subnets with appropriate aggregation interval.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.1-gcp-003",
+          "name": "Packet Mirroring or IDS configured",
+          "service": "VPC",
+          "api_call": "compute.packetMirrorings.list",
+          "expected": "Packet Mirroring or Cloud IDS configured for network inspection",
+          "severity": "medium",
+          "remediation": "Configure Cloud IDS or Packet Mirroring for network traffic inspection.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ]
+    },
+    "3.13.2": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.2-aws-001",
+          "name": "Defense-in-depth architecture layers present",
+          "service": "Multiple",
+          "api_call": "ec2/guardduty/cloudtrail/kms",
+          "expected": "At least 4 of 5 security layers present: network segmentation, GuardDuty, CloudTrail, KMS, VPC Flow Logs",
+          "severity": "high",
+          "remediation": "Implement multiple security layers: VPC segmentation, threat detection (GuardDuty), audit logging (CloudTrail), encryption (KMS), and network monitoring (VPC Flow Logs).",
+          "supports_objectives": []
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.2-azure-001",
+          "name": "Defense-in-depth architecture layers present",
+          "service": "Multiple",
+          "api_call": "network/keyvault/monitor/security",
+          "expected": "At least 4 of 5 security layers present: NSGs on subnets, Key Vault, activity log alerts, Defender for Cloud, Network Watcher",
+          "severity": "high",
+          "remediation": "Implement multiple security layers: NSGs, Key Vault for secrets, Activity Log alerts, Microsoft Defender for Cloud, and Network Watcher.",
+          "supports_objectives": []
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.2-gcp-001",
+          "name": "Defense-in-depth architecture layers present",
+          "service": "Multiple",
+          "api_call": "compute/kms/logging/orgpolicy",
+          "expected": "At least 3 of 4 security layers present: firewall rules, KMS keys, log sinks, org policy constraints",
+          "severity": "high",
+          "remediation": "Implement multiple security layers: VPC firewall rules, Cloud KMS encryption, Cloud Logging sinks, and Organization Policy constraints.",
+          "supports_objectives": []
+        }
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "architectural designs that promote effective information security are identified.",
+          "evidence_needed": "Provide documentation showing that architectural designs that promote effective information security are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "software development techniques that promote effective information security are identified.",
+          "evidence_needed": "Provide documentation showing that software development techniques that promote effective information security are identified and documented."
+        },
+        {
+          "id": "[c]",
+          "text": "systems engineering principles that promote effective information security are identified.",
+          "evidence_needed": "Provide documentation showing that systems engineering principles that promote effective information security are identified and documented."
+        },
+        {
+          "id": "[d]",
+          "text": "identified architectural designs that promote effective information security are employed.",
+          "evidence_needed": "Provide documentation or process evidence: identified architectural designs that promote effective information security are employed."
+        },
+        {
+          "id": "[e]",
+          "text": "identified software development techniques that promote effective information security are employed.",
+          "evidence_needed": "Provide documentation or process evidence: identified software development techniques that promote effective information security are employed."
+        },
+        {
+          "id": "[f]",
+          "text": "identified systems engineering principles that promote effective information security are employed.",
+          "evidence_needed": "Provide documentation or process evidence: identified systems engineering principles that promote effective information security are employed."
+        }
+      ]
+    },
+    "3.13.3": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.3-aws-001",
+          "name": "Management and data plane separated",
+          "service": "VPC",
+          "api_call": "ec2.describe_subnets",
+          "expected": "Management subnets are isolated from data/application subnets",
+          "severity": "high",
+          "remediation": "Separate management interfaces into dedicated subnets with restricted access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.3-aws-002",
+          "name": "Systems Manager for management access",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_information",
+          "expected": "SSM Session Manager used for management instead of direct SSH/RDP",
+          "severity": "high",
+          "remediation": "Use SSM Session Manager for server management instead of direct SSH/RDP access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.3-azure-001",
+          "name": "Management network isolated",
+          "service": "Network",
+          "api_call": "network.virtual_networks.list",
+          "expected": "Dedicated management VNet or subnet with restricted NSG rules",
+          "severity": "high",
+          "remediation": "Create dedicated management subnet/VNet with restrictive NSG rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.3-gcp-001",
+          "name": "Management network segmented",
+          "service": "VPC",
+          "api_call": "compute.subnetworks.list",
+          "expected": "Dedicated management subnet with restricted firewall rules",
+          "severity": "high",
+          "remediation": "Create dedicated management subnet with restrictive firewall rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.13.4": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.4-aws-001",
+          "name": "EBS volumes not shared across accounts",
+          "service": "EC2",
+          "api_call": "ec2.describe_snapshot_attribute",
+          "expected": "EBS snapshots not shared publicly or with unauthorized accounts",
+          "severity": "high",
+          "remediation": "Remove public sharing from EBS snapshots and restrict to authorized accounts.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.4-aws-002",
+          "name": "AMIs not publicly shared",
+          "service": "EC2",
+          "api_call": "ec2.describe_images()",
+          "expected": "No AMIs shared publicly",
+          "severity": "high",
+          "remediation": "Remove public sharing from AMIs.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.4-azure-001",
+          "name": "Shared disks restricted",
+          "service": "Compute",
+          "api_call": "compute.disks.list",
+          "expected": "Shared disk feature limited to authorized multi-attach scenarios only",
+          "severity": "medium",
+          "remediation": "Restrict shared disk usage to explicitly approved scenarios.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.4-gcp-001",
+          "name": "Images not publicly shared",
+          "service": "Compute",
+          "api_call": "compute.images.getIamPolicy",
+          "expected": "No compute images shared with allUsers or allAuthenticatedUsers",
+          "severity": "high",
+          "remediation": "Remove public IAM bindings from custom compute images.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.13.5": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.5-aws-001",
+          "name": "Public subnets isolated from private subnets",
+          "service": "VPC",
+          "api_call": "ec2.describe_subnets",
+          "expected": "Public subnets (with IGW route) are separate from private subnets",
+          "severity": "high",
+          "remediation": "Ensure public-facing resources are in dedicated public subnets separated from private.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.5-aws-002",
+          "name": "NAT Gateway used for private subnet outbound",
+          "service": "VPC",
+          "api_call": "ec2.describe_nat_gateways",
+          "expected": "Private subnets use NAT Gateway for outbound internet access",
+          "severity": "high",
+          "remediation": "Deploy NAT Gateway for private subnet outbound connectivity.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.5-azure-001",
+          "name": "DMZ subnet implemented",
+          "service": "Network",
+          "api_call": "network.virtual_networks.list",
+          "expected": "Dedicated DMZ/perimeter subnet for public-facing workloads",
+          "severity": "high",
+          "remediation": "Create dedicated DMZ subnet for public-facing resources with NSG isolation.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.5-gcp-001",
+          "name": "Public-facing resources in dedicated subnets",
+          "service": "VPC",
+          "api_call": "compute.subnetworks.list",
+          "expected": "Public-facing workloads isolated in dedicated subnets with restricted firewall rules",
+          "severity": "high",
+          "remediation": "Isolate public-facing resources in dedicated subnets with specific firewall rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.13.6": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.6-aws-001",
+          "name": "Default security group restricts all traffic",
+          "service": "EC2",
+          "api_call": "ec2.describe_security_groups",
+          "expected": "Default security groups have no inbound or outbound rules (deny all)",
+          "severity": "high",
+          "remediation": "Remove all rules from default security groups in every VPC.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.6-aws-002",
+          "name": "NACLs implement deny-by-default",
+          "service": "VPC",
+          "api_call": "ec2.describe_network_acls",
+          "expected": "Network ACLs have explicit deny rules and allow only necessary traffic",
+          "severity": "medium",
+          "remediation": "Configure NACLs with explicit allow rules and deny-all default.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.6-azure-001",
+          "name": "NSG default deny rules active",
+          "service": "Network",
+          "api_call": "network.network_security_groups.list",
+          "expected": "All NSGs have DenyAllInBound as the last rule (default behavior)",
+          "severity": "high",
+          "remediation": "Verify NSG default deny rules are not overridden by overly permissive allow rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.6-azure-002",
+          "name": "Azure Firewall default deny configured",
+          "service": "Network",
+          "api_call": "network.azure_firewalls.list",
+          "expected": "Azure Firewall configured with deny-by-default and explicit allow rules",
+          "severity": "high",
+          "remediation": "Configure Azure Firewall with deny-all default and explicit allow rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.6-gcp-001",
+          "name": "Default deny ingress firewall rule",
+          "service": "VPC",
+          "api_call": "compute.firewalls.list",
+          "expected": "Implied deny-all ingress rule active with explicit allow rules only for required traffic",
+          "severity": "high",
+          "remediation": "GCP has implied deny-all ingress; verify no overly permissive rules override it.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.6-gcp-002",
+          "name": "Default allow egress reviewed",
+          "service": "VPC",
+          "api_call": "compute.firewalls.list",
+          "expected": "Default allow-all egress rule replaced with specific egress rules",
+          "severity": "medium",
+          "remediation": "Replace default allow-all egress with specific egress firewall rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.13.7": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.7-aws-001",
+          "name": "Client VPN full tunnel enforced",
+          "service": "VPC",
+          "api_call": "ec2.describe_client_vpn_endpoints",
+          "expected": "Split tunnel disabled on Client VPN endpoints (SplitTunnel=false)",
+          "severity": "high",
+          "remediation": "Disable split tunneling on AWS Client VPN endpoints.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.7-azure-001",
+          "name": "VPN forced tunneling configured",
+          "service": "Network",
+          "api_call": "network.virtual_network_gateways.list",
+          "expected": "Forced tunneling enabled to prevent split tunnel scenarios",
+          "severity": "high",
+          "remediation": "Enable forced tunneling on VPN gateway connections.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.7-gcp-001",
+          "name": "VPN full tunnel policy enforced",
+          "service": "VPN",
+          "api_call": "compute.vpnTunnels.list",
+          "expected": "VPN configuration routes all traffic through tunnel (no split tunnel)",
+          "severity": "high",
+          "remediation": "Configure VPN to route all traffic through tunnel, disabling split tunneling.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.13.8": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.8-aws-001",
+          "name": "ALB/NLB listeners use TLS 1.2+",
+          "service": "ELB",
+          "api_call": "elbv2.describe_listeners",
+          "expected": "All HTTPS listeners use TLS 1.2+ security policies",
+          "severity": "high",
+          "remediation": "Update load balancer listeners to ELBSecurityPolicy-TLS13-1-2-2021-06 or newer.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.8-aws-002",
+          "name": "CloudFront uses TLS 1.2+",
+          "service": "CloudFront",
+          "api_call": "cloudfront.list_distributions",
+          "expected": "All CloudFront distributions enforce TLS 1.2 minimum",
+          "severity": "high",
+          "remediation": "Set CloudFront minimum protocol version to TLSv1.2_2021.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.8-aws-003",
+          "name": "S3 bucket policy enforces TLS",
+          "service": "S3",
+          "api_call": "s3.get_bucket_policy",
+          "expected": "S3 bucket policies deny requests without aws:SecureTransport",
+          "severity": "high",
+          "remediation": "Add bucket policy condition to deny requests where aws:SecureTransport is false.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.8-azure-001",
+          "name": "Minimum TLS 1.2 enforced on App Services",
+          "service": "App Service",
+          "api_call": "web.web_apps.list",
+          "expected": "MinTlsVersion=1.2 on all App Service web apps",
+          "severity": "high",
+          "remediation": "Set minimum TLS version to 1.2 on all Azure App Service web apps.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.8-azure-002",
+          "name": "Storage accounts enforce TLS 1.2+",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "MinimumTlsVersion=TLS1_2 on all storage accounts",
+          "severity": "high",
+          "remediation": "Set minimum TLS version to 1.2 on all storage accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.8-gcp-001",
+          "name": "SSL policies enforce TLS 1.2+",
+          "service": "Compute",
+          "api_call": "compute.sslPolicies.list",
+          "expected": "All SSL policies set minTlsVersion to TLS_1_2",
+          "severity": "high",
+          "remediation": "Configure SSL policies with minimum TLS 1.2 on all load balancers.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.8-gcp-002",
+          "name": "Cloud SQL requires SSL",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "requireSsl=true on all Cloud SQL instances",
+          "severity": "high",
+          "remediation": "Enable SSL enforcement on all Cloud SQL instances.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.13.9": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.9-aws-001",
+          "name": "ALB idle timeout configured",
+          "service": "ELB",
+          "api_call": "elbv2.describe_load_balancer_attributes",
+          "expected": "Idle timeout set to 60 seconds or less on ALBs",
+          "severity": "medium",
+          "remediation": "Configure ALB idle timeout to 60 seconds or appropriate value.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.9-aws-002",
+          "name": "API Gateway timeout configured",
+          "service": "API Gateway",
+          "api_call": "apigateway.get_rest_apis",
+          "expected": "API Gateway integration timeout appropriately configured",
+          "severity": "medium",
+          "remediation": "Configure API Gateway timeout settings for session termination.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.9-azure-001",
+          "name": "Application Gateway idle timeout configured",
+          "service": "Network",
+          "api_call": "network.application_gateways.list",
+          "expected": "Connection idle timeout configured on Application Gateways",
+          "severity": "medium",
+          "remediation": "Configure idle timeout on Application Gateway frontend IP configurations.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.9-gcp-001",
+          "name": "Load balancer timeout configured",
+          "service": "Compute",
+          "api_call": "compute.backendServices.list",
+          "expected": "Backend service timeout configured appropriately",
+          "severity": "medium",
+          "remediation": "Configure backend service timeout on load balancers.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.13.10": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.10-aws-001",
+          "name": "KMS key rotation enabled",
+          "service": "KMS",
+          "api_call": "kms.get_key_rotation_status",
+          "expected": "Automatic key rotation enabled on all customer-managed KMS keys",
+          "severity": "high",
+          "remediation": "Enable automatic annual key rotation on all customer-managed KMS keys.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.10-aws-002",
+          "name": "KMS key policies restrict access",
+          "service": "KMS",
+          "api_call": "kms.get_key_policy",
+          "expected": "KMS key policies follow least privilege with no wildcard principals",
+          "severity": "high",
+          "remediation": "Review KMS key policies and restrict to authorized principals.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.10-aws-003",
+          "name": "ACM certificates managed and auto-renewed",
+          "service": "ACM",
+          "api_call": "acm.list_certificates",
+          "expected": "All TLS certificates managed through ACM with auto-renewal",
+          "severity": "medium",
+          "remediation": "Use ACM-managed certificates with automatic renewal.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.10-azure-001",
+          "name": "Key Vault key rotation configured",
+          "service": "Key Vault",
+          "api_call": "KeyVaultManagementClient.vaults.list + get",
+          "expected": "Key rotation policies configured on all encryption keys",
+          "severity": "high",
+          "remediation": "Configure key rotation policies in Azure Key Vault.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.10-azure-002",
+          "name": "Key Vault access policies follow least privilege",
+          "service": "Key Vault",
+          "api_call": "keyvault.vaults.list",
+          "expected": "Key Vault access policies restrict key operations to authorized identities",
+          "severity": "high",
+          "remediation": "Review and restrict Key Vault access policies to authorized identities.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.10-gcp-001",
+          "name": "Cloud KMS key rotation configured",
+          "service": "KMS",
+          "api_call": "kms_v1.KeyManagementServiceClient.list_key_rings",
+          "expected": "Automatic rotation period configured on all encryption keys",
+          "severity": "high",
+          "remediation": "Configure automatic key rotation on Cloud KMS keys.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.10-gcp-002",
+          "name": "Cloud KMS IAM bindings restricted",
+          "service": "KMS",
+          "api_call": "cloudkms.projects.locations.keyRings.getIamPolicy",
+          "expected": "KMS key ring and key IAM bindings follow least privilege",
+          "severity": "high",
+          "remediation": "Restrict Cloud KMS IAM bindings to authorized service accounts and users.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.13.11": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.11-aws-001",
+          "name": "FIPS endpoints used in GovCloud",
+          "service": "IAM",
+          "api_call": "sts.get_caller_identity",
+          "expected": "Applications use FIPS 140-2 validated endpoints in GovCloud regions",
+          "severity": "high",
+          "remediation": "Configure SDK/CLI to use FIPS endpoints (e.g., iam-fips.us-gov-west-1.amazonaws.com).",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.11-aws-002",
+          "name": "S3 uses FIPS-validated encryption",
+          "service": "S3",
+          "api_call": "s3.get_bucket_encryption",
+          "expected": "S3 bucket encryption uses SSE-KMS with FIPS-validated KMS",
+          "severity": "high",
+          "remediation": "Use SSE-KMS encryption which leverages FIPS 140-2 validated HSMs.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.11-azure-001",
+          "name": "Azure Government FIPS-validated services used",
+          "service": "Compute",
+          "api_call": "StorageManagementClient.storage_accounts.list",
+          "expected": "VMs in Government regions use FIPS-enabled OS configurations",
+          "severity": "high",
+          "remediation": "Enable FIPS mode on Windows VMs or use FIPS-validated Linux configurations.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.11-gcp-001",
+          "name": "CMEK uses FIPS-validated Cloud KMS",
+          "service": "KMS",
+          "api_call": "cloudkms.projects.locations.keyRings.cryptoKeys.list",
+          "expected": "CMEK keys use Cloud KMS which provides FIPS 140-2 Level 3 HSM backing",
+          "severity": "high",
+          "remediation": "Use Cloud KMS or Cloud HSM for FIPS-validated cryptographic operations.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.13.12": {
+      "manual_only": true,
+      "manual_guidance": "Review policies for collaborative computing devices (cameras, microphones, smart displays, conferencing systems). Verify remote activation is disabled by default, physical disconnect options are available, and active indicators (LEDs, on-screen notifications) inform users when devices are in use.",
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "collaborative computing devices are identified.",
+          "evidence_needed": "Provide documentation showing that collaborative computing devices are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "collaborative computing devices provide indication to users of devices in use.",
+          "evidence_needed": "Provide documentation or process evidence: collaborative computing devices provide indication to users of devices in use."
+        },
+        {
+          "id": "[c]",
+          "text": "remote activation of collaborative computing devices is prohibited.",
+          "evidence_needed": "Provide documentation or process evidence: remote activation of collaborative computing devices is prohibited."
+        }
+      ]
+    },
+    "3.13.13": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.13-aws-001",
+          "name": "WAF rules block malicious scripts",
+          "service": "WAFv2",
+          "api_call": "wafv2.list_web_acls",
+          "expected": "WAF managed rule groups include XSS and SQL injection protection",
+          "severity": "high",
+          "remediation": "Enable AWS Managed Rules for common threats including XSS protection.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.13-azure-001",
+          "name": "WAF OWASP rules enabled",
+          "service": "Network",
+          "api_call": "network.web_application_firewall_policies.list",
+          "expected": "WAF policies include OWASP managed rule sets with XSS/injection rules",
+          "severity": "high",
+          "remediation": "Enable OWASP managed rule set on Azure WAF policies.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.13-gcp-001",
+          "name": "Cloud Armor preconfigured WAF rules",
+          "service": "Cloud Armor",
+          "api_call": "compute.securityPolicies.list",
+          "expected": "Cloud Armor policies include preconfigured rules for XSS and code injection",
+          "severity": "high",
+          "remediation": "Enable Cloud Armor preconfigured WAF rules for XSS and injection attacks.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.13.14": {
+      "manual_only": true,
+      "manual_guidance": "Review VoIP security policies and configurations. Verify VoIP traffic is encrypted (SRTP/TLS), segregated on dedicated VLANs, and monitored for anomalous activity. Check that VoIP systems used for CUI discussions are assessed for eavesdropping risks.",
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "use of Voice over Internet Protocol (VoIP) technologies is controlled.",
+          "evidence_needed": "Provide documentation or process evidence: use of Voice over Internet Protocol (VoIP) technologies is controlled."
+        },
+        {
+          "id": "[b]",
+          "text": "use of Voice over Internet Protocol (VoIP) technologies is monitored.",
+          "evidence_needed": "Provide documentation or process evidence: use of Voice over Internet Protocol (VoIP) technologies is monitored."
+        }
+      ]
+    },
+    "3.13.15": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.15-aws-001",
+          "name": "ACM certificates valid and not expired",
+          "service": "ACM",
+          "api_call": "acm.list_certificates",
+          "expected": "No expired or soon-to-expire certificates (within 30 days)",
+          "severity": "high",
+          "remediation": "Renew or replace expiring certificates; use ACM auto-renewal where possible.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.15-aws-002",
+          "name": "DNSSEC enabled on Route 53 hosted zones",
+          "service": "Route 53",
+          "api_call": "route53.list_hosted_zones",
+          "expected": "DNSSEC signing enabled on public hosted zones",
+          "severity": "medium",
+          "remediation": "Enable DNSSEC signing on public Route 53 hosted zones.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.15-azure-001",
+          "name": "App Service certificates valid",
+          "service": "App Service",
+          "api_call": "web.certificates.list",
+          "expected": "No expired or expiring TLS certificates on App Service",
+          "severity": "high",
+          "remediation": "Renew expiring certificates or use App Service managed certificates.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.15-gcp-001",
+          "name": "Managed SSL certificates valid",
+          "service": "Compute",
+          "api_call": "compute.sslCertificates.list",
+          "expected": "All SSL certificates are valid and not expired",
+          "severity": "high",
+          "remediation": "Use Google-managed SSL certificates for automatic renewal.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.13.16": {
+      "aws": [
+        {
+          "check_id": "sc-3.13.16-aws-001",
+          "name": "S3 default encryption enabled",
+          "service": "S3",
+          "api_call": "s3.get_bucket_encryption",
+          "expected": "Default encryption (SSE-S3 or SSE-KMS) enabled on all buckets",
+          "severity": "high",
+          "remediation": "Enable default encryption with SSE-KMS on all S3 buckets.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-aws-002",
+          "name": "RDS encryption at rest enabled",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "StorageEncrypted=true on all RDS instances",
+          "severity": "high",
+          "remediation": "Enable encryption at rest on all RDS instances.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-aws-003",
+          "name": "DynamoDB encryption enabled",
+          "service": "DynamoDB",
+          "api_call": "dynamodb.describe_table",
+          "expected": "SSESpecification enabled with KMS key on all DynamoDB tables",
+          "severity": "high",
+          "remediation": "Enable encryption with customer-managed KMS key on DynamoDB tables.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-aws-004",
+          "name": "EBS encryption by default enabled",
+          "service": "EC2",
+          "api_call": "ec2.get_ebs_encryption_by_default",
+          "expected": "EBS encryption by default enabled in all regions",
+          "severity": "high",
+          "remediation": "Enable EBS encryption by default in all active regions.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "sc-3.13.16-azure-001",
+          "name": "Storage account encryption with CMK",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "Storage accounts use customer-managed keys for encryption",
+          "severity": "high",
+          "remediation": "Configure storage accounts to use customer-managed keys from Key Vault.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-azure-002",
+          "name": "Azure SQL TDE with CMK",
+          "service": "SQL",
+          "api_call": "sql.encryption_protectors.get",
+          "expected": "TDE enabled with customer-managed key on all SQL databases",
+          "severity": "high",
+          "remediation": "Configure TDE with customer-managed key from Key Vault.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-azure-003",
+          "name": "VM disk encryption enabled",
+          "service": "Compute",
+          "api_call": "compute.disks.list",
+          "expected": "All VM disks use Azure Disk Encryption or server-side encryption with CMK",
+          "severity": "high",
+          "remediation": "Enable disk encryption on all VMs using ADE or SSE with CMK.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "sc-3.13.16-gcp-001",
+          "name": "Cloud Storage CMEK encryption",
+          "service": "Storage",
+          "api_call": "storage.buckets.get",
+          "expected": "All buckets with CUI data use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure Cloud Storage buckets with CMEK from Cloud KMS.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-gcp-002",
+          "name": "Cloud SQL CMEK encryption",
+          "service": "Cloud SQL",
+          "api_call": "sqladmin.instances.list",
+          "expected": "All Cloud SQL instances use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Create Cloud SQL instances with CMEK encryption.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "sc-3.13.16-gcp-003",
+          "name": "BigQuery CMEK encryption",
+          "service": "BigQuery",
+          "api_call": "bigquery.datasets.list",
+          "expected": "BigQuery datasets use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure BigQuery datasets with CMEK from Cloud KMS.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    }
+  }
+}

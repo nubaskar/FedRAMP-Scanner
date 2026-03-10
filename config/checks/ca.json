@@ -1,0 +1,197 @@
+{
+  "domain": "CA",
+  "name": "Security Assessment",
+  "checks": {
+    "3.12.1": {
+      "manual_only": true,
+      "manual_guidance": "Request security assessment reports. Verify assessments are conducted at least annually by qualified assessors (internal or third-party). Confirm assessments cover all NIST 800-171 security requirements, identify control effectiveness, and include findings with severity ratings and recommendations.",
+      "evidence_requests": [
+        "Most recent security assessment report",
+        "Assessor qualifications/certifications",
+        "Assessment scope and methodology documentation",
+        "Assessment findings and recommendations",
+        "Assessment schedule (past and planned)"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the frequency of security control assessments is defined.",
+          "evidence_needed": "Provide documentation showing that the frequency of security control assessments are defined."
+        },
+        {
+          "id": "[b]",
+          "text": "security controls are assessed with the defined frequency to determine if the controls are effective in their application.",
+          "evidence_needed": "Provide documentation or process evidence: security controls are assessed with the defined frequency to determine if the controls are effective in their application."
+        }
+      ]
+    },
+    "3.12.2": {
+      "manual_only": true,
+      "manual_guidance": "Request the Plan of Action and Milestones (POA&M). Verify it documents all known security deficiencies, planned corrective actions with specific milestones, responsible parties, required resources, and target completion dates. Confirm the POA&M is reviewed and updated at least quarterly.",
+      "evidence_requests": [
+        "Current POA&M document",
+        "POA&M review and update history",
+        "Milestone completion tracking records",
+        "Resource allocation for remediation",
+        "Quarterly review meeting minutes"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "deficiencies and vulnerabilities to be addressed by the plan of action are identified.",
+          "evidence_needed": "Provide documentation showing that deficiencies and vulnerabilities to be addressed by the plan of action are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "a plan of action is developed to correct identified deficiencies and reduce or eliminate identified vulnerabilities.",
+          "evidence_needed": "Provide documentation or process evidence: a plan of action is developed to correct identified deficiencies and reduce or eliminate identified vulnerabilities."
+        },
+        {
+          "id": "[c]",
+          "text": "the plan of action is implemented to correct identified deficiencies and reduce or eliminate identified vulnerabilities.",
+          "evidence_needed": "Provide documentation or process evidence: the plan of action is implemented to correct identified deficiencies and reduce or eliminate identified vulnerabilities."
+        }
+      ]
+    },
+    "3.12.3": {
+      "aws": [
+        {
+          "check_id": "ca-3.12.3-aws-001",
+          "name": "Security Hub continuous monitoring active",
+          "service": "Security Hub",
+          "api_call": "securityhub.describe_hub",
+          "expected": "Security Hub enabled with automated compliance checks running",
+          "severity": "high",
+          "remediation": "Enable AWS Security Hub with NIST 800-171 related security standards.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ca-3.12.3-aws-002",
+          "name": "Config rules continuously evaluating",
+          "service": "Config",
+          "api_call": "config.describe_compliance_by_config_rule",
+          "expected": "All Config rules actively evaluating with no evaluation errors",
+          "severity": "high",
+          "remediation": "Review and fix Config rules with evaluation errors.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ca-3.12.3-aws-003",
+          "name": "GuardDuty continuous threat monitoring",
+          "service": "GuardDuty",
+          "api_call": "guardduty.get_detector",
+          "expected": "GuardDuty detector status is ENABLED with all finding types active",
+          "severity": "high",
+          "remediation": "Ensure GuardDuty detector is enabled with all protection plans.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ca-3.12.3-azure-001",
+          "name": "Defender for Cloud continuous assessment",
+          "service": "Security Center",
+          "api_call": "security.assessments.list",
+          "expected": "Continuous assessment active for all subscriptions with recommendations current",
+          "severity": "high",
+          "remediation": "Enable Defender for Cloud on all subscriptions for continuous assessment.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ca-3.12.3-azure-002",
+          "name": "Azure Policy compliance continuously monitored",
+          "service": "Policy",
+          "api_call": "policy.policy_states.list",
+          "expected": "Policy compliance state current with no stale evaluations",
+          "severity": "high",
+          "remediation": "Trigger on-demand policy compliance evaluation if stale.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ca-3.12.3-gcp-001",
+          "name": "Security Command Center continuous monitoring",
+          "service": "SCC",
+          "api_call": "securitycenter.organizations.getOrganizationSettings",
+          "expected": "SCC enabled with Security Health Analytics and Event Threat Detection active",
+          "severity": "high",
+          "remediation": "Enable SCC Premium with all built-in security services.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ca-3.12.3-gcp-002",
+          "name": "Organization policy compliance monitored",
+          "service": "Organization Policy",
+          "api_call": "orgpolicy.projects.policies.list",
+          "expected": "Organization policies enforced and compliance monitored",
+          "severity": "high",
+          "remediation": "Configure organization policies and monitor compliance.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.12.4": {
+      "manual_only": true,
+      "manual_guidance": "Request the System Security Plan (SSP). Verify it documents: system boundaries and authorization boundary, operating environment description, security requirement implementation details, interconnections with other systems, and roles and responsibilities. Confirm the SSP is reviewed and updated at least annually or when significant changes occur.",
+      "evidence_requests": [
+        "Current System Security Plan (SSP)",
+        "System boundary/authorization boundary diagrams",
+        "Interconnection Security Agreements (ISAs)",
+        "SSP review and update history",
+        "Change records triggering SSP updates"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "a system security plan is developed.",
+          "evidence_needed": "Provide documentation or process evidence: a system security plan is developed."
+        },
+        {
+          "id": "[b]",
+          "text": "the system boundary is described and documented in the system security plan.",
+          "evidence_needed": "Provide documentation or process evidence: the system boundary is described and documented in the system security plan."
+        },
+        {
+          "id": "[c]",
+          "text": "the system environment of operation is described and documented in the system security plan.",
+          "evidence_needed": "Provide documentation or process evidence: the system environment of operation is described and documented in the system security plan."
+        },
+        {
+          "id": "[d]",
+          "text": "the security requirements identified and approved by the designated authority as non-applicable are identified.",
+          "evidence_needed": "Provide documentation showing that the security requirements identified and approved by the designated authority as non-applicable are identified and documented."
+        },
+        {
+          "id": "[e]",
+          "text": "the method of security requirement implementation is described and documented in the system security plan.",
+          "evidence_needed": "Provide documentation or process evidence: the method of security requirement implementation is described and documented in the system security plan."
+        },
+        {
+          "id": "[f]",
+          "text": "the relationship with or connection to other systems is described and documented in the system security plan.",
+          "evidence_needed": "Provide documentation or process evidence: the relationship with or connection to other systems is described and documented in the system security plan."
+        },
+        {
+          "id": "[g]",
+          "text": "the frequency to update the system security plan is defined.",
+          "evidence_needed": "Provide documentation showing that the frequency to update the system security plan are defined."
+        }
+      ]
+    }
+  }
+}

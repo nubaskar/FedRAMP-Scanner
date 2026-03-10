@@ -1,0 +1,239 @@
+{
+  "domain": "MA",
+  "name": "Maintenance",
+  "checks": {
+    "3.7.1": {
+      "aws": [
+        {
+          "check_id": "ma-3.7.1-aws-001",
+          "name": "SSM Patch Manager configured",
+          "service": "SSM",
+          "api_call": "ssm.describe_patch_baselines",
+          "expected": "Custom patch baselines defined and maintenance windows configured",
+          "severity": "high",
+          "remediation": "Configure SSM Patch Manager with custom patch baselines and maintenance windows.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ma-3.7.1-aws-002",
+          "name": "Patch compliance monitored",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_patch_states",
+          "expected": "All managed instances show patch compliance within 30 days of patch release",
+          "severity": "high",
+          "remediation": "Review and remediate patch compliance gaps on managed instances.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ma-3.7.1-aws-003",
+          "name": "RDS automatic minor version upgrade enabled",
+          "service": "RDS",
+          "api_call": "rds.describe_db_instances",
+          "expected": "AutoMinorVersionUpgrade=true on all RDS instances",
+          "severity": "medium",
+          "remediation": "Enable automatic minor version upgrades on all RDS instances.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ma-3.7.1-azure-001",
+          "name": "Azure Update Management configured",
+          "service": "Automation",
+          "api_call": "automation_account.list",
+          "expected": "Update Management configured with scheduled deployments for all VMs",
+          "severity": "high",
+          "remediation": "Configure Azure Update Management with scheduled update deployments.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ma-3.7.1-azure-002",
+          "name": "VM patch assessment enabled",
+          "service": "Compute",
+          "api_call": "compute.virtual_machines.list",
+          "expected": "Periodic assessment enabled on all VMs for update visibility",
+          "severity": "high",
+          "remediation": "Enable periodic assessment on VMs via Azure Update Manager.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ma-3.7.1-gcp-001",
+          "name": "OS Config patch management configured",
+          "service": "OS Config",
+          "api_call": "osconfig.projects.patchDeployments.list",
+          "expected": "Patch deployments scheduled for all managed instances",
+          "severity": "high",
+          "remediation": "Configure OS Config patch deployments with recurring schedules.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        },
+        {
+          "check_id": "ma-3.7.1-gcp-002",
+          "name": "Container image vulnerability scanning",
+          "service": "Artifact Registry",
+          "api_call": "containeranalysis.projects.occurrences.list",
+          "expected": "Vulnerability scanning enabled on all Artifact Registry repositories",
+          "severity": "high",
+          "remediation": "Enable vulnerability scanning on Artifact Registry repositories.",
+          "supports_objectives": [
+            "[a]"
+          ]
+        }
+      ]
+    },
+    "3.7.2": {
+      "manual_only": true,
+      "manual_guidance": "Review maintenance tool inventory and authorization records. Verify that maintenance personnel are vetted, tools are approved and inspected before use, and remote maintenance sessions are logged and monitored.",
+      "evidence_requests": [
+        "Approved maintenance tools list",
+        "Maintenance personnel authorization records",
+        "Tool inspection and sanitization procedures",
+        "Maintenance activity logs"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "tools used to conduct system maintenance are controlled.",
+          "evidence_needed": "Provide documentation or process evidence: tools used to conduct system maintenance are controlled."
+        },
+        {
+          "id": "[b]",
+          "text": "techniques used to conduct system maintenance are controlled.",
+          "evidence_needed": "Provide documentation or process evidence: techniques used to conduct system maintenance are controlled."
+        },
+        {
+          "id": "[c]",
+          "text": "mechanisms used to conduct system maintenance are controlled.",
+          "evidence_needed": "Provide documentation or process evidence: mechanisms used to conduct system maintenance are controlled."
+        },
+        {
+          "id": "[d]",
+          "text": "personnel used to conduct system maintenance are controlled.",
+          "evidence_needed": "Provide personnel records: personnel used to conduct system maintenance are controlled."
+        }
+      ]
+    },
+    "3.7.3": {
+      "manual_only": true,
+      "manual_guidance": "Review media sanitization procedures for equipment sent off-site for maintenance. Verify sanitization records exist for all equipment removed from the CUI environment. Confirm procedures align with NIST 800-88 guidelines.",
+      "evidence_requests": [
+        "Media sanitization procedures for off-site maintenance",
+        "Equipment removal and sanitization records",
+        "NIST 800-88 compliance documentation"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI.",
+          "evidence_needed": "Provide documentation or process evidence: equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI."
+        }
+      ]
+    },
+    "3.7.4": {
+      "manual_only": true,
+      "manual_guidance": "Review procedures for scanning maintenance and diagnostic media before connection to production systems. Verify anti-malware scans are performed on all maintenance media and results are documented.",
+      "evidence_requests": [
+        "Maintenance media scanning procedures",
+        "Scan records for diagnostic tools and media",
+        "Anti-malware scan configuration for removable media"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "media containing diagnostic and test programs are checked for malicious code before being used in organizational systems that process, store, or transmit CUI.",
+          "evidence_needed": "Provide documentation or process evidence: media containing diagnostic and test programs are checked for malicious code before being used in organizational systems that process, store, or transmit CUI."
+        }
+      ]
+    },
+    "3.7.5": {
+      "aws": [
+        {
+          "check_id": "ma-3.7.5-aws-001",
+          "name": "Session Manager requires MFA for remote maintenance",
+          "service": "SSM",
+          "api_call": "iam.get_policy_version",
+          "expected": "IAM policies for SSM StartSession require MFA condition",
+          "severity": "high",
+          "remediation": "Add MFA condition to IAM policies for SSM Session Manager access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "ma-3.7.5-aws-002",
+          "name": "VPN connections require MFA",
+          "service": "VPC",
+          "api_call": "ec2.describe_client_vpn_endpoints",
+          "expected": "Client VPN endpoints configured with MFA authentication",
+          "severity": "high",
+          "remediation": "Configure Client VPN endpoints with Active Directory or SAML MFA.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "ma-3.7.5-azure-001",
+          "name": "MFA required for Azure Bastion access",
+          "service": "Azure AD",
+          "api_call": "graph.conditional_access_policies.list",
+          "expected": "Conditional Access requires MFA for Azure portal and management access",
+          "severity": "high",
+          "remediation": "Configure Conditional Access to require MFA for all Azure management access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "ma-3.7.5-gcp-001",
+          "name": "2SV required for admin console access",
+          "service": "Workspace Admin",
+          "api_call": "admin.directory.users.list",
+          "expected": "2-Step Verification enforced for all admin accounts used for maintenance",
+          "severity": "high",
+          "remediation": "Enforce 2-Step Verification for all accounts with maintenance access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.7.6": {
+      "manual_only": true,
+      "manual_guidance": "Review escort and supervision procedures for maintenance personnel without appropriate access authorization. Verify that session recording, direct observation, or escort policies are enforced for uncleared or third-party maintenance staff.",
+      "evidence_requests": [
+        "Escort and supervision procedures for maintenance",
+        "Maintenance supervision logs",
+        "Third-party maintenance agreements with supervision requirements",
+        "Session recording configuration for maintenance sessions"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "maintenance personnel without required access authorization are supervised during maintenance activities.",
+          "evidence_needed": "Provide personnel records: maintenance personnel without required access authorization are supervised during maintenance activities."
+        }
+      ]
+    }
+  }
+}

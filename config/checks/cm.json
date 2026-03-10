@@ -1,0 +1,656 @@
+{
+  "domain": "CM",
+  "name": "Configuration Management",
+  "checks": {
+    "3.4.1": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.1-aws-001",
+          "name": "AWS Config enabled in all regions",
+          "service": "Config",
+          "api_call": "config.describe_configuration_recorders",
+          "expected": "Configuration recorder enabled and recording all resource types",
+          "severity": "critical",
+          "remediation": "Enable AWS Config in all regions with all resource type recording.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.1-aws-002",
+          "name": "Systems Manager Inventory enabled",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_information",
+          "expected": "SSM Agent installed on all managed instances with inventory collection",
+          "severity": "high",
+          "remediation": "Install SSM Agent and enable inventory collection on all managed instances.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.1-aws-003",
+          "name": "AMI baseline documented and maintained",
+          "service": "EC2",
+          "api_call": "ec2.describe_images",
+          "expected": "Hardened AMI baselines exist for each instance type",
+          "severity": "medium",
+          "remediation": "Create and maintain hardened AMI baselines using EC2 Image Builder.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.1-azure-001",
+          "name": "Azure Resource Graph inventory available",
+          "service": "Resource Graph",
+          "api_call": "resourcegraph.resources",
+          "expected": "Resource Graph queries return complete inventory of all resources",
+          "severity": "high",
+          "remediation": "Ensure all subscriptions are accessible via Azure Resource Graph.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.1-azure-002",
+          "name": "Azure Policy Guest Configuration enabled",
+          "service": "Policy",
+          "api_call": "policy_assignments.list",
+          "expected": "Guest Configuration policies assigned for baseline compliance",
+          "severity": "high",
+          "remediation": "Enable Azure Policy Guest Configuration for VM baseline assessment.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.1-gcp-001",
+          "name": "Cloud Asset Inventory enabled",
+          "service": "Asset Inventory",
+          "api_call": "cloudasset.assets.list",
+          "expected": "Cloud Asset Inventory accessible with complete resource listing",
+          "severity": "high",
+          "remediation": "Enable Cloud Asset API and configure asset exports.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.1-gcp-002",
+          "name": "OS Config inventory management enabled",
+          "service": "OS Config",
+          "api_call": "compute.instances.aggregatedList",
+          "expected": "OS inventory management enabled on all GCE instances",
+          "severity": "medium",
+          "remediation": "Enable OS Config agent and inventory reporting on all instances.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[f]"
+          ]
+        }
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[b]",
+          "text": "the baseline configuration includes hardware, software, firmware, and documentation.",
+          "evidence_needed": "Provide documentation or process evidence: the baseline configuration includes hardware, software, firmware, and documentation."
+        },
+        {
+          "id": "[e]",
+          "text": "the system inventory includes hardware, software, firmware, and documentation.",
+          "evidence_needed": "Provide documentation or process evidence: the system inventory includes hardware, software, firmware, and documentation."
+        }
+      ]
+    },
+    "3.4.2": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.2-aws-001",
+          "name": "AWS Config rules for CIS Benchmark",
+          "service": "Config",
+          "api_call": "config.describe_config_rules",
+          "expected": "Config rules aligned with CIS AWS Foundations Benchmark deployed",
+          "severity": "high",
+          "remediation": "Deploy AWS Config conformance pack for CIS AWS Foundations Benchmark.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.2-aws-002",
+          "name": "Security Hub CIS standard enabled",
+          "service": "Security Hub",
+          "api_call": "securityhub.describe_standards_subscriptions",
+          "expected": "CIS AWS Foundations Benchmark standard enabled in Security Hub",
+          "severity": "high",
+          "remediation": "Enable CIS AWS Foundations Benchmark standard in Security Hub.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.2-azure-001",
+          "name": "Azure Policy assignments for security baseline",
+          "service": "Policy",
+          "api_call": "policy.policy_assignments.list",
+          "expected": "Azure Security Benchmark policy initiative assigned at subscription level",
+          "severity": "high",
+          "remediation": "Assign the Azure Security Benchmark policy initiative at subscription level.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.2-azure-002",
+          "name": "Defender for Cloud secure score reviewed",
+          "service": "Security Center",
+          "api_call": "security.secure_scores.list",
+          "expected": "Secure score is above 70% for all subscriptions",
+          "severity": "medium",
+          "remediation": "Address Defender for Cloud recommendations to improve secure score.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.2-gcp-001",
+          "name": "Organization policies configured",
+          "service": "Organization Policy",
+          "api_call": "orgpolicy.projects.policies.list",
+          "expected": "Organization policies enforce security baselines",
+          "severity": "high",
+          "remediation": "Configure organization policies for security baseline enforcement.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.2-gcp-002",
+          "name": "SCC findings for CIS compliance",
+          "service": "SCC",
+          "api_call": "securitycenter.securityHealthAnalyticsSettings",
+          "expected": "Security Health Analytics findings reviewed and addressed",
+          "severity": "high",
+          "remediation": "Review and remediate Security Health Analytics findings.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.4.3": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.3-aws-001",
+          "name": "AWS Config configuration history enabled",
+          "service": "Config",
+          "api_call": "config.describe_delivery_channels",
+          "expected": "Configuration history delivered to S3 bucket",
+          "severity": "high",
+          "remediation": "Configure AWS Config delivery channel to S3 for configuration history.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.3-aws-002",
+          "name": "CloudTrail captures config changes",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.describe_trails",
+          "expected": "CloudTrail captures management events including configuration changes",
+          "severity": "high",
+          "remediation": "Ensure CloudTrail records all management events for change tracking.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.3-azure-001",
+          "name": "Activity Log captures resource changes",
+          "service": "Monitor",
+          "api_call": "diagnostic_settings.list",
+          "expected": "Activity Log captures Write and Delete operations on all resources",
+          "severity": "high",
+          "remediation": "Verify Activity Log is capturing all resource modification events.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.3-gcp-001",
+          "name": "Admin Activity logs capture changes",
+          "service": "Logging",
+          "api_call": "logging.entries.list",
+          "expected": "Admin Activity audit logs capture all configuration changes",
+          "severity": "high",
+          "remediation": "Admin Activity logs are always enabled; verify log exports are configured.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]"
+          ]
+        }
+      ]
+    },
+    "3.4.4": {
+      "manual_only": true,
+      "manual_guidance": "Review change management process documentation. Verify that security impact analysis is performed as part of the change approval process before implementation. Check for documented risk assessment of changes to CUI systems.",
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "the security impact of changes to each organizational system is analyzed prior to implementation.",
+          "evidence_needed": "Provide documentation or process evidence: the security impact of changes to each organizational system is analyzed prior to implementation."
+        }
+      ]
+    },
+    "3.4.5": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.5-aws-001",
+          "name": "CI/CD pipeline has approval gates",
+          "service": "CodePipeline",
+          "api_call": "codepipeline.list_pipelines",
+          "expected": "Production deployment pipelines include manual approval stages",
+          "severity": "high",
+          "remediation": "Add manual approval actions to production deployment pipelines.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[g]",
+            "[h]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.5-aws-002",
+          "name": "IAM roles for deployment are scoped",
+          "service": "IAM",
+          "api_call": "iam.list_roles",
+          "expected": "Deployment roles have specific permissions, not administrative access",
+          "severity": "high",
+          "remediation": "Scope deployment IAM roles to specific services and resources.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.5-azure-001",
+          "name": "Resource locks on critical resources",
+          "service": "Resources",
+          "api_call": "resources.management_locks.list",
+          "expected": "Delete locks applied to critical CUI resources",
+          "severity": "medium",
+          "remediation": "Apply Delete or ReadOnly locks on critical resources processing CUI.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.5-gcp-001",
+          "name": "Project lien configured for critical projects",
+          "service": "Resource Manager",
+          "api_call": "cloudresourcemanager.liens.list",
+          "expected": "Liens prevent accidental deletion of critical projects",
+          "severity": "medium",
+          "remediation": "Apply project liens to prevent accidental deletion of CUI projects.",
+          "supports_objectives": [
+            "[a]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[g]",
+            "[h]"
+          ]
+        }
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[b]",
+          "text": "physical access restrictions associated with changes to the system are documented.",
+          "evidence_needed": "Provide physical security evidence: physical access restrictions associated with changes to the system are documented."
+        },
+        {
+          "id": "[f]",
+          "text": "logical access restrictions associated with changes to the system are documented.",
+          "evidence_needed": "Provide documentation or process evidence: logical access restrictions associated with changes to the system are documented."
+        }
+      ]
+    },
+    "3.4.6": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.6-aws-001",
+          "name": "Unused security groups identified",
+          "service": "EC2",
+          "api_call": "ec2.describe_security_groups",
+          "expected": "No security groups with no associated network interfaces (except default)",
+          "severity": "medium",
+          "remediation": "Remove unused security groups to reduce attack surface.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.6-aws-002",
+          "name": "Unused IAM roles identified",
+          "service": "IAM",
+          "api_call": "iam.list_roles",
+          "expected": "No IAM roles unused for more than 90 days",
+          "severity": "medium",
+          "remediation": "Remove or deactivate IAM roles not used in the last 90 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.6-azure-001",
+          "name": "Unused resources identified",
+          "service": "Advisor",
+          "api_call": "advisor.recommendations.list",
+          "expected": "No cost/security advisor recommendations for unused resources",
+          "severity": "medium",
+          "remediation": "Review and remove unused resources identified by Azure Advisor.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.6-gcp-001",
+          "name": "Unused firewall rules identified",
+          "service": "VPC",
+          "api_call": "compute.firewalls.list",
+          "expected": "No firewall rules with zero hit counts over 90 days",
+          "severity": "medium",
+          "remediation": "Remove unused firewall rules identified by firewall insights.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.4.7": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.7-aws-001",
+          "name": "Security groups restrict unnecessary ports",
+          "service": "EC2",
+          "api_call": "ec2.describe_security_groups",
+          "expected": "No security groups allow unrestricted access on non-essential ports",
+          "severity": "high",
+          "remediation": "Restrict security group rules to only necessary ports and protocols.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]",
+            "[i]",
+            "[j]",
+            "[k]",
+            "[l]",
+            "[m]",
+            "[n]",
+            "[o]"
+          ]
+        },
+        {
+          "check_id": "cm-3.4.7-aws-002",
+          "name": "Unnecessary AWS services restricted via SCP",
+          "service": "Organizations",
+          "api_call": "organizations.list_policies",
+          "expected": "SCPs restrict access to only approved AWS services",
+          "severity": "medium",
+          "remediation": "Create SCPs to deny access to unnecessary AWS services.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]",
+            "[i]",
+            "[j]",
+            "[k]",
+            "[l]",
+            "[m]",
+            "[n]",
+            "[o]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.7-azure-001",
+          "name": "NSG rules restrict unnecessary ports",
+          "service": "Network",
+          "api_call": "network.network_security_groups.list",
+          "expected": "No NSG rules allow unrestricted access on non-essential ports",
+          "severity": "high",
+          "remediation": "Restrict NSG rules to only necessary ports and protocols.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]",
+            "[i]",
+            "[j]",
+            "[k]",
+            "[l]",
+            "[m]",
+            "[n]",
+            "[o]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.7-gcp-001",
+          "name": "Firewall rules restrict unnecessary ports",
+          "service": "VPC",
+          "api_call": "compute.firewalls.list",
+          "expected": "No firewall rules allow unrestricted access on non-essential ports",
+          "severity": "high",
+          "remediation": "Restrict firewall rules to only necessary ports and protocols.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]",
+            "[g]",
+            "[h]",
+            "[i]",
+            "[j]",
+            "[k]",
+            "[l]",
+            "[m]",
+            "[n]",
+            "[o]"
+          ]
+        }
+      ]
+    },
+    "3.4.8": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.8-aws-001",
+          "name": "SSM AppManager or application control configured",
+          "service": "SSM",
+          "api_call": "ssm.list_documents",
+          "expected": "Application whitelisting solution deployed on managed instances",
+          "severity": "medium",
+          "remediation": "Deploy application whitelisting using SSM or third-party solution.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.8-azure-001",
+          "name": "Adaptive application controls enabled",
+          "service": "Security Center",
+          "api_call": "security.adaptive_application_controls.list",
+          "expected": "Adaptive application controls configured for VMs processing CUI",
+          "severity": "medium",
+          "remediation": "Enable Defender for Cloud adaptive application controls.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.8-gcp-001",
+          "name": "Binary Authorization enabled",
+          "service": "Binary Authorization",
+          "api_call": "binaryauthorization.projects.getPolicy",
+          "expected": "Binary Authorization policy enforced for container deployments",
+          "severity": "medium",
+          "remediation": "Enable Binary Authorization for GKE and Cloud Run deployments.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.4.9": {
+      "aws": [
+        {
+          "check_id": "cm-3.4.9-aws-001",
+          "name": "SSM software inventory collected",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_information()",
+          "expected": "Software inventory collected from all managed instances",
+          "severity": "medium",
+          "remediation": "Configure SSM Inventory to collect software inventory from all instances.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "cm-3.4.9-azure-001",
+          "name": "Change Tracking and Inventory enabled",
+          "service": "Automation",
+          "api_call": "automation.automation_accounts.list",
+          "expected": "Change Tracking solution enabled for all VMs",
+          "severity": "medium",
+          "remediation": "Enable Change Tracking and Inventory solution for all VMs.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "cm-3.4.9-gcp-001",
+          "name": "OS Config patch and inventory management",
+          "service": "OS Config",
+          "api_call": "osconfig.patchDeployments.list",
+          "expected": "OS Config agent reporting software inventory on all instances",
+          "severity": "medium",
+          "remediation": "Enable OS Config agent for software inventory management.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    }
+  }
+}

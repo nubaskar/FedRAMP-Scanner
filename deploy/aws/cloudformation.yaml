@@ -1,0 +1,855 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  CMMC Cloud Compliance Scanner — AWS deployment stack.
+  Deploys FastAPI backend on ECS Fargate with ALB, RDS PostgreSQL,
+  S3 + CloudFront for frontend, Secrets Manager, and supporting infrastructure.
+
+# ---------------------------------------------------------------------------
+# Parameters
+# ---------------------------------------------------------------------------
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Deployment environment
+
+  DomainName:
+    Type: String
+    Default: ""
+    Description: Custom domain name for the ALB (optional)
+
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: ACM certificate ARN for HTTPS on ALB (optional, required if DomainName set)
+
+  DBInstanceClass:
+    Type: String
+    Default: db.t3.micro
+    AllowedValues:
+      - db.t3.micro
+      - db.t3.small
+      - db.t3.medium
+      - db.r6g.large
+      - db.r6g.xlarge
+    Description: RDS instance class
+
+  DBMultiAZ:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Enable Multi-AZ deployment for RDS
+
+  DesiredCount:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 10
+    Description: Number of Fargate tasks to run
+
+# ---------------------------------------------------------------------------
+# Conditions
+# ---------------------------------------------------------------------------
+Conditions:
+  HasCertificate: !Not [!Equals [!Ref CertificateArn, ""]]
+  HasDomain: !Not [!Equals [!Ref DomainName, ""]]
+  IsProduction: !Equals [!Ref Environment, prod]
+  EnableMultiAZ: !Equals [!Ref DBMultiAZ, "true"]
+
+# ---------------------------------------------------------------------------
+# Resources
+# ---------------------------------------------------------------------------
+Resources:
+
+  # =========================================================================
+  # VPC and Networking
+  # =========================================================================
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-vpc"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-igw"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  # --- Public Subnets (ALB) ---
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-public-a"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-public-b"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-public-rt"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PublicDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+
+  # --- NAT Gateway (for Fargate private subnet internet access) ---
+  NatEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-nat-eip"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref PublicSubnetA
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-nat"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # --- Private Subnets (Fargate + RDS) ---
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.10.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-private-a"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-private-b"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-private-rt"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  PrivateDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+
+  # =========================================================================
+  # Security Groups
+  # =========================================================================
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTPS inbound to ALB
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS from anywhere
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP from anywhere (redirects to HTTPS)
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-alb-sg"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  FargateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound from ALB on port 8000 only
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+          Description: API traffic from ALB
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-fargate-sg"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow PostgreSQL inbound from Fargate only
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref FargateSecurityGroup
+          Description: PostgreSQL from Fargate tasks
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-rds-sg"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # Secrets Manager
+  # =========================================================================
+  DatabaseSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "cmmc-scanner/${Environment}/database"
+      Description: PostgreSQL database credentials
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "cmmc_admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  JWTSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "cmmc-scanner/${Environment}/jwt-secret"
+      Description: JWT signing secret key
+      GenerateSecretString:
+        PasswordLength: 64
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  EncryptionKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "cmmc-scanner/${Environment}/encryption-key"
+      Description: Client credential encryption key
+      GenerateSecretString:
+        PasswordLength: 64
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # RDS PostgreSQL
+  # =========================================================================
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Private subnets for CMMC Scanner RDS
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub "cmmc-scanner-${Environment}"
+      Engine: postgres
+      EngineVersion: "16.4"
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: 20
+      MaxAllocatedStorage: 100
+      StorageType: gp3
+      StorageEncrypted: true
+      MasterUsername: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:username}}"
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}"
+      DBName: cmmc_scanner
+      MultiAZ: !If [EnableMultiAZ, true, false]
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroup
+      BackupRetentionPeriod: !If [IsProduction, 14, 3]
+      DeletionProtection: !If [IsProduction, true, false]
+      CopyTagsToSnapshot: true
+      Tags:
+        - Key: Name
+          Value: !Sub "cmmc-scanner-${Environment}-db"
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # ECR Repository
+  # =========================================================================
+  ECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "cmmc-scanner-${Environment}"
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 10 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 10
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # CloudWatch Logs
+  # =========================================================================
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/cmmc-scanner-${Environment}"
+      RetentionInDays: !If [IsProduction, 90, 14]
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # IAM Roles
+  # =========================================================================
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "cmmc-scanner-${Environment}-ecs-execution"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: SecretsAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref DatabaseSecret
+                  - !Ref JWTSecret
+                  - !Ref EncryptionKeySecret
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt LogGroup.Arn
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "cmmc-scanner-${Environment}-ecs-task"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SecretsManagerRead
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref DatabaseSecret
+                  - !Ref JWTSecret
+                  - !Ref EncryptionKeySecret
+        - PolicyName: S3FrontendAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt FrontendBucket.Arn
+                  - !Sub "${FrontendBucket.Arn}/*"
+        - PolicyName: AssumeClientRoles
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sts:AssumeRole
+                Resource: "arn:aws:iam::*:role/SecuritybricksCMMCScanner*"
+                Condition:
+                  StringEquals:
+                    sts:ExternalId: !Sub "cmmc-scanner-${Environment}"
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # ECS Cluster and Fargate Service
+  # =========================================================================
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "cmmc-scanner-${Environment}"
+      ClusterSettings:
+        - Name: containerInsights
+          Value: !If [IsProduction, enabled, disabled]
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "cmmc-scanner-${Environment}"
+      Cpu: "1024"
+      Memory: "2048"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt ECSTaskRole.Arn
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ContainerDefinitions:
+        - Name: cmmc-scanner-api
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}:latest"
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8000
+              Protocol: tcp
+          Environment:
+            - Name: ENVIRONMENT
+              Value: !Ref Environment
+            - Name: DATABASE_URL
+              Value: !Sub
+                - "postgresql://${Username}:${Password}@${Host}:5432/cmmc_scanner"
+                - Username: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:username}}"
+                  Password: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}"
+                  Host: !GetAtt Database.Endpoint.Address
+          Secrets:
+            - Name: SECRET_KEY
+              ValueFrom: !Ref JWTSecret
+            - Name: ENCRYPTION_KEY
+              ValueFrom: !Ref EncryptionKeySecret
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: api
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"
+            Interval: 30
+            Timeout: 5
+            Retries: 3
+            StartPeriod: 60
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  FargateService:
+    Type: AWS::ECS::Service
+    DependsOn: ALBHTTPSListener
+    Properties:
+      ServiceName: !Sub "cmmc-scanner-${Environment}"
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: FARGATE
+      DesiredCount: !Ref DesiredCount
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !Ref FargateSecurityGroup
+          Subnets:
+            - !Ref PrivateSubnetA
+            - !Ref PrivateSubnetB
+      LoadBalancers:
+        - ContainerName: cmmc-scanner-api
+          ContainerPort: 8000
+          TargetGroupArn: !Ref ALBTargetGroup
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # =========================================================================
+  # Application Load Balancer
+  # =========================================================================
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "cmmc-scanner-${Environment}"
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      Subnets:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "cmmc-scanner-${Environment}-tg"
+      Port: 8000
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: ip
+      HealthCheckPath: /health
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: "200"
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  ALBHTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: "443"
+            StatusCode: HTTP_301
+
+  ALBHTTPSListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !If
+            - HasCertificate
+            - !Ref CertificateArn
+            - !Ref AWS::NoValue
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+
+  # =========================================================================
+  # S3 + CloudFront for Frontend
+  # =========================================================================
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cmmc-scanner-${Environment}-frontend-${AWS::AccountId}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontOAI
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+            Action: s3:GetObject
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+
+  CloudFrontOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "OAI for cmmc-scanner-${Environment} frontend"
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub "CMMC Scanner ${Environment} frontend"
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: S3Frontend
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
+        DefaultCacheBehavior:
+          TargetOriginId: S3Frontend
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          DefaultTTL: 86400
+          MaxTTL: 31536000
+          MinTTL: 0
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 300
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 300
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+      Tags:
+        - Key: Project
+          Value: CMMC-Scanner
+        - Key: ManagedBy
+          Value: CloudFormation
+
+# ---------------------------------------------------------------------------
+# Outputs
+# ---------------------------------------------------------------------------
+Outputs:
+  ALBEndpoint:
+    Description: Application Load Balancer DNS name (API endpoint)
+    Value: !Sub "https://${ALB.DNSName}"
+    Export:
+      Name: !Sub "${AWS::StackName}-ALBEndpoint"
+
+  CloudFrontURL:
+    Description: CloudFront distribution URL (frontend)
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}"
+    Export:
+      Name: !Sub "${AWS::StackName}-CloudFrontURL"
+
+  ECRRepositoryURI:
+    Description: ECR repository URI for Docker image pushes
+    Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}"
+    Export:
+      Name: !Sub "${AWS::StackName}-ECRRepositoryURI"
+
+  DatabaseEndpoint:
+    Description: RDS PostgreSQL endpoint
+    Value: !GetAtt Database.Endpoint.Address
+    Export:
+      Name: !Sub "${AWS::StackName}-DatabaseEndpoint"
+
+  VPCId:
+    Description: VPC ID for reference by other stacks
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCId"
+
+  FrontendBucketName:
+    Description: S3 bucket name for frontend deployment
+    Value: !Ref FrontendBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-FrontendBucket"

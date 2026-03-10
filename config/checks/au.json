@@ -1,0 +1,686 @@
+{
+  "domain": "AU",
+  "name": "Audit and Accountability",
+  "checks": {
+    "3.3.1": {
+      "aws": [
+        {
+          "check_id": "au-3.3.1-aws-001",
+          "name": "CloudTrail enabled in all regions",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.describe_trails",
+          "expected": "Multi-region trail enabled with IsMultiRegionTrail=true",
+          "severity": "critical",
+          "remediation": "Create a multi-region CloudTrail trail to capture all API activity.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-aws-002",
+          "name": "CloudTrail log file validation enabled",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.describe_trails",
+          "expected": "LogFileValidationEnabled=true on all trails",
+          "severity": "high",
+          "remediation": "Enable log file validation on all CloudTrail trails.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-aws-003",
+          "name": "CloudTrail logs retained for at least 365 days",
+          "service": "S3",
+          "api_call": "s3.get_bucket_lifecycle_configuration",
+          "expected": "CloudTrail S3 bucket retains logs for minimum 365 days",
+          "severity": "high",
+          "remediation": "Configure S3 lifecycle policy to retain CloudTrail logs for at least 365 days.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-aws-004",
+          "name": "CloudTrail data events enabled for S3 and Lambda",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.get_event_selectors",
+          "expected": "Data events enabled for S3 object-level operations and Lambda invocations",
+          "severity": "medium",
+          "remediation": "Enable CloudTrail data events for S3 and Lambda.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.1-azure-001",
+          "name": "Azure Activity Log retention configured",
+          "service": "Monitor",
+          "api_call": "MonitorManagementClient.activity_log_alerts.list_by_subscription_id",
+          "expected": "Activity Log sent to Log Analytics workspace with 365+ day retention",
+          "severity": "critical",
+          "remediation": "Configure diagnostic settings to send Activity Log to Log Analytics with 365-day retention.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-azure-002",
+          "name": "Azure AD audit logs retained",
+          "service": "Azure AD",
+          "api_call": "NetworkManagementClient.network_watchers.list_all + resources.list",
+          "expected": "Azure AD audit logs exported to long-term storage",
+          "severity": "high",
+          "remediation": "Configure Azure AD diagnostic settings to export audit logs to Log Analytics or Storage.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-azure-003",
+          "name": "Resource diagnostic settings enabled",
+          "service": "Monitor",
+          "api_call": "monitor.diagnostic_settings.list",
+          "expected": "Diagnostic settings enabled for all critical resources",
+          "severity": "high",
+          "remediation": "Enable diagnostic settings for all resources processing CUI.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.1-gcp-001",
+          "name": "Admin Activity audit logs active",
+          "service": "Logging",
+          "api_call": "logging.projects.logs.list",
+          "expected": "Admin Activity audit logs are enabled (always on)",
+          "severity": "critical",
+          "remediation": "Admin Activity logs are enabled by default and cannot be disabled.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-gcp-002",
+          "name": "Data Access audit logs enabled",
+          "service": "Logging",
+          "api_call": "cloudresourcemanager.projects.getIamPolicy",
+          "expected": "Data Access audit logs enabled for all services",
+          "severity": "high",
+          "remediation": "Enable Data Access audit logs in the project IAM policy.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.1-gcp-003",
+          "name": "Audit log sink to long-term storage",
+          "service": "Logging",
+          "api_call": "logging.projects.sinks.list",
+          "expected": "Log sink configured to export audit logs to Cloud Storage with 365+ day retention",
+          "severity": "high",
+          "remediation": "Create a log sink to export audit logs to Cloud Storage with appropriate retention.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ]
+    },
+    "3.3.2": {
+      "aws": [
+        {
+          "check_id": "au-3.3.2-aws-001",
+          "name": "CloudTrail records user identity",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.describe_trails",
+          "expected": "CloudTrail captures userIdentity for all API calls",
+          "severity": "high",
+          "remediation": "Ensure CloudTrail is properly configured to capture full user identity information.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.2-aws-002",
+          "name": "No shared IAM user accounts",
+          "service": "IAM",
+          "api_call": "iam.list_users()",
+          "expected": "Each IAM user maps to a single individual (no shared accounts)",
+          "severity": "high",
+          "remediation": "Replace shared IAM accounts with individual user accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.2-azure-001",
+          "name": "Azure AD sign-in logs available",
+          "service": "Azure AD",
+          "api_call": "graph.sign_in_logs.list",
+          "expected": "Sign-in logs capture individual user identities for all authentications",
+          "severity": "high",
+          "remediation": "Ensure Azure AD sign-in logging is active and retained.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.2-gcp-001",
+          "name": "Audit logs include principal identity",
+          "service": "Logging",
+          "api_call": "logging.entries.list",
+          "expected": "All audit log entries include principalEmail for user attribution",
+          "severity": "high",
+          "remediation": "Verify audit logs include complete principal identity information.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.3.3": {
+      "manual_only": true,
+      "manual_guidance": "Review audit logging configuration to verify events of interest are captured. Check for a documented process to periodically review and update which events are logged based on current threat landscape, organizational changes, and incident findings.",
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "a process for determining when to review logged events is defined.",
+          "evidence_needed": "Provide documentation showing that a process for determining when to review logged events are defined."
+        },
+        {
+          "id": "[b]",
+          "text": "event types being logged are reviewed in accordance with the defined review process.",
+          "evidence_needed": "Provide evidence of periodic review: event types being logged are reviewed in accordance with the defined review process."
+        },
+        {
+          "id": "[c]",
+          "text": "event types being logged are updated based on the review.",
+          "evidence_needed": "Provide documentation or process evidence: event types being logged are updated based on the review."
+        }
+      ]
+    },
+    "3.3.4": {
+      "aws": [
+        {
+          "check_id": "au-3.3.4-aws-001",
+          "name": "CloudWatch alarm for CloudTrail logging changes",
+          "service": "CloudWatch",
+          "api_call": "cloudwatch.describe_alarms",
+          "expected": "Alarm exists for CloudTrail configuration changes",
+          "severity": "high",
+          "remediation": "Create CloudWatch alarm for CloudTrail StopLogging and DeleteTrail events.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.4-aws-002",
+          "name": "SNS topic configured for audit failure notifications",
+          "service": "SNS",
+          "api_call": "sns.list_topics()",
+          "expected": "SNS topic with active subscriptions for audit failure alerts",
+          "severity": "medium",
+          "remediation": "Configure SNS notifications for audit logging failure alerts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.4-azure-001",
+          "name": "Activity log alert for diagnostic settings changes",
+          "service": "Monitor",
+          "api_call": "monitor.activity_log_alerts.list",
+          "expected": "Alert configured for changes to diagnostic settings",
+          "severity": "high",
+          "remediation": "Create Activity Log alert for diagnostic settings modifications.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.4-gcp-001",
+          "name": "Alert policy for log sink changes",
+          "service": "Monitoring",
+          "api_call": "monitoring.projects.alertPolicies.list",
+          "expected": "Alert policy exists for changes to log sinks and audit configuration",
+          "severity": "high",
+          "remediation": "Create an alerting policy for modifications to logging configuration.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.3.5": {
+      "aws": [
+        {
+          "check_id": "au-3.3.5-aws-001",
+          "name": "AWS Security Hub enabled",
+          "service": "Security Hub",
+          "api_call": "securityhub.describe_hub",
+          "expected": "Security Hub enabled with findings aggregation active",
+          "severity": "high",
+          "remediation": "Enable AWS Security Hub for centralized security finding correlation.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.5-aws-002",
+          "name": "CloudTrail integrated with CloudWatch Logs",
+          "service": "CloudTrail",
+          "api_call": "cloudtrail.describe_trails",
+          "expected": "CloudWatchLogsLogGroupArn configured on trail",
+          "severity": "high",
+          "remediation": "Configure CloudTrail to deliver logs to CloudWatch Logs for real-time analysis.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.5-azure-001",
+          "name": "Microsoft Sentinel enabled",
+          "service": "Sentinel",
+          "api_call": "securityinsight.sentinel_onboarding_states.list",
+          "expected": "Microsoft Sentinel workspace deployed and connected to data sources",
+          "severity": "high",
+          "remediation": "Deploy Microsoft Sentinel and connect relevant data sources.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.5-gcp-001",
+          "name": "Security Command Center enabled",
+          "service": "SCC",
+          "api_call": "securitycenter.securityHealthAnalyticsSettings",
+          "expected": "Security Command Center Premium tier enabled",
+          "severity": "high",
+          "remediation": "Enable Security Command Center Premium for centralized security analysis.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.3.6": {
+      "aws": [
+        {
+          "check_id": "au-3.3.6-aws-001",
+          "name": "CloudWatch Logs Insights available",
+          "service": "CloudWatch",
+          "api_call": "logs.describe_log_groups",
+          "expected": "CloudTrail log group exists in CloudWatch Logs for query access",
+          "severity": "medium",
+          "remediation": "Configure CloudTrail log delivery to CloudWatch Logs for Insights queries.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.6-aws-002",
+          "name": "Athena table configured for CloudTrail analysis",
+          "service": "Athena",
+          "api_call": "athena.list_named_queries",
+          "expected": "Athena table exists for CloudTrail log analysis",
+          "severity": "low",
+          "remediation": "Create Athena table over CloudTrail S3 bucket for ad-hoc analysis.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.6-azure-001",
+          "name": "Log Analytics workspace configured",
+          "service": "Monitor",
+          "api_call": "operationalinsights.workspaces.list",
+          "expected": "Log Analytics workspace deployed with audit data ingestion",
+          "severity": "medium",
+          "remediation": "Deploy Log Analytics workspace and configure audit log ingestion.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.6-gcp-001",
+          "name": "Log Analytics enabled in Cloud Logging",
+          "service": "Logging",
+          "api_call": "logging.projects.locations.buckets.list",
+          "expected": "Log buckets configured with analytics enabled for audit data",
+          "severity": "medium",
+          "remediation": "Enable Log Analytics on log buckets for SQL-based querying.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    },
+    "3.3.7": {
+      "aws": [
+        {
+          "check_id": "au-3.3.7-aws-001",
+          "name": "NTP configured on EC2 instances",
+          "service": "EC2",
+          "api_call": "ec2.describe_instances()",
+          "expected": "Amazon Time Sync Service or NTP configured on all instances",
+          "severity": "medium",
+          "remediation": "Configure Amazon Time Sync Service (169.254.169.123) on all EC2 instances.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.7-azure-001",
+          "name": "Azure VMs use platform time sync",
+          "service": "Compute",
+          "api_call": "compute.virtual_machines.list",
+          "expected": "VMs use Azure platform time synchronization",
+          "severity": "medium",
+          "remediation": "Verify Azure VMs use the platform-provided time synchronization service.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.7-gcp-001",
+          "name": "GCE instances use Google NTP",
+          "service": "Compute",
+          "api_call": "compute.instances.list",
+          "expected": "Instances use metadata.google.internal NTP server",
+          "severity": "medium",
+          "remediation": "Configure GCE instances to use Google-provided NTP (metadata.google.internal).",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ]
+        }
+      ]
+    },
+    "3.3.8": {
+      "aws": [
+        {
+          "check_id": "au-3.3.8-aws-001",
+          "name": "CloudTrail S3 bucket has access logging",
+          "service": "S3",
+          "api_call": "s3.get_bucket_logging",
+          "expected": "Server access logging enabled on CloudTrail S3 bucket",
+          "severity": "high",
+          "remediation": "Enable S3 server access logging on the CloudTrail log bucket.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.8-aws-002",
+          "name": "CloudTrail S3 bucket encrypted",
+          "service": "S3",
+          "api_call": "s3.get_bucket_encryption",
+          "expected": "SSE-KMS encryption enabled on CloudTrail S3 bucket",
+          "severity": "high",
+          "remediation": "Enable SSE-KMS encryption on the CloudTrail log bucket.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.8-aws-003",
+          "name": "CloudTrail S3 bucket MFA Delete enabled",
+          "service": "S3",
+          "api_call": "s3.get_bucket_versioning",
+          "expected": "MFA Delete enabled on CloudTrail S3 bucket",
+          "severity": "medium",
+          "remediation": "Enable MFA Delete on the CloudTrail log bucket.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.8-azure-001",
+          "name": "Log Analytics workspace access controlled",
+          "service": "Monitor",
+          "api_call": "operationalinsights.workspaces.list",
+          "expected": "Access control mode set to require workspace or resource permissions",
+          "severity": "high",
+          "remediation": "Configure workspace access control to use resource-context or workspace-context permissions.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.8-azure-002",
+          "name": "Audit log storage uses immutable blobs",
+          "service": "Storage",
+          "api_call": "storage_accounts.list",
+          "expected": "Immutability policy configured on audit log storage containers",
+          "severity": "high",
+          "remediation": "Configure immutable blob storage for audit log containers.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.8-gcp-001",
+          "name": "Audit log bucket has retention policy",
+          "service": "Storage",
+          "api_call": "storage.buckets.get",
+          "expected": "Retention policy with lock enabled on audit log bucket",
+          "severity": "high",
+          "remediation": "Configure and lock a retention policy on the audit log Cloud Storage bucket.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.8-gcp-002",
+          "name": "Audit log bucket access restricted",
+          "service": "Storage",
+          "api_call": "storage.buckets.getIamPolicy",
+          "expected": "Only authorized principals have access to audit log bucket",
+          "severity": "high",
+          "remediation": "Restrict IAM bindings on the audit log bucket to authorized security personnel only.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]",
+            "[f]"
+          ]
+        }
+      ]
+    },
+    "3.3.9": {
+      "aws": [
+        {
+          "check_id": "au-3.3.9-aws-001",
+          "name": "CloudTrail management restricted to security team",
+          "service": "IAM",
+          "api_call": "iam.list_entities_for_policy",
+          "expected": "CloudTrail management permissions limited to security/audit roles only",
+          "severity": "high",
+          "remediation": "Restrict cloudtrail:* permissions to dedicated security/audit IAM roles.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        },
+        {
+          "check_id": "au-3.3.9-aws-002",
+          "name": "SCP prevents non-security users from modifying audit config",
+          "service": "Organizations",
+          "api_call": "organizations.list_policies",
+          "expected": "SCP restricts audit configuration changes to security OU",
+          "severity": "high",
+          "remediation": "Create SCP to prevent non-security accounts from modifying audit configuration.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "azure": [
+        {
+          "check_id": "au-3.3.9-azure-001",
+          "name": "Diagnostic settings management restricted",
+          "service": "Authorization",
+          "api_call": "authorization.role_assignments.list",
+          "expected": "Monitoring Contributor role assigned only to security/audit personnel",
+          "severity": "high",
+          "remediation": "Restrict Monitoring Contributor and Log Analytics Contributor roles to security team.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ],
+      "gcp": [
+        {
+          "check_id": "au-3.3.9-gcp-001",
+          "name": "Logging admin role restricted",
+          "service": "IAM",
+          "api_call": "cloudresourcemanager.projects.getIamPolicy",
+          "expected": "roles/logging.admin granted only to security/audit service accounts",
+          "severity": "high",
+          "remediation": "Restrict Logging Admin role to authorized security personnel only.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,465 @@
+<mxfile host="Electron" modified="2026-03-06T18:46:57.677Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="K3UuX_UP4cWyS11DY05N" version="21.6.8" type="device" pages="2">
+  <diagram id="scanner-arch" name="Scanner Architecture">
+    <mxGraphModel dx="1195" dy="712" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="CMMC Cloud Compliance Scanner Architecture" style="text;html=1;fontSize=28;fontStyle=1;fontColor=#1B3A5C;align=center;verticalAlign=middle;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="518" y="69" width="800" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="client-group" value="&lt;font style=&quot;font-size: 18px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot;&gt;CLIENT CLOUD ENVIRONMENTS&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#6c8ebf;strokeWidth=2;dashed=1;arcSize=2;verticalAlign=top;fontFamily=Viga;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DViga;fontSize=17;gradientColor=none;" parent="1" vertex="1">
+          <mxGeometry x="37" y="267" width="394" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-com" value="&lt;b&gt;AWS Commercial&lt;/b&gt;&lt;br&gt;L1, L2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#CC7A00;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="320" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-gov" value="&lt;b&gt;AWS GovCloud&lt;/b&gt;&lt;br&gt;L1, L2, L3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#CC7A00;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="384" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="az-com" value="&lt;b&gt;Azure Commercial&lt;/b&gt;&lt;br&gt;L1, L2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#005A9E;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="450" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="az-gov" value="&lt;b&gt;Azure Government&lt;/b&gt;&lt;br&gt;L1, L2, L3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#005A9E;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="515" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gcp-com" value="&lt;b&gt;GCP Commercial&lt;/b&gt;&lt;br&gt;L1, L2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#3367D6;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="582" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gcp-gov" value="&lt;b&gt;GCP Assured Workloads&lt;/b&gt;&lt;br&gt;L1, L2, L3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;fontColor=default;strokeColor=#3367D6;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="59" y="650" width="350" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="iam-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#999;strokeWidth=1;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="59" y="735" width="350" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="iam-title" value="Cross-Account Access" style="text;html=1;fontSize=11;fontStyle=1;fontColor=#999999;align=center;" parent="1" vertex="1">
+          <mxGeometry x="89" y="735" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-role" value="AWS: IAM Role&#xa;(sts:AssumeRole)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="72" y="767" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="az-sp" value="Azure: Service&#xa;Principal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="183.5" y="767" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="gcp-sa" value="GCP: Service&#xa;Account" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="296" y="767" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="iam-note" value="🔒 Read-only permissions — SecurityAudit / Reader role" style="text;html=1;fontSize=9;fontColor=#666;align=center;fontStyle=2;" parent="1" vertex="1">
+          <mxGeometry x="99" y="818" width="270" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="sb-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#4527A0;strokeWidth=2;dashed=1;arcSize=1;" parent="1" vertex="1">
+          <mxGeometry x="603" y="267" width="700" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="sb-title" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot; style=&quot;font-size: 18px;&quot;&gt;SECURITYBRICKS PLATFORM&lt;/font&gt;" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#4527A0;align=center;" parent="1" vertex="1">
+          <mxGeometry x="603" y="267" width="700" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sb-deploy" value="Can be Deployed on AWS or Azure or GCP or as local DEV Instance (Refer to README.md)." style="text;html=1;fontSize=10;fontColor=#666;align=center;fontStyle=2;" parent="1" vertex="1">
+          <mxGeometry x="603" y="291" width="700" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="webui" value="&lt;font style=&quot;font-size: 14px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot;&gt;&lt;b&gt;Web UI (Frontend)&lt;/b&gt;&lt;br&gt;&lt;/font&gt;&lt;br&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot; style=&quot;font-size: 12px;&quot;&gt;Dashboard&lt;br&gt;Client Management&lt;br&gt;Scan Execution&lt;br&gt;Results &amp;amp; Reports&lt;br&gt;Help &amp;amp; Docs&lt;br&gt;&lt;/font&gt;&lt;br&gt;&lt;i style=&quot;color:#999&quot;&gt;HTML / CSS / JS&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;verticalAlign=top;spacingTop=5;arcSize=6;" parent="1" vertex="1">
+          <mxGeometry x="633" y="337" width="148" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="api-layer" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot; style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;FastAPI Backend&lt;/b&gt;&lt;br&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px;&quot; face=&quot;Courier New&quot;&gt;&lt;b&gt;/api/clients&lt;br&gt;/api/scans&lt;br&gt;/api/reports&lt;br&gt;/api/auth&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;i style=&quot;color:#999&quot;&gt;Python 3.12&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;verticalAlign=top;spacingTop=5;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="849" y="337" width="138" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ui-api-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="webui" target="api-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ui-api-label" value="REST API" style="edgeLabel;html=1;fontSize=10;fontColor=#666;" parent="ui-api-arrow" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-25" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="auth" value="&lt;b&gt;Auth&lt;/b&gt;&lt;br&gt;Entra ID SSO + JWT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1053" y="337" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-auth-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;" parent="1" source="api-layer" target="auth" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="995" y="362" />
+              <mxPoint x="995" y="362" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="secrets" value="&lt;b&gt;Secrets&lt;/b&gt;&lt;br&gt;Manager / KeyVault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="1053" y="413" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-secrets-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;" parent="1" source="api-layer" target="secrets" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="987" y="439.52882352941174" as="sourcePoint" />
+            <mxPoint x="1113.0588235294122" y="436.47" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1004" y="438" />
+              <mxPoint x="1004" y="438" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="engine-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;arcSize=4;" parent="1" vertex="1">
+          <mxGeometry x="633" y="537" width="370" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="engine-title" value="SCAN ENGINE" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#2E7D32;align=center;" parent="1" vertex="1">
+          <mxGeometry x="633" y="542" width="370" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="orchestrator" value="&lt;b&gt;Orchestrator&lt;/b&gt;&lt;br&gt;engine.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="858" y="577" width="120" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-scanner" value="&lt;b&gt;AWS Scanner&lt;/b&gt;&lt;br&gt;boto3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="648" y="657.5" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="azure-scanner" value="&lt;b&gt;Azure Scanner&lt;/b&gt;&lt;br&gt;azure-mgmt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="758" y="657.5" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="gcp-scanner" value="&lt;b&gt;GCP Scanner&lt;/b&gt;&lt;br&gt;google-cloud" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="868" y="657.5" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="orch-aws" style="rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" parent="1" source="orchestrator" target="aws-scanner" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="orch-azure" style="rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;" parent="1" source="orchestrator" target="azure-scanner" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="orch-gcp" style="rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;" parent="1" source="orchestrator" target="gcp-scanner" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-engine-arrow" style="rounded=1;strokeColor=default;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="api-layer" target="orchestrator" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-engine-label" value="Trigger Scan" style="edgeLabel;html=1;fontSize=12;fontColor=#666;fontFamily=Helvetica;" parent="api-engine-arrow" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-28" y="-30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="db" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot;&gt;PostgreSQL&lt;/font&gt;&lt;/b&gt;&lt;font style=&quot;font-size: 14px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Oswald&quot; face=&quot;Oswald&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Clients&lt;br&gt;Scans&lt;br&gt;Findings&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1B3A5C;strokeWidth=2;fontSize=11;size=12;verticalAlign=top;spacingTop=8;" parent="1" vertex="1">
+          <mxGeometry x="1062" y="539.5" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="engine-db-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="orchestrator" target="db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="api-db-arrow" style="rounded=1;strokeColor=default;strokeWidth=1;dashed=1;endArrow=block;endFill=1;" parent="1" source="api-layer" target="db" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="reports-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=1;arcSize=7;" parent="1" vertex="1">
+          <mxGeometry x="633" y="742" width="370" height="97" as="geometry" />
+        </mxCell>
+        <mxCell id="reports-title" value="REPORT GENERATOR" style="text;html=1;fontSize=11;fontStyle=1;fontColor=#E65100;align=left;" parent="1" vertex="1">
+          <mxGeometry x="643" y="747" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="html-report" value="📄 HTML Report&lt;br style=&quot;font-size: 10px;&quot;&gt;(Jinja2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E65100;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="643" y="783" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="xlsx-report" value="📊 XLSX Report&lt;br style=&quot;font-size: 10px;&quot;&gt;(openpyxl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E65100;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="763" y="783" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="comparison" value="📋 Comparison&lt;br style=&quot;font-size: 10px;&quot;&gt;Delta Report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E65100;fontSize=10;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="883" y="783" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="engine-reports-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=1;endArrow=block;endFill=1;" parent="1" source="engine-group" target="reports-group" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="client-to-engine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="engine-group" target="client-group" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="836" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="490" y="627" />
+              <mxPoint x="490" y="627" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="client-engine-label" value="&lt;b style=&quot;font-size: 12px;&quot;&gt;Read-only API calls&lt;/b&gt;&lt;br style=&quot;font-size: 12px;&quot;&gt;(config metadata only; no CUI)" style="edgeLabel;html=1;fontSize=12;fontColor=#0068B8;labelBackgroundColor=#FFFFFF;fontFamily=Helvetica;" parent="client-to-engine" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-78" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="consultant" value="&lt;b&gt;SB &lt;br&gt;Consultant&lt;br&gt;&lt;br&gt;&lt;/b&gt;" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#4D4D4D;strokeColor=#6c8ebf;fontSize=11;verticalAlign=bottom;spacingTop=0;fontFamily=Viga;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DViga;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="668" y="149" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="user-webui-1" style="rounded=1;strokeColor=default;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="consultant" target="webui" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;strokeWidth=1;arcSize=4;" parent="1" vertex="1">
+          <mxGeometry x="1343" y="475" width="220" height="392" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-title" value="CHECK DEFINITIONS" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#6A1B9A;align=center;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="1343" y="482" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-sub" value="config/checks/*.json" style="text;html=1;fontSize=9;fontColor=#999;align=center;fontStyle=2;" parent="1" vertex="1">
+          <mxGeometry x="1343" y="502.5" width="220" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="auto-label" value="✅ Automated (~70)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#2E7D32;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="1358" y="527" width="190" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ac" value="AC — Access Control (22)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="549" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-au" value="AU — Audit &amp;amp; Accountability (9)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="565" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-cm" value="CM — Configuration Mgmt (9)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="581" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ia" value="IA — Identification &amp;amp; Auth (11)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="597" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-sc" value="SC — System &amp;amp; Comms (16)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="613" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-si" value="SI — System &amp;amp; Info Integrity (7)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="629" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="mix-label" value="🔶 Mixed (~20)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#E65100;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="1358" y="652" width="190" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ir" value="IR — Incident Response (3)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="674" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-mp" value="MP — Media Protection (9)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="690" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ra" value="RA — Risk Assessment (3)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="706" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="man-label" value="⚠️ Manual Review (~20)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#C62828;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="1358" y="727" width="190" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="check-at" value="AT — Awareness &amp;amp; Training (3)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="750" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ma" value="MA — Maintenance (6)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="766" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ps" value="PS — Personnel Security (2)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="782" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-pe" value="PE — Physical Protection (6)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="798" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="check-ca" value="CA — Security Assessment (4)" style="text;html=1;fontSize=10;fontColor=#333;align=left;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" vertex="1">
+          <mxGeometry x="1368" y="814" width="180" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-engine-arrow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=default;strokeWidth=1;dashed=1;endArrow=block;endFill=1;" parent="1" target="engine-group" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1343" y="691.471176470588" as="sourcePoint" />
+            <mxPoint x="1003" y="630.53" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1088" y="692" />
+              <mxPoint x="1088" y="692" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="checks-engine-label" value="Check definitions" style="edgeLabel;html=1;fontSize=12;fontColor=#6A1B9A;fontFamily=Helvetica;" parent="checks-engine-arrow" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#CCC;strokeWidth=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="603" y="883" width="701" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-met" value="● Met" style="text;html=1;fontSize=14;fontColor=#28a745;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="623" y="893" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-notmet" value="● Not Met" style="text;html=1;fontSize=14;fontColor=#dc3545;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="693" y="893" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-manual" value="● Manual" style="text;html=1;fontSize=14;fontColor=#ffc107;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="783" y="893" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" value="- Scan results = metadata (config states, resource ARNs), not CUI. &lt;br&gt;- No FedRAMP/CMMC certification required." style="text;html=1;fontSize=14;fontColor=#666;fontStyle=2;align=left;" parent="1" vertex="1">
+          <mxGeometry x="873" y="886" width="416" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-1" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/1280px-Amazon_Web_Services_Logo.svg.png;" vertex="1" parent="1">
+          <mxGeometry x="75.25" y="331.25" width="49.24" height="29.5" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-3" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://d2908q01vomqb2.cloudfront.net/9e6a55b6b4563e652a23be9d623ca5055c356940/2022/06/09/govcloud.png;" vertex="1" parent="1">
+          <mxGeometry x="65.005" y="386" width="69.73" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-4" value="HTTPS (Browser)" style="text;html=1;fontSize=10;fontColor=#666;align=center;labelBackgroundColor=default;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="653" y="234" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-6" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://mscloudnews.com/sites/default/files/azure-govt-621.png;" vertex="1" parent="1">
+          <mxGeometry x="63.93000000000001" y="520.5" width="70.81" height="39" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-7" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://www.logo.wine/a/logo/Microsoft_Azure/Microsoft_Azure-Logo.wine.svg;" vertex="1" parent="1">
+          <mxGeometry x="60.87" y="448" width="78" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-8" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://logos-world.net/wp-content/uploads/2021/02/Google-Cloud-Symbol.png;" vertex="1" parent="1">
+          <mxGeometry x="55.629999999999995" y="584.75" width="79.11" height="44.5" as="geometry" />
+        </mxCell>
+        <mxCell id="TYh-Ub1OJSEPQpL_MCA3-9" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://www.svgrepo.com/show/375540/assured-workloads.svg;" vertex="1" parent="1">
+          <mxGeometry x="71.83999999999997" y="649" width="55" height="55" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="scan-flow" name="Scan Flow">
+    <mxGraphModel dx="1434" dy="854" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="flow-title" value="CMMC Compliance Scan — Execution Flow" style="text;html=1;fontSize=36;fontStyle=1;fontColor=#1B3A5C;align=center;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="150" y="56" width="1100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="phase1-label" value="PHASE 1: CLIENT ONBOARDING" style="text;html=1;fontSize=18;fontStyle=1;fontColor=#4527A0;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="150" y="151" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="&lt;font style=&quot;font-size: 14px;&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Viga&quot;&gt;&lt;b style=&quot;&quot;&gt;1. Add Client&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font face=&quot;Poppins&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; style=&quot;font-size: 12px;&quot;&gt;Name, environment,&lt;br style=&quot;font-size: 12px;&quot;&gt;CMMC level&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#3F51B5;fontSize=12;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="150" y="188" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;2. Configure Credentials&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Role ARN / Service Principal&lt;br style=&quot;font-size: 12px;&quot;&gt;/ Service Account&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#3F51B5;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="402" y="188" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;3. Test Connection&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Verify read-only access&lt;br style=&quot;font-size: 12px;&quot;&gt;to client environment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#3F51B5;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="646" y="188" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s1-s2" style="rounded=1;strokeColor=#3F51B5;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="s1" target="s2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s2-s3" style="rounded=1;strokeColor=#3F51B5;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="s2" target="s3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phase2-label" value="PHASE 2: SCAN EXECUTION" style="text;html=1;fontSize=18;fontStyle=1;fontColor=#2E7D32;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="150" y="311" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;4. Start Scan&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Select client&lt;br style=&quot;font-size: 12px;&quot;&gt;Confirm level&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="150" y="351" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;5. Load Checks&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot;&gt;&lt;font face=&quot;Poppins&quot;&gt;Filter by level:&lt;/font&gt;&lt;br style=&quot;font-size: 12px;&quot;&gt;&lt;font face=&quot;Courier New&quot;&gt;&lt;b&gt;L1=17&lt;/b&gt;&lt;/font&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt; / &lt;/font&gt;&lt;font face=&quot;Courier New&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot;&gt;&lt;b&gt;L2=110&lt;/b&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt; / &lt;/font&gt;&lt;font face=&quot;Courier New&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot;&gt;&lt;b&gt;L3=110+&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="302" y="351" width="165" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;6. Connect&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Assume role /&lt;br style=&quot;font-size: 12px;&quot;&gt;authenticate&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="500" y="351" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="Automated?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="346" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e4-yes" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;7a. Run API Check&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Call cloud API&lt;br style=&quot;font-size: 12px;&quot;&gt;Evaluate response&lt;br style=&quot;font-size: 12px;&quot;&gt;Collect evidence&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="800" y="321" width="140" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="e4-no" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;7b. Mark Manual&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Status = &quot;manual&quot;&lt;br style=&quot;font-size: 12px;&quot;&gt;Include guidance&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="800" y="401" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;8. Determine Status&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="990" y="351" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="met-badge" value="✅ Met" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;gradientColor=#97d077;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="326" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="notmet-badge" value="❌ Not Met" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;gradientColor=#ea6b66;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="361" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="manual-badge" value="⚠️ Manual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;gradientColor=#ffd966;" parent="1" vertex="1">
+          <mxGeometry x="1160" y="396" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="e1-e2" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e1" target="e2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2-e3" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e2" target="e3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3-d1" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e3" target="d1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-yes" style="rounded=1;strokeColor=#388E3C;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="d1" target="e4-yes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-yes-label" value="Yes" style="edgeLabel;html=1;fontSize=12;fontColor=#388E3C;fontStyle=1;fontFamily=Viga;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DViga;" parent="d1-yes" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-14" y="-28" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d1-no" style="rounded=1;strokeColor=#E65100;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="d1" target="e4-no" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-no-label" value="No" style="edgeLabel;html=1;fontSize=12;fontColor=#E65100;fontStyle=1;fontFamily=Viga;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DViga;" parent="d1-no" connectable="0" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-12" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4y-e5" style="rounded=1;strokeColor=#666;strokeWidth=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e4-yes" target="e5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4n-e5" style="rounded=1;strokeColor=#666;strokeWidth=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e4-no" target="e5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5-met" style="rounded=1;strokeColor=#28a745;strokeWidth=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e5" target="met-badge" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5-notmet" style="rounded=1;strokeColor=#dc3545;strokeWidth=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e5" target="notmet-badge" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5-manual" style="rounded=1;strokeColor=#ffc107;strokeWidth=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="e5" target="manual-badge" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="loop" value="Repeat for each NIST practice" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#999;strokeWidth=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;endArrow=block;endFill=1;fontSize=12;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" source="e5" target="d1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1055" y="487" />
+              <mxPoint x="705" y="487" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="phase3-label" value="PHASE 3: REPORTING &amp;amp; REMEDIATION" style="text;html=1;fontSize=18;fontStyle=1;fontColor=#E65100;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;" parent="1" vertex="1">
+          <mxGeometry x="150" y="534" width="300" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;9. Store Findings&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Save all results&lt;br style=&quot;font-size: 12px;&quot;&gt;to PostgreSQL&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="150" y="569" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;10. Generate Reports&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;HTML + XLSX&lt;br style=&quot;font-size: 12px;&quot;&gt;Met/Not-Met/Manual&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="320" y="569" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;11. Review with Client&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Dashboard walkthrough&lt;br style=&quot;font-size: 12px;&quot;&gt;Not-Met prioritization&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="510" y="569" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;12. Remediate&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Client or Securitybricks&lt;br style=&quot;font-size: 12px;&quot;&gt;fixes Not-Met items&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="710" y="569" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;13. Re-scan&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;Verify fixes&lt;br style=&quot;font-size: 12px;&quot;&gt;Delta report&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="910" y="569" width="120" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;14. Assessment Ready&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;All Met ✅&lt;br style=&quot;font-size: 12px;&quot;&gt;Evidence collected&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;strokeWidth=2;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="569" width="161" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r1-r2" style="rounded=1;strokeColor=#E65100;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="r1" target="r2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-r3" style="rounded=1;strokeColor=#E65100;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="r2" target="r3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r3-r4" style="rounded=1;strokeColor=#E65100;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="r3" target="r4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r4-r5" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="r4" target="r5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r5-r6" style="rounded=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="r5" target="r6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rescan-loop" value="If Not-Met remain" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#dc3545;strokeWidth=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;endArrow=block;endFill=1;fontSize=12;fontFamily=Poppins;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DPoppins;" parent="1" source="r5" target="r4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="654" />
+              <mxPoint x="790" y="654" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="level-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#999;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="712" width="1100" height="131" as="geometry" />
+        </mxCell>
+        <mxCell id="level-title" value="CMMC Level Scope" style="text;html=1;fontSize=18;fontStyle=1;fontColor=#333;align=left;fontFamily=Oswald;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOswald;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="165" y="722" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l1-box" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;Level 1 (FCI)&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;17 FAR practices&lt;br style=&quot;font-size: 12px;&quot;&gt;Self-assessment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="165" y="759" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l2-box" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;Level 2 (CUI)&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;110 NIST 800-171 practices&lt;br style=&quot;font-size: 12px;&quot;&gt;C3PAO assessment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="345" y="759" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="l3-box" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;Level 3 (CUI — APT)&lt;/b&gt;&lt;br style=&quot;&quot;&gt;&lt;/font&gt;&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; face=&quot;Poppins&quot;&gt;110 + 800-172 enhanced&lt;br style=&quot;font-size: 12px;&quot;&gt;DIBCAC assessment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="565" y="759" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="com-note" value="&lt;b style=&quot;font-size: 12px;&quot;&gt;Commercial clouds:&lt;/b&gt; L1, L2 only" style="text;html=1;fontSize=12;fontColor=#555;align=left;" parent="1" vertex="1">
+          <mxGeometry x="800" y="761" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="gov-note" value="&lt;b style=&quot;font-size: 12px;&quot;&gt;Government clouds:&lt;/b&gt; L1, L2, L3" style="text;html=1;fontSize=12;fontColor=#555;align=left;" parent="1" vertex="1">
+          <mxGeometry x="800" y="783" width="200" height="18" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

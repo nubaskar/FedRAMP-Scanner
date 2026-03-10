@@ -1,0 +1,43 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+.venv
+*.egg-info
+.pytest_cache
+.mypy_cache
+
+# Environment
+.env
+.env.*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Documentation & diagrams
+CLAUDE.md
+README.md
+docs/
+diagrams/
+
+# Deployment templates (not needed in container)
+deploy/
+
+# Scripts (not needed in container)
+scripts/
+
+# macOS
+.DS_Store
+._*
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml

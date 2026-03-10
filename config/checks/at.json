@@ -1,0 +1,87 @@
+{
+  "domain": "AT",
+  "name": "Awareness and Training",
+  "checks": {
+    "3.2.1": {
+      "manual_only": true,
+      "manual_guidance": "Request security awareness training records and completion certificates. Verify training covers CUI handling, phishing, social engineering, password security, and organizational security policies. Confirm all personnel with CUI access complete training upon hire and annually thereafter.",
+      "evidence_requests": [
+        "Security awareness training materials/curriculum",
+        "Training completion records for all CUI-access personnel",
+        "Training schedule and frequency documentation",
+        "List of personnel required to complete training"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "security risks associated with organizational activities involving CUI are identified.",
+          "evidence_needed": "Provide documentation showing that security risks associated with organizational activities involving cui are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "policies, standards, and procedures related to the security of the system are identified.",
+          "evidence_needed": "Provide documentation showing that policies, standards, and procedures related to the security of the system are identified and documented."
+        },
+        {
+          "id": "[c]",
+          "text": "managers, systems administrators, and users of the system are made aware of the security risks associated with their activities.",
+          "evidence_needed": "Provide documentation or process evidence: managers, systems administrators, and users of the system are made aware of the security risks associated with their activities."
+        },
+        {
+          "id": "[d]",
+          "text": "managers, systems administrators, and users of the system are made aware of the applicable policies, standards, and procedures related to the security of the system.",
+          "evidence_needed": "Provide documentation or process evidence: managers, systems administrators, and users of the system are made aware of the applicable policies, standards, and procedures related to the security of the system."
+        }
+      ]
+    },
+    "3.2.2": {
+      "manual_only": true,
+      "manual_guidance": "Request role-based training records for IT and security staff. Verify training covers specific duties including system administration, incident response, security monitoring, and configuration management. Confirm training is tailored to each role's security responsibilities.",
+      "evidence_requests": [
+        "Role-based training curriculum per security function",
+        "Training completion records for IT/security personnel",
+        "Role-to-training mapping documentation",
+        "Certification records for specialized security roles"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "information security-related duties, roles, and responsibilities are defined.",
+          "evidence_needed": "Provide documentation showing that information security-related duties, roles, and responsibilities are defined."
+        },
+        {
+          "id": "[b]",
+          "text": "information security-related duties, roles, and responsibilities are assigned to designated personnel.",
+          "evidence_needed": "Provide personnel records: information security-related duties, roles, and responsibilities are assigned to designated personnel."
+        },
+        {
+          "id": "[c]",
+          "text": "personnel are adequately trained to carry out their assigned information security-related duties, roles, and responsibilities.",
+          "evidence_needed": "Provide personnel records: personnel are adequately trained to carry out their assigned information security-related duties, roles, and responsibilities."
+        }
+      ]
+    },
+    "3.2.3": {
+      "manual_only": true,
+      "manual_guidance": "Request insider threat training records. Verify training includes indicators of insider threat (behavioral, technical, organizational), reporting procedures, and whistleblower protections. Confirm training is completed annually by all personnel with CUI access.",
+      "evidence_requests": [
+        "Insider threat awareness training materials",
+        "Training completion records",
+        "Insider threat reporting procedures",
+        "Insider threat program documentation"
+      ],
+      "objectives_requiring_documentation": [
+        {
+          "id": "[a]",
+          "text": "potential indicators associated with insider threats are identified.",
+          "evidence_needed": "Provide documentation showing that potential indicators associated with insider threats are identified and documented."
+        },
+        {
+          "id": "[b]",
+          "text": "security awareness training on recognizing and reporting potential indicators of insider threat is provided to managers and employees.",
+          "evidence_needed": "Provide training records: security awareness training on recognizing and reporting potential indicators of insider threat is provided to managers and employees."
+        }
+      ]
+    }
+  }
+}

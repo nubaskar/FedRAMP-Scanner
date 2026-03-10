@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database (dev)
+*.db
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Reports (generated output in project root)
+/reports/
+
+# Node modules (if any frontend tooling added later)
+node_modules/
+
+# Deployment artifacts
+deploy/aws/.aws-sam/
+deploy/azure/.azure/
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Temp
+tmp/

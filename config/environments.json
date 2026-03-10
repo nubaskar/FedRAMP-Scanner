@@ -1,0 +1,77 @@
+{
+  "environments": {
+    "aws_commercial": {
+      "platform": "AWS",
+      "tier": "commercial",
+      "display_name": "AWS Commercial",
+      "allowed_cmmc_levels": ["L1", "L2"],
+      "credential_type": "cross_account_role",
+      "credential_fields": ["role_arn", "external_id"],
+      "regions": ["us-east-1", "us-east-2", "us-west-1", "us-west-2"],
+      "default_region": "us-east-1",
+      "sdk": "boto3",
+      "fedramp_baseline": "Moderate"
+    },
+    "aws_govcloud": {
+      "platform": "AWS",
+      "tier": "government",
+      "display_name": "AWS GovCloud",
+      "allowed_cmmc_levels": ["L1", "L2", "L3"],
+      "credential_type": "cross_account_role",
+      "credential_fields": ["role_arn", "external_id"],
+      "regions": ["us-gov-west-1", "us-gov-east-1"],
+      "default_region": "us-gov-west-1",
+      "sdk": "boto3",
+      "fedramp_baseline": "High"
+    },
+    "azure_commercial": {
+      "platform": "Azure",
+      "tier": "commercial",
+      "display_name": "Azure Commercial",
+      "allowed_cmmc_levels": ["L1", "L2"],
+      "credential_type": "service_principal",
+      "credential_fields": ["tenant_id", "client_id", "client_secret", "subscription_id"],
+      "regions": ["eastus", "eastus2", "westus", "westus2", "centralus"],
+      "default_region": "eastus",
+      "sdk": "azure",
+      "fedramp_baseline": "Moderate"
+    },
+    "azure_government": {
+      "platform": "Azure",
+      "tier": "government",
+      "display_name": "Azure Government",
+      "allowed_cmmc_levels": ["L1", "L2", "L3"],
+      "credential_type": "service_principal",
+      "credential_fields": ["tenant_id", "client_id", "client_secret", "subscription_id"],
+      "regions": ["usgovvirginia", "usgovarizona", "usgovtexas"],
+      "default_region": "usgovvirginia",
+      "sdk": "azure",
+      "cloud_endpoint": "AzureUSGovernment",
+      "fedramp_baseline": "High"
+    },
+    "gcp_commercial": {
+      "platform": "GCP",
+      "tier": "commercial",
+      "display_name": "GCP Commercial",
+      "allowed_cmmc_levels": ["L1", "L2"],
+      "credential_type": "service_account",
+      "credential_fields": ["project_id", "service_account_key_json"],
+      "regions": ["us-central1", "us-east1", "us-east4", "us-west1"],
+      "default_region": "us-central1",
+      "sdk": "google-cloud",
+      "fedramp_baseline": "Moderate"
+    },
+    "gcp_assured_workloads": {
+      "platform": "GCP",
+      "tier": "government",
+      "display_name": "GCP Assured Workloads",
+      "allowed_cmmc_levels": ["L1", "L2", "L3"],
+      "credential_type": "service_account",
+      "credential_fields": ["project_id", "service_account_key_json"],
+      "regions": ["us-central1", "us-east4"],
+      "default_region": "us-central1",
+      "sdk": "google-cloud",
+      "fedramp_baseline": "High"
+    }
+  }
+}

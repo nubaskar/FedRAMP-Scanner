@@ -1,0 +1,2620 @@
+{
+  "framework_versions": {
+    "nist_800_171": "Rev 2",
+    "nist_800_172": "2021",
+    "far": "52.204-21"
+  },
+  "families": {
+    "3.1": {
+      "domain": "AC",
+      "name": "Access Control",
+      "practices": {
+        "3.1.1": {
+          "requirement": "Limit information system access to authorized users, processes acting on behalf of authorized users, or devices (including other information systems).",
+          "level": "L1",
+          "far_mapping": "b.1.i",
+          "automated": true,
+          "check_areas": [
+            "iam_policies",
+            "user_accounts",
+            "service_accounts"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "authorized users are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "processes acting on behalf of authorized users are identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "devices (including other systems) authorized to connect to the system are identified.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "system access is limited to authorized users.",
+              "automatable": true
+            },
+            "[e]": {
+              "text": "system access is limited to processes acting on behalf of authorized users.",
+              "automatable": true
+            },
+            "[f]": {
+              "text": "system access is limited to authorized devices (including other systems).",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.2": {
+          "requirement": "Limit information system access to the types of transactions and functions that authorized users are permitted to execute.",
+          "level": "L1",
+          "far_mapping": "b.1.ii",
+          "automated": true,
+          "check_areas": [
+            "rbac",
+            "permission_boundaries",
+            "function_access"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the types of transactions and functions that authorized users are permitted to execute are defined",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "system access is limited to the defined types of transactions and functions for authorized users.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.3": {
+          "requirement": "Control the flow of CUI in accordance with approved authorizations.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "network_acls",
+            "security_groups",
+            "data_flow_controls",
+            "vpc_endpoints"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "information flow control policies are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "methods and enforcement mechanisms for controlling the flow of CUI are defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "designated sources and destinations (e.g., networks, individuals, and devices) for CUI within systems and between interconnected systems are identified.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "authorizations for controlling the flow of CUI are defined.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "approved authorizations for controlling the flow of CUI are enforced.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.4": {
+          "requirement": "Separate the duties of individuals to reduce the risk of malevolent activity without collusion.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "iam_roles",
+            "separation_of_duties",
+            "admin_accounts"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the duties of individuals requiring separation to reduce the risk of malevolent activity are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "organization-defined duties of individuals requiring separation are separated.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "separate accounts for individuals whose duties and accesses must be separated to reduce the risk of malevolent activity or collusion are established",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.5": {
+          "requirement": "Employ the principle of least privilege, including for specific security functions and privileged accounts.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "iam_policies",
+            "admin_privileges",
+            "permission_boundaries",
+            "wildcard_permissions"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "privileged accounts are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "access to privileged accounts is authorized in accordance with the principle of least privilege.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "security functions are identified.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "access to security functions is authorized in accordance with the principle of least privilege.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.6": {
+          "requirement": "Use non-privileged accounts or roles when accessing nonsecurity functions.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "admin_usage_patterns",
+            "privilege_escalation",
+            "role_separation"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "nonsecurity functions are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "users are required to use non-privileged accounts or roles when accessing nonsecurity functions.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.7": {
+          "requirement": "Prevent non-privileged users from executing privileged functions and capture the execution of such functions in audit logs.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "privilege_escalation_controls",
+            "audit_logging",
+            "sudo_policies"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "privileged functions are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "non-privileged users are defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "non-privileged users are prevented from executing privileged functions.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "the execution of privileged functions is captured in audit logs.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.8": {
+          "requirement": "Limit unsuccessful logon attempts.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "account_lockout_policy",
+            "login_attempt_limits",
+            "brute_force_protection"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the means of limiting unsuccessful logon attempts is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the defined means of limiting unsuccessful logon attempts is implemented.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.9": {
+          "requirement": "Provide privacy and security notices consistent with applicable CUI rules.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Verify login banners and system use notification messages are configured on all systems processing CUI.",
+          "objectives": {
+            "[a]": {
+              "text": "privacy and security notices required by CUI-specified rules are identified, consistent, and associated with the specific CUI category",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "privacy and security notices are displayed.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.10": {
+          "requirement": "Use session lock with pattern-hiding displays to prevent access and viewing of data after a period of inactivity.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "session_timeout",
+            "idle_timeout",
+            "screen_lock_policy"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the period of inactivity after which the system initiates a session lock is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "access to the system and viewing of data is prevented by initiating a session lock after the defined period of inactivity.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "previously visible information is concealed via a pattern-hiding display after the defined period of inactivity.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.11": {
+          "requirement": "Terminate (automatically) a user session after a defined condition.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "session_timeout",
+            "token_expiration",
+            "idle_disconnect"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "conditions requiring a user session to terminate are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "a user session is automatically terminated after any of the defined conditions occur.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.12": {
+          "requirement": "Monitor and control remote access sessions.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "vpn_configuration",
+            "remote_access_logging",
+            "bastion_hosts",
+            "session_recording"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "remote access sessions are permitted.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the types of permitted remote access are identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "remote access sessions are controlled.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "remote access sessions are monitored.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.13": {
+          "requirement": "Employ cryptographic mechanisms to protect the confidentiality of remote access sessions.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "vpn_encryption",
+            "tls_configuration",
+            "ssh_configuration"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "cryptographic mechanisms to protect the confidentiality of remote access sessions are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "cryptographic mechanisms to protect the confidentiality of remote access sessions are implemented.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.14": {
+          "requirement": "Route remote access via managed access control points.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "vpn_gateways",
+            "bastion_hosts",
+            "jump_servers",
+            "network_routing"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "managed access control points are identified and implemented.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "remote access is routed through managed network access control points.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.15": {
+          "requirement": "Authorize remote execution of privileged commands and remote access to security-relevant information.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "remote_admin_policies",
+            "privileged_access_management",
+            "jump_server_logging"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "privileged commands authorized for remote execution are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "security-relevant information authorized to be accessed remotely is identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "the execution of the identified privileged commands via remote access is authorized.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "access to the identified security-relevant information via remote access is authorized.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.1.16": {
+          "requirement": "Authorize wireless access prior to allowing such connections.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review wireless access policies and verify that wireless connections require explicit authorization. Check for rogue access point detection.",
+          "objectives": {
+            "[a]": {
+              "text": "wireless access points are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "wireless access is authorized prior to allowing such connections.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.17": {
+          "requirement": "Protect wireless access using authentication and encryption.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Verify wireless networks use WPA2/WPA3-Enterprise with 802.1X authentication. Check encryption standards meet FIPS 140-2 requirements.",
+          "objectives": {
+            "[a]": {
+              "text": "wireless access to the system is protected using encryption.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "wireless access to the system is protected using authentication.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.18": {
+          "requirement": "Control connection of mobile devices.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review mobile device management (MDM) policies. Verify enrollment requirements, device compliance checks, and connection restrictions for mobile devices accessing CUI.",
+          "objectives": {
+            "[a]": {
+              "text": "mobile devices that process, store, or transmit CUI are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "the connection of mobile devices is authorized.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "mobile device connections are monitored and logged.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.19": {
+          "requirement": "Encrypt CUI on mobile devices and mobile computing platforms.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Verify MDM enforces full-device encryption on mobile devices. Check that CUI storage on mobile devices uses FIPS-validated encryption.",
+          "objectives": {
+            "[a]": {
+              "text": "mobile devices and mobile computing platforms that process, store, or transmit CUI are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "encryption is employed to protect CUI on identified mobile devices and mobile computing platforms.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.20": {
+          "requirement": "Verify and control/limit connections to and use of external information systems.",
+          "level": "L1",
+          "far_mapping": "b.1.iii",
+          "automated": true,
+          "check_areas": [
+            "vpc_peering",
+            "external_connections",
+            "api_gateways",
+            "outbound_rules"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "connections to external systems are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "use of external systems is identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "connections to external systems are verified.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "use of external systems is verified.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "connections to external systems are controlled/limited.",
+              "automatable": true
+            },
+            "[f]": {
+              "text": "use of external systems is controlled/limited.",
+              "automatable": true
+            }
+          }
+        },
+        "3.1.21": {
+          "requirement": "Limit use of organizational portable storage devices on external information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review policies restricting use of USB drives and portable storage on external systems. Verify endpoint DLP controls for removable media.",
+          "objectives": {
+            "[a]": {
+              "text": "use of organizational portable storage devices containing CUI on external systems is identified and documented.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "limits on the use of organizational portable storage devices containing CUI on external systems are defined.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "use of organizational portable storage devices containing CUI on external systems is limited as defined.",
+              "automatable": false
+            }
+          }
+        },
+        "3.1.22": {
+          "requirement": "Control CUI posted or processed on publicly accessible information systems.",
+          "level": "L1",
+          "far_mapping": "b.1.iv",
+          "automated": true,
+          "check_areas": [
+            "public_access_blocks",
+            "s3_bucket_policies",
+            "public_ip_exposure",
+            "content_filtering"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "individuals authorized to post or process information on publicly accessible systems are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "procedures to ensure CUI is not posted or processed on publicly accessible systems are identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "a review process in in place prior to posting of any content to publicly accessible systems.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "content on publicly accessible information systems is reviewed to ensure that it does not include CUI.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "mechanisms are in place to remove and address improper posting of CUI.",
+              "automatable": "partial"
+            }
+          }
+        }
+      }
+    },
+    "3.2": {
+      "domain": "AT",
+      "name": "Awareness and Training",
+      "practices": {
+        "3.2.1": {
+          "requirement": "Ensure that managers, systems administrators, and users of organizational information systems are made aware of the security risks associated with their activities and of the applicable policies, standards, and procedures related to the security of organizational information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request security awareness training records and completion certificates. Verify training covers CUI handling, phishing, social engineering, and organizational security policies.",
+          "objectives": {
+            "[a]": {
+              "text": "security risks associated with organizational activities involving CUI are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "policies, standards, and procedures related to the security of the system are identified.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "managers, systems administrators, and users of the system are made aware of the security risks associated with their activities.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "managers, systems administrators, and users of the system are made aware of the applicable policies, standards, and procedures related to the security of the system.",
+              "automatable": false
+            }
+          }
+        },
+        "3.2.2": {
+          "requirement": "Ensure that organizational personnel are adequately trained to carry out their assigned information security-related duties and responsibilities.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request role-based training records for IT/security staff. Verify training covers specific duties such as incident response, system administration, and security monitoring.",
+          "objectives": {
+            "[a]": {
+              "text": "information security-related duties, roles, and responsibilities are defined.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "information security-related duties, roles, and responsibilities are assigned to designated personnel.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "personnel are adequately trained to carry out their assigned information security-related duties, roles, and responsibilities.",
+              "automatable": false
+            }
+          }
+        },
+        "3.2.3": {
+          "requirement": "Provide security awareness training on recognizing and reporting potential indicators of insider threat.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request insider threat training records. Verify training includes indicators of insider threat, reporting procedures, and is completed annually by all personnel with CUI access.",
+          "objectives": {
+            "[a]": {
+              "text": "potential indicators associated with insider threats are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "security awareness training on recognizing and reporting potential indicators of insider threat is provided to managers and employees.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.3": {
+      "domain": "AU",
+      "name": "Audit and Accountability",
+      "practices": {
+        "3.3.1": {
+          "requirement": "Create and retain system audit logs and records to the extent needed to enable the monitoring, analysis, investigation, and reporting of unlawful or unauthorized system activity.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "cloudtrail",
+            "azure_monitor",
+            "gcp_audit_logs",
+            "log_retention"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "audit logs needed (i.e., event types to be logged) to enable the monitoring, analysis, investigation, and reporting of unlawful or unauthorized system activity are specified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the content of audit records needed to support monitoring, analysis, investigation, and reporting of unlawful or unauthorized system activity is defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "audit records are created (generated).",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "audit records, once created, contain the defined content.",
+              "automatable": true
+            },
+            "[e]": {
+              "text": "retention requirements for audit records are defined.",
+              "automatable": "partial"
+            },
+            "[f]": {
+              "text": "audit records are retained as defined.",
+              "automatable": true
+            }
+          }
+        },
+        "3.3.2": {
+          "requirement": "Ensure that the actions of individual system users can be uniquely traced to those users so they can be held accountable for their actions.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "user_attribution",
+            "cloudtrail_user_identity",
+            "shared_account_detection"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the content of the audit records needed to support the ability to uniquely trace users to their actions is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "audit records, once created, contain the defined content.",
+              "automatable": true
+            }
+          }
+        },
+        "3.3.3": {
+          "requirement": "Review and update logged events.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review audit logging configuration to ensure events of interest are captured. Verify periodic review process for updating which events are logged based on current threat landscape.",
+          "objectives": {
+            "[a]": {
+              "text": "a process for determining when to review logged events is defined.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "event types being logged are reviewed in accordance with the defined review process.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "event types being logged are updated based on the review.",
+              "automatable": false
+            }
+          }
+        },
+        "3.3.4": {
+          "requirement": "Alert in the event of an audit logging process failure.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "cloudwatch_alarms",
+            "azure_alerts",
+            "gcp_monitoring",
+            "log_pipeline_monitoring"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "personnel or roles to be alerted in the event of an audit logging process failure are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "types of audit logging process failures for which alert will be generated are defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "identified personnel or roles are alerted in the event of an audit logging process failure.",
+              "automatable": true
+            }
+          }
+        },
+        "3.3.5": {
+          "requirement": "Correlate audit record review, analysis, and reporting processes to support organizational processes for investigation and response to indications of unlawful, unauthorized, suspicious, or unusual activity.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "siem_integration",
+            "security_hub",
+            "sentinel",
+            "chronicle"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "audit record review, analysis, and reporting processes for investigation and response to indications of unlawful, unauthorized, suspicious, or unusual activity are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "defined audit record review, analysis, and reporting processes are correlated.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.3.6": {
+          "requirement": "Provide audit record reduction and report generation to support on-demand analysis and reporting.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "log_analytics",
+            "athena_queries",
+            "log_analytics_workspace",
+            "bigquery"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "an audit record reduction capability that supports on-demand analysis is provided.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "a report generation capability that supports on-demand reporting is provided.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.3.7": {
+          "requirement": "Provide a system capability that compares and synchronizes internal system clocks with an authoritative source to generate time stamps for audit records.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "ntp_configuration",
+            "time_sync_service",
+            "chrony"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "internal system clocks are used to generate time stamps for audit records.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "an authoritative source with which to compare and synchronize internal system clocks is specified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "internal system clocks used to generate time stamps for audit records are compared to and synchronized with the specified authoritative time source.",
+              "automatable": true
+            }
+          }
+        },
+        "3.3.8": {
+          "requirement": "Protect audit information and audit logging tools from unauthorized access, modification, and deletion.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "log_bucket_policies",
+            "log_encryption",
+            "immutable_storage",
+            "access_controls"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "audit information is protected from unauthorized access.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "audit information is protected from unauthorized modification.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "audit information is protected from unauthorized deletion.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "audit logging tools are protected from unauthorized access.",
+              "automatable": true
+            },
+            "[e]": {
+              "text": "audit logging tools are protected from unauthorized modification.",
+              "automatable": true
+            },
+            "[f]": {
+              "text": "audit logging tools are protected from unauthorized deletion.",
+              "automatable": true
+            }
+          }
+        },
+        "3.3.9": {
+          "requirement": "Limit management of audit logging functionality to a subset of privileged users.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "log_admin_roles",
+            "iam_audit_permissions",
+            "separation_of_duties"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a subset of privileged users granted access to manage audit logging functionality is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "management of audit logging functionality is limited to the defined subset of privileged users.",
+              "automatable": true
+            }
+          }
+        }
+      }
+    },
+    "3.4": {
+      "domain": "CM",
+      "name": "Configuration Management",
+      "practices": {
+        "3.4.1": {
+          "requirement": "Establish and maintain baseline configurations and inventories of organizational information systems (including hardware, software, firmware, and documentation) throughout the respective system development life cycles.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "config_recorder",
+            "resource_inventory",
+            "asset_inventory",
+            "baseline_images"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a baseline configuration is established.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the baseline configuration includes hardware, software, firmware, and documentation.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "the baseline configuration is maintained (reviewed and updated) throughout the system development life cycle.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "a system inventory is established.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "the system inventory includes hardware, software, firmware, and documentation.",
+              "automatable": false
+            },
+            "[f]": {
+              "text": "the inventory is maintained (reviewed and updated) throughout the system development life cycle.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.4.2": {
+          "requirement": "Establish and enforce security configuration settings for information technology products employed in organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "config_rules",
+            "security_benchmarks",
+            "cis_compliance",
+            "policy_assignments"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "security configuration settings for information technology products employed in the system are established and included in the baseline configuration.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "security configuration settings for information technology products employed in the system are enforced.",
+              "automatable": true
+            }
+          }
+        },
+        "3.4.3": {
+          "requirement": "Track, review, approve or disapprove, and log changes to organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "config_history",
+            "change_tracking",
+            "cloudtrail_config_changes",
+            "activity_log"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "changes to the system are tracked.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "changes to the system are reviewed.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "changes to the system are approved or disapproved.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "changes to the system are logged.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.4.4": {
+          "requirement": "Analyze the security impact of changes prior to implementation.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review change management process documentation. Verify that security impact analysis is performed as part of the change approval process before implementation.",
+          "objectives": {
+            "[a]": {
+              "text": "the security impact of changes to each organizational system is analyzed prior to implementation.",
+              "automatable": false
+            }
+          }
+        },
+        "3.4.5": {
+          "requirement": "Define, document, approve, and enforce physical and logical access restrictions associated with changes to organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "change_management_iam",
+            "deployment_roles",
+            "ci_cd_permissions",
+            "approval_gates"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "physical access restrictions associated with changes to the system are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "physical access restrictions associated with changes to the system are documented.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "physical access restrictions associated with changes to the system are approved.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "physical access restrictions associated with changes to the system are enforced.",
+              "automatable": true
+            },
+            "[e]": {
+              "text": "logical access restrictions associated with changes to the system are defined.",
+              "automatable": "partial"
+            },
+            "[f]": {
+              "text": "logical access restrictions associated with changes to the system are documented.",
+              "automatable": false
+            },
+            "[g]": {
+              "text": "logical access restrictions associated with changes to the system are approved.",
+              "automatable": "partial"
+            },
+            "[h]": {
+              "text": "logical access restrictions associated with changes to the system are enforced.",
+              "automatable": true
+            }
+          }
+        },
+        "3.4.6": {
+          "requirement": "Employ the principle of least functionality by configuring organizational information systems to provide only essential capabilities.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "unused_services",
+            "open_ports",
+            "unnecessary_software",
+            "service_hardening"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "essential system capabilities are defined based on the principle of least functionality.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the system is configured to provide only the defined essential capabilities.",
+              "automatable": true
+            }
+          }
+        },
+        "3.4.7": {
+          "requirement": "Restrict, disable, or prevent the use of nonessential programs, functions, ports, protocols, and services.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "security_groups",
+            "firewall_rules",
+            "service_restrictions",
+            "port_scanning"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "essential programs are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the use of nonessential programs is defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "the use of nonessential programs is restricted, disabled, or prevented as defined.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "essential functions are defined.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "the use of nonessential functions is defined.",
+              "automatable": "partial"
+            },
+            "[f]": {
+              "text": "the use of nonessential functions is restricted, disabled, or prevented as defined.",
+              "automatable": true
+            },
+            "[g]": {
+              "text": "essential ports are defined.",
+              "automatable": "partial"
+            },
+            "[h]": {
+              "text": "the use of nonessential ports is defined.",
+              "automatable": "partial"
+            },
+            "[i]": {
+              "text": "the use of nonessential ports is restricted, disabled, or prevented as defined.",
+              "automatable": true
+            },
+            "[j]": {
+              "text": "essential protocols are defined.",
+              "automatable": "partial"
+            },
+            "[k]": {
+              "text": "the use of nonessential protocols is defined.",
+              "automatable": "partial"
+            },
+            "[l]": {
+              "text": "the use of nonessential protocols is restricted, disabled, or prevented as defined.",
+              "automatable": true
+            },
+            "[m]": {
+              "text": "essential services are defined.",
+              "automatable": "partial"
+            },
+            "[n]": {
+              "text": "the use of nonessential services is defined.",
+              "automatable": "partial"
+            },
+            "[o]": {
+              "text": "the use of nonessential services is restricted, disabled, or prevented as defined.",
+              "automatable": true
+            }
+          }
+        },
+        "3.4.8": {
+          "requirement": "Apply deny-by-exception (blacklisting) policy to prevent the use of unauthorized software or deny-all, permit-by-exception (whitelisting) policy to allow the execution of authorized software.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "application_whitelisting",
+            "applocker",
+            "software_restrictions",
+            "binary_authorization"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a policy specifying whether whitelisting or blacklisting is to be implemented is specified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the software allowed to execute under whitelisting or denied use under blacklisting is specified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "whitelisting to allow the execution of authorized software or blacklisting to prevent the use of unauthorized software is implemented as specified.",
+              "automatable": true
+            }
+          }
+        },
+        "3.4.9": {
+          "requirement": "Control and monitor user-installed software.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "software_inventory",
+            "package_management",
+            "install_restrictions",
+            "endpoint_management"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a policy for controlling the installation of software by users is established.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "installation of software by users is controlled based on the established policy.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "installation of software by users is monitored.",
+              "automatable": true
+            }
+          }
+        }
+      }
+    },
+    "3.5": {
+      "domain": "IA",
+      "name": "Identification and Authentication",
+      "practices": {
+        "3.5.1": {
+          "requirement": "Identify information system users, processes acting on behalf of users, or devices.",
+          "level": "L1",
+          "far_mapping": "b.1.v",
+          "automated": true,
+          "check_areas": [
+            "user_inventory",
+            "service_accounts",
+            "device_identity",
+            "certificate_management"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "system users are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "processes acting on behalf of users are identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "devices accessing the system are identified.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.5.2": {
+          "requirement": "Authenticate (or verify) the identities of those users, processes, or devices, as a prerequisite to allowing access to organizational information systems.",
+          "level": "L1",
+          "far_mapping": "b.1.vi",
+          "automated": true,
+          "check_areas": [
+            "authentication_mechanisms",
+            "mfa_configuration",
+            "api_authentication"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the identity of each user is authenticated or verified as a prerequisite to system access.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the identity of each process acting on behalf of a user is authenticated or verified as a prerequisite to system access.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "the identity of each device accessing or connecting to the system is authenticated or verified as a prerequisite to system access.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.5.3": {
+          "requirement": "Use multifactor authentication for local and network access to privileged accounts and for network access to non-privileged accounts.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "mfa_enforcement",
+            "privileged_mfa",
+            "console_mfa",
+            "conditional_access"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "privileged accounts are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "multifactor authentication is implemented for local access to privileged accounts.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "multifactor authentication is implemented for network access to privileged accounts.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "multifactor authentication is implemented for network access to non-privileged accounts.",
+              "automatable": true
+            }
+          }
+        },
+        "3.5.4": {
+          "requirement": "Employ replay-resistant authentication mechanisms for network access to privileged and non-privileged accounts.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "token_replay_protection",
+            "oauth_nonce",
+            "kerberos",
+            "fido2"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "replay-resistant authentication mechanisms are implemented for all network account access to privileged and non-privileged accounts.",
+              "automatable": true
+            }
+          }
+        },
+        "3.5.5": {
+          "requirement": "Prevent reuse of identifiers for a defined period.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "identifier_reuse_policy",
+            "account_naming",
+            "deprovisioning_workflow"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a period within which identifiers cannot be reused is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "reuse of identifiers is prevented within the defined period.",
+              "automatable": true
+            }
+          }
+        },
+        "3.5.6": {
+          "requirement": "Disable identifiers after a defined period of inactivity.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "inactive_user_detection",
+            "credential_report",
+            "last_login_audit"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a period of inactivity after which an identifier is disabled is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "identifiers are disabled after the defined period of inactivity.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.5.7": {
+          "requirement": "Enforce a minimum password complexity and change of characters when new passwords are created.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "password_policy",
+            "complexity_requirements",
+            "password_history"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "password complexity requirements are defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "password change of character requirements are defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "minimum password complexity requirements as defined are enforced when new passwords are created.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "minimum password change of character requirements as defined are enforced when new passwords are created.",
+              "automatable": true
+            }
+          }
+        },
+        "3.5.8": {
+          "requirement": "Prohibit password reuse for a specified number of generations.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "password_history",
+            "password_reuse_prevention"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the number of generations during which a password cannot be reused is specified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "reuse of passwords is prohibited during the specified number of generations.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.5.9": {
+          "requirement": "Allow temporary password use for system logons with an immediate change to a permanent password.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "temporary_password_policy",
+            "force_password_change",
+            "initial_login_reset"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "an immediate change to a permanent password is required when a temporary password is used for system logon.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.5.10": {
+          "requirement": "Store and transmit only cryptographically-protected passwords.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "password_hashing",
+            "tls_for_auth",
+            "credential_storage_encryption"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "passwords are cryptographically protected in storage.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "passwords are cryptographically protected in transit.",
+              "automatable": true
+            }
+          }
+        },
+        "3.5.11": {
+          "requirement": "Obscure feedback of authentication information.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Verify that authentication interfaces mask password input. Check that error messages do not reveal whether the username or password was incorrect.",
+          "objectives": {
+            "[a]": {
+              "text": "authentication information is obscured during the authentication process.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.6": {
+      "domain": "IR",
+      "name": "Incident Response",
+      "practices": {
+        "3.6.1": {
+          "requirement": "Establish an operational incident-handling capability for organizational information systems that includes preparation, detection, analysis, containment, recovery, and user response activities.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "guardduty",
+            "security_center",
+            "scc",
+            "incident_response_tools",
+            "playbooks"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "an operational incident-handling capability is established.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "the operational incident-handling capability includes preparation.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "the operational incident-handling capability includes detection.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "the operational incident-handling capability includes analysis.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "the operational incident-handling capability includes containment.",
+              "automatable": "partial"
+            },
+            "[f]": {
+              "text": "the operational incident-handling capability includes recovery.",
+              "automatable": "partial"
+            },
+            "[g]": {
+              "text": "the operational incident-handling capability includes user response activities.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.6.2": {
+          "requirement": "Track, document, and report incidents to designated officials and/or authorities both internal and external to the organization.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review incident tracking system and reporting procedures. Verify incident reports include required data elements and are communicated to appropriate authorities within required timeframes.",
+          "objectives": {
+            "[a]": {
+              "text": "incidents are tracked.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "incidents are documented.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "authorities to whom incidents are to be reported are identified.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "organizational officials to whom incidents are to be reported are identified.",
+              "automatable": false
+            },
+            "[e]": {
+              "text": "identified authorities are notified of incidents.",
+              "automatable": false
+            },
+            "[f]": {
+              "text": "identified organizational officials are notified of incidents.",
+              "automatable": false
+            }
+          }
+        },
+        "3.6.3": {
+          "requirement": "Test the organizational incident response capability.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request records of incident response tests and tabletop exercises. Verify testing occurs at least annually and results are documented with lessons learned.",
+          "objectives": {
+            "[a]": {
+              "text": "the incident response capability is tested.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.7": {
+      "domain": "MA",
+      "name": "Maintenance",
+      "practices": {
+        "3.7.1": {
+          "requirement": "Perform maintenance on organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "patch_management",
+            "ssm_patch_baseline",
+            "update_management",
+            "os_patch_compliance"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "system maintenance is performed.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.7.2": {
+          "requirement": "Provide controls on the tools, techniques, mechanisms, and personnel used to conduct information system maintenance.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review maintenance tool inventory and authorization records. Verify that maintenance personnel are vetted and that maintenance tools are inspected and sanitized before use.",
+          "objectives": {
+            "[a]": {
+              "text": "tools used to conduct system maintenance are controlled.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "techniques used to conduct system maintenance are controlled.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "mechanisms used to conduct system maintenance are controlled.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "personnel used to conduct system maintenance are controlled.",
+              "automatable": false
+            }
+          }
+        },
+        "3.7.3": {
+          "requirement": "Ensure equipment removed for off-site maintenance is sanitized of any CUI.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review media sanitization procedures for equipment sent off-site. Verify sanitization records exist for all equipment removed for maintenance.",
+          "objectives": {
+            "[a]": {
+              "text": "equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI.",
+              "automatable": false
+            }
+          }
+        },
+        "3.7.4": {
+          "requirement": "Check media containing diagnostic and test programs for malicious code before the media are used in organizational information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review procedures for scanning maintenance media. Verify that anti-malware scans are performed on all diagnostic media before connection to production systems.",
+          "objectives": {
+            "[a]": {
+              "text": "media containing diagnostic and test programs are checked for malicious code before being used in organizational systems that process, store, or transmit CUI.",
+              "automatable": false
+            }
+          }
+        },
+        "3.7.5": {
+          "requirement": "Require multifactor authentication to establish nonlocal maintenance sessions via external network connections and terminate such connections when nonlocal maintenance is complete.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "remote_maintenance_mfa",
+            "session_termination",
+            "vpn_mfa"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "multifactor authentication is required to establish nonlocal maintenance sessions via external network connections.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "nonlocal maintenance sessions established via external network connections are terminated when nonlocal maintenance is complete.",
+              "automatable": true
+            }
+          }
+        },
+        "3.7.6": {
+          "requirement": "Supervise the maintenance activities of maintenance personnel without required access authorization.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review escort and supervision procedures for maintenance personnel. Verify that session recording or direct observation is used for uncleared maintenance staff.",
+          "objectives": {
+            "[a]": {
+              "text": "maintenance personnel without required access authorization are supervised during maintenance activities.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.8": {
+      "domain": "MP",
+      "name": "Media Protection",
+      "practices": {
+        "3.8.1": {
+          "requirement": "Protect (i.e., physically control and securely store) information system media containing CUI, both paper and digital.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review media storage and handling procedures. Verify physical security controls for media storage areas and digital media access controls.",
+          "objectives": {
+            "[a]": {
+              "text": "paper media containing CUI is physically controlled.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "digital media containing CUI is physically controlled.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "paper media containing CUI is securely stored.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "digital media containing CUI is securely stored.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.2": {
+          "requirement": "Limit access to CUI on information system media to authorized users.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "storage_access_policies",
+            "bucket_policies",
+            "blob_access",
+            "disk_encryption_keys"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "access to CUI on system media is limited to authorized users.",
+              "automatable": true
+            }
+          }
+        },
+        "3.8.3": {
+          "requirement": "Sanitize or destroy information system media containing CUI before disposal or release for reuse.",
+          "level": "L1",
+          "far_mapping": "b.1.vii",
+          "automated": false,
+          "manual_guidance": "Review media sanitization procedures and records. Verify NIST 800-88 compliant sanitization methods are used. Check disposal vendor certifications and certificates of destruction.",
+          "objectives": {
+            "[a]": {
+              "text": "system media containing CUI is sanitized or destroyed before disposal.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "system media containing CUI is sanitized before it is released for reuse.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.4": {
+          "requirement": "Mark media with necessary CUI markings and distribution limitations.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Verify CUI marking procedures exist and are followed. Check that digital and physical media containing CUI are marked with appropriate CUI designations and distribution statements.",
+          "objectives": {
+            "[a]": {
+              "text": "media containing CUI is marked with applicable CUI markings.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "media containing CUI is marked with distribution limitations.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.5": {
+          "requirement": "Control access to media containing CUI and maintain accountability for media during transport outside of controlled areas.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review media transport procedures and chain-of-custody records. Verify encryption requirements for media in transit and accountability tracking mechanisms.",
+          "objectives": {
+            "[a]": {
+              "text": "access to media containing CUI is controlled.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "accountability for media containing CUI is maintained during transport outside of controlled areas.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.6": {
+          "requirement": "Implement cryptographic mechanisms to protect the confidentiality of CUI stored on digital media during transport unless otherwise protected by alternative physical safeguards.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "encryption_at_rest",
+            "volume_encryption",
+            "kms_key_management",
+            "ebs_encryption"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the confidentiality of CUI stored on digital media is protected during transport using cryptographic mechanisms or alternative physical safeguards.",
+              "automatable": true
+            }
+          }
+        },
+        "3.8.7": {
+          "requirement": "Control the use of removable media on information system components.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review removable media policies and endpoint DLP configurations. Verify USB device restrictions and authorized device whitelists.",
+          "objectives": {
+            "[a]": {
+              "text": "the use of removable media on system components containing CUI is controlled.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.8": {
+          "requirement": "Prohibit the use of portable storage devices when such devices have no identifiable owner.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review portable storage device policies. Verify that all authorized portable storage devices are registered and assigned to specific individuals.",
+          "objectives": {
+            "[a]": {
+              "text": "the use of portable storage devices is prohibited when such devices have no identifiable owner.",
+              "automatable": false
+            }
+          }
+        },
+        "3.8.9": {
+          "requirement": "Protect the confidentiality of backup CUI at storage locations.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "backup_encryption",
+            "backup_access_controls",
+            "backup_storage_location",
+            "cross_region_backup"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the confidentiality of backup CUI is protected at storage locations.",
+              "automatable": true
+            }
+          }
+        }
+      }
+    },
+    "3.9": {
+      "domain": "PS",
+      "name": "Personnel Security",
+      "practices": {
+        "3.9.1": {
+          "requirement": "Screen individuals prior to authorizing access to organizational information systems containing CUI.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review personnel screening procedures and records. Verify background checks are completed before granting access to CUI systems. Check screening criteria meet organizational and regulatory requirements.",
+          "objectives": {
+            "[a]": {
+              "text": "individuals are screened prior to authorizing access to organizational systems.",
+              "automatable": false
+            }
+          }
+        },
+        "3.9.2": {
+          "requirement": "Ensure that organizational information systems containing CUI are protected during and after personnel actions such as terminations and transfers.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review termination and transfer procedures. Verify that access is revoked promptly upon termination, credentials are disabled, and equipment/media are recovered. Check for automated deprovisioning workflows.",
+          "objectives": {
+            "[a]": {
+              "text": "a policy and/or process for terminating system access authorization and any credentials coincident with personnel actions is established.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "system access and credentials are terminated consistent with personnel actions such as termination or transfer.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "the system is protected during and after personnel transfer actions.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.10": {
+      "domain": "PE",
+      "name": "Physical Protection",
+      "practices": {
+        "3.10.1": {
+          "requirement": "Limit physical access to organizational information systems, equipment, and the respective operating environments to authorized individuals.",
+          "level": "L1",
+          "far_mapping": "b.1.viii",
+          "automated": false,
+          "manual_guidance": "Review physical access control mechanisms (badge readers, biometrics, locks). Verify authorized access lists are current and physical access logs are maintained.",
+          "objectives": {
+            "[a]": {
+              "text": "authorized individuals allowed physical access are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "physical access to organizational systems is limited to authorized individuals.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "physical access to equipment is limited to authorized individuals.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "physical access to operating environments is limited to authorized individuals.",
+              "automatable": false
+            }
+          }
+        },
+        "3.10.2": {
+          "requirement": "Protect and monitor the physical facility and support infrastructure for organizational information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review physical security monitoring systems (cameras, alarms, environmental controls). Verify monitoring coverage of server rooms, network closets, and other sensitive areas.",
+          "objectives": {
+            "[a]": {
+              "text": "the physical facility where that system resides is protected.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "the support infrastructure for that system is protected.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "the physical facility where that system resides is monitored.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "the support infrastructure for that system is monitored.",
+              "automatable": false
+            }
+          }
+        },
+        "3.10.3": {
+          "requirement": "Escort visitors and monitor visitor activity.",
+          "level": "L1",
+          "far_mapping": "b.1.ix",
+          "automated": false,
+          "manual_guidance": "Review visitor management procedures. Verify visitor logs, escort requirements, and badge/identification procedures. Check that visitors are escorted in areas with CUI access.",
+          "objectives": {
+            "[a]": {
+              "text": "visitors are escorted.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "visitor activity is monitored.",
+              "automatable": false
+            }
+          }
+        },
+        "3.10.4": {
+          "requirement": "Maintain audit logs of physical access.",
+          "level": "L1",
+          "far_mapping": "b.1.x",
+          "automated": false,
+          "manual_guidance": "Review physical access logs and retention periods. Verify logs capture entry/exit times, individual identity, and are retained per organizational policy.",
+          "objectives": {
+            "[a]": {
+              "text": "audit logs of physical access are maintained.",
+              "automatable": false
+            }
+          }
+        },
+        "3.10.5": {
+          "requirement": "Control and manage physical access devices.",
+          "level": "L1",
+          "far_mapping": "b.1.xi",
+          "automated": false,
+          "manual_guidance": "Review inventory and management of physical access devices (keys, badges, combinations, PINs). Verify devices are inventoried, changed when compromised, and deactivated for separated personnel.",
+          "objectives": {
+            "[a]": {
+              "text": "physical access devices are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "physical access devices are controlled.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "physical access devices are managed.",
+              "automatable": false
+            }
+          }
+        },
+        "3.10.6": {
+          "requirement": "Enforce safeguarding measures for CUI at alternate work sites.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review telework and alternate work site policies. Verify requirements for securing CUI at home offices and temporary work locations including physical security and network requirements.",
+          "objectives": {
+            "[a]": {
+              "text": "safeguarding measures for CUI are defined for alternate work sites.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "safeguarding measures for CUI are enforced for alternate work sites.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.11": {
+      "domain": "RA",
+      "name": "Risk Assessment",
+      "practices": {
+        "3.11.1": {
+          "requirement": "Periodically assess the risk to organizational operations (including mission, functions, image, or reputation), organizational assets, and individuals, resulting from the operation of organizational information systems and the associated processing, storage, or transmission of CUI.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request the most recent risk assessment report. Verify it covers CUI systems, is updated at least annually, and addresses threats, vulnerabilities, likelihood, and impact.",
+          "objectives": {
+            "[a]": {
+              "text": "the frequency to assess risk to organizational operations, organizational assets, and individuals is defined.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency.",
+              "automatable": false
+            }
+          }
+        },
+        "3.11.2": {
+          "requirement": "Scan for vulnerabilities in organizational information systems and applications periodically and when new vulnerabilities affecting those systems and applications are identified.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "vulnerability_scanner",
+            "inspector",
+            "qualys",
+            "defender_vulnerability",
+            "web_security_scanner"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the frequency to scan for vulnerabilities in an organizational system and its applications that process, store, or transmit CUI is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "vulnerability scans are performed in an organizational system that processes, stores, or transmits CUI with the defined frequency.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "vulnerability scans are performed in an application that contains CUI with the defined frequency.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "vulnerability scans are performed in an organizational system that processes, stores, or transmits CUI when new vulnerabilities are identified.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "vulnerability scans are performed in an application that contains CUI when new vulnerabilities are identified.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.11.3": {
+          "requirement": "Remediate vulnerabilities in accordance with risk assessments.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "patch_compliance",
+            "vulnerability_remediation",
+            "ssm_compliance",
+            "update_management"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "vulnerabilities are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "vulnerabilities are remediated in accordance with risk assessments.",
+              "automatable": "partial"
+            }
+          }
+        }
+      }
+    },
+    "3.12": {
+      "domain": "CA",
+      "name": "Security Assessment",
+      "practices": {
+        "3.12.1": {
+          "requirement": "Periodically assess the security controls in organizational information systems to determine if the controls are effective in their application.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request security assessment reports. Verify assessments are conducted at least annually, cover all security controls, and identify control effectiveness with findings and recommendations.",
+          "objectives": {
+            "[a]": {
+              "text": "the frequency of security control assessments is defined.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "security controls are assessed with the defined frequency to determine if the controls are effective in their application.",
+              "automatable": false
+            }
+          }
+        },
+        "3.12.2": {
+          "requirement": "Develop and implement plans of action designed to correct deficiencies and reduce or eliminate vulnerabilities in organizational information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request the Plan of Action and Milestones (POA&M). Verify it documents known deficiencies, planned corrective actions, responsible parties, and target completion dates.",
+          "objectives": {
+            "[a]": {
+              "text": "deficiencies and vulnerabilities to be addressed by the plan of action are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "a plan of action is developed to correct identified deficiencies and reduce or eliminate identified vulnerabilities.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "the plan of action is implemented to correct identified deficiencies and reduce or eliminate identified vulnerabilities.",
+              "automatable": false
+            }
+          }
+        },
+        "3.12.3": {
+          "requirement": "Monitor security controls on an ongoing basis to ensure the continued effectiveness of the controls.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "security_hub",
+            "security_center",
+            "scc",
+            "continuous_monitoring",
+            "compliance_dashboards"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "security controls are monitored on an ongoing basis to ensure the continued effectiveness of those controls.",
+              "automatable": true
+            }
+          }
+        },
+        "3.12.4": {
+          "requirement": "Develop, document, and periodically update system security plans that describe system boundaries, system environments of operation, how security requirements are implemented, and the relationships with or connections to other systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Request the System Security Plan (SSP). Verify it documents system boundaries, operating environment, security control implementation, and interconnections. Check for annual review and updates.",
+          "objectives": {
+            "[a]": {
+              "text": "a system security plan is developed.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "the system boundary is described and documented in the system security plan.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "the system environment of operation is described and documented in the system security plan.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "the security requirements identified and approved by the designated authority as non-applicable are identified.",
+              "automatable": false
+            },
+            "[e]": {
+              "text": "the method of security requirement implementation is described and documented in the system security plan.",
+              "automatable": false
+            },
+            "[f]": {
+              "text": "the relationship with or connection to other systems is described and documented in the system security plan.",
+              "automatable": false
+            },
+            "[g]": {
+              "text": "the frequency to update the system security plan is defined.",
+              "automatable": false
+            }
+          }
+        }
+      }
+    },
+    "3.13": {
+      "domain": "SC",
+      "name": "System and Communications Protection",
+      "practices": {
+        "3.13.1": {
+          "requirement": "Monitor, control, and protect organizational communications (i.e., information transmitted or received by organizational information systems) at the external boundaries and key internal boundaries of the information systems.",
+          "level": "L1",
+          "far_mapping": "b.1.xii",
+          "automated": true,
+          "check_areas": [
+            "network_firewalls",
+            "waf",
+            "ids_ips",
+            "vpc_flow_logs",
+            "nsg_flow_logs"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the external system boundary is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "key internal system boundaries are defined.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "communications are monitored at the external system boundary.",
+              "automatable": true
+            },
+            "[d]": {
+              "text": "communications are monitored at key internal boundaries.",
+              "automatable": true
+            },
+            "[e]": {
+              "text": "communications are controlled at the external system boundary.",
+              "automatable": true
+            },
+            "[f]": {
+              "text": "communications are controlled at key internal boundaries.",
+              "automatable": true
+            },
+            "[g]": {
+              "text": "communications are protected at the external system boundary.",
+              "automatable": true
+            },
+            "[h]": {
+              "text": "communications are protected at key internal boundaries.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.2": {
+          "requirement": "Employ architectural designs, software development techniques, and systems engineering principles that promote effective information security within organizational information systems.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review system architecture documentation. Verify defense-in-depth design, network segmentation, and secure development practices are documented and implemented.",
+          "objectives": {
+            "[a]": {
+              "text": "architectural designs that promote effective information security are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "software development techniques that promote effective information security are identified.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "systems engineering principles that promote effective information security are identified.",
+              "automatable": false
+            },
+            "[d]": {
+              "text": "identified architectural designs that promote effective information security are employed.",
+              "automatable": false
+            },
+            "[e]": {
+              "text": "identified software development techniques that promote effective information security are employed.",
+              "automatable": false
+            },
+            "[f]": {
+              "text": "identified systems engineering principles that promote effective information security are employed.",
+              "automatable": false
+            }
+          }
+        },
+        "3.13.3": {
+          "requirement": "Separate user functionality from information system management functionality.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "network_segmentation",
+            "management_network_isolation",
+            "bastion_hosts",
+            "admin_vlan"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "user functionality is identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "system management functionality is identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "user functionality is separated from system management functionality.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.13.4": {
+          "requirement": "Prevent unauthorized and unintended information transfer via shared system resources.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "resource_isolation",
+            "container_isolation",
+            "shared_tenancy_controls",
+            "memory_protection"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "unauthorized and unintended information transfer via shared system resources is prevented.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.5": {
+          "requirement": "Implement subnetworks for publicly accessible system components that are physically or logically separated from internal networks.",
+          "level": "L1",
+          "far_mapping": "b.1.xiii",
+          "automated": true,
+          "check_areas": [
+            "public_subnet_isolation",
+            "dmz_configuration",
+            "nat_gateway",
+            "application_gateway"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "publicly accessible system components are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "subnetworks for publicly accessible system components are physically or logically separated from internal networks.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.13.6": {
+          "requirement": "Deny network communications traffic by default and allow network communications traffic by exception (i.e., deny all, permit by exception).",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "default_deny_rules",
+            "nacl_configuration",
+            "nsg_default_rules",
+            "firewall_policies"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "network communications traffic is denied by default.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "network communications traffic is allowed by exception.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.13.7": {
+          "requirement": "Prevent remote devices from simultaneously establishing non-remote connections with organizational information systems and communicating via some other connection to resources in external networks (i.e., split tunneling).",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "vpn_split_tunnel",
+            "client_vpn_config",
+            "network_policy"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "remote devices are prevented from simultaneously establishing non-remote connections with the system and communicating via some other connection to resources in external networks (i.e., split tunneling).",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.8": {
+          "requirement": "Implement cryptographic mechanisms to prevent unauthorized disclosure of CUI during transmission unless otherwise protected by alternative physical safeguards.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "tls_configuration",
+            "certificate_management",
+            "encryption_in_transit",
+            "ssl_policy"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "cryptographic mechanisms intended to prevent unauthorized disclosure of CUI are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "alternative physical safeguards intended to prevent unauthorized disclosure of CUI are identified.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "either cryptographic mechanisms or alternative physical safeguards are implemented to prevent unauthorized disclosure of CUI during transmission.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.9": {
+          "requirement": "Terminate network connections associated with communications sessions at the end of the sessions or after a defined period of inactivity.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "session_timeout",
+            "connection_draining",
+            "idle_timeout_config",
+            "load_balancer_timeout"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "a period of inactivity to terminate network connections associated with communications sessions is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "network connections associated with communications sessions are terminated at the end of the sessions.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "network connections associated with communications sessions are terminated after the defined period of inactivity.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.10": {
+          "requirement": "Establish and manage cryptographic keys for cryptography employed in organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "kms_key_rotation",
+            "key_management",
+            "certificate_rotation",
+            "key_vault"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "cryptographic keys are established whenever cryptography is employed.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "cryptographic keys are managed whenever cryptography is employed.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.11": {
+          "requirement": "Employ FIPS-validated cryptography when used to protect the confidentiality of CUI.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "fips_endpoints",
+            "fips_mode",
+            "cryptographic_modules",
+            "tls_cipher_suites"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "FIPS-validated cryptography is employed to protect the confidentiality of CUI.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.12": {
+          "requirement": "Prohibit remote activation of collaborative computing devices and provide indication of devices in use to users present at the device.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review policies for collaborative computing devices (cameras, microphones, conferencing systems). Verify remote activation is disabled and indicators of active use are enabled.",
+          "objectives": {
+            "[a]": {
+              "text": "collaborative computing devices are identified.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "collaborative computing devices provide indication to users of devices in use.",
+              "automatable": false
+            },
+            "[c]": {
+              "text": "remote activation of collaborative computing devices is prohibited.",
+              "automatable": false
+            }
+          }
+        },
+        "3.13.13": {
+          "requirement": "Control and monitor the use of mobile code.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "waf_rules",
+            "content_security_policy",
+            "script_restrictions",
+            "browser_policies"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "use of mobile code is controlled.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "use of mobile code is monitored.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.14": {
+          "requirement": "Control and monitor the use of Voice over Internet Protocol (VoIP) technologies.",
+          "level": "L2",
+          "automated": false,
+          "manual_guidance": "Review VoIP security policies and configurations. Verify VoIP traffic is encrypted, segregated on dedicated VLANs, and monitored for anomalous activity.",
+          "objectives": {
+            "[a]": {
+              "text": "use of Voice over Internet Protocol (VoIP) technologies is controlled.",
+              "automatable": false
+            },
+            "[b]": {
+              "text": "use of Voice over Internet Protocol (VoIP) technologies is monitored.",
+              "automatable": false
+            }
+          }
+        },
+        "3.13.15": {
+          "requirement": "Protect the authenticity of communications sessions.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "certificate_validation",
+            "dnssec",
+            "session_tokens",
+            "mutual_tls"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the authenticity of communications sessions is protected.",
+              "automatable": true
+            }
+          }
+        },
+        "3.13.16": {
+          "requirement": "Protect the confidentiality of CUI at rest.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "encryption_at_rest",
+            "volume_encryption",
+            "database_encryption",
+            "storage_encryption"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the confidentiality of CUI at rest is protected.",
+              "automatable": true
+            }
+          }
+        }
+      }
+    },
+    "3.14": {
+      "domain": "SI",
+      "name": "System and Information Integrity",
+      "practices": {
+        "3.14.1": {
+          "requirement": "Identify, report, and correct information and information system flaws in a timely manner.",
+          "level": "L1",
+          "far_mapping": "b.1.xiv",
+          "automated": true,
+          "check_areas": [
+            "patch_management",
+            "vulnerability_scanning",
+            "ssm_compliance",
+            "update_management"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the time within which to identify system flaws is specified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "system flaws are identified within the specified time frame.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "the time within which to report system flaws is specified.",
+              "automatable": "partial"
+            },
+            "[d]": {
+              "text": "system flaws are reported within the specified time frame.",
+              "automatable": "partial"
+            },
+            "[e]": {
+              "text": "the time within which to correct system flaws is specified.",
+              "automatable": "partial"
+            },
+            "[f]": {
+              "text": "system flaws are corrected within the specified time frame.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.14.2": {
+          "requirement": "Provide protection from malicious code at appropriate locations within organizational information systems.",
+          "level": "L1",
+          "far_mapping": "b.1.xv",
+          "automated": true,
+          "check_areas": [
+            "antimalware",
+            "endpoint_protection",
+            "guardduty_malware",
+            "defender_endpoint"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "designated locations for malicious code protection are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "protection from malicious code at designated locations is provided.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.14.3": {
+          "requirement": "Monitor information system security alerts and advisories and take action in response.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "security_hub",
+            "security_center",
+            "scc_notifications",
+            "alert_configuration"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "response actions to system security alerts and advisories are identified.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "system security alerts and advisories are monitored.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "actions in response to system security alerts and advisories are taken.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.14.4": {
+          "requirement": "Update malicious code protection mechanisms when new releases are available.",
+          "level": "L1",
+          "far_mapping": "b.1.xvi",
+          "automated": true,
+          "check_areas": [
+            "antimalware_updates",
+            "signature_currency",
+            "auto_update_config"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "malicious code protection mechanisms are updated when new releases are available.",
+              "automatable": true
+            }
+          }
+        },
+        "3.14.5": {
+          "requirement": "Perform periodic scans of the information system and real-time scans of files from external sources as files are downloaded, opened, or executed.",
+          "level": "L1",
+          "far_mapping": "b.1.xvii",
+          "automated": true,
+          "check_areas": [
+            "scheduled_scans",
+            "real_time_protection",
+            "malware_scanning",
+            "object_scanning"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the frequency for malicious code scans is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "malicious code scans are performed with the defined frequency.",
+              "automatable": "partial"
+            },
+            "[c]": {
+              "text": "real-time malicious code scans of files from external sources as files are downloaded, opened, or executed are performed.",
+              "automatable": "partial"
+            }
+          }
+        },
+        "3.14.6": {
+          "requirement": "Monitor organizational information systems, including inbound and outbound communications traffic, to detect attacks and indicators of potential attacks.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "ids_ips",
+            "network_monitoring",
+            "traffic_analysis",
+            "anomaly_detection"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "the system is monitored to detect attacks and indicators of potential attacks.",
+              "automatable": true
+            },
+            "[b]": {
+              "text": "inbound communications traffic is monitored to detect attacks and indicators of potential attacks.",
+              "automatable": true
+            },
+            "[c]": {
+              "text": "outbound communications traffic is monitored to detect attacks and indicators of potential attacks.",
+              "automatable": true
+            }
+          }
+        },
+        "3.14.7": {
+          "requirement": "Identify unauthorized use of organizational information systems.",
+          "level": "L2",
+          "automated": true,
+          "check_areas": [
+            "anomaly_detection",
+            "unauthorized_access_alerts",
+            "baseline_deviation",
+            "ueba"
+          ],
+          "objectives": {
+            "[a]": {
+              "text": "authorized use of the system is defined.",
+              "automatable": "partial"
+            },
+            "[b]": {
+              "text": "unauthorized use of the system is identified.",
+              "automatable": "partial"
+            }
+          }
+        }
+      }
+    }
+  },
+  "far_practices": [
+    "b.1.i - Limit information system access to authorized users",
+    "b.1.ii - Limit information system access to authorized functions",
+    "b.1.iii - Verify and control/limit connections to external systems",
+    "b.1.iv - Control information posted or processed on publicly accessible systems",
+    "b.1.v - Identify information system users, processes, or devices",
+    "b.1.vi - Authenticate identities before allowing access",
+    "b.1.vii - Sanitize or destroy information system media before disposal or reuse",
+    "b.1.viii - Limit physical access to organizational information systems",
+    "b.1.ix - Escort visitors and monitor visitor activity",
+    "b.1.x - Maintain audit logs of physical access",
+    "b.1.xi - Control and manage physical access devices",
+    "b.1.xii - Monitor, control, and protect organizational communications at external boundaries",
+    "b.1.xiii - Implement subnetworks for publicly accessible system components",
+    "b.1.xiv - Identify, report, and correct information and information system flaws",
+    "b.1.xv - Provide protection from malicious code at appropriate locations",
+    "b.1.xvi - Update malicious code protection mechanisms when new releases are available",
+    "b.1.xvii - Perform periodic scans of the information system and real-time scans of files from external sources"
+  ]
+}
