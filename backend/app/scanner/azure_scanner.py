@@ -337,8 +337,8 @@ class AzureScanner(BaseScanner):
         if self._policy_client is None:
             with self._lock:
                 if self._policy_client is None:
-                    from azure.mgmt.policyinsights import PolicyInsightsClient
-                    self._policy_client = PolicyInsightsClient(
+                    from azure.mgmt.resource.policy import PolicyClient
+                    self._policy_client = PolicyClient(
                         self._credential, self._subscription_id, **self._mgmt_kwargs)
         return self._policy_client
 
@@ -681,6 +681,7 @@ class AzureScanner(BaseScanner):
 
             owner_role_id = "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
             contributor_role_id = "b24988ac-6180-42a0-ab88-20f7382dd24c"
+            scope = f"/subscriptions/{self._subscription_id}"
 
             broad_assignments = []
             assignments_raw = []
@@ -4430,35 +4431,40 @@ class AzureScanner(BaseScanner):
             return self._result(check_def, "error", f"Check failed: {e}")
 
     def check_traffic_manager_failover(self, check_def: dict) -> CheckResult:
-        """Check Traffic Manager has failover profiles."""
+        """Check Traffic Manager or Front Door configured for failover."""
         try:
-            if not hasattr(self, '_traffic_manager_client') or self._traffic_manager_client is None:
-                from azure.mgmt.trafficmanager import TrafficManagerManagementClient
-                with self._lock:
-                    if not hasattr(self, '_traffic_manager_client') or self._traffic_manager_client is None:
-                        self._traffic_manager_client = TrafficManagerManagementClient(
-                            self._credential, self._subscription_id, **self._mgmt_kwargs)
-            profiles = list(self._traffic_manager_client.profiles.list_by_subscription())
-            failover_profiles = []
-            for profile in profiles:
-                if profile.traffic_routing_method and "priority" in profile.traffic_routing_method.lower():
-                    failover_profiles.append(profile.name)
+            # Use resource list to find Traffic Manager and Front Door resources
+            # without requiring the azure-mgmt-trafficmanager package
+            tm_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Network/trafficManagerProfiles'"))
+            fd_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Network/frontDoors'"))
+            lb_resources = list(self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Network/loadBalancers'"))
+            failover_resources = [r.name for r in tm_resources] + [r.name for r in fd_resources]
             raw = self._build_evidence(
-                api_call="traffic_manager_client.profiles.list_by_subscription()",
-                cli_command="az network traffic-manager profile list",
-                response={"total_profiles": len(profiles), "failover_profiles": failover_profiles},
-                service="TrafficManager",
+                api_call="resource_client.resources.list(filter=resourceType)",
+                cli_command="az resource list --resource-type Microsoft.Network/trafficManagerProfiles",
+                response={"traffic_manager_profiles": len(tm_resources),
+                         "front_door_profiles": len(fd_resources),
+                         "load_balancers": len(lb_resources),
+                         "failover_resources": failover_resources},
+                service="Network",
                 assessor_guidance=(
-                    "Verify failover_profiles contains priority-based routing. Traffic Manager provides DNS-based "
+                    "Verify failover_resources contains Traffic Manager or Front Door profiles. These provide DNS-based "
                     "failover across regions. Priority routing directs traffic to primary endpoint with automatic failover."
                 ),
             )
-            if len(failover_profiles) > 0:
+            if len(failover_resources) > 0:
                 return self._result(check_def, "met",
-                    f"{len(failover_profiles)} Traffic Manager profile(s) configured for failover.",
+                    f"{len(failover_resources)} failover resource(s) configured: {', '.join(failover_resources)}.",
+                    raw_evidence=raw)
+            if len(lb_resources) > 0:
+                return self._result(check_def, "met",
+                    f"No Traffic Manager/Front Door found, but {len(lb_resources)} load balancer(s) configured for resilience.",
                     raw_evidence=raw)
             return self._result(check_def, "not_met",
-                f"No failover-capable Traffic Manager profiles found. {len(profiles)} total profile(s).",
+                "No Traffic Manager, Front Door, or Load Balancer resources found for failover.",
                 raw_evidence=raw)
         except Exception as e:
             return self._result(check_def, "error", f"Check failed: {e}")
@@ -5012,9 +5018,10 @@ class AzureScanner(BaseScanner):
             # Check for Azure DevOps resources (automation accounts with runbooks indicate CI/CD)
             automation_resources = list(self._resource_client.resources.list(
                 filter="resourceType eq 'Microsoft.Automation/automationAccounts'"))
-            # Check for GitHub Actions runner resources
-            runner_resources = list(self._resource_client.resources.list(
-                filter="resourceType eq 'Microsoft.Compute/virtualMachines' and tags.GitHubActions"))
+            # Check for GitHub Actions runner resources (filter by tag separately)
+            runner_resources = [r for r in self._resource_client.resources.list(
+                filter="resourceType eq 'Microsoft.Compute/virtualMachines'")
+                if r.tags and 'GitHubActions' in r.tags]
             ci_cd_indicators = len(automation_resources) + len(runner_resources)
             raw = self._build_evidence(
                 api_call="resource_client.resources.list()",

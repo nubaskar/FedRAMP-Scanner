@@ -9,13 +9,10 @@ A web-based platform that scans client cloud environments against FedRAMP requir
 - [1. Introduction](#1-introduction)
   - [1.1 Overview](#11-overview)
   - [1.2 How It Works](#12-how-it-works)
-- [2. FedRAMP Framework Reference](#2-cmmc-framework-reference)
+- [2. FedRAMP Framework Reference](#2-fedramp-framework-reference)
   - [2.1 Supported Cloud Environments](#21-supported-cloud-environments)
-  - [2.2 FedRAMP Certification Levels](#22-cmmc-certification-levels)
-  - [2.3 FedRAMP Familys and Check Coverage](#23-cmmc-domains-and-check-coverage)
-    - [Low — FAR 52.204-21](#level-1--far-52204-21-17-practices)
-    - [Moderate — NIST SP 800-53 Rev 5](#level-2--nist-sp-800-53 Rev 5-110-practices)
-    - [High — NIST SP 800-172](#level-3--nist-sp-800-172-enhanced-practices)
+  - [2.2 FedRAMP Impact Levels](#22-fedramp-impact-levels)
+  - [2.3 FedRAMP Families and Check Coverage](#23-fedramp-families-and-check-coverage)
 - [3. Getting Started](#3-getting-started)
   - [3.1 Prerequisites](#31-prerequisites)
   - [3.2 Local Development](#32-local-development)
@@ -92,7 +89,7 @@ A web-based platform that scans client cloud environments against FedRAMP requir
 
 The FedRAMP Cloud Compliance Scanner connects to client cloud environments via read-only IAM roles, evaluates security configurations against NIST 800-53 Rev 5 controls, and generates professional HTML and XLSX reports.
 
-The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Defense Industrial Base (CSP) contractors. It automates the evaluation of approximately 71 of the 110 NIST 800-53 Rev 5 controls and flags the remaining 39 policy/process controls as "Manual Review Required."
+The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Cloud Service Providers (CSPs). It automates the evaluation of 66 of the 324 NIST 800-53 Rev 5 controls and flags the remaining 258 policy/process controls as "Manual Review Required."
 
 ### 1.2 How It Works
 
@@ -110,8 +107,8 @@ The workflow proceeds through five stages:
 
 1. **Client onboarding** — The client grants a read-only cross-account role (AWS IAM role, Azure service principal, or GCP service account) using the provided template.
 2. **Scan execution** — A Securitybricks consultant triggers a scan from the Web UI, selecting the client, environment, and FedRAMP baseline.
-3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates ~71 automated practices across all 14 FedRAMP control families.
-4. **Manual review markers** — ~39 policy/process controls that cannot be automated are flagged as "Manual Review Required."
+3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates ~66 automated controls across all 20 NIST 800-53 control families.
+4. **Manual review markers** — ~258 policy/process controls that cannot be automated are flagged as "Manual Review Required."
 5. **Report generation** — Professional HTML and XLSX reports are produced with executive summary, per-domain breakdown, detailed findings, and remediation guidance.
 
 > **Scan scope:** Each client entry scans a single cloud account (AWS account, Azure subscription, or GCP project). If a client has multiple accounts or subscriptions in scope for FedRAMP assessment, onboard each one as a separate client entry. Reports are generated per scan, so each account/subscription gets its own assessment report.
@@ -122,68 +119,49 @@ The workflow proceeds through five stages:
 
 ### 2.1 Supported Cloud Environments
 
-| # | Environment | Tier | FedRAMP Baselines | FedRAMP Baseline |
-|---|-------------|------|-------------|------------------|
-| 1 | AWS Commercial | Commercial | L1, L2 | Moderate |
+| # | Environment | Tier | Supported Baselines | FedRAMP Level |
+|---|-------------|------|---------------------|---------------|
+| 1 | AWS Commercial | Commercial | Low, Moderate, High | Moderate |
 | 2 | AWS GovCloud | Government | Low, Moderate, High | High |
-| 3 | Azure Commercial | Commercial | L1, L2 | Moderate |
+| 3 | Azure Commercial | Commercial | Low, Moderate, High | Moderate |
 | 4 | Azure Government | Government | Low, Moderate, High | High |
-| 5 | GCP Commercial | Commercial | L1, L2 | Moderate |
+| 5 | GCP Commercial | Commercial | Low, Moderate, High | Moderate |
 | 6 | GCP Assured Workloads | Government | Low, Moderate, High | High |
 
-### 2.2 FedRAMP Certification Levels
+### 2.2 FedRAMP Impact Levels
 
-| Level | Framework | Practices | Data Type | Assessment |
-|-------|-----------|-----------|-----------|------------|
-| L1 | FAR 52.204-21 | 17 | FCI | Self-assessment |
-| L2 | NIST SP 800-53 Rev 5 | 110 | CUI | 3PAO assessment |
-| L3 | NIST SP 800-172 (enhanced) | 110 + enhanced | CUI (APT-focused) | CSPCAC assessment |
+| Baseline | Framework | Controls | Data Sensitivity | Assessment |
+|----------|-----------|----------|------------------|------------|
+| Low | NIST SP 800-53 Rev 5 | ~125 | Low-impact federal data | 3PAO assessment |
+| Moderate | NIST SP 800-53 Rev 5 | ~325 | Moderate-impact (most CSPs) | 3PAO assessment |
+| High | NIST SP 800-53 Rev 5 | ~421 | High-impact (law enforcement, health) | 3PAO assessment |
 
-### 2.3 FedRAMP Familys and Check Coverage
+### 2.3 FedRAMP Families and Check Coverage
 
-#### Low — FAR 52.204-21 (17 controls)
+The scanner covers NIST 800-53 Rev 5 controls across 20 control families. Each automated control has cloud-specific check implementations for AWS, Azure, and GCP.
 
-L1 covers basic safeguarding of Federal Contract Information (FCI). The 17 FAR practices map to a subset of NIST 800-53 Rev 5 across 6 domains:
-
-| Domain | Family | Automated | Manual |
-|--------|--------|-----------|--------|
-| AC | Access Control | 4 | 0 |
-| IA | Identification and Authentication | 2 | 0 |
-| MP | Media Protection | 0 | 1 |
-| PE | Physical Protection | 0 | 4 |
-| SC | System & Comms Protection | 2 | 0 |
-| SI | System & Info Integrity | 4 | 0 |
-| **Total** | | **12 automated** | **5 manual** |
-
-#### Moderate — NIST SP 800-53 Rev 5 (110 controls)
-
-L2 covers all 110 NIST 800-53 Rev 5 controls (which include the 17 L1 controls) across all 14 FedRAMP control families:
-
-| Domain | Family | Automated | Manual |
-|--------|--------|-----------|--------|
+| Family | Name | Automated | Manual |
+|--------|------|-----------|--------|
 | AC | Access Control | 16 | 6 |
 | AT | Awareness and Training | 0 | 3 |
 | AU | Audit and Accountability | 8 | 1 |
+| CA | Security Assessment and Authorization | 1 | 3 |
 | CM | Configuration Management | 8 | 1 |
+| CP | Contingency Planning | 10 | 0 |
 | IA | Identification and Authentication | 10 | 1 |
 | IR | Incident Response | 1 | 2 |
 | MA | Maintenance | 2 | 4 |
 | MP | Media Protection | 3 | 6 |
+| PE | Physical and Environmental Protection | 0 | 6 |
+| PL | Planning | 3 | 0 |
 | PS | Personnel Security | 0 | 2 |
-| PE | Physical Protection | 0 | 6 |
+| PT | PII Processing and Transparency | 5 | 0 |
 | RA | Risk Assessment | 2 | 1 |
-| CA | Security Assessment | 1 | 3 |
-| SC | System & Comms Protection | 13 | 3 |
-| SI | System & Info Integrity | 7 | 0 |
-| **Total** | | **71 automated** | **39 manual** |
-
-#### High — NIST SP 800-172 (enhanced practices)
-
-L3 adds enhanced security requirements from NIST 800-172 on top of the 110 L2 controls, targeting protection against Advanced Persistent Threats (APTs). L3 checks are available only for Government environments (AWS GovCloud, Azure Government, GCP Assured Workloads).
-
-> **Status:** L3 enhanced practice checks are planned but not yet implemented. The scanner currently supports L1 and L2 assessments.
-
-Each automated practice has cloud-specific check implementations for AWS, Azure, and GCP.
+| SA | System and Services Acquisition | 8 | 0 |
+| SC | System and Communications Protection | 13 | 3 |
+| SI | System and Information Integrity | 7 | 0 |
+| SR | Supply Chain Risk Management | 4 | 0 |
+| **Total** | | **66 automated** | **258 manual** |
 
 ---
 
@@ -248,13 +226,13 @@ Open http://localhost:8000 in your browser. The backend serves the frontend via 
 
 ```bash
 # Build the image (on Apple Silicon, add --platform linux/amd64)
-docker build -t cmmc-scanner:latest .
+docker build -t fedramp-scanner:latest .
 
 # Run with default SQLite database
-docker run -p 8000:8000 cmmc-scanner:latest
+docker run -p 8000:8000 fedramp-scanner:latest
 
 # Or with a .env file for PostgreSQL / SSO configuration
-docker run -p 8000:8000 --env-file .env cmmc-scanner:latest
+docker run -p 8000:8000 --env-file .env fedramp-scanner:latest
 ```
 
 Open http://localhost:8000 in your browser. The backend serves the frontend via `/static/`.
@@ -263,7 +241,7 @@ Open http://localhost:8000 in your browser. The backend serves the frontend via 
 
 ### 3.3 Client Environment Deployment (for Securitybricks Engineers)
 
-For FedRAMP L2 readiness assessments, Securitybricks engineers deploy the scanner on a VM inside the client's cloud environment. The VM runs the scanner locally, connects to the client's cloud via read-only credentials, and engineers access it from their AVD session at `http://<VM_IP>:8000`. After the assessment is complete, the VM is destroyed — no persistent infrastructure is left behind.
+For FedRAMP readiness assessments, Securitybricks engineers deploy the scanner on a VM inside the client's cloud environment. The VM runs the scanner locally, connects to the client's cloud via read-only credentials, and engineers access it from their AVD session at `http://<VM_IP>:8000`. After the assessment is complete, the VM is destroyed — no persistent infrastructure is left behind.
 
 #### 3.3.1 VM Requirements
 
@@ -283,17 +261,17 @@ For FedRAMP L2 readiness assessments, Securitybricks engineers deploy the scanne
 **Azure:**
 ```bash
 # Create resource group and VM with NSG rule for TCP 8000
-az group create --name cmmc-scan-rg --location eastus2
+az group create --name fedramp-scan-rg --location eastus2
 
 az vm create \
-  --resource-group cmmc-scan-rg \
-  --name cmmc-scan-vm \
+  --resource-group fedramp-scan-rg \
+  --name fedramp-scan-vm \
   --image Ubuntu2204 \
   --size Standard_B2s \
   --admin-username azureuser \
   --generate-ssh-keys
 
-az vm open-port --resource-group cmmc-scan-rg --name cmmc-scan-vm --port 8000
+az vm open-port --resource-group fedramp-scan-rg --name fedramp-scan-vm --port 8000
 ```
 
 **AWS:**
@@ -309,7 +287,7 @@ aws ec2 run-instances \
 **GCP:**
 ```bash
 # Create instance with firewall rule for TCP 8000
-gcloud compute instances create cmmc-scan-vm \
+gcloud compute instances create fedramp-scan-vm \
   --zone=us-central1-a \
   --machine-type=e2-medium \
   --image-family=ubuntu-2204-lts \
@@ -368,8 +346,8 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 If Docker is available on the VM:
 
 ```bash
-docker build -t cmmc-scanner:latest .
-docker run -p 8000:8000 --env-file .env cmmc-scanner:latest
+docker build -t fedramp-scanner:latest .
+docker run -p 8000:8000 --env-file .env fedramp-scanner:latest
 ```
 
 On Apple Silicon or ARM-based VMs, add `--platform linux/amd64` to the build command.
@@ -380,14 +358,14 @@ After the assessment is complete, destroy the VM:
 
 ```bash
 # Azure
-az vm delete --name cmmc-scan-vm --resource-group cmmc-scan-rg --yes
-az group delete --name cmmc-scan-rg --yes
+az vm delete --name fedramp-scan-vm --resource-group fedramp-scan-rg --yes
+az group delete --name fedramp-scan-rg --yes
 
 # AWS
 aws ec2 terminate-instances --instance-ids <instance-id>
 
 # GCP
-gcloud compute instances delete cmmc-scan-vm --zone=us-central1-a --quiet
+gcloud compute instances delete fedramp-scan-vm --zone=us-central1-a --quiet
 ```
 
 > **Note:** The SQLite database is local to the VM — all scan data is destroyed with the VM. Download any reports you need before teardown.
@@ -410,13 +388,13 @@ Preview report format without running a scan or configuring a database:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `DATABASE_URL` | Database connection string | `sqlite:///./cmmc_scanner.db` |
+| `DATABASE_URL` | Database connection string | `sqlite:///./fedramp_scanner.db` |
 | `JWT_SECRET_KEY` | Secret key for signing JWT tokens | Dev fallback (change in production) |
 | `AZURE_AD_TENANT_ID` | Microsoft Entra ID tenant ID | _(empty — disables SSO)_ |
 | `AZURE_AD_CLIENT_ID` | Entra ID application (client) ID | _(empty — disables SSO)_ |
 | `AZURE_AD_CLIENT_SECRET` | Entra ID client secret | _(empty)_ |
-| `FRONTEND_URL` | Redirect target after SSO callback | `http://localhost:8080` |
-| `ALLOWED_ORIGINS` | Comma-separated CORS origins | `http://localhost:8080,http://localhost:8000` |
+| `FRONTEND_URL` | Redirect target after SSO callback | `http://localhost:8000` |
+| `ALLOWED_ORIGINS` | Comma-separated CORS origins | `http://localhost:8000` |
 | `ENVIRONMENT` | Runtime environment | `dev` (`dev`, `staging`, or `prod`) |
 
 When `AZURE_AD_TENANT_ID` and `AZURE_AD_CLIENT_ID` are set and `ENVIRONMENT=prod`, the login page shows the SSO button. Otherwise it falls back to password login.
@@ -455,7 +433,7 @@ When `AZURE_AD_TENANT_ID` and `AZURE_AD_CLIENT_ID` are set and `ENVIRONMENT=prod
 | `GET` | `/api/scans` | List scans (optional `?client_id=` filter) |
 | `GET` | `/api/scans/{id}` | Get scan with all findings |
 | `GET` | `/api/scans/{id}/summary` | Compliance summary by status/domain |
-| `GET` | `/api/scans/{id}/evidence/{control_id}` | Live API evidence for a practice |
+| `GET` | `/api/scans/{id}/evidence/{control_id}` | Live API evidence for a control |
 | `DELETE` | `/api/scans/{id}` | Delete scan and findings |
 
 ### 4.4 Reports
@@ -515,11 +493,11 @@ az provider register --namespace Microsoft.ContainerRegistry
 
 ```bash
 # Create the resource group
-az group create --name cmmc-scanner-rg --location eastus2
+az group create --name fedramp-scanner-rg --location eastus2
 
 # Deploy infrastructure (first deployment uses a placeholder init container)
 az deployment group create \
-  --resource-group cmmc-scanner-rg \
+  --resource-group fedramp-scanner-rg \
   --template-file deploy/azure/main.bicep \
   --parameters \
     environment=prod \
@@ -538,13 +516,13 @@ Valid `environment` values: `dev`, `staging`, `prod`.
 ```bash
 # Get all deployment outputs
 az deployment group show \
-  --resource-group cmmc-scanner-rg \
+  --resource-group fedramp-scanner-rg \
   --name main \
   --query properties.outputs -o json
 
 # Save ACR name for later steps
 ACR_NAME=$(az deployment group show \
-  --resource-group cmmc-scanner-rg \
+  --resource-group fedramp-scanner-rg \
   --name main \
   --query properties.outputs.acrLoginServer.value -o tsv)
 
@@ -558,7 +536,7 @@ Use ACR Tasks to build in the cloud (no local Docker needed, builds linux/amd64 
 ```bash
 az acr build \
   --registry ${ACR_NAME%%.*} \
-  --image cmmc-scanner:v1 \
+  --image fedramp-scanner:v1 \
   --platform linux/amd64 \
   .
 ```
@@ -570,22 +548,22 @@ az acr build \
 ```bash
 # Register ACR credentials with the Container App (required after first deployment)
 az containerapp registry set \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
   --server $ACR_NAME \
   --username $(az acr credential show --name ${ACR_NAME%%.*} --query username -o tsv) \
   --password $(az acr credential show --name ${ACR_NAME%%.*} --query "passwords[0].value" -o tsv)
 
 # Update the Container App with the real image
 az containerapp update \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
-  --image $ACR_NAME/cmmc-scanner:v1
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
+  --image $ACR_NAME/fedramp-scanner:v1
 
 # Fix ingress port (init container used port 80, our app uses 8000)
 az containerapp ingress update \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
   --target-port 8000
 ```
 
@@ -594,7 +572,7 @@ az containerapp ingress update \
 ```bash
 # Get storage account name
 STORAGE_ACCOUNT=$(az storage account list \
-  --resource-group cmmc-scanner-rg \
+  --resource-group fedramp-scanner-rg \
   --query "[0].name" -o tsv)
 
 # Enable static website hosting
@@ -620,8 +598,8 @@ curl https://<container-app-url>/health
 
 # Frontend — open in browser
 echo "Frontend: https://$STORAGE_ACCOUNT.z20.web.core.windows.net/"
-echo "Backend:  $(az containerapp show --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
+echo "Backend:  $(az containerapp show --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
   --query properties.configuration.ingress.fqdn -o tsv)"
 ```
 
@@ -632,16 +610,16 @@ echo "Backend:  $(az containerapp show --name cmmc-scanner-prod-api \
 ```bash
 # Add custom domain to Container App
 az containerapp hostname add \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
   --hostname scanner.securitybricks.com
 
 # Bind managed TLS certificate
 az containerapp hostname bind \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
   --hostname scanner.securitybricks.com \
-  --environment cmmc-scanner-prod-env \
+  --environment fedramp-scanner-prod-env \
   --validation-method CNAME
 ```
 
@@ -655,15 +633,15 @@ After making code changes, rebuild and push a new image version:
 # Build new version (always increment the tag — never reuse v1, v2, etc.)
 az acr build \
   --registry ${ACR_NAME%%.*} \
-  --image cmmc-scanner:v2 \
+  --image fedramp-scanner:v2 \
   --platform linux/amd64 \
   .
 
 # Update Container App
 az containerapp update \
-  --name cmmc-scanner-prod-api \
-  --resource-group cmmc-scanner-rg \
-  --image $ACR_NAME/cmmc-scanner:v2
+  --name fedramp-scanner-prod-api \
+  --resource-group fedramp-scanner-rg \
+  --image $ACR_NAME/fedramp-scanner:v2
 
 # Re-upload frontend if changed
 az storage blob upload-batch \
@@ -695,7 +673,7 @@ az ad sp create --id $APP_ID
 
 # 3. Create a client secret (save the output)
 az ad app credential reset --id $APP_ID --append \
-  --display-name "cmmc-scanner-secret" --years 1
+  --display-name "fedramp-scanner-secret" --years 1
 
 # 4. Assign Reader role on the target subscription
 SUB_ID=$(az account show --query id -o tsv)
@@ -805,8 +783,8 @@ The Securitybricks consultant enters these in the "Add Client" form, selecting *
 | Issue | Resolution |
 |-------|------------|
 | Key Vault name conflict on redeploy | Run `az keyvault list-deleted -o tsv` then `az keyvault purge --name <name>` (only works if purge protection was not enabled). |
-| Container image not found | Verify tags: `az acr repository show-tags --name <acr> --repository cmmc-scanner -o tsv`. |
-| App crash-looping | Check logs: `az containerapp logs show --name cmmc-scanner-prod-api --resource-group cmmc-scanner-rg --tail 50`. |
+| Container image not found | Verify tags: `az acr repository show-tags --name <acr> --repository fedramp-scanner -o tsv`. |
+| App crash-looping | Check logs: `az containerapp logs show --name fedramp-scanner-prod-api --resource-group fedramp-scanner-rg --tail 50`. |
 | PostgreSQL restricted in region | Use `eastus2` instead of `eastus`; register providers with `az provider register`. |
 | CORS errors on frontend | Set `ALLOWED_ORIGINS` env var on the Container App to include the frontend URL. |
 | ARM64 image error | Use `--platform linux/amd64` when building; Container Apps only supports amd64. |
@@ -913,7 +891,7 @@ The CloudFormation template provisions the full stack in a single deployment. Se
 ```bash
 aws cloudformation deploy \
   --template-file deploy/aws/cloudformation.yaml \
-  --stack-name cmmc-scanner \
+  --stack-name fedramp-scanner \
   --capabilities CAPABILITY_IAM \
   --parameter-overrides \
     Environment=production \
@@ -925,7 +903,7 @@ aws cloudformation deploy \
 ```bash
 # Get ECR repository URI from stack output
 ECR_URI=$(aws cloudformation describe-stacks \
-  --stack-name cmmc-scanner \
+  --stack-name fedramp-scanner \
   --query 'Stacks[0].Outputs[?OutputKey==`ECRRepositoryURI`].OutputValue' \
   --output text)
 
@@ -944,7 +922,7 @@ docker push $ECR_URI:v1
 ```bash
 # Get frontend bucket name from stack output
 BUCKET=$(aws cloudformation describe-stacks \
-  --stack-name cmmc-scanner \
+  --stack-name fedramp-scanner \
   --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
   --output text)
 
@@ -957,8 +935,8 @@ aws s3 sync frontend/ s3://$BUCKET/
 ```bash
 # Force new deployment to pick up the latest image
 aws ecs update-service \
-  --cluster cmmc-scanner-cluster \
-  --service cmmc-scanner-service \
+  --cluster fedramp-scanner-cluster \
+  --service fedramp-scanner-service \
   --force-new-deployment
 ```
 
@@ -967,7 +945,7 @@ aws ecs update-service \
 ```bash
 # Get ALB endpoint from stack output
 ALB_URL=$(aws cloudformation describe-stacks \
-  --stack-name cmmc-scanner \
+  --stack-name fedramp-scanner \
   --query 'Stacks[0].Outputs[?OutputKey==`ALBEndpoint`].OutputValue' \
   --output text)
 
@@ -977,7 +955,7 @@ curl https://$ALB_URL/health
 # Show endpoints
 echo "Backend:  https://$ALB_URL"
 echo "Frontend: $(aws cloudformation describe-stacks \
-  --stack-name cmmc-scanner \
+  --stack-name fedramp-scanner \
   --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontURL`].OutputValue' \
   --output text)"
 ```
@@ -995,8 +973,8 @@ docker push $ECR_URI:v2
 
 # Force ECS to pick up the new image
 aws ecs update-service \
-  --cluster cmmc-scanner-cluster \
-  --service cmmc-scanner-service \
+  --cluster fedramp-scanner-cluster \
+  --service fedramp-scanner-service \
   --force-new-deployment
 
 # Re-upload frontend if changed
@@ -1020,7 +998,7 @@ Provide clients with the cross-account role template to grant read-only access.
 # Run in the client's AWS account
 aws cloudformation deploy \
   --template-file deploy/aws/client-role-template.yaml \
-  --stack-name cmmc-scanner-role \
+  --stack-name fedramp-scanner-role \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
     ScannerAccountId=<securitybricks-aws-account-id> \
@@ -1085,7 +1063,7 @@ The client provides the resulting **Role ARN** and **External ID** to Securitybr
 |-------|------------|
 | Stack creation fails with IAM capability error | Ensure `--capabilities CAPABILITY_IAM` is included in the deploy command. |
 | ECR push access denied | Run `aws ecr get-login-password \| docker login --username AWS --password-stdin $ECR_URI` to refresh credentials. |
-| ECS tasks fail to start | Check CloudWatch logs: `aws logs get-log-events --log-group-name /ecs/cmmc-scanner --log-stream-name <stream>`. |
+| ECS tasks fail to start | Check CloudWatch logs: `aws logs get-log-events --log-group-name /ecs/fedramp-scanner --log-stream-name <stream>`. |
 | ALB health check failing | Verify the target group health check path is `/health` and the container is listening on port 8000. |
 | ARM64 image on Fargate | Use `docker build --platform linux/amd64` when building on Apple Silicon. |
 | CloudFront serving stale frontend | Create an invalidation: `aws cloudfront create-invalidation --distribution-id <id> --paths "/*"`. |
@@ -1120,7 +1098,7 @@ Cloud Run is a fully managed serverless container platform that scales to zero w
 
 ```bash
 # Set your project ID (replace with your own)
-PROJECT_ID="cmmc-scanner-prod"
+PROJECT_ID="fedramp-scanner-prod"
 REGION="us-central1"
 
 # Create project (or use an existing one)
@@ -1146,7 +1124,7 @@ gcloud services enable \
 
 ```bash
 # Create a Cloud SQL PostgreSQL instance
-gcloud sql instances create cmmc-scanner-db \
+gcloud sql instances create fedramp-scanner-db \
   --database-version=POSTGRES_15 \
   --tier=db-f1-micro \
   --region=$REGION \
@@ -1157,12 +1135,12 @@ gcloud sql instances create cmmc-scanner-db \
 
 # Set the database password
 gcloud sql users set-password postgres \
-  --instance=cmmc-scanner-db \
+  --instance=fedramp-scanner-db \
   --password='<secure-db-password>'
 
 # Create the application database
-gcloud sql databases create cmmc_scanner \
-  --instance=cmmc-scanner-db
+gcloud sql databases create fedramp_scanner \
+  --instance=fedramp-scanner-db
 ```
 
 Store secrets in Secret Manager:
@@ -1178,14 +1156,14 @@ echo -n '<secure-encryption-key>' | gcloud secrets create encryption-key --data-
 
 ```bash
 # Create Artifact Registry repository
-gcloud artifacts repositories create cmmc-scanner \
+gcloud artifacts repositories create fedramp-scanner \
   --repository-format=docker \
   --location=$REGION \
   --description="FedRAMP Scanner container images"
 
 # Build using Cloud Build (no local Docker needed, builds linux/amd64)
 gcloud builds submit \
-  --tag $REGION-docker.pkg.dev/$PROJECT_ID/cmmc-scanner/cmmc-scanner:v1 \
+  --tag $REGION-docker.pkg.dev/$PROJECT_ID/fedramp-scanner/fedramp-scanner:v1 \
   .
 ```
 
@@ -1195,17 +1173,17 @@ gcloud builds submit \
 
 ```bash
 # Create a Serverless VPC Connector for Cloud SQL access
-gcloud compute networks vpc-access connectors create cmmc-connector \
+gcloud compute networks vpc-access connectors create fedramp-connector \
   --region=$REGION \
   --range=10.8.0.0/28
 
 # Get the Cloud SQL connection name
-SQL_CONNECTION=$(gcloud sql instances describe cmmc-scanner-db \
+SQL_CONNECTION=$(gcloud sql instances describe fedramp-scanner-db \
   --format='value(connectionName)')
 
 # Deploy to Cloud Run
-gcloud run deploy cmmc-scanner-api \
-  --image=$REGION-docker.pkg.dev/$PROJECT_ID/cmmc-scanner/cmmc-scanner:v1 \
+gcloud run deploy fedramp-scanner-api \
+  --image=$REGION-docker.pkg.dev/$PROJECT_ID/fedramp-scanner/fedramp-scanner:v1 \
   --region=$REGION \
   --platform=managed \
   --port=8000 \
@@ -1213,10 +1191,10 @@ gcloud run deploy cmmc-scanner-api \
   --cpu=1 \
   --min-instances=0 \
   --max-instances=3 \
-  --vpc-connector=cmmc-connector \
+  --vpc-connector=fedramp-connector \
   --add-cloudsql-instances=$SQL_CONNECTION \
   --set-env-vars="ENVIRONMENT=prod" \
-  --set-env-vars="DATABASE_URL=postgresql://postgres:<secure-db-password>@/cmmc_scanner?host=/cloudsql/$SQL_CONNECTION" \
+  --set-env-vars="DATABASE_URL=postgresql://postgres:<secure-db-password>@/fedramp_scanner?host=/cloudsql/$SQL_CONNECTION" \
   --set-secrets="JWT_SECRET_KEY=jwt-secret:latest" \
   --set-secrets="ENCRYPTION_KEY=encryption-key:latest" \
   --allow-unauthenticated
@@ -1253,7 +1231,7 @@ The frontend is accessible at `https://storage.googleapis.com/$BUCKET_NAME/index
 
 ```bash
 # Get the Cloud Run service URL
-SERVICE_URL=$(gcloud run services describe cmmc-scanner-api \
+SERVICE_URL=$(gcloud run services describe fedramp-scanner-api \
   --region=$REGION \
   --format='value(status.url)')
 
@@ -1272,12 +1250,12 @@ echo "Frontend: https://storage.googleapis.com/$BUCKET_NAME/index.html"
 ```bash
 # Build new version (always increment the tag)
 gcloud builds submit \
-  --tag $REGION-docker.pkg.dev/$PROJECT_ID/cmmc-scanner/cmmc-scanner:v2 \
+  --tag $REGION-docker.pkg.dev/$PROJECT_ID/fedramp-scanner/fedramp-scanner:v2 \
   .
 
 # Update Cloud Run service
-gcloud run deploy cmmc-scanner-api \
-  --image=$REGION-docker.pkg.dev/$PROJECT_ID/cmmc-scanner/cmmc-scanner:v2 \
+gcloud run deploy fedramp-scanner-api \
+  --image=$REGION-docker.pkg.dev/$PROJECT_ID/fedramp-scanner/fedramp-scanner:v2 \
   --region=$REGION
 
 # Re-upload frontend if changed
@@ -1293,23 +1271,23 @@ Each client creates a service account with read-only access on their GCP project
 PROJECT_ID="<client-project-id>"
 
 # Create a read-only service account
-gcloud iam service-accounts create cmmc-scanner-readonly \
+gcloud iam service-accounts create fedramp-scanner-readonly \
   --project=$PROJECT_ID \
   --display-name="FedRAMP Scanner Read-Only"
 
 # Grant Viewer role on the project
 gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:cmmc-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --member="serviceAccount:fedramp-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/viewer"
 
 # Grant Security Reviewer role for deeper security config reads
 gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:cmmc-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --member="serviceAccount:fedramp-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/iam.securityReviewer"
 
 # Create and download the service account key
 gcloud iam service-accounts keys create sa-key.json \
-  --iam-account=cmmc-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com
+  --iam-account=fedramp-scanner-readonly@${PROJECT_ID}.iam.gserviceaccount.com
 ```
 
 The client provides the **service account key JSON file** and **Project ID** to Securitybricks for onboarding. The consultant enters these in the "Add Client" form, selecting **GCP Commercial** or **GCP Assured Workloads** as the environment.
@@ -1324,7 +1302,7 @@ The client provides the **service account key JSON file** and **Project ID** to 
 |-------|------------|
 | Cloud SQL connection refused from Cloud Run | Ensure the `--add-cloudsql-instances` flag is set and the VPC Connector is in the same region as Cloud SQL. |
 | `Permission denied` on Cloud Build | Grant `roles/cloudbuild.builds.builder` to the Cloud Build service account, or enable the Cloud Build API. |
-| Cloud Run returns 503 after deploy | Check logs: `gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=cmmc-scanner-api" --limit 50`. |
+| Cloud Run returns 503 after deploy | Check logs: `gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=fedramp-scanner-api" --limit 50`. |
 | Artifact Registry push denied | Run `gcloud auth configure-docker $REGION-docker.pkg.dev` to configure Docker credentials. |
 | Cloud Storage bucket not publicly accessible | Verify `allUsers` has `roles/storage.objectViewer` and uniform bucket-level access is enabled. |
 | Secret Manager access denied from Cloud Run | Grant `roles/secretmanager.secretAccessor` to the Cloud Run service account. |
@@ -1343,22 +1321,27 @@ FedRAMP-SCANNER/
 ├── Dockerfile                    # Multi-stage container build (python:3.12-slim)
 ├── config/
 │   ├── environments.json         # 6 cloud environment definitions
-│   ├── nist_800_53_controls.json       # All 110 NIST 800-53 Rev 5 + 17 FAR practices
-│   └── checks/                   # Check definitions per FedRAMP family (14 JSON files)
-│       ├── ac.json               # Access Control (3.1.x)
-│       ├── at.json               # Awareness & Training (3.2.x)
-│       ├── au.json               # Audit & Accountability (3.3.x)
-│       ├── cm.json               # Configuration Management (3.4.x)
-│       ├── ia.json               # Identification & Authentication (3.5.x)
-│       ├── ir.json               # Incident Response (3.6.x)
-│       ├── ma.json               # Maintenance (3.7.x)
-│       ├── mp.json               # Media Protection (3.8.x)
-│       ├── ps.json               # Personnel Security (3.9.x)
-│       ├── pe.json               # Physical Protection (3.10.x)
-│       ├── ra.json               # Risk Assessment (3.11.x)
-│       ├── ca.json               # Security Assessment (3.12.x)
-│       ├── sc.json               # System & Comms Protection (3.13.x)
-│       └── si.json               # System & Info Integrity (3.14.x)
+│   ├── nist_800_53_controls.json       # All 324 NIST 800-53 Rev 5 controls
+│   └── checks/                   # Check definitions per control family (20 JSON files)
+│       ├── ac.json               # Access Control
+│       ├── at.json               # Awareness & Training
+│       ├── au.json               # Audit & Accountability
+│       ├── ca.json               # Security Assessment & Authorization
+│       ├── cm.json               # Configuration Management
+│       ├── cp.json               # Contingency Planning
+│       ├── ia.json               # Identification & Authentication
+│       ├── ir.json               # Incident Response
+│       ├── ma.json               # Maintenance
+│       ├── mp.json               # Media Protection
+│       ├── pe.json               # Physical & Environmental Protection
+│       ├── pl.json               # Planning
+│       ├── ps.json               # Personnel Security
+│       ├── pt.json               # PII Processing & Transparency
+│       ├── ra.json               # Risk Assessment
+│       ├── sa.json               # System & Services Acquisition
+│       ├── sc.json               # System & Comms Protection
+│       ├── si.json               # System & Info Integrity
+│       └── sr.json               # Supply Chain Risk Management
 ├── backend/
 │   ├── requirements.txt          # Python dependencies
 │   └── app/
@@ -1401,7 +1384,7 @@ FedRAMP-SCANNER/
 │   └── azure/
 │       └── main.bicep            # Azure infrastructure (Container Apps)
 ├── diagrams/
-│   └── cmmc-scanner-architecture.drawio  # Architecture diagrams (2 pages)
+│   └── fedramp-scanner-architecture.drawio  # Architecture diagrams (2 pages)
 └── scripts/
     └── setup.sh                  # Local development setup
 ```
@@ -1434,8 +1417,8 @@ Relationships: Client has many Scans (cascade delete). Scan has many Findings (c
 | Decision | Rationale |
 |----------|-----------|
 | **Flexible deployment model** | Scanner runs on Securitybricks infrastructure or as a local dev instance in the client's environment. Connects to client cloud via cross-account read-only roles. |
-| **Scan results are metadata** | Config states, Met/Not-Met statuses, resource ARNs — not CUI. No FedRAMP/FedRAMP certification needed for the platform. |
-| **~71 of 110 controls automated** | Remaining ~39 are policy/process controls marked "Manual Review Required." |
+| **Scan results are metadata** | Config states, Met/Not-Met statuses, resource ARNs — not sensitive data. No FedRAMP authorization needed for the platform itself. |
+| **66 of 324 controls automated** | Remaining 258 are policy/process controls marked "Manual Review Required." |
 | **HTML + XLSX reports** | Professional, well-formatted, client-facing deliverables suitable for audit. |
 | **Scan comparison** | Side-by-side delta reports to track remediation progress between scans. |
 | **Triple deployment support** | Azure Commercial (Bicep), AWS Commercial (CloudFormation), or GCP Commercial (gcloud CLI). |

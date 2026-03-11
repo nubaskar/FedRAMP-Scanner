@@ -119,14 +119,14 @@ def generate() -> str:
         {
             "num": "1.6", "name": "Check ID Format", "tier": "Config",
             "verifies": "All <code>check_id</code> values match the pattern "
-                        "<code>{domain}-{control}-{provider}-{seq}</code> (e.g., <code>ac-3.1.1-aws-001</code>).",
-            "why": "Ensures consistent, parseable identifiers across all 393 checks for reporting and traceability.",
+                        "<code>{family}-{control}[-{enhancement}]-{provider}-{seq}</code> (e.g., <code>ac-2-aws-001</code>, <code>ac-6-3-azure-001</code>).",
+            "why": "Ensures consistent, parseable identifiers across all check definitions for reporting and traceability.",
         },
         {
             "num": "1.7", "name": "Control Completeness", "tier": "Config",
-            "verifies": "All 110 NIST 800-53 Rev 5 controls from <code>nist_800_53_controls.json</code> appear in "
+            "verifies": "All base NIST 800-53 Rev 5 controls from <code>nist_800_53_controls.json</code> appear in "
                         "<code>config/checks/*.json</code> (either as automated checks or manual-only entries).",
-            "why": "Guarantees full NIST 800-53 Rev 5 coverage  - no control is omitted from the check configuration.",
+            "why": "Guarantees full NIST 800-53 Rev 5 coverage  - no base control is omitted from the check configuration.",
         },
         {
             "num": "1.8", "name": "Provider Parity", "tier": "Config",
@@ -175,8 +175,8 @@ def generate() -> str:
     # Traceability chain visualization (reuse methodology pattern)
     a('<div class="help-traceability-chain">')
     chain_steps = [
-        ("FedRAMP Level", "L1 / L2 / L3 certification tier"),
-        ("NIST 800-53 Rev 5 Control", "One of 110 security requirements"),
+        ("FedRAMP Baseline", "Low / Moderate / High authorization level"),
+        ("NIST 800-53 Rev 5 Control", f"One of {len(controls)} security requirements"),
         ("800-53A Assessment Objective", 'Specific "determine if" statement'),
         ("Scanner Check Definition", "JSON config with check_id, api_call, expected"),
         ("Scanner Python Method", "Actual code that calls cloud APIs"),
@@ -387,9 +387,9 @@ def generate() -> str:
          "chains up to 2 levels deep) and fuzzy-matches them against the <code>api_call</code> field "
          "in the config. The scanner calls exactly the APIs it documents.",
          "tag-met"),
-        ("Every NIST 800-53 Rev 5 control is covered",
-         "QA check 1.7 verifies that all 110 NIST SP 800-53 Rev 5 controls appear in the check "
-         "configuration  - either as automated checks or as manual-only entries. No control "
+        ("Every NIST 800-53 Rev 5 base control is covered",
+         "QA check 1.7 verifies that all base NIST SP 800-53 Rev 5 controls appear in the check "
+         "configuration  - either as automated checks or as manual-only entries. No base control "
          "is omitted from the scanner&rsquo;s scope.",
          "tag-met"),
         ("Every assessment objective is addressed",
@@ -431,8 +431,8 @@ def generate() -> str:
     a('The script will:')
     a('</p>')
     a('<ol style="margin:0;padding-left:20px;line-height:1.8;">')
-    a('<li>Load all 110 NIST controls from <code>config/nist_800_53_controls.json</code></li>')
-    a('<li>Load all check definitions from <code>config/checks/*.json</code> (14 domain files)</li>')
+    a(f'<li>Load all {len(controls)} NIST controls from <code>config/nist_800_53_controls.json</code></li>')
+    a('<li>Load all check definitions from <code>config/checks/*.json</code> (20 domain files)</li>')
     a('<li>Parse <code>engine.py</code> to extract <code>*_CHECK_METHODS</code> dispatch tables</li>')
     a('<li>Parse all three scanner files (<code>aws_scanner.py</code>, <code>azure_scanner.py</code>, '
       '<code>gcp_scanner.py</code>) with Python AST analysis</li>')

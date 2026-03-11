@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
-  Securitybricks CMMC Cloud Compliance Scanner — Client Cross-Account Role.
+  Securitybricks FedRAMP Cloud Compliance Scanner — Client Cross-Account Role.
   Deploy this template in your AWS account to grant Securitybricks read-only
-  access for automated CMMC compliance scanning. The role uses SecurityAudit
+  access for automated FedRAMP compliance scanning. The role uses SecurityAudit
   and targeted read-only policies — it cannot modify any resources.
 
 # ---------------------------------------------------------------------------
@@ -12,7 +12,7 @@ Parameters:
   SecuritybricksAccountId:
     Type: String
     Description: >-
-      The AWS account ID of Securitybricks' CMMC Scanner platform.
+      The AWS account ID of Securitybricks' FedRAMP Scanner platform.
       Securitybricks will provide this value during onboarding.
     AllowedPattern: "^[0-9]{12}$"
     ConstraintDescription: Must be a valid 12-digit AWS account ID
@@ -30,7 +30,7 @@ Parameters:
 
   RoleName:
     Type: String
-    Default: SecuritybricksCMMCScannerRole
+    Default: SecuritybricksFedRAMPScannerRole
     Description: Name for the IAM role (customize if needed)
     AllowedPattern: "^[a-zA-Z0-9_+=,.@\\-]+$"
     MaxLength: 64
@@ -76,14 +76,14 @@ Resources:
   # =========================================================================
   # Cross-Account IAM Role
   # =========================================================================
-  CMMCScannerRole:
+  FedRAMPScannerRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Ref RoleName
       MaxSessionDuration: !Ref SessionDurationSeconds
       Description: >-
-        Read-only role for Securitybricks CMMC Cloud Compliance Scanner.
-        Grants access to audit AWS configurations for CMMC Level 1/2/3
+        Read-only role for Securitybricks FedRAMP Cloud Compliance Scanner.
+        Grants access to audit AWS configurations for FedRAMP Low/Moderate/High
         practice compliance without any write permissions.
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -102,31 +102,31 @@ Resources:
         - arn:aws:iam::aws:policy/SecurityAudit
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
         - Key: Purpose
-          Value: Securitybricks-CMMC-Compliance-Scan
+          Value: Securitybricks-FedRAMP-Compliance-Scan
         - Key: AccessLevel
           Value: ReadOnly
 
   # =========================================================================
-  # Custom Policy — Additional Read-Only API Calls for CMMC Scanning
+  # Custom Policy — Additional Read-Only API Calls for FedRAMP Scanning
   #
-  # These cover specific API calls needed for CMMC practice validation
+  # These cover specific API calls needed for FedRAMP control validation
   # that are not included in the SecurityAudit managed policy.
   # =========================================================================
-  CMMCScannerAdditionalReadPolicy:
+  FedRAMPScannerAdditionalReadPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: SecuritybricksCMMCScannerAdditionalRead
+      PolicyName: SecuritybricksFedRAMPScannerAdditionalRead
       Roles:
-        - !Ref CMMCScannerRole
+        - !Ref FedRAMPScannerRole
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           # -----------------------------------------------------------------
-          # IAM and Identity (CMMC: AC, IA domains)
+          # IAM and Identity (FedRAMP: AC, IA domains)
           # -----------------------------------------------------------------
           - Sid: IAMCredentialReporting
             Effect: Allow
@@ -147,7 +147,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Compute and Networking (CMMC: SC, CM domains)
+          # Compute and Networking (FedRAMP: SC, CM domains)
           # -----------------------------------------------------------------
           - Sid: ComputeNetworkRead
             Effect: Allow
@@ -182,7 +182,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Storage (CMMC: MP, SC domains)
+          # Storage (FedRAMP: MP, SC domains)
           # -----------------------------------------------------------------
           - Sid: StorageRead
             Effect: Allow
@@ -204,7 +204,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Database (CMMC: SC, MP domains)
+          # Database (FedRAMP: SC, MP domains)
           # -----------------------------------------------------------------
           - Sid: DatabaseRead
             Effect: Allow
@@ -225,7 +225,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Encryption and Key Management (CMMC: SC domain)
+          # Encryption and Key Management (FedRAMP: SC domain)
           # -----------------------------------------------------------------
           - Sid: KMSRead
             Effect: Allow
@@ -239,7 +239,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Logging and Monitoring (CMMC: AU, SI domains)
+          # Logging and Monitoring (FedRAMP: AU, SI domains)
           # -----------------------------------------------------------------
           - Sid: LoggingMonitoringRead
             Effect: Allow
@@ -266,7 +266,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Incident Response (CMMC: IR domain)
+          # Incident Response (FedRAMP: IR domain)
           # -----------------------------------------------------------------
           - Sid: IncidentResponseRead
             Effect: Allow
@@ -288,7 +288,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Backup and Recovery (CMMC: MP domain)
+          # Backup and Recovery (FedRAMP: MP domain)
           # -----------------------------------------------------------------
           - Sid: BackupRead
             Effect: Allow
@@ -299,10 +299,23 @@ Resources:
               - backup:DescribeBackupVault
               - backup:ListRecoveryPointsByBackupVault
               - backup:GetBackupVaultAccessPolicy
+              - backup:ListRestoreJobs
+              - backup:ListCopyJobs
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Organizations and Account (CMMC: CA domain)
+          # Resilience Hub (FedRAMP: CP domain)
+          # -----------------------------------------------------------------
+          - Sid: ResilienceHubRead
+            Effect: Allow
+            Action:
+              - resiliencehub:ListApps
+              - resiliencehub:ListAppAssessments
+              - resiliencehub:DescribeApp
+            Resource: "*"
+
+          # -----------------------------------------------------------------
+          # Organizations and Account (FedRAMP: CA domain)
           # -----------------------------------------------------------------
           - Sid: OrganizationsRead
             Effect: Allow
@@ -317,7 +330,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Security Services (CMMC: RA, SI domains)
+          # Security Services (FedRAMP: RA, SI domains)
           # -----------------------------------------------------------------
           - Sid: SecurityServicesRead
             Effect: Allow
@@ -333,7 +346,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Web, CDN, DNS, and Certificates (CMMC: SC domain)
+          # Web, CDN, DNS, and Certificates (FedRAMP: SC domain)
           # -----------------------------------------------------------------
           - Sid: WebCDNDNSRead
             Effect: Allow
@@ -348,7 +361,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Identity Center, CI/CD, Athena, Health (CMMC: AC, CM, AU domains)
+          # Identity Center, CI/CD, Athena, Health (FedRAMP: AC, CM, AU domains)
           # -----------------------------------------------------------------
           - Sid: IdentityCICDAnalyticsRead
             Effect: Allow
@@ -356,6 +369,8 @@ Resources:
               - sso:ListInstances
               - codepipeline:ListPipelines
               - codepipeline:GetPipeline
+              - codeguru-reviewer:ListRepositoryAssociations
+              - codeguru-reviewer:DescribeRepositoryAssociation
               - athena:ListNamedQueries
               - athena:ListWorkGroups
               - health:DescribeEvents
@@ -364,12 +379,12 @@ Resources:
   # =========================================================================
   # Explicit Deny — Ensure No Write Access
   # =========================================================================
-  CMMCScannerDenyWritePolicy:
+  FedRAMPScannerDenyWritePolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: SecuritybricksCMMCScannerDenyWrite
+      PolicyName: SecuritybricksFedRAMPScannerDenyWrite
       Roles:
-        - !Ref CMMCScannerRole
+        - !Ref FedRAMPScannerRole
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -416,8 +431,8 @@ Outputs:
   RoleArn:
     Description: >-
       Provide this ARN to Securitybricks to complete onboarding.
-      This is the cross-account role that the CMMC Scanner will assume.
-    Value: !GetAtt CMMCScannerRole.Arn
+      This is the cross-account role that the FedRAMP Scanner will assume.
+    Value: !GetAtt FedRAMPScannerRole.Arn
 
   ExternalIdUsed:
     Description: External ID configured for this role
@@ -431,7 +446,7 @@ Outputs:
     Description: Next steps after deploying this template
     Value: !Sub >-
       Role created successfully. Provide the Role ARN
-      (${CMMCScannerRole.Arn}) to your Securitybricks contact.
-      They will configure it in the CMMC Scanner platform for
+      (${FedRAMPScannerRole.Arn}) to your Securitybricks contact.
+      They will configure it in the FedRAMP Scanner platform for
       your organization. The scanner will use External ID
       '${ExternalId}' when assuming this role.

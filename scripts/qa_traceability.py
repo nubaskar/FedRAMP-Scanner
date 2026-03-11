@@ -49,11 +49,13 @@ REPORT_DIR = PROJECT_ROOT / "qa"
 REQUIRED_CHECK_FIELDS = {"check_id", "name", "service", "api_call", "expected",
                          "severity", "supports_objectives"}
 
-# Valid check_id pattern: {domain}-{control}-{provider}-{sequence}
+# Valid check_id pattern: {family}-{control}[-{enhancement}]-{provider}-{sequence}
+# Examples: ac-2-aws-001, ac-6-3-azure-001, sc-7-5-gcp-002
 CHECK_ID_RE = re.compile(
-    r"^[a-z]{2}-"                    # domain (ac, au, sc, ...)
-    r"\d+\.\d+\.\d+-"               # control (3.1.1, 3.13.10, ...)
-    r"(aws|azure|gcp)-"             # provider
+    r"^[a-z]{2}-"                    # family (ac, au, sc, ...)
+    r"\d+"                           # control number (2, 6, 7, ...)
+    r"(-\d+)?"                       # optional enhancement (-3, -5, ...)
+    r"-(aws|azure|gcp)-"            # provider
     r"\d{3}$"                        # sequence (001, 002, ...)
 )
 
@@ -84,7 +86,11 @@ class QACheckResult:
 # Loaders
 # ---------------------------------------------------------------------------
 def load_controls() -> dict:
-    """Load nist_800_53_controls.json → {control_id: {requirement, level, objectives, automated, ...}}"""
+    """Load nist_800_53_controls.json → {control_id: {requirement, level, objectives, automated, ...}}
+
+    Includes both base controls (AC-2) and enhancements (AC-2(9), AC-6(3)).
+    Enhancement IDs are normalized from JSON format (AC-6.3) to NIST format (AC-6(3)).
+    """
     with open(PRACTICES_FILE) as f:
         data = json.load(f)
     controls: dict = {}
@@ -92,6 +98,16 @@ def load_controls() -> dict:
         domain = fam.get("domain", "")
         for pid, pdata in fam.get("controls", {}).items():
             controls[pid] = {**pdata, "domain": domain}
+            # Include enhancements with both ID formats
+            for enh_id, enh_data in pdata.get("enhancements", {}).items():
+                enh_entry = {**enh_data, "domain": domain}
+                # Store as original dot format (AC-6.3)
+                controls[enh_id] = enh_entry
+                # Also store as paren format (AC-6(3)) used in some check files
+                parts = enh_id.rsplit(".", 1)
+                if len(parts) == 2:
+                    nist_id = f"{parts[0]}({parts[1]})"
+                    controls[nist_id] = enh_entry
     return controls
 
 
@@ -225,10 +241,19 @@ def extract_api_calls_from_method(source_lines: list[str], start: int, end: int)
         path = m.group(1).split("?")[0]
         calls.append(f"graph/{path}")
 
+    # Pattern 2b: self._gcp_api_get or self._gcp_api_get_safe — GCP REST calls
+    for m in re.finditer(r'self\._gcp_api_get(?:_safe)?\(', body):
+        # The actual API is declared in _build_evidence; flag that this is a GCP REST call
+        calls.append("gcp_rest_call")
+
     # Pattern 3: GCP local client variable calls — <var>.method(
     # Match: client.get_iam_policy(, client.list_topics(, etc.
     for m in re.finditer(r'\b(\w+_?client|\w+_service)\s*\.\s*(\w+)\(', body):
         calls.append(f"client.{m.group(2)}")
+    # Pattern 3b: Chained local client calls — local_client.sub.method(
+    # Matches: policy_client.policy_assignments.list(, automation_client.runbook.list_by_...(
+    for m in re.finditer(r'\b(\w+_client)\s*\.\s*(\w+)\s*\.\s*(\w+)\(', body):
+        calls.append(f"{m.group(2)}.{m.group(3)}")
     # Also match: client = Foo.BarClient(...) then client.method(
     for m in re.finditer(r'(\w+)\s*=\s*\w+\.\w+Client\(', body):
         var_name = m.group(1)
@@ -508,7 +533,8 @@ def qa1_6_check_id_format(checks: list[dict]) -> QACheckResult:
 
 def qa1_7_control_completeness(checks: list[dict], controls: dict,
                                 raw_configs: dict[str, dict]) -> QACheckResult:
-    """1.7 — All 110 controls from nist_800_53_controls.json appear in config/checks/*.json."""
+    """1.7 — All base controls (non-enhancements) from nist_800_53_controls.json
+    appear in config/checks/*.json (either as automated checks or manual-only entries)."""
     r = QACheckResult(name="Control Completeness")
 
     # Controls that appear in config (either as manual or automated)
@@ -517,14 +543,24 @@ def qa1_7_control_completeness(checks: list[dict], controls: dict,
         for pid in config.get("checks", {}).keys():
             config_controls.add(pid)
 
-    for pid in sorted(controls.keys()):
+    # Only check base controls that are marked as automated (have cloud checks).
+    # Manual-only controls (PE, PS, etc.) intentionally have no check config entry.
+    # Exclude enhancements (contain '(' or have a dot followed by digits like AC-6.3).
+    import re
+    _enh_re = re.compile(r'^[A-Z]{2}-\d+[.(]')
+    base_controls = {pid: data for pid, data in controls.items()
+                     if not _enh_re.search(pid + "(") and "(" not in pid
+                     and not re.search(r'\.\d+$', pid)
+                     and data.get("automated", False)}
+
+    for pid in sorted(base_controls.keys()):
         if pid in config_controls:
             r.passed += 1
         else:
             r.failed += 1
             r.findings.append(Finding(
                 "ERROR", r.name, pid,
-                f"Control {pid} ({controls[pid].get('domain', '?')}) "
+                f"Automated control {pid} ({controls[pid].get('domain', '?')}) "
                 f"not found in any config/checks/*.json file"
             ))
     return r

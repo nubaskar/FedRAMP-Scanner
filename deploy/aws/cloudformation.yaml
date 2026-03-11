@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
-  CMMC Cloud Compliance Scanner — AWS deployment stack.
+  FedRAMP Cloud Compliance Scanner — AWS deployment stack.
   Deploys FastAPI backend on ECS Fargate with ALB, RDS PostgreSQL,
   S3 + CloudFront for frontend, Secrets Manager, and supporting infrastructure.
 
@@ -78,9 +78,9 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-vpc"
+          Value: !Sub "fedramp-scanner-${Environment}-vpc"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -89,9 +89,9 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-igw"
+          Value: !Sub "fedramp-scanner-${Environment}-igw"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -111,9 +111,9 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-public-a"
+          Value: !Sub "fedramp-scanner-${Environment}-public-a"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -126,9 +126,9 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-public-b"
+          Value: !Sub "fedramp-scanner-${Environment}-public-b"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -138,9 +138,9 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-public-rt"
+          Value: !Sub "fedramp-scanner-${Environment}-public-rt"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -172,9 +172,9 @@ Resources:
       Domain: vpc
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-nat-eip"
+          Value: !Sub "fedramp-scanner-${Environment}-nat-eip"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -185,9 +185,9 @@ Resources:
       SubnetId: !Ref PublicSubnetA
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-nat"
+          Value: !Sub "fedramp-scanner-${Environment}-nat"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -200,9 +200,9 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-private-a"
+          Value: !Sub "fedramp-scanner-${Environment}-private-a"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -214,9 +214,9 @@ Resources:
       AvailabilityZone: !Select [1, !GetAZs ""]
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-private-b"
+          Value: !Sub "fedramp-scanner-${Environment}-private-b"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -226,9 +226,9 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-private-rt"
+          Value: !Sub "fedramp-scanner-${Environment}-private-rt"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -272,9 +272,9 @@ Resources:
           Description: HTTP from anywhere (redirects to HTTPS)
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-alb-sg"
+          Value: !Sub "fedramp-scanner-${Environment}-alb-sg"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -291,9 +291,9 @@ Resources:
           Description: API traffic from ALB
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-fargate-sg"
+          Value: !Sub "fedramp-scanner-${Environment}-fargate-sg"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -310,9 +310,9 @@ Resources:
           Description: PostgreSQL from Fargate tasks
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-rds-sg"
+          Value: !Sub "fedramp-scanner-${Environment}-rds-sg"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -322,44 +322,44 @@ Resources:
   DatabaseSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "cmmc-scanner/${Environment}/database"
+      Name: !Sub "fedramp-scanner/${Environment}/database"
       Description: PostgreSQL database credentials
       GenerateSecretString:
-        SecretStringTemplate: '{"username": "cmmc_admin"}'
+        SecretStringTemplate: '{"username": "fedramp_admin"}'
         GenerateStringKey: password
         PasswordLength: 32
         ExcludeCharacters: '"@/\'
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
   JWTSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "cmmc-scanner/${Environment}/jwt-secret"
+      Name: !Sub "fedramp-scanner/${Environment}/jwt-secret"
       Description: JWT signing secret key
       GenerateSecretString:
         PasswordLength: 64
         ExcludeCharacters: '"@/\'
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
   EncryptionKeySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "cmmc-scanner/${Environment}/encryption-key"
+      Name: !Sub "fedramp-scanner/${Environment}/encryption-key"
       Description: Client credential encryption key
       GenerateSecretString:
         PasswordLength: 64
         ExcludeCharacters: '"@/\'
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -369,13 +369,13 @@ Resources:
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
-      DBSubnetGroupDescription: Private subnets for CMMC Scanner RDS
+      DBSubnetGroupDescription: Private subnets for FedRAMP Scanner RDS
       SubnetIds:
         - !Ref PrivateSubnetA
         - !Ref PrivateSubnetB
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -384,7 +384,7 @@ Resources:
     DeletionPolicy: Snapshot
     UpdateReplacePolicy: Snapshot
     Properties:
-      DBInstanceIdentifier: !Sub "cmmc-scanner-${Environment}"
+      DBInstanceIdentifier: !Sub "fedramp-scanner-${Environment}"
       Engine: postgres
       EngineVersion: "16.4"
       DBInstanceClass: !Ref DBInstanceClass
@@ -394,7 +394,7 @@ Resources:
       StorageEncrypted: true
       MasterUsername: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:username}}"
       MasterUserPassword: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}"
-      DBName: cmmc_scanner
+      DBName: fedramp_scanner
       MultiAZ: !If [EnableMultiAZ, true, false]
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
@@ -404,9 +404,9 @@ Resources:
       CopyTagsToSnapshot: true
       Tags:
         - Key: Name
-          Value: !Sub "cmmc-scanner-${Environment}-db"
+          Value: !Sub "fedramp-scanner-${Environment}-db"
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -416,7 +416,7 @@ Resources:
   ECRRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: !Sub "cmmc-scanner-${Environment}"
+      RepositoryName: !Sub "fedramp-scanner-${Environment}"
       ImageScanningConfiguration:
         ScanOnPush: true
       LifecyclePolicy:
@@ -439,7 +439,7 @@ Resources:
           }
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -449,11 +449,11 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/ecs/cmmc-scanner-${Environment}"
+      LogGroupName: !Sub "/ecs/fedramp-scanner-${Environment}"
       RetentionInDays: !If [IsProduction, 90, 14]
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -463,7 +463,7 @@ Resources:
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "cmmc-scanner-${Environment}-ecs-execution"
+      RoleName: !Sub "fedramp-scanner-${Environment}-ecs-execution"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -492,14 +492,14 @@ Resources:
                 Resource: !GetAtt LogGroup.Arn
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
   ECSTaskRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "cmmc-scanner-${Environment}-ecs-task"
+      RoleName: !Sub "fedramp-scanner-${Environment}-ecs-task"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -537,13 +537,13 @@ Resources:
               - Effect: Allow
                 Action:
                   - sts:AssumeRole
-                Resource: "arn:aws:iam::*:role/SecuritybricksCMMCScanner*"
+                Resource: "arn:aws:iam::*:role/SecuritybricksFedRAMPScanner*"
                 Condition:
                   StringEquals:
-                    sts:ExternalId: !Sub "cmmc-scanner-${Environment}"
+                    sts:ExternalId: !Sub "fedramp-scanner-${Environment}"
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -553,20 +553,20 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub "cmmc-scanner-${Environment}"
+      ClusterName: !Sub "fedramp-scanner-${Environment}"
       ClusterSettings:
         - Name: containerInsights
           Value: !If [IsProduction, enabled, disabled]
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub "cmmc-scanner-${Environment}"
+      Family: !Sub "fedramp-scanner-${Environment}"
       Cpu: "1024"
       Memory: "2048"
       NetworkMode: awsvpc
@@ -578,7 +578,7 @@ Resources:
         CpuArchitecture: X86_64
         OperatingSystemFamily: LINUX
       ContainerDefinitions:
-        - Name: cmmc-scanner-api
+        - Name: fedramp-scanner-api
           Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}:latest"
           Essential: true
           PortMappings:
@@ -589,7 +589,7 @@ Resources:
               Value: !Ref Environment
             - Name: DATABASE_URL
               Value: !Sub
-                - "postgresql://${Username}:${Password}@${Host}:5432/cmmc_scanner"
+                - "postgresql://${Username}:${Password}@${Host}:5432/fedramp_scanner"
                 - Username: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:username}}"
                   Password: !Sub "{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}"
                   Host: !GetAtt Database.Endpoint.Address
@@ -614,7 +614,7 @@ Resources:
             StartPeriod: 60
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -622,7 +622,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: ALBHTTPSListener
     Properties:
-      ServiceName: !Sub "cmmc-scanner-${Environment}"
+      ServiceName: !Sub "fedramp-scanner-${Environment}"
       Cluster: !Ref ECSCluster
       TaskDefinition: !Ref TaskDefinition
       LaunchType: FARGATE
@@ -642,12 +642,12 @@ Resources:
             - !Ref PrivateSubnetA
             - !Ref PrivateSubnetB
       LoadBalancers:
-        - ContainerName: cmmc-scanner-api
+        - ContainerName: fedramp-scanner-api
           ContainerPort: 8000
           TargetGroupArn: !Ref ALBTargetGroup
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -657,7 +657,7 @@ Resources:
   ALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Sub "cmmc-scanner-${Environment}"
+      Name: !Sub "fedramp-scanner-${Environment}"
       Scheme: internet-facing
       Type: application
       SecurityGroups:
@@ -667,14 +667,14 @@ Resources:
         - !Ref PublicSubnetB
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub "cmmc-scanner-${Environment}-tg"
+      Name: !Sub "fedramp-scanner-${Environment}-tg"
       Port: 8000
       Protocol: HTTP
       VpcId: !Ref VPC
@@ -688,7 +688,7 @@ Resources:
         HttpCode: "200"
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -727,7 +727,7 @@ Resources:
   FrontendBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "cmmc-scanner-${Environment}-frontend-${AWS::AccountId}"
+      BucketName: !Sub "fedramp-scanner-${Environment}-frontend-${AWS::AccountId}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -741,7 +741,7 @@ Resources:
         Status: Enabled
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 
@@ -763,14 +763,14 @@ Resources:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: !Sub "OAI for cmmc-scanner-${Environment} frontend"
+        Comment: !Sub "OAI for fedramp-scanner-${Environment} frontend"
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Enabled: true
-        Comment: !Sub "CMMC Scanner ${Environment} frontend"
+        Comment: !Sub "FedRAMP Scanner ${Environment} frontend"
         DefaultRootObject: index.html
         HttpVersion: http2and3
         PriceClass: PriceClass_100
@@ -810,7 +810,7 @@ Resources:
           CloudFrontDefaultCertificate: true
       Tags:
         - Key: Project
-          Value: CMMC-Scanner
+          Value: FedRAMP-Scanner
         - Key: ManagedBy
           Value: CloudFormation
 

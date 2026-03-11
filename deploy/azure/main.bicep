@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// CMMC Cloud Compliance Scanner — Azure Bicep deployment template.
+// FedRAMP Cloud Compliance Scanner — Azure Bicep deployment template.
 //
 // Deploys FastAPI backend on Azure Container Apps with PostgreSQL Flexible
 // Server, Blob Storage + CDN for frontend, Key Vault, and supporting infra.
@@ -58,7 +58,7 @@ param containerImage string = ''
 // Variables
 // ===========================================================================
 
-var prefix = 'cmmc-scanner'
+var prefix = 'fedramp-scanner'
 var uniqueSuffix = uniqueString(resourceGroup().id, prefix)
 var resourcePrefix = '${prefix}-${environment}'
 var isProduction = environment == 'prod'
@@ -69,7 +69,7 @@ var initImage = 'mcr.microsoft.com/k8se/quickstart:latest'
 var resolvedImage = useCustomImage ? containerImage : initImage
 
 var tags = {
-  Project: 'CMMC-Scanner'
+  Project: 'FedRAMP-Scanner'
   Environment: environment
   ManagedBy: 'Bicep'
 }
@@ -222,7 +222,7 @@ resource secretDbConnectionString 'Microsoft.KeyVault/vaults/secrets@2023-07-01'
   parent: keyVault
   name: 'database-connection-string'
   properties: {
-    value: 'postgresql://cmmc_admin:${dbAdminPassword}@${postgresServer.properties.fullyQualifiedDomainName}:5432/cmmc_scanner?sslmode=require'
+    value: 'postgresql://fedramp_admin:${dbAdminPassword}@${postgresServer.properties.fullyQualifiedDomainName}:5432/fedramp_scanner?sslmode=require'
   }
 }
 
@@ -266,7 +266,7 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' =
   }
   properties: {
     version: '16'
-    administratorLogin: 'cmmc_admin'
+    administratorLogin: 'fedramp_admin'
     administratorLoginPassword: dbAdminPassword
     storage: {
       storageSizeGB: postgresStorageGB
@@ -290,7 +290,7 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' =
 
 resource postgresDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2024-08-01' = {
   parent: postgresServer
-  name: 'cmmc_scanner'
+  name: 'fedramp_scanner'
   properties: {
     charset: 'UTF8'
     collation: 'en_US.utf8'
@@ -408,7 +408,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         [
           {
             name: 'database-url'
-            value: 'postgresql://cmmc_admin:${dbAdminPassword}@${postgresServer.properties.fullyQualifiedDomainName}:5432/cmmc_scanner?sslmode=require'
+            value: 'postgresql://fedramp_admin:${dbAdminPassword}@${postgresServer.properties.fullyQualifiedDomainName}:5432/fedramp_scanner?sslmode=require'
           }
           {
             name: 'secret-key'
@@ -430,7 +430,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     template: {
       containers: [
         {
-          name: 'cmmc-scanner-api'
+          name: 'fedramp-scanner-api'
           image: resolvedImage
           resources: {
             cpu: json('1.0')
@@ -546,7 +546,7 @@ resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' =
 // ===========================================================================
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
-  name: take('cmmc${replace(environment, '-', '')}${uniqueSuffix}', 24)
+  name: take('frs${replace(environment, '-', '')}${uniqueSuffix}', 24)
   location: location
   tags: tags
   kind: 'StorageV2'

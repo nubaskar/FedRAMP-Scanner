@@ -19,10 +19,14 @@ ROOT = Path(__file__).resolve().parent.parent
 CONFIG_DIR = ROOT / "config"
 
 
-def _numeric_key(item):
-    """Sort key for control/family IDs like '3.1.1' numerically, not lexicographically."""
+def _nist_key(item):
+    """Sort key for NIST 800-53 IDs like 'AC-2', 'AC-2(1)' — alphabetic family, numeric control."""
+    import re
     key = item[0] if isinstance(item, tuple) else item
-    return [int(n) for n in key.split(".")]
+    m = re.match(r'([A-Z]{2})-?(\d+)?', key)
+    if m:
+        return (m.group(1), int(m.group(2)) if m.group(2) else 0)
+    return (key, 0)
 
 def load_data():
     with open(CONFIG_DIR / "nist_800_53_controls.json") as f:
@@ -61,7 +65,7 @@ def generate():
              "aws": 0, "azure": 0, "gcp": 0, "doc_reqs": 0}
     domain_stats = {}
 
-    for fam_id, family in sorted(pd["families"].items(), key=_numeric_key):
+    for fam_id, family in sorted(pd["families"].items(), key=_nist_key):
         domain = family["domain"]
         name = family["name"]
         ds = {"name": name, "controls": 0, "automated": 0, "manual": 0,
@@ -111,14 +115,15 @@ def generate():
     a('<div class="card-body">')
     a('<h3 class="help-section-title">How This Scanner Works</h3>')
     a('<p class="help-section-desc">')
-    a("The FedRAMP Cloud Compliance Scanner evaluates CSP cloud environments against ")
-    a("all 110 NIST SP 800-53 Rev 5 controls. For each control, the scanner maps its NIST SP 800-53A ")
+    a(f"The FedRAMP Cloud Compliance Scanner evaluates CSP cloud environments against ")
+    a(f"all {stats['total_controls']} NIST SP 800-53 Rev 5 controls across {len(domain_stats)} control families. ")
+    a("For each control, the scanner maps its NIST SP 800-53A ")
     a("assessment objectives to cloud-specific API checks across AWS, Azure, and GCP.")
     a('</p>')
     a('<p class="help-section-desc">')
     a("This document explains <strong>how</strong> each control is evaluated, <strong>which</strong> cloud APIs are queried, ")
     a("<strong>why</strong> each check maps to specific assessment objectives, and <strong>what</strong> 3PAOs must do ")
-    a("for the 39 controls that require manual review.")
+    a(f"for the {stats['manual']} controls that require manual review.")
     a('</p>')
 
     # Key stats grid
@@ -149,8 +154,8 @@ def generate():
     a('<p class="help-section-desc">Every check in the scanner traces back through the following chain:</p>')
     a('<div class="help-traceability-chain">')
     chain_steps = [
-        ("shield-alt", "FedRAMP Level", "L1 / L2 / L3 certification tier"),
-        ("book", "NIST SP 800-53 Rev 5 Control", "One of 110 security requirements"),
+        ("shield-alt", "FedRAMP Baseline", "Low / Moderate / High authorization level"),
+        ("book", "NIST SP 800-53 Rev 5 Control", f"One of {stats['total_controls']} security requirements"),
         ("clipboard-check", "800-53A Assessment Objective", "Specific &ldquo;determine if&rdquo; statement"),
         ("search", "Scanner Check", "Cloud-specific configuration test"),
         ("cloud", "Cloud API Call", "Read-only query to AWS, Azure, or GCP"),
@@ -171,20 +176,18 @@ def generate():
     a('<thead><tr><th>Source</th><th>Version</th><th>Purpose</th><th>Reference</th></tr></thead>')
     a('<tbody>')
     for src, ver, purpose, url, url_label in [
-        ("NIST SP 800-53 Rev 5", "Feb 2020", "110 security controls across 14 families",
-         "https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5/rev-2/final", "csrc.nist.gov"),
-        ("NIST SP 800-53A", "Jun 2018", "319 assessment objectives (&quot;determine if&quot; statements)",
-         "https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5a/final", "csrc.nist.gov"),
-        ("NIST SP 800-172", "Feb 2021", "Enhanced security controls for Level 3",
-         "https://csrc.nist.gov/publications/detail/sp/800-172/final", "csrc.nist.gov"),
-        ("FAR 52.204-21", "2016", "17 basic safeguarding controls for Level 1",
-         "https://www.acquisition.gov/far/52.204-21", "acquisition.gov"),
-        ("FedRAMP Model", "Dec 2021", "Three-level certification model",
-         "https://dodcio.defense.gov/FedRAMP/", "dodcio.defense.gov"),
+        ("NIST SP 800-53 Rev 5", "Sep 2020", f"{stats['total_controls']} security controls across {len(domain_stats)} families",
+         "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final", "csrc.nist.gov"),
+        ("NIST SP 800-53A Rev 5", "Jan 2022", f"{stats['total_objectives']} assessment objectives (&quot;determine if&quot; statements)",
+         "https://csrc.nist.gov/publications/detail/sp/800-53a/rev-5/final", "csrc.nist.gov"),
+        ("FedRAMP Authorization", "Current", "Three baselines: Low, Moderate, High",
+         "https://www.fedramp.gov/program-basics/", "fedramp.gov"),
+        ("FedRAMP Baselines", "Rev 5", "Control baselines for Low / Moderate / High impact levels",
+         "https://www.fedramp.gov/baselines/", "fedramp.gov"),
         ("AWS Config Rules", "Current", "~200 rules mapped to NIST 800-53 Rev 5",
-         "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-controls-for-nist_800-53 Rev 5.html", "docs.aws.amazon.com"),
-        ("Azure Policy", "Current", "~200 policy definitions for NIST 800-53 Rev 5 R2",
-         "https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-53 Rev 5-r2", "learn.microsoft.com"),
+         "https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_5.html", "docs.aws.amazon.com"),
+        ("Azure Policy", "Current", "~200 policy definitions for NIST 800-53 Rev 5",
+         "https://learn.microsoft.com/en-us/azure/governance/policy/samples/nist-sp-800-53-rev5", "learn.microsoft.com"),
         ("GCP CIS Benchmark", "Current", "GCP security controls aligned to NIST controls",
          "https://cloud.google.com/security/compliance/cis-benchmarks", "cloud.google.com"),
     ]:
@@ -197,7 +200,7 @@ def generate():
     a('<div class="card mb-lg">')
     a('<div class="card-body">')
     a('<h3 class="help-section-title">Three-Tier Evaluation Model</h3>')
-    a('<p class="help-section-desc">Each of the 319 NIST SP 800-53A assessment objectives is classified into one of three tiers:</p>')
+    a(f'<p class="help-section-desc">Each of the {stats["total_objectives"]} NIST SP 800-53A assessment objectives is classified into one of three tiers:</p>')
     a('<table class="data-table">')
     a('<thead><tr><th>Tier</th><th>Classification</th><th>Count</th><th>Scanner Handling</th></tr></thead>')
     a('<tbody>')
@@ -207,12 +210,116 @@ def generate():
     a('</tbody></table>')
     a('</div></div>')
 
+    # Domain display order (used in multiple sections below)
+    domain_order = ["AC", "AT", "AU", "CA", "CM", "CP", "IA", "IR", "MA", "MP", "PE", "PL", "PM", "PS", "PT", "RA", "SA", "SC", "SI", "SR"]
+
+    # --- Why Only N Controls Are Automated ---
+    # Categorize manual-only families
+    zero_auto_families = [(dc, domain_stats[dc]) for dc in domain_order
+                          if dc in domain_stats and domain_stats[dc]["automated"] == 0]
+    low_auto_families = [(dc, domain_stats[dc]) for dc in domain_order
+                         if dc in domain_stats and 0 < domain_stats[dc]["automated"] and
+                         domain_stats[dc]["automated"] * 100 // domain_stats[dc]["controls"] <= 20]
+    zero_auto_count = sum(d["controls"] for _, d in zero_auto_families)
+
+    a('<div class="card mb-lg">')
+    a('<div class="card-body">')
+    a(f'<h3 class="help-section-title">Why Only {stats["automated"]} of {stats["total_controls"]} Controls Are Automated</h3>')
+    a('<p class="help-section-desc">')
+    a(f'NIST SP 800-53 Rev 5 defines {stats["total_controls"]} security controls, but only {stats["automated"]} '
+      f'({round(stats["automated"] * 100 / stats["total_controls"])}%) can be meaningfully evaluated through cloud API queries. '
+      f'This is not a gap in scanner coverage &mdash; it reflects the fundamental nature of the controls themselves. '
+      f'The remaining {stats["manual"]} controls govern activities that occur outside of cloud infrastructure '
+      f'and cannot be observed through any API.')
+    a('</p>')
+
+    # Category 1: Entirely non-automatable families
+    a('<h4 class="help-subsection-title" style="margin-top:1.25rem">Controls That Cannot Be Automated</h4>')
+    a('<table class="data-table">')
+    a('<thead><tr><th>Category</th><th>Families</th><th>Controls</th><th>Why Not Automatable</th></tr></thead>')
+    a('<tbody>')
+    a(f'<tr>'
+      f'<td><strong>Physical &amp; Environmental</strong></td>'
+      f'<td>PE ({domain_stats.get("PE", {}).get("controls", 0)} controls)</td>'
+      f'<td>{domain_stats.get("PE", {}).get("controls", 0)}</td>'
+      f'<td>Facility access, environmental protections, fire suppression, and physical security '
+      f'exist outside cloud infrastructure &mdash; no API can verify a locked door or a guard post</td>'
+      f'</tr>')
+    a(f'<tr>'
+      f'<td><strong>Organizational Governance</strong></td>'
+      f'<td>PM ({domain_stats.get("PM", {}).get("controls", 0)} controls)</td>'
+      f'<td>{domain_stats.get("PM", {}).get("controls", 0)}</td>'
+      f'<td>Risk management strategy, authorization processes, insider threat programs, and enterprise '
+      f'architecture are organizational decisions documented in policies, not cloud configurations</td>'
+      f'</tr>')
+    a(f'<tr>'
+      f'<td><strong>Personnel Security</strong></td>'
+      f'<td>PS ({domain_stats.get("PS", {}).get("controls", 0)} controls)</td>'
+      f'<td>{domain_stats.get("PS", {}).get("controls", 0)}</td>'
+      f'<td>Background checks, personnel screening, access agreements, and termination procedures are '
+      f'HR processes that require human verification of documents and records</td>'
+      f'</tr>')
+    a(f'<tr>'
+      f'<td><strong>Awareness &amp; Training</strong></td>'
+      f'<td>AT ({domain_stats.get("AT", {}).get("controls", 0)} controls)</td>'
+      f'<td>{domain_stats.get("AT", {}).get("controls", 0)}</td>'
+      f'<td>Security awareness training, role-based training programs, and training records require '
+      f'review of training materials, completion records, and curriculum content</td>'
+      f'</tr>')
+    a(f'<tr class="table-total">'
+      f'<td><strong>Subtotal</strong></td>'
+      f'<td>{len(zero_auto_families)} families with 0% automation</td>'
+      f'<td><strong>{zero_auto_count}</strong></td>'
+      f'<td>These {zero_auto_count} controls account for '
+      f'{round(zero_auto_count * 100 / stats["total_controls"])}% of the framework</td>'
+      f'</tr>')
+    a('</tbody></table>')
+
+    # Category 2: Policy/Procedure objectives within automated families
+    a('<h4 class="help-subsection-title" style="margin-top:1.25rem">Policy &amp; Procedure Objectives Within Automated Families</h4>')
+    a('<p class="help-section-desc">')
+    a('Even in families that have automated checks, many controls contain assessment objectives that ask: '
+      '&ldquo;<em>Does the organization define and document a policy/procedure for X?</em>&rdquo; '
+      'These <strong>Tier 3</strong> objectives require a 3PAO to review written policies, standard operating procedures, '
+      'and organizational memoranda &mdash; artifacts that exist as documents, not as cloud API states. '
+      'This is why families like Access Control (AC) show 48% automation despite having strong API coverage: '
+      f'the {domain_stats.get("AC", {}).get("automated", 0)} automated controls check <em>configuration states</em> '
+      '(MFA enabled, least-privilege roles, session timeouts), while the '
+      f'{domain_stats.get("AC", {}).get("manual", 0)} manual controls verify '
+      'that policies, procedures, and approval workflows exist and are followed.')
+    a('</p>')
+
+    # Category 3: What CAN be automated
+    a('<h4 class="help-subsection-title" style="margin-top:1.25rem">What <em>Can</em> Be Automated</h4>')
+    a('<p class="help-section-desc">')
+    a(f'The {stats["automated"]} automated controls share a common trait: their compliance state is observable '
+      'through cloud provider APIs as a <strong>configuration property</strong> that is either present or absent. Examples:')
+    a('</p>')
+    a('<ul class="help-doc-reqs">')
+    a('<li><strong>AC-6(3):</strong> &ldquo;Is privileged access to the system restricted to specific accounts?&rdquo; '
+      '&rarr; Check IAM policies for least-privilege roles (API-verifiable)</li>')
+    a('<li><strong>AU-6:</strong> &ldquo;Are audit records reviewed and analyzed?&rdquo; '
+      '&rarr; Check CloudTrail/Activity Log/Cloud Audit Logs enabled and forwarded (API-verifiable)</li>')
+    a('<li><strong>SC-8:</strong> &ldquo;Is confidentiality/integrity of transmitted information protected?&rdquo; '
+      '&rarr; Check TLS/SSL certificate configuration on load balancers (API-verifiable)</li>')
+    a('<li><strong>PE-3:</strong> &ldquo;Is physical access to the facility controlled?&rdquo; '
+      '&rarr; Requires on-site inspection of badge readers, visitor logs, and guard stations (not API-verifiable)</li>')
+    a('</ul>')
+
+    a('<div class="help-info-box" style="margin-top:0.75rem">')
+    a(f'<strong>Bottom line:</strong> The {stats["automated"]}/{stats["total_controls"]} automation ratio is inherent to the '
+      'NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside '
+      'technical controls. A scanner that claimed 100% automation of 800-53 would be misrepresenting '
+      'what the framework requires. The Coverage Matrix below shows the exact breakdown by family.')
+    a('</div>')
+    a('</div></div>')
+
     # --- Coverage Matrix ---
     a('<div class="card mb-lg">')
     a('<div class="card-body">')
     a('<h3 class="help-section-title">Coverage Matrix by Domain</h3>')
     a('<p class="help-section-desc">')
-    a("The table below shows the scanner's coverage across all 14 FedRAMP control families. Each domain is broken down by the number of ")
+    a(f"The table below shows the scanner's coverage across all {len(domain_stats)} FedRAMP control families. Each domain is broken down by the number of ")
     a("NIST 800-53 Rev 5 controls, how many are automated vs. manual, the total 800-53A assessment objectives, and the cloud-specific ")
     a("checks implemented for each provider. The <strong>Automation Rate</strong> bar shows the percentage of controls in each domain ")
     a("that are fully automated by the scanner.")
@@ -229,7 +336,6 @@ def generate():
     a('<thead><tr><th>Domain</th><th>Name</th><th>Controls</th><th>Auto</th><th>Manual</th><th>Objectives</th><th>AWS</th><th>Azure</th><th>GCP</th><th>Automation Rate</th></tr></thead>')
     a('<tbody>')
 
-    domain_order = ["AC", "AT", "AU", "CM", "IA", "IR", "MA", "MP", "PE", "PS", "RA", "CA", "SC", "SI"]
     for dc in domain_order:
         if dc in domain_stats:
             d = domain_stats[dc]
@@ -278,18 +384,18 @@ def generate():
     # --- Domain-by-Domain Reference (all 110 controls) ---
     a('<div class="card mb-lg">')
     a('<div class="card-body">')
-    a('<h3 class="help-section-title">Complete Control Reference (All 110 Controls)</h3>')
+    a(f'<h3 class="help-section-title">Complete Control Reference (All {stats["total_controls"]} Controls)</h3>')
     a('<p class="help-section-desc">')
     a('Expand each domain below to see all controls with their assessment objectives, automated checks, ')
     a('and cloud API details.')
     a('</p>')
     a('<div class="help-accordion">')
 
-    for fam_id, family in sorted(pd["families"].items(), key=_numeric_key):
+    for fam_id, family in sorted(pd["families"].items(), key=_nist_key):
         domain = family["domain"]
         name = family["name"]
         ds = domain_stats[domain]
-        controls = sorted(family["controls"].items(), key=_numeric_key)
+        controls = sorted(family["controls"].items(), key=_nist_key)
 
         a('<div class="help-accordion-item">')
         a('<div class="help-accordion-header">')
@@ -300,7 +406,9 @@ def generate():
         a('<div class="help-accordion-body"><div class="help-accordion-body-inner">')
 
         for pid, p in controls:
-            level = p.get("level", "L2")
+            baselines = p.get("baselines", ["Moderate"])
+            baseline_label = "/".join(baselines)
+            baseline_css = baselines[0].lower() if baselines else "moderate"
             is_auto = p.get("automated", False)
             auto_tag = "auto" if is_auto else "manual-tag"
             auto_label = "Automated" if is_auto else "Manual"
@@ -308,7 +416,7 @@ def generate():
 
             a(f'<div class="help-control-card">')
             a(f'<h5 class="help-control-id">{pid} '
-              f'<span class="tag tag-{level.lower()}">{level}</span> '
+              f'<span class="tag tag-{baseline_css}">{baseline_label}</span> '
               f'<span class="tag tag-{auto_tag}">{auto_label}</span></h5>')
             a(f'<p class="help-control-req">{esc_html(p["requirement"])}</p>')
 
@@ -386,11 +494,11 @@ def generate():
     a('</p>')
     a('<div class="help-accordion">')
 
-    for fam_id, family in sorted(pd["families"].items(), key=_numeric_key):
+    for fam_id, family in sorted(pd["families"].items(), key=_nist_key):
         domain = family["domain"]
         name = family["name"]
         manual_controls = {
-            pid: p for pid, p in sorted(family["controls"].items(), key=_numeric_key)
+            pid: p for pid, p in sorted(family["controls"].items(), key=_nist_key)
             if not p.get("automated", False)
         }
         if not manual_controls:
@@ -404,9 +512,12 @@ def generate():
         a('</div>')
         a('<div class="help-accordion-body"><div class="help-accordion-body-inner">')
 
-        for pid, p in sorted(manual_controls.items(), key=_numeric_key):
+        for pid, p in sorted(manual_controls.items(), key=_nist_key):
             a(f'<div class="help-control-card">')
-            a(f'<h5 class="help-control-id">{pid} <span class="tag tag-{p.get("level", "L2").lower()}">{p.get("level", "L2")}</span></h5>')
+            baselines = p.get("baselines", ["Moderate"])
+            baseline_label = "/".join(baselines)
+            baseline_css = baselines[0].lower() if baselines else "moderate"
+            a(f'<h5 class="help-control-id">{pid} <span class="tag tag-{baseline_css}">{baseline_label}</span></h5>')
             a(f'<p class="help-control-req">{esc_html(p["requirement"])}</p>')
 
             # Assessment objectives

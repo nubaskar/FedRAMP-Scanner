@@ -3,8 +3,8 @@
    ==========================================================================
    Color System:
      Primary Red:    #E31B23
-     Secondary Navy: #1B3A5C
-     Accent Blue:    #2E75B6
+     Secondary Teal: #0D4F4F
+     Accent Teal:    #0E8585
      Background:     #F5F7FA
      Card:           #FFFFFF
      Text:           #1A1A1A
@@ -19,10 +19,10 @@
   --color-primary: #E31B23;
   --color-primary-dark: #c21620;
   --color-primary-light: #f5535a;
-  --color-secondary: #1B3A5C;
-  --color-secondary-light: #264d75;
-  --color-accent: #2E75B6;
-  --color-accent-light: #4a93d1;
+  --color-secondary: #0D4F4F;
+  --color-secondary-light: #146B6B;
+  --color-accent: #0E8585;
+  --color-accent-light: #12A3A3;
   --color-bg: #F5F7FA;
   --color-card: #FFFFFF;
   --color-text: #1A1A1A;
@@ -818,13 +818,13 @@ h6 { font-size: 0.875rem; }
 }
 
 .btn-evidence {
-  background: #456689;
+  background: #2A7070;
   color: #ffffff;
-  border-color: #456689;
+  border-color: #2A7070;
   transition: background var(--transition-fast), box-shadow var(--transition-fast);
 }
 .btn-evidence:hover {
-  background: #3a576f;
+  background: #1F5C5C;
   box-shadow: 0 2px 6px rgba(69, 102, 137, 0.3);
 }
 .btn-evidence:active {
@@ -944,17 +944,17 @@ h6 { font-size: 0.875rem; }
   color: var(--color-not-met);
 }
 
-.badge-l1 {
-  background: rgba(46, 117, 182, 0.1);
+.badge-low {
+  background: rgba(14, 133, 133, 0.1);
   color: var(--color-accent);
 }
 
-.badge-l2 {
-  background: rgba(27, 58, 92, 0.1);
+.badge-moderate {
+  background: rgba(13, 79, 79, 0.1);
   color: var(--color-secondary);
 }
 
-.badge-l3 {
+.badge-high {
   background: rgba(227, 27, 35, 0.08);
   color: var(--color-primary);
 }
@@ -1061,14 +1061,49 @@ h6 { font-size: 0.875rem; }
   table-layout: fixed;
 }
 
-.findings-table th:nth-child(1) { width: 100px; }
-.findings-table th:nth-child(3) { width: 90px; }
+.findings-table th:nth-child(1) { width: 110px; }
+.findings-table th:nth-child(3) { width: 120px; }
 .findings-table th:nth-child(4) { width: 90px; }
-.findings-table th:nth-child(5) { width: 90px; }
+.findings-table th:nth-child(5) { width: 140px; }
 
-.findings-table td:nth-child(2) {
-  word-break: break-word;
-  white-space: normal;
+.findings-table .finding-name-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.findings-table .finding-row {
+  transition: background 0.15s;
+}
+.findings-table .finding-row:hover {
+  background: var(--color-bg);
+}
+.findings-table .finding-row.expanded {
+  background: var(--color-bg);
+}
+.findings-table .finding-row.expanded .expand-icon {
+  transform: rotate(90deg);
+}
+
+.finding-detail-body {
+  padding: 16px 20px 20px 36px;
+  background: var(--color-bg);
+  max-height: 400px;
+  overflow-y: auto;
+}
+.finding-detail-section {
+  margin-bottom: 16px;
+}
+.finding-detail-section:last-child {
+  margin-bottom: 0;
+}
+.finding-detail-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
 }
 
 /* ---------- Forms ---------- */
@@ -1478,7 +1513,7 @@ h6 { font-size: 0.875rem; }
 .login-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #1B3A5C 0%, #0f2640 50%, #162d47 100%);
+  background: linear-gradient(135deg, #0D4F4F 0%, #083333 50%, #0A3D3D 100%);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -1508,7 +1543,7 @@ h6 { font-size: 0.875rem; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--color-secondary) 0%, #0f2640 100%);
+  background: linear-gradient(160deg, var(--color-secondary) 0%, #083333 100%);
 }
 
 .login-header-content {
@@ -2845,7 +2880,7 @@ h6 { font-size: 0.875rem; }
 
 /* Per-stat card colors */
 .help-stat-card[data-stat="practices"]  { --stat-color: #5B63D3; } /* Indigo */
-.help-stat-card[data-stat="objectives"] { --stat-color: #2E75B6; } /* Blue */
+.help-stat-card[data-stat="objectives"] { --stat-color: #0E8585; } /* Teal */
 .help-stat-card[data-stat="automated"]  { --stat-color: #059669; } /* Green */
 .help-stat-card[data-stat="manual"]     { --stat-color: #D97706; } /* Amber */
 .help-stat-card[data-stat="aws"]        { --stat-color: #FF9900; } /* AWS Orange */
@@ -2909,7 +2944,7 @@ h6 { font-size: 0.875rem; }
 
 /* Per-step colors  - pleasant palette flowing from warm to cool */
 .help-chain-step[data-step="1"] { --chain-color: #5B63D3; } /* Indigo  - governance */
-.help-chain-step[data-step="2"] { --chain-color: #2E75B6; } /* Blue  - standards */
+.help-chain-step[data-step="2"] { --chain-color: #0E8585; } /* Teal  - standards */
 .help-chain-step[data-step="3"] { --chain-color: #0891B2; } /* Teal  - objectives */
 .help-chain-step[data-step="4"] { --chain-color: #059669; } /* Green  - scanner */
 .help-chain-step[data-step="5"] { --chain-color: #D97706; } /* Amber  - cloud APIs */

@@ -26,10 +26,10 @@ from openpyxl.utils import get_column_letter
 # ---------------------------------------------------------------------------
 # Style constants
 # ---------------------------------------------------------------------------
-BRAND_NAVY = "1B3A5C"
-BRAND_BLUE = "2E75B6"
+BRAND_NAVY = "0D4F4F"
+BRAND_BLUE = "0E8585"
 WHITE = "FFFFFF"
-LIGHT_BG = "EDF4F9"
+LIGHT_BG = "E8F5F5"
 MET_GREEN = "28A745"
 NOT_MET_RED = "DC3545"
 MANUAL_AMBER = "FFC107"

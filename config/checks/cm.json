@@ -639,7 +639,7 @@
           "check_id": "cm-7-5-azure-001",
           "name": "Adaptive application controls enabled",
           "service": "Security Center",
-          "api_call": "security.adaptive_application_controls.list",
+          "api_call": "security.assessments.list",
           "expected": "Adaptive application controls configured for VMs processing CUI",
           "severity": "medium",
           "remediation": "Enable Defender for Cloud adaptive application controls.",

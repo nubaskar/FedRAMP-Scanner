@@ -20,9 +20,9 @@ COLOR_MET = "#28a745"
 COLOR_NOT_MET = "#dc3545"
 COLOR_MANUAL = "#ffc107"
 COLOR_ERROR = "#6c757d"
-BRAND_NAVY = "#1B3A5C"
-BRAND_BLUE = "#2E75B6"
-BRAND_LIGHT_BG = "#EDF4F9"
+BRAND_NAVY = "#0D4F4F"
+BRAND_BLUE = "#0E8585"
+BRAND_LIGHT_BG = "#E8F5F5"
 
 
 def generate_html_report(scan, findings, client) -> str:

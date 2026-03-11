@@ -7,9 +7,9 @@
   'use strict';
 
   /* ---------- Configuration ---------- */
-  const isBackendServed = window.location.port === '8000' || window.location.pathname.startsWith('/static/');
+  const isBackendServed = window.location.port === '8100' || window.location.pathname.startsWith('/static/');
   const CONFIG = {
-    API_BASE: isBackendServed ? window.location.origin + '/api' : 'https://fedramp-scanner-prod-api.whitecliff-57323604.eastus2.azurecontainerapps.io/api',
+    API_BASE: isBackendServed ? window.location.origin + '/api' : 'http://localhost:8100/api',
     TOKEN_KEY: 'fedramp_scanner_token',
     USER_KEY: 'fedramp_scanner_user',
     POLL_INTERVAL: 5000,

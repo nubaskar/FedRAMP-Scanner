@@ -1,11 +1,11 @@
 # ===========================================================================
-# CMMC Cloud Compliance Scanner — Multi-stage Docker Build
+# FedRAMP Cloud Compliance Scanner — Multi-stage Docker Build
 #
 # Stage 1: Install Python dependencies
 # Stage 2: Production image with backend + frontend
 #
-# Build:  docker build -t cmmc-scanner:latest .
-# Run:    docker run -p 8000:8000 --env-file .env cmmc-scanner:latest
+# Build:  docker build -t fedramp-scanner:latest .
+# Run:    docker run -p 8000:8000 --env-file .env fedramp-scanner:latest
 # ===========================================================================
 
 # ---------------------------------------------------------------------------

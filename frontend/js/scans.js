@@ -755,8 +755,10 @@
   }
 
   function buildSummaryCards(scan) {
-    var s = scan.summary || { met: 0, not_met: 0, manual: 0, total: 0 };
-    return '<div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">' +
+    var s = scan.summary || { met: 0, not_met: 0, manual: 0, error: 0, total: 0 };
+    var errorCount = s.error || 0;
+    var cols = errorCount > 0 ? 5 : 4;
+    var html = '<div class="stats-grid" style="grid-template-columns:repeat(' + cols + ',1fr)">' +
       '<div class="stat-card">' +
         '<div class="stat-card-icon green">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' +
@@ -783,7 +785,20 @@
           '<div class="stat-card-value" style="color:#b8860b">' + (s.manual || 0) + '</div>' +
           '<div class="stat-card-label">Manual Review</div>' +
         '</div>' +
-      '</div>' +
+      '</div>';
+    if (errorCount > 0) {
+      html +=
+      '<div class="stat-card">' +
+        '<div class="stat-card-icon" style="background:#fef2f2;color:#dc2626">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+        '</div>' +
+        '<div class="stat-card-content">' +
+          '<div class="stat-card-value" style="color:#dc2626">' + errorCount + '</div>' +
+          '<div class="stat-card-label">Error</div>' +
+        '</div>' +
+      '</div>';
+    }
+    html +=
       '<div class="stat-card">' +
         '<div class="stat-card-icon navy">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>' +
@@ -794,6 +809,7 @@
         '</div>' +
       '</div>' +
     '</div>';
+    return html;
   }
 
   function buildDonutChart(scan) {
@@ -1015,54 +1031,54 @@
     var rows = '';
     findings.forEach(function (f, idx) {
       var hasDetail = f.evidence || f.remediation;
-      var cursor = hasDetail ? ' style="cursor:pointer"' : '';
-      var expandIcon = hasDetail
-        ? '<svg class="expand-icon" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="vertical-align:middle;margin-right:4px;transition:transform 0.2s"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>'
-        : '';
+      var expandIcon = '<svg class="expand-icon" width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="vertical-align:middle;margin-right:6px;transition:transform 0.2s"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>';
       var evidenceBtn = (f.status !== 'manual')
-        ? '<td style="text-align:right;white-space:nowrap">' +
-            '<button class="btn-info-icon" data-practice-id="' + app.escapeHtml(f.id) + '" data-scan-id="' + app.escapeHtml(scanId || '') + '" title="More information on Evidence with CLI results">' +
+        ? '<button class="btn-info-icon" data-practice-id="' + app.escapeHtml(f.id) + '" data-scan-id="' + app.escapeHtml(scanId || '') + '" title="More information on Evidence with CLI results">' +
               '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="10" y="14.5" text-anchor="middle" font-size="12" font-weight="bold" font-family="serif" fill="currentColor">i</text></svg>' +
             '</button>' +
             '<button class="btn btn-evidence btn-sm evidence-btn" data-practice-id="' + app.escapeHtml(f.id) + '" data-scan-id="' + app.escapeHtml(scanId || '') + '" title="View detailed API evidence and CLI commands">' +
               '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="vertical-align:middle"><path d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"/></svg>' +
               ' Evidence' +
-            '</button>' +
-          '</td>'
-        : '<td></td>';
-      rows += '<tr class="finding-row"' + cursor + ' data-finding-idx="' + idx + '">' +
-        '<td style="white-space:nowrap">' + expandIcon + '<span class="font-mono font-bold text-small">' + app.escapeHtml(f.id) + '</span></td>' +
-        '<td style="white-space:normal;word-break:break-word">' + app.escapeHtml(f.name) + '</td>' +
-        '<td style="white-space:nowrap">' + app.statusBadge(f.status) + '</td>' +
-        '<td style="white-space:nowrap"><span class="' + app.severityClass(f.severity) + '">' + app.escapeHtml(f.severity) + '</span></td>' +
-        evidenceBtn +
+            '</button>'
+        : '';
+
+      rows += '<tr class="finding-row" style="cursor:pointer" data-finding-idx="' + idx + '">' +
+        '<td style="white-space:nowrap;width:110px">' + expandIcon + '<span class="font-mono font-bold text-small">' + app.escapeHtml(f.id) + '</span></td>' +
+        '<td class="finding-name-cell">' + app.escapeHtml(f.name) + '</td>' +
+        '<td style="white-space:nowrap;width:100px">' + app.statusBadge(f.status) + '</td>' +
+        '<td style="white-space:nowrap;width:80px"><span class="' + app.severityClass(f.severity) + '">' + app.escapeHtml(f.severity) + '</span></td>' +
+        '<td style="text-align:right;white-space:nowrap;width:140px">' + evidenceBtn + '</td>' +
       '</tr>';
-      if (hasDetail) {
-        var evidenceHtml = f.evidence
-          ? '<div><strong>Evidence:</strong>' + formatEvidence(f.evidence) + '</div>'
-          : '';
-        var remediationHtml = f.remediation
-          ? '<div style="margin-top:12px"><strong>Remediation:</strong>' + textToBullets(f.remediation) + '</div>'
-          : '';
-        rows += '<tr class="finding-detail" data-finding-idx="' + idx + '" style="display:none">' +
-          '<td colspan="5" style="padding:12px 16px 16px 32px;background:var(--color-bg);border-bottom:1px solid var(--color-border-light)">' +
-            '<div class="text-small">' + evidenceHtml + remediationHtml + '</div>' +
-          '</td>' +
-        '</tr>';
+
+      // Expandable detail row
+      var evidenceHtml = f.evidence
+        ? '<div class="finding-detail-section"><div class="finding-detail-label">Evidence</div>' + formatEvidence(f.evidence) + '</div>'
+        : '';
+      var remediationHtml = f.remediation
+        ? '<div class="finding-detail-section"><div class="finding-detail-label">Remediation</div>' + textToBullets(f.remediation) + '</div>'
+        : '';
+      var detailContent = evidenceHtml + remediationHtml;
+      if (!detailContent) {
+        detailContent = '<p class="text-muted text-small">No additional details available for this control.</p>';
       }
+      rows += '<tr class="finding-detail" data-finding-idx="' + idx + '" style="display:none">' +
+        '<td colspan="5" style="padding:0;border-bottom:1px solid var(--color-border-light)">' +
+          '<div class="finding-detail-body">' + detailContent + '</div>' +
+        '</td>' +
+      '</tr>';
     });
 
-    return '<table class="data-table findings-table" style="width:100%" aria-label="Control-level findings">' +
+    return '<table class="data-table findings-table" style="width:100%;table-layout:fixed" aria-label="Control-level findings">' +
       '<colgroup>' +
-        '<col style="width:120px">' +
+        '<col style="width:110px">' +
         '<col>' +
-        '<col style="min-width:120px">' +
-        '<col style="min-width:90px">' +
-        '<col style="min-width:170px">' +
+        '<col style="width:120px">' +
+        '<col style="width:90px">' +
+        '<col style="width:140px">' +
       '</colgroup>' +
       '<thead><tr>' +
         '<th>Control ID</th>' +
-        '<th>Check Name</th>' +
+        '<th>Control</th>' +
         '<th>Status</th>' +
         '<th>Severity</th>' +
         '<th></th>' +
@@ -1231,8 +1247,7 @@
         if (!detail) return;
         var isOpen = detail.style.display !== 'none';
         detail.style.display = isOpen ? 'none' : 'table-row';
-        var icon = row.querySelector('.expand-icon');
-        if (icon) icon.style.transform = isOpen ? '' : 'rotate(90deg)';
+        row.classList.toggle('expanded', !isOpen);
       });
     });
 

@@ -24,9 +24,13 @@ DOCS_DIR = ROOT / "docs"
 
 
 def _numeric_key(item):
-    """Sort key for control/family IDs like '3.1.1' numerically, not lexicographically."""
+    """Sort key for NIST 800-53 IDs like 'AC', 'AC-2', 'AC-2(1)' — alphabetic family, numeric control."""
+    import re
     key = item[0] if isinstance(item, tuple) else item
-    return [int(n) for n in key.split(".")]
+    m = re.match(r'([A-Z]{2})-?(\d+)?', key)
+    if m:
+        return (m.group(1), int(m.group(2)) if m.group(2) else 0)
+    return (key, 0)
 DOCS_DIR.mkdir(exist_ok=True)
 
 # ---------------------------------------------------------------------------
@@ -153,6 +157,7 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("   - 4.1 [Check-to-Objective Mapping](#41-check-to-objective-mapping)")
     w("   - 4.2 [Three-Tier Evaluation Model](#42-three-tier-evaluation-model)")
     w("   - 4.3 [Cloud Provider API Baselines](#43-cloud-provider-api-baselines)")
+    w(f"   - 4.4 [Why Only {stats['automated']} of {stats['total_controls']} Controls Are Automated](#44-why-only-{stats['automated']}-of-{stats['total_controls']}-controls-are-automated)")
     w("5. [Coverage Matrix Summary](#5-coverage-matrix-summary)")
     w("   - 5.1 [Overall Statistics](#51-overall-statistics)")
     w("   - 5.2 [Domain-Level Coverage](#52-domain-level-coverage)")
@@ -314,6 +319,70 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("**Key Azure Services Queried:** Entra ID (Graph API), Network, Compute, Storage, Key Vault, Security Center, Monitor, Policy, Authorization, SQL, App Service, Sentinel, Advisor, Automation, Resource Graph, Guest Configuration")
     w("")
     w("**Key GCP Services Queried:** IAM, Cloud Resource Manager, Compute, VPC, Storage, Cloud KMS, Cloud Logging, Cloud Monitoring, Security Command Center, OS Config, Binary Authorization, Container Analysis, Web Security Scanner, Cloud SQL, BigQuery, Cloud DNS, Recommender, Cloud IDS, Cloud Armor, BeyondCorp, Organization Policy")
+    w("")
+    # --- Section 4.4: Why Only N Controls Are Automated ---
+    w(f"### 4.4 Why Only {stats['automated']} of {stats['total_controls']} Controls Are Automated")
+    w("")
+    w(f"NIST SP 800-53 Rev 5 defines {stats['total_controls']} security controls, but only {stats['automated']} "
+      f"({stats['automated']*100//stats['total_controls']}%) can be meaningfully evaluated through cloud API queries. "
+      f"This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. "
+      f"The remaining {stats['manual']} controls govern activities that occur outside of cloud infrastructure "
+      f"and cannot be observed through any API.")
+    w("")
+    w("**Controls That Cannot Be Automated:**")
+    w("")
+    w("| Category | Families | Controls | Why Not Automatable |")
+    w("|----------|----------|----------|---------------------|")
+
+    # Get per-domain stats
+    domain_order = ["AC", "AT", "AU", "CA", "CM", "CP", "IA", "IR", "MA", "MP",
+                    "PE", "PL", "PM", "PS", "PT", "RA", "SA", "SC", "SI", "SR"]
+    domain_stats = {}
+    for fam_id, family in controls_data["families"].items():
+        d = family["domain"]
+        if d not in domain_stats:
+            domain_stats[d] = {"controls": 0, "automated": 0, "manual": 0}
+        for pid, p in family["controls"].items():
+            domain_stats[d]["controls"] += 1
+            if p.get("automated", False):
+                domain_stats[d]["automated"] += 1
+            else:
+                domain_stats[d]["manual"] += 1
+
+    pe_c = domain_stats.get("PE", {}).get("controls", 0)
+    pm_c = domain_stats.get("PM", {}).get("controls", 0)
+    ps_c = domain_stats.get("PS", {}).get("controls", 0)
+    at_c = domain_stats.get("AT", {}).get("controls", 0)
+    zero_total = pe_c + pm_c + ps_c + at_c
+
+    w(f"| Physical & Environmental | PE ({pe_c} controls) | {pe_c} | Facility access, environmental protections, fire suppression — no API can verify a locked door |")
+    w(f"| Organizational Governance | PM ({pm_c} controls) | {pm_c} | Risk strategy, authorization processes, insider threat programs — organizational policies, not cloud configs |")
+    w(f"| Personnel Security | PS ({ps_c} controls) | {ps_c} | Background checks, screening, access agreements, termination — HR processes requiring human verification |")
+    w(f"| Awareness & Training | AT ({at_c} controls) | {at_c} | Security training programs, role-based training — requires review of materials and completion records |")
+    w(f"| **Subtotal** | **4 families (0% automation)** | **{zero_total}** | **{zero_total*100//stats['total_controls']}% of the framework** |")
+    w("")
+    w("**Policy & Procedure Objectives Within Automated Families:**")
+    w("")
+    w("Even in families with automated checks, many controls ask: *\"Does the organization define and document a policy/procedure for X?\"* "
+      "These Tier 3 objectives require a 3PAO to review written policies and standard operating procedures — artifacts "
+      "that exist as documents, not as cloud API states. This is why families like Access Control (AC) show only "
+      f"{domain_stats.get('AC', {}).get('automated', 0)}/{domain_stats.get('AC', {}).get('controls', 0)} automation: "
+      "the automated controls check *configuration states* (MFA, least-privilege roles, session timeouts), "
+      "while the manual controls verify that policies, procedures, and approval workflows exist and are followed.")
+    w("")
+    w("**What *Can* Be Automated:**")
+    w("")
+    w(f"The {stats['automated']} automated controls share a common trait: their compliance state is observable "
+      "through cloud provider APIs as a **configuration property** that is either present or absent. Examples:")
+    w("")
+    w("- **AC-6(3):** *Is privileged access restricted to specific accounts?* → Check IAM policies for least-privilege roles (API-verifiable)")
+    w("- **AU-6:** *Are audit records reviewed and analyzed?* → Check CloudTrail/Activity Log enabled and forwarded (API-verifiable)")
+    w("- **SC-8:** *Is transmitted information protected?* → Check TLS/SSL configuration on load balancers (API-verifiable)")
+    w("- **PE-3:** *Is physical access controlled?* → Requires on-site inspection of badge readers and guard stations (not API-verifiable)")
+    w("")
+    w(f"> **Bottom line:** The {stats['automated']}/{stats['total_controls']} automation ratio is inherent to the "
+      "NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside "
+      "technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.")
     w("")
     w("---")
     w("")
@@ -597,7 +666,7 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
                         api_controls[key].add(pid)
 
         for (svc, api), pids in sorted(api_controls.items()):
-            pids_str = ", ".join(sorted(pids, key=lambda x: [int(n) for n in x.split(".")])[:5])
+            pids_str = ", ".join(sorted(pids, key=_numeric_key)[:5])
             if len(pids) > 5:
                 pids_str += f" (+{len(pids)-5} more)"
             w(f"| {svc} | `{api}` | {pids_str} |")

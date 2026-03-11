@@ -1291,8 +1291,8 @@ def _load_control_names() -> dict[str, str]:
         names: dict[str, str] = {}
         for _fam_id, fam_data in data.get("families", {}).items():
             for control_id, p_data in fam_data.get("controls", {}).items():
-                req = p_data.get("requirement", "")
-                names[control_id] = req
+                title = p_data.get("title", "")
+                names[control_id] = title
         return names
     except Exception:
         return {}
