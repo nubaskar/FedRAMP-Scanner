@@ -197,8 +197,7 @@
           "severity": "high",
           "remediation": "Add MFA condition to IAM policies for SSM Session Manager access.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "MA-4"
         },
@@ -211,8 +210,7 @@
           "severity": "high",
           "remediation": "Configure Client VPN endpoints with Active Directory or SAML MFA.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "MA-4"
         }
@@ -227,8 +225,7 @@
           "severity": "high",
           "remediation": "Configure Conditional Access to require MFA for all Azure management access.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "MA-4"
         }
@@ -243,8 +240,7 @@
           "severity": "high",
           "remediation": "Enforce 2-Step Verification for all accounts with maintenance access.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "MA-4"
         }

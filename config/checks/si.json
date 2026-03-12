@@ -37,12 +37,9 @@
           "severity": "high",
           "remediation": "Remediate non-compliant patches per defined SLAs.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
             "[d]",
-            "[e]",
-            "[f]"
+            "[e]"
           ],
           "control_id": "SI-2"
         },
@@ -57,10 +54,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[e]"
           ],
           "control_id": "SI-2"
         },
@@ -73,12 +67,8 @@
           "severity": "medium",
           "remediation": "Enable automatic minor version upgrades on all RDS instances.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "SI-2"
         }
@@ -113,10 +103,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[e]"
           ],
           "control_id": "SI-2"
         },
@@ -129,12 +116,8 @@
           "severity": "medium",
           "remediation": "Update App Service apps to use current, supported runtime versions.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "SI-2"
         }
@@ -167,12 +150,8 @@
           "severity": "high",
           "remediation": "Enable auto-upgrade on all GKE node pools.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "SI-2"
         },
@@ -187,10 +166,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[e]"
           ],
           "control_id": "SI-2"
         }
@@ -213,8 +189,7 @@
           "severity": "high",
           "remediation": "Enable GuardDuty Malware Protection for EBS volume scanning.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         },
@@ -227,8 +202,7 @@
           "severity": "high",
           "remediation": "Deploy endpoint protection solution on all EC2 instances.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         },
@@ -241,8 +215,7 @@
           "severity": "medium",
           "remediation": "Enable GuardDuty Malware Protection for S3 on buckets receiving uploads.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         }
@@ -257,8 +230,7 @@
           "severity": "high",
           "remediation": "Enable Defender for Servers Plan 2 with Microsoft Defender for Endpoint.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         },
@@ -271,8 +243,7 @@
           "severity": "high",
           "remediation": "Deploy Microsoft Antimalware extension on all Windows VMs.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         }
@@ -287,8 +258,7 @@
           "severity": "high",
           "remediation": "Deploy endpoint protection solution on all GCE instances.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         },
@@ -301,8 +271,7 @@
           "severity": "medium",
           "remediation": "Configure malware scanning for Cloud Storage buckets receiving uploads.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "SI-3"
         }
@@ -637,8 +606,7 @@
           "remediation": "Enable VPC Flow Logs and configure analysis via GuardDuty or SIEM.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "SI-4"
         },
@@ -699,8 +667,7 @@
           "remediation": "Enable Traffic Analytics on NSG flow logs.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "SI-4"
         }
@@ -731,8 +698,7 @@
           "remediation": "Enable VPC Flow Logs and configure export to BigQuery for network analysis.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "SI-4"
         },

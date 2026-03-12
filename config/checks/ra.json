@@ -48,11 +48,7 @@
           "severity": "high",
           "remediation": "Enable Amazon Inspector v2 for EC2, ECR, and Lambda vulnerability scanning.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -65,11 +61,7 @@
           "severity": "high",
           "remediation": "Enable image scan on push for all ECR repositories.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -83,9 +75,6 @@
           "remediation": "Review and remediate critical/high Inspector findings within 30 days.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
             "[e]"
           ],
           "control_id": "RA-5"
@@ -101,11 +90,7 @@
           "severity": "high",
           "remediation": "Enable Defender for Cloud built-in vulnerability assessment on all VMs.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -118,11 +103,7 @@
           "severity": "high",
           "remediation": "Enable Defender for Containers for container image vulnerability scanning.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -135,11 +116,7 @@
           "severity": "high",
           "remediation": "Enable SQL vulnerability assessment on all Azure SQL servers.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         }
@@ -154,11 +131,7 @@
           "severity": "high",
           "remediation": "Configure Web Security Scanner for all web applications.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -171,11 +144,7 @@
           "severity": "high",
           "remediation": "Enable Container Analysis vulnerability scanning on Artifact Registry.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         },
@@ -188,11 +157,7 @@
           "severity": "high",
           "remediation": "Ensure Security Health Analytics is enabled in Security Command Center.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[a]"
           ],
           "control_id": "RA-5"
         }
@@ -211,8 +176,7 @@
           "severity": "high",
           "remediation": "Remediate non-compliant patches per SSM Patch Manager baseline.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         },
@@ -225,8 +189,7 @@
           "severity": "high",
           "remediation": "Establish and follow vulnerability remediation SLAs by severity.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         }
@@ -241,8 +204,7 @@
           "severity": "high",
           "remediation": "Address update compliance gaps identified by Azure Update Manager.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         },
@@ -255,8 +217,7 @@
           "severity": "high",
           "remediation": "Address Defender for Cloud recommendations within defined SLAs.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         }
@@ -271,8 +232,7 @@
           "severity": "high",
           "remediation": "Remediate non-compliant patches identified by OS Config.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         },
@@ -285,8 +245,7 @@
           "severity": "high",
           "remediation": "Remediate critical Security Command Center findings within 15 days.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "RA-5(5)"
         }

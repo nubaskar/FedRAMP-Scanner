@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import glob
 import os
+import re
 import textwrap
 from pathlib import Path
 from datetime import datetime
@@ -24,13 +25,20 @@ DOCS_DIR = ROOT / "docs"
 
 
 def _numeric_key(item):
-    """Sort key for NIST 800-53 IDs like 'AC', 'AC-2', 'AC-2(1)' — alphabetic family, numeric control."""
-    import re
+    """Sort key for NIST 800-53 IDs like 'AC', 'AC-2', 'AC-2(1)', 'AC-2.9'."""
     key = item[0] if isinstance(item, tuple) else item
-    m = re.match(r'([A-Z]{2})-?(\d+)?', key)
+    m = re.match(r'([A-Z]{2})-?(\d+)?(?:[.(](\d+)\)?)?', key)
     if m:
-        return (m.group(1), int(m.group(2)) if m.group(2) else 0)
-    return (key, 0)
+        return (m.group(1), int(m.group(2)) if m.group(2) else 0, int(m.group(3)) if m.group(3) else 0)
+    return (key, 0, 0)
+
+
+def _dot_to_paren(dot_id):
+    """Convert enhancement dot notation to parenthetical: AC-2.9 -> AC-2(9)"""
+    m = re.match(r'^([A-Z]{2}-\d+)\.(\d+)$', dot_id)
+    if m:
+        return f'{m.group(1)}({m.group(2)})'
+    return dot_id
 DOCS_DIR.mkdir(exist_ok=True)
 
 # ---------------------------------------------------------------------------
@@ -88,7 +96,17 @@ def compute_stats(controls_data, all_checks):
         for pid, p in family["controls"].items():
             stats["total_controls"] += 1
             d["controls"] += 1
-            is_auto = p.get("automated", False)
+
+            dom_checks = all_checks.get(domain, {}).get("checks", {})
+
+            # A base control is automated if it or any enhancement has checks
+            base_has_checks = pid in dom_checks
+            enh_has_checks = any(
+                (_dot_to_paren(eid) in dom_checks or eid in dom_checks)
+                for eid in p.get("enhancements", {})
+            )
+            is_auto = base_has_checks or enh_has_checks
+
             if is_auto:
                 stats["automated"] += 1
                 d["automated"] += 1
@@ -108,8 +126,9 @@ def compute_stats(controls_data, all_checks):
                 else:
                     stats["obj_auto_false"] += 1
 
-            if domain in all_checks and pid in all_checks[domain].get("checks", {}):
-                pdata = all_checks[domain]["checks"][pid]
+            # Count checks from base control
+            if pid in dom_checks:
+                pdata = dom_checks[pid]
                 for c in pdata.get("aws", []):
                     stats["aws_checks"] += 1
                     d["aws"] += 1
@@ -122,6 +141,24 @@ def compute_stats(controls_data, all_checks):
                 stats["doc_requirements"] += len(
                     pdata.get("objectives_requiring_documentation", [])
                 )
+
+            # Count checks from enhancement controls
+            for eid in p.get("enhancements", {}):
+                lookup_id = _dot_to_paren(eid) if _dot_to_paren(eid) in dom_checks else (eid if eid in dom_checks else None)
+                if lookup_id:
+                    edata = dom_checks[lookup_id]
+                    for c in edata.get("aws", []):
+                        stats["aws_checks"] += 1
+                        d["aws"] += 1
+                    for c in edata.get("azure", []):
+                        stats["azure_checks"] += 1
+                        d["azure"] += 1
+                    for c in edata.get("gcp", []):
+                        stats["gcp_checks"] += 1
+                        d["gcp"] += 1
+                    stats["doc_requirements"] += len(
+                        edata.get("objectives_requiring_documentation", [])
+                    )
 
         stats["domains"][domain] = d
 
@@ -186,13 +223,13 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("")
     w("This document serves as the **authoritative methodology reference** for FedRAMP Assessors (3PAOs) using the scanner. It explains:")
     w("")
-    w("- **How** each of the 110 NIST 800-53 Rev 5 controls is evaluated")
+    w(f"- **How** each of the {stats['total_controls']} NIST 800-53 Rev 5 controls is evaluated")
     w("- **Which** cloud APIs are queried and what constitutes a passing or failing check")
     w("- **Why** each check maps to specific NIST SP 800-53A assessment objectives")
-    w("- **What** 3PAOs must do for the 39 controls that require manual assessment")
+    w(f"- **What** 3PAOs must do for the {stats['manual']} controls that require manual assessment")
     w("- **Where** the authoritative sources and traceability chain originates")
     w("")
-    w(f"The scanner implements **{stats['total_checks']} cloud-specific technical checks** across AWS ({stats['aws_checks']}), Azure ({stats['azure_checks']}), and GCP ({stats['gcp_checks']}), mapped to **{stats['total_objectives']} NIST SP 800-53A assessment objectives** across all 110 controls and 14 FedRAMP control families.")
+    w(f"The scanner implements **{stats['total_checks']} cloud-specific technical checks** across AWS ({stats['aws_checks']}), Azure ({stats['azure_checks']}), and GCP ({stats['gcp_checks']}), mapped to **{stats['total_objectives']} NIST SP 800-53A assessment objectives** across all {stats['total_controls']} controls and {len(stats['domains'])} FedRAMP control families.")
     w("")
     w("---")
     w("")
@@ -231,8 +268,8 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("")
     w("| Source | Version | Purpose | Reference |")
     w("|--------|---------|---------|-----------|")
-    w("| **NIST SP 800-53 Rev 5** | Feb 2020 | 110 security controls across 14 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5/rev-2/final) |")
-    w("| **NIST SP 800-53A** | Jun 2018 | 319 assessment objectives (\"determine if\" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53 Rev 5a/final) |")
+    w(f"| **NIST SP 800-53 Rev 5** | Sep 2020 | {stats['total_controls']} security controls across {len(stats['domains'])} families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final) |")
+    w(f"| **NIST SP 800-53A Rev 5** | Jan 2022 | {stats['total_objectives']} assessment objectives (\"determine if\" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53a/rev-5/final) |")
     w("| **NIST SP 800-172** | Feb 2021 | Enhanced security controls for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |")
     w("| **FAR 52.204-21** | 2016 | 17 basic safeguarding controls for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |")
     w("| **FedRAMP Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/FedRAMP/) |")
@@ -247,7 +284,7 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("| Step | Stage | Description |")
     w("|------|-------|-------------|")
     w("| 1 | **FedRAMP Level** | L1 / L2 / L3 certification tier |")
-    w("| 2 | **NIST SP 800-53 Rev 5 Control** | One of 110 security requirements |")
+    w(f"| 2 | **NIST SP 800-53 Rev 5 Control** | One of {stats['total_controls']} security requirements |")
     w("| 3 | **800-53A Assessment Objective** | Specific \"determine if\" statement |")
     w("| 4 | **Scanner Check** | Cloud-specific configuration test |")
     w("| 5 | **Cloud API Call** | Read-only query to AWS, Azure, or GCP |")
@@ -263,7 +300,7 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("")
     w("### 4.1 Check-to-Objective Mapping")
     w("")
-    w("NIST SP 800-53A defines **319 assessment objectives** across the 110 NIST SP 800-53 Rev 5 controls. Each objective is a discrete \"determine if\" statement that an assessor must evaluate.")
+    w(f"NIST SP 800-53A defines **{stats['total_objectives']} assessment objectives** across the {stats['total_controls']} NIST SP 800-53 Rev 5 controls. Each objective is a discrete \"determine if\" statement that an assessor must evaluate.")
     w("")
     w("The scanner maps every automated check to the specific 800-53A objectives it supports via the `supports_objectives` field. For example:")
     w("")
@@ -407,12 +444,13 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
 
     w("### 5.2 Domain-Level Coverage")
     w("")
-    w("The table below shows the scanner's coverage across all 14 FedRAMP control families. Each domain is broken down by the number of NIST 800-53 Rev 5 controls, how many are automated vs. manual, the total 800-53A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of controls in each domain that are fully automated by the scanner.")
+    w(f"The table below shows the scanner's coverage across all {len(stats['domains'])} FedRAMP control families. Each domain is broken down by the number of NIST 800-53 Rev 5 controls, how many are automated vs. manual, the total 800-53A assessment objectives, and the cloud-specific checks implemented for each provider. The **Automation Rate** shows the percentage of controls in each domain that are fully automated by the scanner.")
     w("")
     w("| Domain | Name | Controls | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |")
     w("|--------|------|-----------|-----------|--------|------------|-----|-------|-----|-----------------|")
 
-    domain_order = ["AC", "AT", "AU", "CM", "IA", "IR", "MA", "MP", "PE", "PS", "RA", "CA", "SC", "SI"]
+    domain_order = ["AC", "AT", "AU", "CA", "CM", "CP", "IA", "IR", "MA", "MP",
+                    "PE", "PL", "PM", "PS", "PT", "RA", "SA", "SC", "SI", "SR"]
     for domain_code in domain_order:
         if domain_code in stats["domains"]:
             d = stats["domains"][domain_code]
@@ -446,10 +484,75 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("- Documentation requirements for non-automatable objectives")
     w("")
 
+    def _render_control_md(display_id, ctrl_data, dom_checks, is_enhancement=False):
+        """Render a control section in markdown (base or enhancement)."""
+        baselines = ctrl_data.get("baselines", [])
+        baseline_label = "/".join(baselines) if baselines else "N/A"
+        is_auto = ctrl_data.get("automated", False)
+        auto_label = "Automated" if is_auto else "Manual"
+        enh_label = " (Enhancement)" if is_enhancement else ""
+        objs = ctrl_data.get("objectives", {})
+        req = ctrl_data.get("requirement", "")
+
+        w(f"#### {display_id}{enh_label} — {req[:200]}" if req else f"#### {display_id}{enh_label}")
+        w("")
+        w(f"**Baseline:** {baseline_label} | **Type:** {auto_label} | **Objectives:** {len(objs)}")
+        w("")
+
+        # Assessment objectives table
+        if objs:
+            w("**Assessment Objectives:**")
+            w("")
+            w("| ID | Objective | Automatable |")
+            w("|----|-----------|-------------|")
+            for oid, obj in sorted(objs.items()):
+                a = obj.get("automatable")
+                if a is True:
+                    a_label = "Yes"
+                elif a == "partial":
+                    a_label = "Partial"
+                else:
+                    a_label = "No"
+                w(f"| {display_id}{oid} | {obj['text'][:120]} | {a_label} |")
+            w("")
+
+        # Automated checks
+        pdata = dom_checks.get(display_id)
+        if pdata:
+            has_checks = any(pdata.get(c) for c in ["aws", "azure", "gcp"])
+            if has_checks:
+                w("**Automated Checks:**")
+                w("")
+                w("| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |")
+                w("|----------|-------|------|---------|---------|----------|------------|")
+                for cloud in ["aws", "azure", "gcp"]:
+                    for c in pdata.get(cloud, []):
+                        so = ", ".join(c.get("supports_objectives", []))
+                        api = c.get("api_call", "N/A")
+                        w(f"| `{c['check_id']}` | {cloud.upper()} | {c['name']} | {c.get('service', '')} | `{api}` | {c.get('severity', '')} | {so} |")
+                w("")
+
+            # Documentation requirements
+            doc_reqs = pdata.get("objectives_requiring_documentation", [])
+            if doc_reqs:
+                w("**Documentation Requirements:**")
+                w("")
+                for d_req in doc_reqs:
+                    w(f"- **{display_id}{d_req['id']}**: {d_req['text']} — *{d_req.get('evidence_needed', 'Evidence required')}*")
+                w("")
+
+        # Manual guidance
+        if not is_auto and ctrl_data.get("manual_guidance"):
+            w(f"**3PAO Manual Assessment Guidance:** {ctrl_data['manual_guidance']}")
+            w("")
+
+        w("")
+
     for fam_id, family in sorted(controls_data["families"].items(), key=_numeric_key):
         domain = family["domain"]
         name = family["name"]
         d = stats["domains"].get(domain, {})
+        dom_checks = all_checks.get(domain, {}).get("checks", {})
 
         w(f"### {domain} — {name}")
         w("")
@@ -457,72 +560,19 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
         w("")
 
         for pid, p in sorted(family["controls"].items(), key=_numeric_key):
-            level = p.get("level", "L2")
-            is_auto = p.get("automated", False)
-            auto_label = "Automated" if is_auto else "Manual"
-            objs = p.get("objectives", {})
+            # Render base control
+            _render_control_md(pid, p, dom_checks)
 
-            w(f"#### {pid} — {p['requirement']}")
-            w("")
-            w(f"**Level:** {level} | **Type:** {auto_label} | **Objectives:** {len(objs)}")
-            if p.get("far_mapping"):
-                w(f" | **FAR 52.204-21:** {p['far_mapping']}")
-            w("")
-
-            # Assessment objectives table
-            if objs:
-                w("**Assessment Objectives:**")
-                w("")
-                w("| ID | Objective | Automatable |")
-                w("|----|-----------|-------------|")
-                for oid, obj in sorted(objs.items()):
-                    a = obj.get("automatable")
-                    if a is True:
-                        a_label = "Yes"
-                    elif a == "partial":
-                        a_label = "Partial"
-                    else:
-                        a_label = "No"
-                    w(f"| {pid}{oid} | {obj['text'][:120]} | {a_label} |")
-                w("")
-
-            # Automated checks
-            if domain in all_checks and pid in all_checks[domain].get("checks", {}):
-                pdata = all_checks[domain]["checks"][pid]
-
-                has_checks = False
-                for cloud in ["aws", "azure", "gcp"]:
-                    if pdata.get(cloud):
-                        has_checks = True
-                        break
-
-                if has_checks:
-                    w("**Automated Checks:**")
-                    w("")
-                    w("| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |")
-                    w("|----------|-------|------|---------|---------|----------|------------|")
-                    for cloud in ["aws", "azure", "gcp"]:
-                        for c in pdata.get(cloud, []):
-                            so = ", ".join(c.get("supports_objectives", []))
-                            api = c.get("api_call", "N/A")
-                            w(f"| `{c['check_id']}` | {cloud.upper()} | {c['name']} | {c.get('service', '')} | `{api}` | {c.get('severity', '')} | {so} |")
-                    w("")
-
-                # Documentation requirements
-                doc_reqs = pdata.get("objectives_requiring_documentation", [])
-                if doc_reqs:
-                    w("**Documentation Requirements:**")
-                    w("")
-                    for d_req in doc_reqs:
-                        w(f"- **{pid}{d_req['id']}**: {d_req['text']} — *{d_req.get('evidence_needed', 'Evidence required')}*")
-                    w("")
-
-            # Manual guidance
-            if not is_auto and p.get("manual_guidance"):
-                w(f"**3PAO Manual Assessment Guidance:** {p['manual_guidance']}")
-                w("")
-
-            w("")
+            # Render enhancement controls that have checks or are automated
+            for eid, enh in sorted(p.get("enhancements", {}).items(), key=_numeric_key):
+                enh_display = _dot_to_paren(eid)
+                enh_lookup = _dot_to_paren(eid) if _dot_to_paren(eid) in dom_checks else eid
+                enh_has_checks = enh_lookup in dom_checks
+                if enh_has_checks or enh.get("automated"):
+                    enh_dom_checks = dict(dom_checks)
+                    if enh_lookup in dom_checks and enh_display not in dom_checks:
+                        enh_dom_checks[enh_display] = dom_checks[enh_lookup]
+                    _render_control_md(enh_display, enh, enh_dom_checks, is_enhancement=True)
 
     w("---")
     w("")
@@ -532,7 +582,7 @@ def generate_markdown(controls_data, all_checks, stats) -> str:
     w("")
     w("### 7.1 How to Use This Guide")
     w("")
-    w("For the 39 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.")
+    w(f"For the {stats['manual']} controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.")
     w("")
     w("For each manual control, this guide provides:")
     w("")

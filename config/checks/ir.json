@@ -19,13 +19,7 @@
           "severity": "critical",
           "remediation": "Enable Amazon GuardDuty in all active regions.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -38,13 +32,7 @@
           "severity": "high",
           "remediation": "Enable AWS Security Hub and integrate GuardDuty, Inspector, and Macie.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -57,13 +45,7 @@
           "severity": "high",
           "remediation": "Create EventBridge rules to route GuardDuty/Security Hub findings to SNS/Lambda.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -76,13 +58,7 @@
           "severity": "medium",
           "remediation": "Create SSM Automation runbooks for incident response playbooks.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         }
@@ -97,13 +73,7 @@
           "severity": "critical",
           "remediation": "Enable Microsoft Defender for Cloud on all resource types.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -116,13 +86,7 @@
           "severity": "high",
           "remediation": "Deploy Microsoft Sentinel and configure relevant data connectors.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -135,13 +99,7 @@
           "severity": "medium",
           "remediation": "Create Sentinel automation rules and playbooks for common incident types.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         }
@@ -156,13 +114,7 @@
           "severity": "critical",
           "remediation": "Enable Security Command Center Premium for threat detection capabilities.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -175,13 +127,7 @@
           "severity": "high",
           "remediation": "Enable Event Threat Detection in Security Command Center.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         },
@@ -194,13 +140,7 @@
           "severity": "high",
           "remediation": "Configure SCC notification channels to Pub/Sub for automated response.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]"
+            "[a]"
           ],
           "control_id": "IR-2"
         }

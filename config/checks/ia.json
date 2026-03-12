@@ -20,8 +20,7 @@
           "remediation": "Ensure all IAM users are uniquely named and map to individual personnel.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-2"
         },
@@ -34,9 +33,7 @@
           "severity": "medium",
           "remediation": "Name service accounts descriptively and add tags identifying their purpose.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[a]"
           ],
           "control_id": "IA-2"
         },
@@ -50,8 +47,7 @@
           "remediation": "Attach IAM instance profiles to EC2 instances; remove embedded credentials.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-2"
         }
@@ -67,8 +63,7 @@
           "remediation": "Ensure all Azure AD accounts are uniquely identified to individuals.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-2"
         },
@@ -82,8 +77,7 @@
           "remediation": "Enable managed identities for Azure resources instead of using secrets.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-2"
         }
@@ -99,8 +93,7 @@
           "remediation": "Ensure all IAM bindings use organizational Cloud Identity accounts.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-2"
         },
@@ -113,9 +106,7 @@
           "severity": "medium",
           "remediation": "Add descriptive names and descriptions to all service accounts.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[a]"
           ],
           "control_id": "IA-2"
         }
@@ -137,9 +128,7 @@
           "severity": "critical",
           "remediation": "Enable hardware MFA on the root account immediately.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-3"
         },
@@ -152,9 +141,7 @@
           "severity": "critical",
           "remediation": "Enable MFA for all IAM users with console access.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-3"
         }
@@ -169,9 +156,7 @@
           "severity": "critical",
           "remediation": "Require MFA registration for all Azure AD users.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-3"
         },
@@ -185,8 +170,7 @@
           "remediation": "Create Conditional Access policy to block legacy authentication.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-3"
         }
@@ -201,9 +185,7 @@
           "severity": "critical",
           "remediation": "Enforce 2-Step Verification in Google Workspace admin console.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "IA-3"
         }

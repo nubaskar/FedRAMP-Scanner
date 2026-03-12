@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import glob
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,13 +21,25 @@ CONFIG_DIR = ROOT / "config"
 
 
 def _nist_key(item):
-    """Sort key for NIST 800-53 IDs like 'AC-2', 'AC-2(1)' — alphabetic family, numeric control."""
-    import re
+    """Sort key for NIST 800-53 IDs like 'AC-2', 'AC-2(1)', 'AC-2.9' — alphabetic family, numeric control, numeric enhancement."""
     key = item[0] if isinstance(item, tuple) else item
-    m = re.match(r'([A-Z]{2})-?(\d+)?', key)
+    m = re.match(r'([A-Z]{2})-(\d+)(?:[.(](\d+)\)?)?', key)
     if m:
-        return (m.group(1), int(m.group(2)) if m.group(2) else 0)
-    return (key, 0)
+        return (m.group(1), int(m.group(2)), int(m.group(3)) if m.group(3) else 0)
+    return (key, 0, 0)
+
+
+def _dot_to_paren(dot_id):
+    """Convert enhancement dot notation to parenthetical: AC-2.9 -> AC-2(9)"""
+    m = re.match(r'^([A-Z]{2}-\d+)\.(\d+)$', dot_id)
+    if m:
+        return f'{m.group(1)}({m.group(2)})'
+    return dot_id
+
+
+def _enh_display_id(dot_id):
+    """Convert dot notation to display format: AC-2.9 -> AC-2(9)"""
+    return _dot_to_paren(dot_id)
 
 def load_data():
     with open(CONFIG_DIR / "nist_800_53_controls.json") as f:
@@ -74,7 +87,17 @@ def generate():
         for pid, p in family["controls"].items():
             stats["total_controls"] += 1
             ds["controls"] += 1
-            if p.get("automated", False):
+
+            # A base control counts as automated if it or any enhancement has checks
+            dom_checks = all_checks.get(domain, {}).get("checks", {})
+            base_has_checks = pid in dom_checks
+            enh_has_checks = any(
+                (_dot_to_paren(eid) in dom_checks or eid in dom_checks)
+                for eid in p.get("enhancements", {})
+            )
+            is_auto = base_has_checks or enh_has_checks
+
+            if is_auto:
                 stats["automated"] += 1; ds["automated"] += 1
             else:
                 stats["manual"] += 1; ds["manual"] += 1
@@ -86,12 +109,23 @@ def generate():
                 elif a == "partial": stats["obj_partial"] += 1
                 else: stats["obj_false"] += 1
 
-            if domain in all_checks and pid in all_checks[domain].get("checks", {}):
-                pdata = all_checks[domain]["checks"][pid]
+            # Count checks from base control
+            if pid in dom_checks:
+                pdata = dom_checks[pid]
                 for _ in pdata.get("aws", []): stats["aws"] += 1; ds["aws"] += 1
                 for _ in pdata.get("azure", []): stats["azure"] += 1; ds["azure"] += 1
                 for _ in pdata.get("gcp", []): stats["gcp"] += 1; ds["gcp"] += 1
                 stats["doc_reqs"] += len(pdata.get("objectives_requiring_documentation", []))
+
+            # Count checks from enhancement controls
+            for eid in p.get("enhancements", {}):
+                lookup_id = _dot_to_paren(eid) if _dot_to_paren(eid) in dom_checks else (eid if eid in dom_checks else None)
+                if lookup_id:
+                    edata = dom_checks[lookup_id]
+                    for _ in edata.get("aws", []): stats["aws"] += 1; ds["aws"] += 1
+                    for _ in edata.get("azure", []): stats["azure"] += 1; ds["azure"] += 1
+                    for _ in edata.get("gcp", []): stats["gcp"] += 1; ds["gcp"] += 1
+                    stats["doc_reqs"] += len(edata.get("objectives_requiring_documentation", []))
 
         domain_stats[domain] = ds
 
@@ -391,11 +425,89 @@ def generate():
     a('</p>')
     a('<div class="help-accordion">')
 
+    def _render_control_card(display_id, ctrl_data, dom_checks, is_enhancement=False):
+        """Render a control card (base or enhancement) into the accordion."""
+        baselines = ctrl_data.get("baselines", ["Moderate"])
+        baseline_label = "/".join(baselines) if baselines else "N/A"
+        baseline_css = baselines[0].lower() if baselines else "moderate"
+        is_auto = ctrl_data.get("automated", False)
+        auto_tag = "auto" if is_auto else "manual-tag"
+        auto_label = "Automated" if is_auto else "Manual"
+        enh_tag = ' <span class="tag tag-manual">Enhancement</span>' if is_enhancement else ""
+        objs = ctrl_data.get("objectives", {})
+
+        a(f'<div class="help-control-card">')
+        a(f'<h5 class="help-control-id">{display_id} '
+          f'<span class="tag tag-{baseline_css}">{baseline_label}</span> '
+          f'<span class="tag tag-{auto_tag}">{auto_label}</span>{enh_tag}</h5>')
+        req = ctrl_data.get("requirement", "")
+        if req:
+            a(f'<p class="help-control-req">{esc_html(req)}</p>')
+
+        # Objectives
+        if objs:
+            a('<details>')
+            a(f'<summary>{len(objs)} Assessment Objectives</summary>')
+            a('<table class="data-table help-compact-table">')
+            a('<thead><tr><th>ID</th><th>Objective</th><th>Type</th></tr></thead>')
+            a('<tbody>')
+            for oid, obj in sorted(objs.items()):
+                aval = obj.get("automatable")
+                if aval is True: alabel = '<span class="tag tag-met">Auto</span>'
+                elif aval == "partial": alabel = '<span class="tag tag-manual">Partial</span>'
+                else: alabel = '<span class="tag tag-not-met">Manual</span>'
+                a(f'<tr><td>{display_id}{oid}</td><td>{esc_html(obj["text"])}</td><td>{alabel}</td></tr>')
+            a('</tbody></table>')
+            a('</details>')
+
+        # Look up checks using the appropriate ID format
+        check_lookup_id = display_id  # For base controls, use as-is
+        pdata = dom_checks.get(check_lookup_id)
+        if pdata:
+            has_checks = any(pdata.get(c) for c in ["aws", "azure", "gcp"])
+            if has_checks:
+                check_count = sum(len(pdata.get(c, [])) for c in ["aws", "azure", "gcp"])
+                a('<details>')
+                a(f'<summary>{check_count} Cloud Checks (AWS / Azure / GCP)</summary>')
+                a('<table class="data-table help-compact-table">')
+                a('<thead><tr><th>Cloud</th><th>Check</th><th>Service</th><th>API Call</th><th>Severity</th><th>Objectives</th></tr></thead>')
+                a('<tbody>')
+                for cloud in ["aws", "azure", "gcp"]:
+                    for c in pdata.get(cloud, []):
+                        so = ", ".join(c.get("supports_objectives", []))
+                        sev = c.get("severity", "")
+                        sev_class = f"tag-{sev}" if sev in ("critical", "high", "medium", "low") else ""
+                        a(f'<tr class="csp-{cloud}"><td>{cloud.upper()}</td><td>{esc_html(c["name"])}</td>'
+                          f'<td>{esc_html(c.get("service", ""))}</td>'
+                          f'<td><code>{esc_html(c.get("api_call", "N/A"))}</code></td>'
+                          f'<td><span class="tag {sev_class}">{sev}</span></td>'
+                          f'<td>{so}</td></tr>')
+                a('</tbody></table>')
+                a('</details>')
+
+            # Doc requirements
+            dreqs = pdata.get("objectives_requiring_documentation", [])
+            if dreqs:
+                a('<details>')
+                a(f'<summary>{len(dreqs)} Documentation Requirements</summary>')
+                a('<ul class="help-doc-reqs">')
+                for dr in dreqs:
+                    a(f'<li><strong>{display_id}{dr["id"]}:</strong> {esc_html(dr.get("evidence_needed", "Documentation required"))}</li>')
+                a('</ul>')
+                a('</details>')
+
+        # Manual guidance
+        if not is_auto and ctrl_data.get("manual_guidance"):
+            a(f'<div class="help-info-box"><strong>3PAO Guidance:</strong> {esc_html(ctrl_data["manual_guidance"])}</div>')
+
+        a('</div>')  # control-card
+
     for fam_id, family in sorted(pd["families"].items(), key=_nist_key):
         domain = family["domain"]
         name = family["name"]
         ds = domain_stats[domain]
         controls = sorted(family["controls"].items(), key=_nist_key)
+        dom_checks = all_checks.get(domain, {}).get("checks", {})
 
         a('<div class="help-accordion-item">')
         a('<div class="help-accordion-header">')
@@ -406,76 +518,21 @@ def generate():
         a('<div class="help-accordion-body"><div class="help-accordion-body-inner">')
 
         for pid, p in controls:
-            baselines = p.get("baselines", ["Moderate"])
-            baseline_label = "/".join(baselines)
-            baseline_css = baselines[0].lower() if baselines else "moderate"
-            is_auto = p.get("automated", False)
-            auto_tag = "auto" if is_auto else "manual-tag"
-            auto_label = "Automated" if is_auto else "Manual"
-            objs = p.get("objectives", {})
+            # Render base control card
+            _render_control_card(pid, p, dom_checks)
 
-            a(f'<div class="help-control-card">')
-            a(f'<h5 class="help-control-id">{pid} '
-              f'<span class="tag tag-{baseline_css}">{baseline_label}</span> '
-              f'<span class="tag tag-{auto_tag}">{auto_label}</span></h5>')
-            a(f'<p class="help-control-req">{esc_html(p["requirement"])}</p>')
-
-            # Objectives
-            if objs:
-                a('<details>')
-                a(f'<summary>{len(objs)} Assessment Objectives</summary>')
-                a('<table class="data-table help-compact-table">')
-                a('<thead><tr><th>ID</th><th>Objective</th><th>Type</th></tr></thead>')
-                a('<tbody>')
-                for oid, obj in sorted(objs.items()):
-                    aval = obj.get("automatable")
-                    if aval is True: alabel = '<span class="tag tag-met">Auto</span>'
-                    elif aval == "partial": alabel = '<span class="tag tag-manual">Partial</span>'
-                    else: alabel = '<span class="tag tag-not-met">Manual</span>'
-                    a(f'<tr><td>{pid}{oid}</td><td>{esc_html(obj["text"])}</td><td>{alabel}</td></tr>')
-                a('</tbody></table>')
-                a('</details>')
-
-            # Checks
-            if domain in all_checks and pid in all_checks[domain].get("checks", {}):
-                pdata = all_checks[domain]["checks"][pid]
-                has_checks = any(pdata.get(c) for c in ["aws", "azure", "gcp"])
-                if has_checks:
-                    check_count = sum(len(pdata.get(c, [])) for c in ["aws", "azure", "gcp"])
-                    a('<details>')
-                    a(f'<summary>{check_count} Cloud Checks (AWS / Azure / GCP)</summary>')
-                    a('<table class="data-table help-compact-table">')
-                    a('<thead><tr><th>Cloud</th><th>Check</th><th>Service</th><th>API Call</th><th>Severity</th><th>Objectives</th></tr></thead>')
-                    a('<tbody>')
-                    for cloud in ["aws", "azure", "gcp"]:
-                        for c in pdata.get(cloud, []):
-                            so = ", ".join(c.get("supports_objectives", []))
-                            sev = c.get("severity", "")
-                            sev_class = f"tag-{sev}" if sev in ("critical", "high", "medium", "low") else ""
-                            a(f'<tr class="csp-{cloud}"><td>{cloud.upper()}</td><td>{esc_html(c["name"])}</td>'
-                              f'<td>{esc_html(c.get("service", ""))}</td>'
-                              f'<td><code>{esc_html(c.get("api_call", "N/A"))}</code></td>'
-                              f'<td><span class="tag {sev_class}">{sev}</span></td>'
-                              f'<td>{so}</td></tr>')
-                    a('</tbody></table>')
-                    a('</details>')
-
-                # Doc requirements
-                dreqs = pdata.get("objectives_requiring_documentation", [])
-                if dreqs:
-                    a('<details>')
-                    a(f'<summary>{len(dreqs)} Documentation Requirements</summary>')
-                    a('<ul class="help-doc-reqs">')
-                    for dr in dreqs:
-                        a(f'<li><strong>{pid}{dr["id"]}:</strong> {esc_html(dr.get("evidence_needed", "Documentation required"))}</li>')
-                    a('</ul>')
-                    a('</details>')
-
-            # Manual guidance
-            if not is_auto and p.get("manual_guidance"):
-                a(f'<div class="help-info-box"><strong>3PAO Guidance:</strong> {esc_html(p["manual_guidance"])}</div>')
-
-            a('</div>')  # control-card
+            # Render enhancement control cards
+            for eid, enh in sorted(p.get("enhancements", {}).items(), key=_nist_key):
+                enh_display = _enh_display_id(eid)
+                # Enhancement checks may be keyed by parenthetical or dot notation
+                enh_lookup = _dot_to_paren(eid) if _dot_to_paren(eid) in dom_checks else eid
+                enh_has_checks = enh_lookup in dom_checks
+                if enh_has_checks or enh.get("automated"):
+                    # Build a temporary dom_checks view with the display ID as key
+                    enh_dom_checks = dict(dom_checks)
+                    if enh_lookup in dom_checks and enh_display not in dom_checks:
+                        enh_dom_checks[enh_display] = dom_checks[enh_lookup]
+                    _render_control_card(enh_display, enh, enh_dom_checks, is_enhancement=True)
 
         a('</div></div>')  # accordion body
         a('</div>')  # accordion item

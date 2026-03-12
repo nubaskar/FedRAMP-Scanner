@@ -13,7 +13,7 @@
           "expected": "All ECR images have vulnerability scan results",
           "severity": "high",
           "remediation": "Enable automated vulnerability scanning for all ECR repositories.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-2"
         },
         {
@@ -37,7 +37,7 @@
           "expected": "Container registries have Defender for Containers enabled for scanning",
           "severity": "high",
           "remediation": "Enable Microsoft Defender for Containers on Azure Container Registry.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-2"
         }
       ],
@@ -50,7 +50,7 @@
           "expected": "Container images have vulnerability scanning enabled",
           "severity": "high",
           "remediation": "Enable Container Analysis for vulnerability scanning on Artifact Registry.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-2"
         }
       ]
@@ -108,7 +108,7 @@
           "expected": "Container images signed for authenticity verification",
           "severity": "high",
           "remediation": "Use AWS Signer to sign container images and verify signatures at deployment.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-11"
         },
         {
@@ -132,7 +132,7 @@
           "expected": "Container registries have content trust enabled for image signing",
           "severity": "high",
           "remediation": "Enable content trust on Azure Container Registry for image signing.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-11"
         }
       ],
@@ -145,7 +145,7 @@
           "expected": "Binary Authorization policy requires signed images",
           "severity": "high",
           "remediation": "Enable Binary Authorization to require signed container images.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SR-11"
         }
       ]

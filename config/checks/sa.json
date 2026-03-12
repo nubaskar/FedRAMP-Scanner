@@ -13,7 +13,7 @@
           "expected": "At least one active CodePipeline exists for SDLC automation",
           "severity": "medium",
           "remediation": "Configure AWS CodePipeline to implement automated CI/CD workflows.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-3"
         },
         {
@@ -24,7 +24,7 @@
           "expected": "CodeBuild projects include security scanning in build specs",
           "severity": "medium",
           "remediation": "Add security scanning steps to CodeBuild project build specifications.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-3"
         }
       ],
@@ -37,7 +37,7 @@
           "expected": "Active Azure Pipelines exist for CI/CD automation",
           "severity": "medium",
           "remediation": "Configure Azure Pipelines to implement CI/CD workflows.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-3"
         }
       ],
@@ -50,7 +50,7 @@
           "expected": "Cloud Build triggers exist for automated builds and deployments",
           "severity": "medium",
           "remediation": "Configure Cloud Build triggers for CI/CD automation.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-3"
         }
       ]
@@ -287,7 +287,7 @@
           "expected": "Systems Manager tracks installed software and versions for EOL detection",
           "severity": "high",
           "remediation": "Enable AWS Systems Manager inventory to track software versions.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-22"
         },
         {
@@ -298,7 +298,7 @@
           "expected": "Inspector findings include EOL software detections",
           "severity": "high",
           "remediation": "Enable Amazon Inspector to scan for end-of-life software packages.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-22"
         }
       ],
@@ -311,7 +311,7 @@
           "expected": "Defender for Cloud assessments include EOL software detection",
           "severity": "high",
           "remediation": "Enable Microsoft Defender for Cloud to detect unsupported software.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-22"
         }
       ],
@@ -324,7 +324,7 @@
           "expected": "SCC findings include EOL and unsupported software detections",
           "severity": "high",
           "remediation": "Enable Security Command Center to detect end-of-life software.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "SA-22"
         }
       ]

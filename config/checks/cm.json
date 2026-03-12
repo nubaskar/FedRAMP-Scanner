@@ -53,8 +53,7 @@
           "supports_objectives": [
             "[a]",
             "[c]",
-            "[d]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "CM-2"
         }
@@ -87,8 +86,7 @@
           "supports_objectives": [
             "[a]",
             "[c]",
-            "[d]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "CM-2"
         }
@@ -121,8 +119,7 @@
           "supports_objectives": [
             "[a]",
             "[c]",
-            "[d]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "CM-2"
         }
@@ -201,7 +198,6 @@
           "severity": "medium",
           "remediation": "Address Defender for Cloud recommendations to improve secure score.",
           "supports_objectives": [
-            "[a]",
             "[b]"
           ],
           "control_id": "CM-6"
@@ -231,7 +227,6 @@
           "severity": "high",
           "remediation": "Review and remediate Security Health Analytics findings.",
           "supports_objectives": [
-            "[a]",
             "[b]"
           ],
           "control_id": "CM-6"

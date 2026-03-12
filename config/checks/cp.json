@@ -13,7 +13,7 @@
           "expected": "Critical resources tagged with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Tag critical resources with DR/contingency plan metadata.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-2"
         }
       ],
@@ -26,7 +26,7 @@
           "expected": "Critical resources tagged with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Tag critical resources with DR/contingency plan metadata in Azure.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-2"
         }
       ],
@@ -39,7 +39,7 @@
           "expected": "Critical resources labeled with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Label critical resources with DR/contingency plan metadata in GCP.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-2"
         }
       ]
@@ -55,7 +55,7 @@
           "expected": "Recent resilience assessments exist showing DR testing results",
           "severity": "medium",
           "remediation": "Use AWS Resilience Hub to test and document DR plan testing.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-4"
         }
       ],
@@ -68,7 +68,7 @@
           "expected": "Test failover completed within required timeframe",
           "severity": "medium",
           "remediation": "Perform and document test failovers in Azure Site Recovery.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-4"
         }
       ],
@@ -81,7 +81,7 @@
           "expected": "DR test logs exist showing recent testing activity",
           "severity": "medium",
           "remediation": "Document DR testing activities in Cloud Logging.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-4"
         }
       ]
@@ -97,7 +97,7 @@
           "expected": "Critical S3 buckets replicate to alternate region",
           "severity": "high",
           "remediation": "Enable cross-region replication for critical S3 buckets.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         },
         {
@@ -108,7 +108,7 @@
           "expected": "Critical RDS instances have read replicas in alternate regions",
           "severity": "high",
           "remediation": "Configure cross-region read replicas for critical RDS databases.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         }
       ],
@@ -121,7 +121,7 @@
           "expected": "Critical storage accounts use GRS or GZRS replication",
           "severity": "high",
           "remediation": "Enable geo-redundant storage (GRS/GZRS) for critical storage accounts.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         },
         {
@@ -132,7 +132,7 @@
           "expected": "Critical SQL databases have active geo-replication",
           "severity": "high",
           "remediation": "Configure active geo-replication for critical Azure SQL databases.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         }
       ],
@@ -145,7 +145,7 @@
           "expected": "Critical buckets use MULTI_REGIONAL or DUAL_REGIONAL storage class",
           "severity": "high",
           "remediation": "Configure multi-region or dual-region storage for critical buckets.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         },
         {
@@ -156,7 +156,7 @@
           "expected": "Critical Cloud SQL instances have cross-region read replicas",
           "severity": "high",
           "remediation": "Configure cross-region read replicas for critical Cloud SQL instances.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-6"
         }
       ]
@@ -172,7 +172,7 @@
           "expected": "Load balancers exist in multiple regions for failover",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple AWS regions.",
-          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "supports_objectives": ["[a]", "[b]"],
           "control_id": "CP-7"
         },
         {
@@ -183,7 +183,7 @@
           "expected": "Health checks monitor critical endpoints with failover routing",
           "severity": "high",
           "remediation": "Configure Route 53 health checks and failover routing policies.",
-          "supports_objectives": ["[a]", "[d]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-7"
         }
       ],
@@ -196,7 +196,7 @@
           "expected": "Load balancers or Application Gateways exist in multiple regions",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple Azure regions.",
-          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "supports_objectives": ["[a]", "[b]"],
           "control_id": "CP-7"
         },
         {
@@ -207,7 +207,7 @@
           "expected": "Traffic Manager profiles with multiple endpoints for regional failover",
           "severity": "high",
           "remediation": "Configure Azure Traffic Manager or Front Door with multi-region endpoints.",
-          "supports_objectives": ["[a]", "[d]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-7"
         }
       ],
@@ -220,7 +220,7 @@
           "expected": "Managed instance groups exist in multiple regions",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple GCP regions.",
-          "supports_objectives": ["[a]", "[b]", "[d]"],
+          "supports_objectives": ["[a]", "[b]"],
           "control_id": "CP-7"
         },
         {
@@ -231,7 +231,7 @@
           "expected": "Backend services include instances from multiple regions",
           "severity": "high",
           "remediation": "Configure Cloud Load Balancing with backends in multiple regions.",
-          "supports_objectives": ["[a]", "[d]"],
+          "supports_objectives": ["[a]"],
           "control_id": "CP-7"
         }
       ]
@@ -247,7 +247,7 @@
           "expected": "At least one backup vault exists with active backup plans",
           "severity": "critical",
           "remediation": "Configure AWS Backup with vaults and backup plans for critical resources.",
-          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "supports_objectives": ["[a]", "[c]"],
           "control_id": "CP-9"
         },
         {
@@ -293,7 +293,7 @@
           "expected": "Critical VMs are protected with backup policies",
           "severity": "critical",
           "remediation": "Configure Azure Backup for all critical virtual machines.",
-          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "supports_objectives": ["[a]", "[c]"],
           "control_id": "CP-9"
         },
         {
@@ -328,7 +328,7 @@
           "expected": "Snapshot schedules exist for critical persistent disks",
           "severity": "critical",
           "remediation": "Configure snapshot schedules for critical Compute Engine persistent disks.",
-          "supports_objectives": ["[a]", "[c]", "[d]"],
+          "supports_objectives": ["[a]", "[c]"],
           "control_id": "CP-9"
         },
         {

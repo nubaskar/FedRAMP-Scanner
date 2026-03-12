@@ -22,11 +22,7 @@
             "[a]",
             "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[d]"
           ],
           "control_id": "SC-7"
         },
@@ -40,13 +36,7 @@
           "remediation": "Enable VPC Flow Logs on all VPCs in ACCEPT and REJECT mode.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[b]"
           ],
           "control_id": "SC-7"
         },
@@ -62,11 +52,7 @@
             "[a]",
             "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[d]"
           ],
           "control_id": "SC-7"
         },
@@ -80,13 +66,7 @@
           "remediation": "Enable GuardDuty with VPC Flow Logs data source.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[b]"
           ],
           "control_id": "SC-7"
         }
@@ -104,11 +84,7 @@
             "[a]",
             "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[d]"
           ],
           "control_id": "SC-7"
         },
@@ -122,13 +98,7 @@
           "remediation": "Enable NSG flow logs with Traffic Analytics for all NSGs.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[b]"
           ],
           "control_id": "SC-7"
         },
@@ -144,11 +114,7 @@
             "[a]",
             "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[d]"
           ],
           "control_id": "SC-7"
         }
@@ -166,11 +132,7 @@
             "[a]",
             "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[d]"
           ],
           "control_id": "SC-7"
         },
@@ -184,13 +146,7 @@
           "remediation": "Enable VPC Flow Logs on all subnets with appropriate aggregation interval.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[b]"
           ],
           "control_id": "SC-7"
         },
@@ -204,13 +160,7 @@
           "remediation": "Configure Cloud IDS or Packet Mirroring for network traffic inspection.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]",
-            "[g]",
-            "[h]"
+            "[b]"
           ],
           "control_id": "SC-7"
         }

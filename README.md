@@ -89,7 +89,7 @@ A web-based platform that scans client cloud environments against FedRAMP requir
 
 The FedRAMP Cloud Compliance Scanner connects to client cloud environments via read-only IAM roles, evaluates security configurations against NIST 800-53 Rev 5 controls, and generates professional HTML and XLSX reports.
 
-The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Cloud Service Providers (CSPs). It automates the evaluation of 66 of the 324 NIST 800-53 Rev 5 controls and flags the remaining 258 policy/process controls as "Manual Review Required."
+The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Cloud Service Providers (CSPs). It automates the evaluation of 93 of the 324 NIST 800-53 Rev 5 controls (including enhancement controls) with 496 cloud-specific checks (AWS 203, Azure 147, GCP 146) and flags the remaining 231 policy/process controls as "Manual Review Required."
 
 ### 1.2 How It Works
 
@@ -107,8 +107,8 @@ The workflow proceeds through five stages:
 
 1. **Client onboarding** — The client grants a read-only cross-account role (AWS IAM role, Azure service principal, or GCP service account) using the provided template.
 2. **Scan execution** — A Securitybricks consultant triggers a scan from the Web UI, selecting the client, environment, and FedRAMP baseline.
-3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates ~66 automated controls across all 20 NIST 800-53 control families.
-4. **Manual review markers** — ~258 policy/process controls that cannot be automated are flagged as "Manual Review Required."
+3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates 93 automated controls (including enhancement controls) with 496 cloud-specific checks across all 20 NIST 800-53 control families.
+4. **Manual review markers** — 231 policy/process controls that cannot be automated are flagged as "Manual Review Required."
 5. **Report generation** — Professional HTML and XLSX reports are produced with executive summary, per-domain breakdown, detailed findings, and remediation guidance.
 
 > **Scan scope:** Each client entry scans a single cloud account (AWS account, Azure subscription, or GCP project). If a client has multiple accounts or subscriptions in scope for FedRAMP assessment, onboard each one as a separate client entry. Reports are generated per scan, so each account/subscription gets its own assessment report.
@@ -142,26 +142,27 @@ The scanner covers NIST 800-53 Rev 5 controls across 20 control families. Each a
 
 | Family | Name | Automated | Manual |
 |--------|------|-----------|--------|
-| AC | Access Control | 16 | 6 |
-| AT | Awareness and Training | 0 | 3 |
-| AU | Audit and Accountability | 8 | 1 |
-| CA | Security Assessment and Authorization | 1 | 3 |
-| CM | Configuration Management | 8 | 1 |
-| CP | Contingency Planning | 10 | 0 |
-| IA | Identification and Authentication | 10 | 1 |
-| IR | Incident Response | 1 | 2 |
-| MA | Maintenance | 2 | 4 |
-| MP | Media Protection | 3 | 6 |
-| PE | Physical and Environmental Protection | 0 | 6 |
-| PL | Planning | 3 | 0 |
-| PS | Personnel Security | 0 | 2 |
-| PT | PII Processing and Transparency | 5 | 0 |
-| RA | Risk Assessment | 2 | 1 |
-| SA | System and Services Acquisition | 8 | 0 |
-| SC | System and Communications Protection | 13 | 3 |
-| SI | System and Information Integrity | 7 | 0 |
-| SR | Supply Chain Risk Management | 4 | 0 |
-| **Total** | | **66 automated** | **258 manual** |
+| AC | Access Control | 14 | 11 |
+| AT | Awareness and Training | 2 | 4 |
+| AU | Audit and Accountability | 7 | 9 |
+| CA | Assessment, Authorization, and Monitoring | 3 | 6 |
+| CM | Configuration Management | 6 | 8 |
+| CP | Contingency Planning | 6 | 7 |
+| IA | Identification and Authentication | 6 | 7 |
+| IR | Incident Response | 3 | 7 |
+| MA | Maintenance | 4 | 3 |
+| MP | Media Protection | 6 | 2 |
+| PE | Physical and Environmental Protection | 5 | 18 |
+| PL | Planning | 2 | 9 |
+| PM | Program Management | 0 | 32 |
+| PS | Personnel Security | 2 | 7 |
+| PT | PII Processing and Transparency | 3 | 5 |
+| RA | Risk Assessment | 2 | 8 |
+| SA | System and Services Acquisition | 6 | 18 |
+| SC | System and Communications Protection | 9 | 42 |
+| SI | System and Information Integrity | 4 | 19 |
+| SR | Supply Chain Risk Management | 3 | 9 |
+| **Total** | | **93 automated** | **231 manual** |
 
 ---
 

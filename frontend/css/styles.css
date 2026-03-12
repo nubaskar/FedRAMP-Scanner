@@ -3,8 +3,8 @@
    ==========================================================================
    Color System:
      Primary Red:    #E31B23
-     Secondary Teal: #0D4F4F
-     Accent Teal:    #0E8585
+     Secondary Navy: #1B3A5C
+     Accent Navy:    #2E6BA6
      Background:     #F5F7FA
      Card:           #FFFFFF
      Text:           #1A1A1A
@@ -19,10 +19,10 @@
   --color-primary: #E31B23;
   --color-primary-dark: #c21620;
   --color-primary-light: #f5535a;
-  --color-secondary: #0D4F4F;
-  --color-secondary-light: #146B6B;
-  --color-accent: #0E8585;
-  --color-accent-light: #12A3A3;
+  --color-secondary: #1B3A5C;
+  --color-secondary-light: #264B73;
+  --color-accent: #2E6BA6;
+  --color-accent-light: #3A85C8;
   --color-bg: #F5F7FA;
   --color-card: #FFFFFF;
   --color-text: #1A1A1A;
@@ -204,6 +204,10 @@ h6 { font-size: 0.875rem; }
   text-transform: uppercase;
   letter-spacing: 2.5px;
   margin-top: var(--spacing-sm);
+}
+
+.brand-highlight {
+  color: #D4A843;
 }
 
 /* Sidebar Navigation */
@@ -945,12 +949,12 @@ h6 { font-size: 0.875rem; }
 }
 
 .badge-low {
-  background: rgba(14, 133, 133, 0.1);
+  background: rgba(46, 107, 166, 0.1);
   color: var(--color-accent);
 }
 
 .badge-moderate {
-  background: rgba(13, 79, 79, 0.1);
+  background: rgba(27, 58, 92, 0.1);
   color: var(--color-secondary);
 }
 
@@ -1513,7 +1517,7 @@ h6 { font-size: 0.875rem; }
 .login-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #0D4F4F 0%, #083333 50%, #0A3D3D 100%);
+  background: linear-gradient(135deg, #1B3A5C 0%, #0F2440 50%, #152E4A 100%);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -1543,7 +1547,7 @@ h6 { font-size: 0.875rem; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--color-secondary) 0%, #083333 100%);
+  background: linear-gradient(160deg, var(--color-secondary) 0%, #0F2440 100%);
 }
 
 .login-header-content {
@@ -2880,7 +2884,7 @@ h6 { font-size: 0.875rem; }
 
 /* Per-stat card colors */
 .help-stat-card[data-stat="practices"]  { --stat-color: #5B63D3; } /* Indigo */
-.help-stat-card[data-stat="objectives"] { --stat-color: #0E8585; } /* Teal */
+.help-stat-card[data-stat="objectives"] { --stat-color: #2E6BA6; } /* Navy */
 .help-stat-card[data-stat="automated"]  { --stat-color: #059669; } /* Green */
 .help-stat-card[data-stat="manual"]     { --stat-color: #D97706; } /* Amber */
 .help-stat-card[data-stat="aws"]        { --stat-color: #FF9900; } /* AWS Orange */
@@ -2944,8 +2948,8 @@ h6 { font-size: 0.875rem; }
 
 /* Per-step colors  - pleasant palette flowing from warm to cool */
 .help-chain-step[data-step="1"] { --chain-color: #5B63D3; } /* Indigo  - governance */
-.help-chain-step[data-step="2"] { --chain-color: #0E8585; } /* Teal  - standards */
-.help-chain-step[data-step="3"] { --chain-color: #0891B2; } /* Teal  - objectives */
+.help-chain-step[data-step="2"] { --chain-color: #2E6BA6; } /* Navy  - standards */
+.help-chain-step[data-step="3"] { --chain-color: #3A85C8; } /* Navy  - objectives */
 .help-chain-step[data-step="4"] { --chain-color: #059669; } /* Green  - scanner */
 .help-chain-step[data-step="5"] { --chain-color: #D97706; } /* Amber  - cloud APIs */
 .help-chain-step[data-step="6"] { --chain-color: #E31B23; } /* Red  - determination */

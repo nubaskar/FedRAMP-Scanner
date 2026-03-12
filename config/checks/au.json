@@ -21,10 +21,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[c]"
           ],
           "control_id": "AU-2"
         },
@@ -37,10 +34,6 @@
           "severity": "high",
           "remediation": "Enable log file validation on all CloudTrail trails.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
             "[e]",
             "[f]"
           ],
@@ -55,11 +48,6 @@
           "severity": "high",
           "remediation": "Configure S3 lifecycle policy to retain CloudTrail logs for at least 365 days.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
             "[f]"
           ],
           "control_id": "AU-2"
@@ -75,10 +63,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[c]"
           ],
           "control_id": "AU-2"
         }
@@ -94,10 +79,7 @@
           "remediation": "Configure diagnostic settings to send Activity Log to Log Analytics with 365-day retention.",
           "supports_objectives": [
             "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
             "[f]"
           ],
           "control_id": "AU-2"
@@ -112,10 +94,7 @@
           "remediation": "Configure Azure AD diagnostic settings to export audit logs to Log Analytics or Storage.",
           "supports_objectives": [
             "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
             "[f]"
           ],
           "control_id": "AU-2"
@@ -131,10 +110,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[c]"
           ],
           "control_id": "AU-2"
         }
@@ -151,10 +127,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[c]"
           ],
           "control_id": "AU-2"
         },
@@ -169,10 +142,7 @@
           "supports_objectives": [
             "[a]",
             "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[c]"
           ],
           "control_id": "AU-2"
         },
@@ -185,11 +155,7 @@
           "severity": "high",
           "remediation": "Create a log sink to export audit logs to Cloud Storage with appropriate retention.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
             "[f]"
           ],
           "control_id": "AU-2"
@@ -322,8 +288,7 @@
           "remediation": "Configure SNS notifications for audit logging failure alerts.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "AU-5"
         }
@@ -339,8 +304,7 @@
           "remediation": "Create Activity Log alert for diagnostic settings modifications.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "AU-5"
         }
@@ -356,8 +320,7 @@
           "remediation": "Create an alerting policy for modifications to logging configuration.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]"
+            "[b]"
           ],
           "control_id": "AU-5"
         }
@@ -380,8 +343,7 @@
           "severity": "high",
           "remediation": "Enable AWS Security Hub for centralized security finding correlation.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "AU-6"
         },
@@ -394,8 +356,7 @@
           "severity": "high",
           "remediation": "Configure CloudTrail to deliver logs to CloudWatch Logs for real-time analysis.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "AU-6"
         }
@@ -410,8 +371,7 @@
           "severity": "high",
           "remediation": "Deploy Microsoft Sentinel and connect relevant data sources.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "AU-6"
         }
@@ -426,8 +386,7 @@
           "severity": "high",
           "remediation": "Enable Security Command Center Premium for centralized security analysis.",
           "supports_objectives": [
-            "[a]",
-            "[b]"
+            "[a]"
           ],
           "control_id": "AU-6"
         }
@@ -579,11 +538,7 @@
           "remediation": "Enable S3 server access logging on the CloudTrail log bucket.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[b]"
           ],
           "control_id": "AU-9"
         },
@@ -596,12 +551,8 @@
           "severity": "high",
           "remediation": "Enable SSE-KMS encryption on the CloudTrail log bucket.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
             "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[d]"
           ],
           "control_id": "AU-9"
         },
@@ -614,10 +565,6 @@
           "severity": "medium",
           "remediation": "Enable MFA Delete on the CloudTrail log bucket.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
             "[e]",
             "[f]"
           ],
@@ -635,11 +582,7 @@
           "remediation": "Configure workspace access control to use resource-context or workspace-context permissions.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[b]"
           ],
           "control_id": "AU-9"
         },
@@ -652,10 +595,6 @@
           "severity": "high",
           "remediation": "Configure immutable blob storage for audit log containers.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
             "[e]",
             "[f]"
           ],
@@ -672,10 +611,6 @@
           "severity": "high",
           "remediation": "Configure and lock a retention policy on the audit log Cloud Storage bucket.",
           "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
             "[e]",
             "[f]"
           ],
@@ -691,11 +626,7 @@
           "remediation": "Restrict IAM bindings on the audit log bucket to authorized security personnel only.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]",
-            "[f]"
+            "[b]"
           ],
           "control_id": "AU-9"
         }
