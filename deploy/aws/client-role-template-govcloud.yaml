@@ -37,7 +37,7 @@ Parameters:
 
   RoleName:
     Type: String
-    Default: SecuritybricksFedRAMPScannerRole
+    Default: SecuritybricksFedRAMPAuditorRole
     Description: Name for the IAM role (customize if needed)
     AllowedPattern: "^[a-zA-Z0-9_+=,.@\\-]+$"
     MaxLength: 64

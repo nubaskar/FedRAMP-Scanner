@@ -1,33 +1,19 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >-
-  Securitybricks FedRAMP Cloud Compliance Scanner — Client Cross-Account Role.
-  Deploy this template in your AWS account to grant Securitybricks read-only
-  access for automated FedRAMP compliance scanning. The role uses SecurityAudit
+  Securitybricks FedRAMP Assessment — Auditor Read-Only Role for AWS GovCloud.
+  Deploy this template in your AWS GovCloud account to create a read-only IAM
+  role for Securitybricks assessment engineers. The role uses SecurityAudit
   and targeted read-only policies — it cannot modify any resources.
+  Assessors log in with their IAM user accounts and assume this role.
+
+  IMPORTANT: This template must be deployed in an AWS GovCloud region
+  (us-gov-west-1 or us-gov-east-1). For commercial AWS accounts, use
+  client-auditor-role-template.yaml instead.
 
 # ---------------------------------------------------------------------------
 # Parameters
 # ---------------------------------------------------------------------------
 Parameters:
-  SecuritybricksAccountId:
-    Type: String
-    Description: >-
-      The AWS account ID of Securitybricks' FedRAMP Scanner platform.
-      Securitybricks will provide this value during onboarding.
-    AllowedPattern: "^[0-9]{12}$"
-    ConstraintDescription: Must be a valid 12-digit AWS account ID
-
-  ExternalId:
-    Type: String
-    Description: >-
-      Unique external ID for cross-account assume-role security.
-      Securitybricks generates this value per-client to prevent
-      confused deputy attacks. It will be provided during onboarding.
-    MinLength: 16
-    MaxLength: 128
-    AllowedPattern: "^[a-zA-Z0-9_\\-]+$"
-    ConstraintDescription: Alphanumeric characters, hyphens, and underscores only
-
   RoleName:
     Type: String
     Default: SecuritybricksFedRAMPAuditorRole
@@ -49,20 +35,11 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: Securitybricks Configuration
-        Parameters:
-          - SecuritybricksAccountId
-          - ExternalId
-      - Label:
-          default: Role Configuration (Optional)
+          default: Role Configuration
         Parameters:
           - RoleName
           - SessionDurationSeconds
     ParameterLabels:
-      SecuritybricksAccountId:
-        default: Securitybricks AWS Account ID
-      ExternalId:
-        default: External ID (provided by Securitybricks)
       RoleName:
         default: IAM Role Name
       SessionDurationSeconds:
@@ -74,54 +51,52 @@ Metadata:
 Resources:
 
   # =========================================================================
-  # Cross-Account IAM Role
+  # Auditor IAM Role — same-account assume-role (GovCloud partition)
   # =========================================================================
-  FedRAMPScannerRole:
+  FedRAMPAuditorRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Ref RoleName
       MaxSessionDuration: !Ref SessionDurationSeconds
       Description: >-
-        Read-only role for Securitybricks FedRAMP Cloud Compliance Scanner.
-        Grants access to audit AWS configurations for FedRAMP Low/Moderate/High
-        practice compliance without any write permissions.
+        Read-only role for Securitybricks FedRAMP assessment engineers.
+        Grants access to audit AWS GovCloud configurations for NIST 800-53
+        Rev 5 control compliance without any write permissions.
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: AllowSecuritybricksCrossAccountAccess
+          - Sid: AllowSameAccountAssume
             Effect: Allow
             Principal:
-              AWS: !Sub "arn:aws:iam::${SecuritybricksAccountId}:root"
+              AWS: !Sub "arn:aws-us-gov:iam::${AWS::AccountId}:root"
             Action: sts:AssumeRole
-            Condition:
-              StringEquals:
-                sts:ExternalId: !Ref ExternalId
       ManagedPolicyArns:
-        # SecurityAudit provides read access to security-related configurations
-        # across IAM, CloudTrail, Config, GuardDuty, KMS, etc.
-        - arn:aws:iam::aws:policy/SecurityAudit
+        # SecurityAudit — GovCloud ARN partition
+        - arn:aws-us-gov:iam::aws:policy/SecurityAudit
       Tags:
         - Key: Project
-          Value: FedRAMP-Scanner
+          Value: FedRAMP-Assessment
         - Key: ManagedBy
           Value: CloudFormation
         - Key: Purpose
-          Value: Securitybricks-FedRAMP-Compliance-Scan
+          Value: Securitybricks-FedRAMP-Assessment
         - Key: AccessLevel
           Value: ReadOnly
+        - Key: Environment
+          Value: GovCloud
 
   # =========================================================================
-  # Custom Policy — Additional Read-Only API Calls for FedRAMP Scanning
+  # Custom Policy — Additional Read-Only API Calls for FedRAMP Assessment
   #
-  # These cover specific API calls needed for FedRAMP control validation
+  # These cover specific API calls needed for NIST 800-53 control validation
   # that are not included in the SecurityAudit managed policy.
   # =========================================================================
-  FedRAMPScannerAdditionalReadPolicy:
+  FedRAMPAuditorAdditionalReadPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: SecuritybricksFedRAMPScannerAdditionalRead
+      PolicyName: SecuritybricksFedRAMPAuditorAdditionalRead
       Roles:
-        - !Ref FedRAMPScannerRole
+        - !Ref FedRAMPAuditorRole
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -288,7 +263,7 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Backup and Recovery (FedRAMP: MP domain)
+          # Backup and Recovery (FedRAMP: CP domain)
           # -----------------------------------------------------------------
           - Sid: BackupRead
             Effect: Allow
@@ -331,6 +306,8 @@ Resources:
 
           # -----------------------------------------------------------------
           # Security Services (FedRAMP: RA, SI domains)
+          # Note: Some services (Inspector2) may have limited availability
+          # in GovCloud. Checks will gracefully handle missing services.
           # -----------------------------------------------------------------
           - Sid: SecurityServicesRead
             Effect: Allow
@@ -346,22 +323,22 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Web, CDN, DNS, and Certificates (FedRAMP: SC domain)
+          # Web, DNS, and Certificates (FedRAMP: SC domain)
+          # Note: CloudFront is NOT available in GovCloud.
+          # Route53 is available but runs from commercial partition.
           # -----------------------------------------------------------------
-          - Sid: WebCDNDNSRead
+          - Sid: WebDNSCertRead
             Effect: Allow
             Action:
-              - cloudfront:ListDistributions
               - acm:ListCertificates
               - acm:DescribeCertificate
-              - route53:ListHostedZones
-              - route53:GetDNSSEC
               - apigateway:GET
               - ecr:DescribeRepositories
             Resource: "*"
 
           # -----------------------------------------------------------------
-          # Identity Center, CI/CD, Athena, Health (FedRAMP: AC, CM, AU domains)
+          # Identity Center, CI/CD, Athena (FedRAMP: AC, CM, AU domains)
+          # Note: AWS Health API requires Business/Enterprise Support.
           # -----------------------------------------------------------------
           - Sid: IdentityCICDAnalyticsRead
             Effect: Allow
@@ -379,12 +356,12 @@ Resources:
   # =========================================================================
   # Explicit Deny — Ensure No Write Access
   # =========================================================================
-  FedRAMPScannerDenyWritePolicy:
+  FedRAMPAuditorDenyWritePolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: SecuritybricksFedRAMPScannerDenyWrite
+      PolicyName: SecuritybricksFedRAMPAuditorDenyWrite
       Roles:
-        - !Ref FedRAMPScannerRole
+        - !Ref FedRAMPAuditorRole
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -430,23 +407,27 @@ Resources:
 Outputs:
   RoleArn:
     Description: >-
-      Provide this ARN to Securitybricks to complete onboarding.
-      This is the cross-account role that the FedRAMP Scanner will assume.
-    Value: !GetAtt FedRAMPScannerRole.Arn
-
-  ExternalIdUsed:
-    Description: External ID configured for this role
-    Value: !Ref ExternalId
+      Role ARN for assessors to assume. Provide this to the Securitybricks
+      assessment team along with the IAM user credentials.
+    Value: !GetAtt FedRAMPAuditorRole.Arn
 
   RoleName:
     Description: Name of the IAM role created
     Value: !Ref RoleName
 
+  AssumeRolePolicy:
+    Description: >-
+      Attach this inline policy to each assessor IAM user to allow them
+      to assume the auditor role.
+    Value: !Sub >-
+      {"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"sts:AssumeRole","Resource":"${FedRAMPAuditorRole.Arn}"}]}
+
   SetupInstructions:
     Description: Next steps after deploying this template
     Value: !Sub >-
-      Role created successfully. Provide the Role ARN
-      (${FedRAMPScannerRole.Arn}) to your Securitybricks contact.
-      They will configure it in the FedRAMP Scanner platform for
-      your organization. The scanner will use External ID
-      '${ExternalId}' when assuming this role.
+      Role created successfully. Next steps:
+      1) Create IAM user accounts for each assessor.
+      2) Attach the AssumeRole policy (see AssumeRolePolicy output) to each user.
+      3) Provide the Role ARN (${FedRAMPAuditorRole.Arn}), IAM usernames,
+         passwords, and access keys to the Securitybricks assessment team
+         via a secure channel.

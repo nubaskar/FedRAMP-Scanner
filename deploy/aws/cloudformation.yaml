@@ -537,7 +537,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - sts:AssumeRole
-                Resource: "arn:aws:iam::*:role/SecuritybricksFedRAMPScanner*"
+                Resource: "arn:aws:iam::*:role/SecuritybricksFedRAMPAuditor*"
                 Condition:
                   StringEquals:
                     sts:ExternalId: !Sub "fedramp-scanner-${Environment}"
