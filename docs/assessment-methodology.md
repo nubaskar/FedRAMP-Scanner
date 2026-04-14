@@ -2,7 +2,7 @@
 
 **Document Classification:** For Official Use — Assessment Staff Only
 
-**Version:** 1.0 | **Date:** April 06, 2026 | **Author:** Securitybricks (3PAO, powered by Aprio)
+**Version:** 1.0 | **Date:** April 14, 2026 | **Author:** Securitybricks (3PAO, powered by Aprio)
 
 ---
 
@@ -15,7 +15,7 @@
    - 4.1 [Check-to-Objective Mapping](#41-check-to-objective-mapping)
    - 4.2 [Three-Tier Evaluation Model](#42-three-tier-evaluation-model)
    - 4.3 [Cloud Provider API Baselines](#43-cloud-provider-api-baselines)
-   - 4.4 [Why Only 70 of 324 Controls Are Automated](#44-why-only-70-of-324-controls-are-automated)
+   - 4.4 [Why Only 70 of 323 Controls Are Automated](#44-why-only-70-of-323-controls-are-automated)
 5. [Coverage Matrix Summary](#5-coverage-matrix-summary)
    - 5.1 [Overall Statistics](#51-overall-statistics)
    - 5.2 [Domain-Level Coverage](#52-domain-level-coverage)
@@ -55,13 +55,13 @@ The FedRAMP Cloud Compliance Scanner is an automated assessment tool built by Se
 
 This document serves as the **authoritative methodology reference** for FedRAMP Assessors (3PAOs) using the scanner. It explains:
 
-- **How** each of the 324 NIST 800-53 Rev 5 controls is evaluated
+- **How** each of the 323 NIST 800-53 Rev 5 controls is evaluated
 - **Which** cloud APIs are queried and what constitutes a passing or failing check
 - **Why** each check maps to specific NIST SP 800-53A assessment objectives
 - **What** 3PAOs must do for the 254 controls that require manual assessment
 - **Where** the authoritative sources and traceability chain originates
 
-The scanner implements **496 cloud-specific technical checks** across AWS (203), Azure (147), and GCP (146), mapped to **254 NIST SP 800-53A assessment objectives** across all 324 controls and 20 FedRAMP control families.
+The scanner implements **496 cloud-specific technical checks** across AWS (203), Azure (147), and GCP (146), mapped to **254 NIST SP 800-53A assessment objectives** across all 323 controls and 20 FedRAMP control families.
 
 ---
 
@@ -96,7 +96,7 @@ The scanner's check library is derived from and traceable to the following autho
 
 | Source | Version | Purpose | Reference |
 |--------|---------|---------|-----------|
-| **NIST SP 800-53 Rev 5** | Sep 2020 | 324 security controls across 20 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final) |
+| **NIST SP 800-53 Rev 5** | Sep 2020 | 323 security controls across 20 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final) |
 | **NIST SP 800-53A Rev 5** | Jan 2022 | 254 assessment objectives ("determine if" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53a/rev-5/final) |
 | **NIST SP 800-172** | Feb 2021 | Enhanced security controls for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |
 | **FAR 52.204-21** | 2016 | 17 basic safeguarding controls for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |
@@ -112,7 +112,7 @@ Every check in the scanner traces back through the following chain:
 | Step | Stage | Description |
 |------|-------|-------------|
 | 1 | **FedRAMP Level** | L1 / L2 / L3 certification tier |
-| 2 | **NIST SP 800-53 Rev 5 Control** | One of 324 security requirements |
+| 2 | **NIST SP 800-53 Rev 5 Control** | One of 323 security requirements |
 | 3 | **800-53A Assessment Objective** | Specific "determine if" statement |
 | 4 | **Scanner Check** | Cloud-specific configuration test |
 | 5 | **Cloud API Call** | Read-only query to AWS, Azure, or GCP |
@@ -126,7 +126,7 @@ Every finding in the scanner report traces back through this chain to the author
 
 ### 4.1 Check-to-Objective Mapping
 
-NIST SP 800-53A defines **254 assessment objectives** across the 324 NIST SP 800-53 Rev 5 controls. Each objective is a discrete "determine if" statement that an assessor must evaluate.
+NIST SP 800-53A defines **254 assessment objectives** across the 323 NIST SP 800-53 Rev 5 controls. Each objective is a discrete "determine if" statement that an assessor must evaluate.
 
 The scanner maps every automated check to the specific 800-53A objectives it supports via the `supports_objectives` field. For example:
 
@@ -181,9 +181,9 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 **Key GCP Services Queried:** IAM, Cloud Resource Manager, Compute, VPC, Storage, Cloud KMS, Cloud Logging, Cloud Monitoring, Security Command Center, OS Config, Binary Authorization, Container Analysis, Web Security Scanner, Cloud SQL, BigQuery, Cloud DNS, Recommender, Cloud IDS, Cloud Armor, BeyondCorp, Organization Policy
 
-### 4.4 Why Only 70 of 324 Controls Are Automated
+### 4.4 Why Only 70 of 323 Controls Are Automated
 
-NIST SP 800-53 Rev 5 defines 324 security controls, but only 70 (21%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 254 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
+NIST SP 800-53 Rev 5 defines 323 security controls, but only 70 (21%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 254 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
 
 **Controls That Cannot Be Automated:**
 
@@ -208,7 +208,7 @@ The 70 automated controls share a common trait: their compliance state is observ
 - **SC-8:** *Is transmitted information protected?* → Check TLS/SSL configuration on load balancers (API-verifiable)
 - **PE-3:** *Is physical access controlled?* → Requires on-site inspection of badge readers and guard stations (not API-verifiable)
 
-> **Bottom line:** The 70/324 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
+> **Bottom line:** The 70/323 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
 
 ---
 
@@ -218,7 +218,7 @@ The 70 automated controls share a common trait: their compliance state is observ
 
 | Metric | Value |
 |--------|-------|
-| NIST 800-53 Rev 5 Controls | 324 |
+| NIST 800-53 Rev 5 Controls | 323 |
 | NIST 800-53A Assessment Objectives | 254 |
 | Controls with Automated Checks | 70 (21%) |
 | Controls Requiring Manual Assessment | 254 (78%) |
@@ -254,7 +254,7 @@ The table below shows the scanner's coverage across all 20 FedRAMP control famil
 | SC | System and Communications Protection | 51 | 8 | 43 | 25 | 31 | 21 | 21 | 16% |
 | SI | System and Information Integrity | 23 | 4 | 19 | 14 | 21 | 16 | 16 | 17% |
 | SR | Supply Chain Risk Management | 12 | 3 | 9 | 5 | 5 | 3 | 3 | 25% |
-| **Total** | | **324** | **70** | **254** | **254** | **203** | **147** | **146** | **22%** |
+| **Total** | | **323** | **70** | **254** | **254** | **203** | **147** | **146** | **22%** |
 
 ### 5.3 Objective Automatable Classification
 
