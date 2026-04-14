@@ -351,6 +351,19 @@
             "[c]"
           ],
           "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-3-aws-001",
+          "name": "Backups replicated to alternate region",
+          "service": "Backup",
+          "api_call": "backup.list_backup_vaults",
+          "expected": "Backup vaults configured with cross-region copy",
+          "severity": "high",
+          "remediation": "Configure cross-region backup copy for AWS Backup vaults.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "CP-9"
         }
       ],
       "azure": [
@@ -395,6 +408,19 @@
             "[c]"
           ],
           "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-3-azure-001",
+          "name": "Backup data replicated to separate region",
+          "service": "Recovery Services",
+          "api_call": "RecoveryServicesClient.vaults.list_by_subscription_id",
+          "expected": "Recovery Services vaults configured with GRS or cross-region replication",
+          "severity": "high",
+          "remediation": "Configure geo-redundant storage for Recovery Services vaults.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "CP-9"
         }
       ],
       "gcp": [
@@ -437,6 +463,19 @@
           "supports_objectives": [
             "[a]",
             "[c]"
+          ],
+          "control_id": "CP-9"
+        },
+        {
+          "check_id": "cp-9-3-gcp-001",
+          "name": "Snapshots stored in separate region",
+          "service": "Compute Engine",
+          "api_call": "compute.snapshots.list",
+          "expected": "Snapshots stored in multi-region or separate region from source",
+          "severity": "high",
+          "remediation": "Store critical snapshots in separate regions from source resources.",
+          "supports_objectives": [
+            "[a]"
           ],
           "control_id": "CP-9"
         }
@@ -490,56 +529,6 @@
             "[a]"
           ],
           "control_id": "CP-9(1)"
-        }
-      ]
-    },
-    "CP-9(3)": {
-      "baselines": [
-        "High"
-      ],
-      "aws": [
-        {
-          "check_id": "cp-9-3-aws-001",
-          "name": "Backups replicated to alternate region",
-          "service": "Backup",
-          "api_call": "backup.list_backup_vaults",
-          "expected": "Backup vaults configured with cross-region copy",
-          "severity": "high",
-          "remediation": "Configure cross-region backup copy for AWS Backup vaults.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "CP-9(3)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "cp-9-3-azure-001",
-          "name": "Backup data replicated to separate region",
-          "service": "Recovery Services",
-          "api_call": "RecoveryServicesClient.vaults.list_by_subscription_id",
-          "expected": "Recovery Services vaults configured with GRS or cross-region replication",
-          "severity": "high",
-          "remediation": "Configure geo-redundant storage for Recovery Services vaults.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "CP-9(3)"
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "cp-9-3-gcp-001",
-          "name": "Snapshots stored in separate region",
-          "service": "Compute Engine",
-          "api_call": "compute.snapshots.list",
-          "expected": "Snapshots stored in multi-region or separate region from source",
-          "severity": "high",
-          "remediation": "Store critical snapshots in separate regions from source resources.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "CP-9(3)"
         }
       ]
     },

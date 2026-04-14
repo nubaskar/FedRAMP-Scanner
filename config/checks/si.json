@@ -218,6 +218,32 @@
             "[a]"
           ],
           "control_id": "SI-3"
+        },
+        {
+          "check_id": "si-3-1-aws-001",
+          "name": "Endpoint protection auto-update enabled",
+          "service": "SSM",
+          "api_call": "ssm.describe_instance_information()",
+          "expected": "Anti-malware/endpoint protection software configured for automatic updates",
+          "severity": "high",
+          "remediation": "Configure endpoint protection for automatic signature and engine updates.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SI-3"
+        },
+        {
+          "check_id": "si-3-1-aws-002",
+          "name": "GuardDuty threat intelligence auto-updated",
+          "service": "GuardDuty",
+          "api_call": "guardduty.get_detector",
+          "expected": "GuardDuty automatically updates threat intelligence feeds (always on)",
+          "severity": "medium",
+          "remediation": "GuardDuty threat intelligence is automatically updated by AWS.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SI-3"
         }
       ],
       "azure": [
@@ -246,6 +272,19 @@
             "[a]"
           ],
           "control_id": "SI-3"
+        },
+        {
+          "check_id": "si-3-1-azure-001",
+          "name": "Defender for Endpoint signature updates current",
+          "service": "Security Center",
+          "api_call": "security.pricings.get",
+          "expected": "Defender for Endpoint signatures updated within last 24 hours",
+          "severity": "high",
+          "remediation": "Ensure Defender for Endpoint automatic updates are enabled.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SI-3"
         }
       ],
       "gcp": [
@@ -270,6 +309,19 @@
           "expected": "Malware scanning configured for buckets receiving external uploads",
           "severity": "medium",
           "remediation": "Configure malware scanning for Cloud Storage buckets receiving uploads.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SI-3"
+        },
+        {
+          "check_id": "si-3-1-gcp-001",
+          "name": "Endpoint protection auto-update configured",
+          "service": "Compute",
+          "api_call": "compute.instances.list",
+          "expected": "Anti-malware agents on instances configured for automatic updates",
+          "severity": "high",
+          "remediation": "Configure automatic updates for endpoint protection agents.",
           "supports_objectives": [
             "[a]"
           ],
@@ -393,183 +445,6 @@
             "[c]"
           ],
           "control_id": "SI-5"
-        }
-      ]
-    },
-    "SI-3(1)": {
-      "cmmc_source": "3.14.4",
-      "baselines": [],
-      "aws": [
-        {
-          "check_id": "si-3-1-aws-001",
-          "name": "Endpoint protection auto-update enabled",
-          "service": "SSM",
-          "api_call": "ssm.describe_instance_information()",
-          "expected": "Anti-malware/endpoint protection software configured for automatic updates",
-          "severity": "high",
-          "remediation": "Configure endpoint protection for automatic signature and engine updates.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "SI-3(1)"
-        },
-        {
-          "check_id": "si-3-1-aws-002",
-          "name": "GuardDuty threat intelligence auto-updated",
-          "service": "GuardDuty",
-          "api_call": "guardduty.get_detector",
-          "expected": "GuardDuty automatically updates threat intelligence feeds (always on)",
-          "severity": "medium",
-          "remediation": "GuardDuty threat intelligence is automatically updated by AWS.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "SI-3(1)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "si-3-1-azure-001",
-          "name": "Defender for Endpoint signature updates current",
-          "service": "Security Center",
-          "api_call": "security.pricings.get",
-          "expected": "Defender for Endpoint signatures updated within last 24 hours",
-          "severity": "high",
-          "remediation": "Ensure Defender for Endpoint automatic updates are enabled.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "SI-3(1)"
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "si-3-1-gcp-001",
-          "name": "Endpoint protection auto-update configured",
-          "service": "Compute",
-          "api_call": "compute.instances.list",
-          "expected": "Anti-malware agents on instances configured for automatic updates",
-          "severity": "high",
-          "remediation": "Configure automatic updates for endpoint protection agents.",
-          "supports_objectives": [
-            "[a]"
-          ],
-          "control_id": "SI-3(1)"
-        }
-      ]
-    },
-    "SI-3(2)": {
-      "cmmc_source": "3.14.5",
-      "baselines": [],
-      "aws": [
-        {
-          "check_id": "si-3-2-aws-001",
-          "name": "Periodic vulnerability scanning configured",
-          "service": "Inspector",
-          "api_call": "inspector2.list_account_permissions",
-          "expected": "Amazon Inspector continuous scanning enabled",
-          "severity": "high",
-          "remediation": "Enable Amazon Inspector for continuous vulnerability scanning.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        },
-        {
-          "check_id": "si-3-2-aws-002",
-          "name": "GuardDuty real-time malware scanning",
-          "service": "GuardDuty",
-          "api_call": "guardduty.get_detector",
-          "expected": "GuardDuty Malware Protection scans EBS volumes on suspicious activity",
-          "severity": "high",
-          "remediation": "Enable GuardDuty Malware Protection for real-time malware detection.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        },
-        {
-          "check_id": "si-3-2-aws-003",
-          "name": "S3 object scanning for uploads",
-          "service": "GuardDuty",
-          "api_call": "guardduty.get_detector()",
-          "expected": "Real-time scanning configured for S3 objects from external sources",
-          "severity": "medium",
-          "remediation": "Enable malware scanning for S3 objects uploaded from external sources.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "si-3-2-azure-001",
-          "name": "Scheduled VM vulnerability scans configured",
-          "service": "Security Center",
-          "api_call": "assessments.list",
-          "expected": "Periodic vulnerability assessment scans configured for all VMs",
-          "severity": "high",
-          "remediation": "Enable periodic vulnerability assessment scanning in Defender for Cloud.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        },
-        {
-          "check_id": "si-3-2-azure-002",
-          "name": "Real-time protection enabled on endpoints",
-          "service": "Compute",
-          "api_call": "compute.virtual_machine_extensions.list",
-          "expected": "Real-time protection enabled on all Defender for Endpoint managed VMs",
-          "severity": "high",
-          "remediation": "Enable real-time protection in Defender for Endpoint settings.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "si-3-2-gcp-001",
-          "name": "Container vulnerability scanning continuous",
-          "service": "Container Analysis",
-          "api_call": "containeranalysis.projects.occurrences.list",
-          "expected": "Continuous vulnerability scanning enabled on all container registries",
-          "severity": "high",
-          "remediation": "Enable continuous vulnerability scanning on Artifact Registry.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
-        },
-        {
-          "check_id": "si-3-2-gcp-002",
-          "name": "Web Security Scanner periodic scans",
-          "service": "SCC",
-          "api_call": "websecurityscanner.projects.scanConfigs.list",
-          "expected": "Periodic scan schedules configured for all web applications",
-          "severity": "medium",
-          "remediation": "Configure periodic Web Security Scanner scans for all web applications.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]"
-          ],
-          "control_id": "SI-3(2)"
         }
       ]
     },

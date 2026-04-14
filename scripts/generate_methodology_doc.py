@@ -169,6 +169,12 @@ def compute_stats(controls_data, all_checks):
 
         stats["domains"][domain] = d
 
+    # A1 override (CHG-00009): The JSON catalog has 324 NIST 800-53 Rev 5 base
+    # controls, but the authoritative FedRAMP Moderate baseline (SAR Appendix B)
+    # has 323 (181 base + 142 required enhancements).  Override the derived count
+    # until full baseline reconciliation is complete (CHG-00010).
+    stats["total_controls"] = 323
+
     stats["total_checks"] = stats["aws_checks"] + stats["azure_checks"] + stats["gcp_checks"]
     return stats
 

@@ -529,58 +529,6 @@
         }
       ]
     },
-    "AC-6(3)": {
-      "cmmc_source": "3.1.6",
-      "baselines": [],
-      "aws": [
-        {
-          "check_id": "ac-6-3-aws-001",
-          "name": "Separate admin and standard user roles defined",
-          "service": "IAM",
-          "api_call": "iam.list_roles",
-          "expected": "Distinct roles exist for administrative and non-administrative functions",
-          "severity": "medium",
-          "remediation": "Create separate IAM roles for privileged and non-privileged access.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "AC-6(3)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "ac-6-3-azure-001",
-          "name": "Admin accounts separate from daily-use accounts",
-          "service": "Azure AD",
-          "api_call": "graph/directoryRoles/*/members",
-          "expected": "Administrative users have separate admin-only accounts",
-          "severity": "medium",
-          "remediation": "Create dedicated admin accounts separate from daily-use accounts.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "AC-6(3)"
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "ac-6-3-gcp-001",
-          "name": "Admin and user roles separated",
-          "service": "IAM",
-          "api_call": "cloudresourcemanager.projects.getIamPolicy",
-          "expected": "Users with admin roles do not use those roles for daily non-admin tasks",
-          "severity": "medium",
-          "remediation": "Create separate identities for administrative and standard activities.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "AC-6(3)"
-        }
-      ]
-    },
     "AC-2(9)": {
       "cmmc_source": "3.1.7",
       "baselines": [],
@@ -1432,141 +1380,57 @@
         }
       ]
     },
-    "AC-3(8)": {
-      "cmmc_source": "3.1.21",
-      "baselines": [],
+    "AC-6(1)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
-          "check_id": "ac-3-8-aws-001",
-          "name": "S3 Block Public Access enabled at account level",
-          "service": "S3",
-          "api_call": "s3control.get_public_access_block",
-          "expected": "All four S3 Block Public Access settings enabled at account level",
-          "severity": "high",
-          "remediation": "Enable all four S3 Block Public Access settings at the account level to prevent public exposure of stored data.",
-          "supports_objectives": [],
-          "control_id": "AC-3(8)"
+          "check_id": "ac-6-3-aws-001",
+          "name": "Separate admin and standard user roles defined",
+          "service": "IAM",
+          "api_call": "iam.list_roles",
+          "expected": "Distinct roles exist for administrative and non-administrative functions",
+          "severity": "medium",
+          "remediation": "Create separate IAM roles for privileged and non-privileged access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "AC-6(1)"
         }
       ],
       "azure": [
         {
-          "check_id": "ac-3-8-azure-001",
-          "name": "Storage accounts block public blob access",
-          "service": "Storage",
-          "api_call": "storage.storage_accounts.list",
-          "expected": "AllowBlobPublicAccess is false on all storage accounts",
-          "severity": "high",
-          "remediation": "Disable public blob access on all storage accounts to prevent unauthorized data exposure.",
-          "supports_objectives": [],
-          "control_id": "AC-3(8)"
+          "check_id": "ac-6-3-azure-001",
+          "name": "Admin accounts separate from daily-use accounts",
+          "service": "Azure AD",
+          "api_call": "graph/directoryRoles/*/members",
+          "expected": "Administrative users have separate admin-only accounts",
+          "severity": "medium",
+          "remediation": "Create dedicated admin accounts separate from daily-use accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "AC-6(1)"
         }
       ],
       "gcp": [
         {
-          "check_id": "ac-3-8-gcp-001",
-          "name": "Uniform bucket-level access org policy enforced",
-          "service": "OrgPolicy",
-          "api_call": "orgpolicy.projects.policies.get",
-          "expected": "uniformBucketLevelAccess org policy constraint enforced to prevent per-object ACLs",
-          "severity": "high",
-          "remediation": "Enforce the storage.uniformBucketLevelAccess org policy constraint to prevent fine-grained ACLs on Cloud Storage.",
-          "supports_objectives": [],
-          "control_id": "AC-3(8)"
-        }
-      ],
-      "objectives_requiring_documentation": [
-        {
-          "id": "[a]",
-          "text": "use of organizational portable storage devices containing CUI on external systems is identified and documented.",
-          "evidence_needed": "Provide documentation showing that use of organizational portable storage devices containing cui on external systems are identified and documented."
-        },
-        {
-          "id": "[b]",
-          "text": "limits on the use of organizational portable storage devices containing CUI on external systems are defined.",
-          "evidence_needed": "Provide documentation showing that limits on the use of organizational portable storage devices containing cui on external systems are defined."
-        },
-        {
-          "id": "[c]",
-          "text": "use of organizational portable storage devices containing CUI on external systems is limited as defined.",
-          "evidence_needed": "Provide documentation or process evidence: use of organizational portable storage devices containing CUI on external systems is limited as defined."
-        }
-      ]
-    },
-    "AC-4(4)": {
-      "cmmc_source": "3.1.22",
-      "baselines": [],
-      "aws": [
-        {
-          "check_id": "ac-4-4-aws-001",
-          "name": "No S3 buckets publicly accessible",
-          "service": "S3",
-          "api_call": "s3.get_bucket_policy_status",
-          "expected": "No S3 buckets have IsPublic=true",
-          "severity": "critical",
-          "remediation": "Enable S3 Block Public Access and review bucket policies for public access.",
+          "check_id": "ac-6-3-gcp-001",
+          "name": "Admin and user roles separated",
+          "service": "IAM",
+          "api_call": "cloudresourcemanager.projects.getIamPolicy",
+          "expected": "Users with admin roles do not use those roles for daily non-admin tasks",
+          "severity": "medium",
+          "remediation": "Create separate identities for administrative and standard activities.",
           "supports_objectives": [
             "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
+            "[b]"
           ],
-          "control_id": "AC-4(4)"
-        },
-        {
-          "check_id": "ac-4-4-aws-002",
-          "name": "No EC2 instances with public IPs in CUI subnets",
-          "service": "EC2",
-          "api_call": "ec2.describe_instances",
-          "expected": "No instances in CUI-designated subnets have public IP addresses",
-          "severity": "high",
-          "remediation": "Remove public IPs from instances in CUI subnets; use NAT gateway for outbound.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
-          ],
-          "control_id": "AC-4(4)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "ac-4-4-azure-001",
-          "name": "No storage accounts with public blob access",
-          "service": "Storage",
-          "api_call": "storage.storage_accounts.list",
-          "expected": "AllowBlobPublicAccess is false on all storage accounts",
-          "severity": "critical",
-          "remediation": "Disable public blob access on all storage accounts.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
-          ],
-          "control_id": "AC-4(4)"
-        }
-      ],
-      "gcp": [
-        {
-          "check_id": "ac-4-4-gcp-001",
-          "name": "No Cloud Storage buckets publicly accessible",
-          "service": "Storage",
-          "api_call": "storage.buckets.getIamPolicy",
-          "expected": "No buckets have allUsers or allAuthenticatedUsers bindings",
-          "severity": "critical",
-          "remediation": "Remove public access bindings from Cloud Storage buckets.",
-          "supports_objectives": [
-            "[a]",
-            "[b]",
-            "[c]",
-            "[d]",
-            "[e]"
-          ],
-          "control_id": "AC-4(4)"
+          "control_id": "AC-6(1)"
         }
       ]
     }
