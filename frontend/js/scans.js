@@ -607,6 +607,7 @@
             met: dd.met,
             not_met: dd.not_met,
             manual: dd.manual,
+            error: dd.error,
             findings: dd.findings,
           });
         }
@@ -902,6 +903,7 @@
             '<span class="accordion-meta-item text-met"><strong>' + d.met + '</strong> met</span>' +
             '<span class="accordion-meta-item text-not-met"><strong>' + (d.not_met || 0) + '</strong> not met</span>' +
             '<span class="accordion-meta-item text-manual"><strong>' + (d.manual || 0) + '</strong> manual</span>' +
+            (d.error ? '<span class="accordion-meta-item text-error"><strong>' + d.error + '</strong> error</span>' : '') +
             '<div style="width:80px">' +
               '<div class="progress-bar sm">' +
                 '<div class="progress-bar-fill ' + barColor + '" style="width:' + metPct + '%"></div>' +

@@ -143,6 +143,7 @@ h6 { font-size: 0.875rem; }
 .text-met { color: var(--color-met); }
 .text-not-met { color: var(--color-not-met); }
 .text-manual { color: var(--color-manual); }
+.text-error { color: var(--color-error); }
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-small { font-size: 0.8125rem; }
