@@ -239,6 +239,32 @@ Resources:
             Resource: "*"
 
           # -----------------------------------------------------------------
+          # Macie — PII / sensitive data discovery (FedRAMP: PT, MP, RA)
+          # Added by CHG-00005 — SecurityAudit does not cover Macie in all
+          # account/region combinations.
+          # -----------------------------------------------------------------
+          - Sid: MacieRead
+            Effect: Allow
+            Action:
+              - macie2:GetMacieSession
+              - macie2:GetFindingStatistics
+              - macie2:ListFindings
+              - macie2:DescribeBuckets
+              - macie2:GetClassificationExportConfiguration
+            Resource: "*"
+
+          # -----------------------------------------------------------------
+          # Data Lifecycle Manager (FedRAMP: CP — backups/snapshots)
+          # Added by CHG-00006 — required for cp-9-aws-003 EBS snapshot check.
+          # -----------------------------------------------------------------
+          - Sid: DLMRead
+            Effect: Allow
+            Action:
+              - dlm:GetLifecyclePolicies
+              - dlm:GetLifecyclePolicy
+            Resource: "*"
+
+          # -----------------------------------------------------------------
           # Logging and Monitoring (FedRAMP: AU, SI domains)
           # -----------------------------------------------------------------
           - Sid: LoggingMonitoringRead

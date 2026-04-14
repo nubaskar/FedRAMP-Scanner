@@ -99,10 +99,17 @@ def compute_stats(controls_data, all_checks):
 
             dom_checks = all_checks.get(domain, {}).get("checks", {})
 
-            # A base control is automated if it or any enhancement has checks
-            base_has_checks = pid in dom_checks
+            # A base control is automated if it or any enhancement has at
+            # least one non-empty cloud-specific check list (CHG-00001).
+            def _has_any_check(entry):
+                if not entry:
+                    return False
+                return any(entry.get(c) for c in ("aws", "azure", "gcp"))
+
+            base_has_checks = _has_any_check(dom_checks.get(pid))
             enh_has_checks = any(
-                (_dot_to_paren(eid) in dom_checks or eid in dom_checks)
+                _has_any_check(dom_checks.get(_dot_to_paren(eid))
+                                or dom_checks.get(eid))
                 for eid in p.get("enhancements", {})
             )
             is_auto = base_has_checks or enh_has_checks

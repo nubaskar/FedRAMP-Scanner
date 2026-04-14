@@ -2,7 +2,7 @@
 
 **Document Classification:** For Official Use — Assessment Staff Only
 
-**Version:** 1.0 | **Date:** March 12, 2026 | **Author:** Securitybricks (3PAO, powered by Aprio)
+**Version:** 1.0 | **Date:** April 06, 2026 | **Author:** Securitybricks (3PAO, powered by Aprio)
 
 ---
 
@@ -15,7 +15,7 @@
    - 4.1 [Check-to-Objective Mapping](#41-check-to-objective-mapping)
    - 4.2 [Three-Tier Evaluation Model](#42-three-tier-evaluation-model)
    - 4.3 [Cloud Provider API Baselines](#43-cloud-provider-api-baselines)
-   - 4.4 [Why Only 93 of 324 Controls Are Automated](#44-why-only-93-of-324-controls-are-automated)
+   - 4.4 [Why Only 70 of 324 Controls Are Automated](#44-why-only-70-of-324-controls-are-automated)
 5. [Coverage Matrix Summary](#5-coverage-matrix-summary)
    - 5.1 [Overall Statistics](#51-overall-statistics)
    - 5.2 [Domain-Level Coverage](#52-domain-level-coverage)
@@ -58,7 +58,7 @@ This document serves as the **authoritative methodology reference** for FedRAMP 
 - **How** each of the 324 NIST 800-53 Rev 5 controls is evaluated
 - **Which** cloud APIs are queried and what constitutes a passing or failing check
 - **Why** each check maps to specific NIST SP 800-53A assessment objectives
-- **What** 3PAOs must do for the 231 controls that require manual assessment
+- **What** 3PAOs must do for the 254 controls that require manual assessment
 - **Where** the authoritative sources and traceability chain originates
 
 The scanner implements **496 cloud-specific technical checks** across AWS (203), Azure (147), and GCP (146), mapped to **254 NIST SP 800-53A assessment objectives** across all 324 controls and 20 FedRAMP control families.
@@ -181,9 +181,9 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 **Key GCP Services Queried:** IAM, Cloud Resource Manager, Compute, VPC, Storage, Cloud KMS, Cloud Logging, Cloud Monitoring, Security Command Center, OS Config, Binary Authorization, Container Analysis, Web Security Scanner, Cloud SQL, BigQuery, Cloud DNS, Recommender, Cloud IDS, Cloud Armor, BeyondCorp, Organization Policy
 
-### 4.4 Why Only 93 of 324 Controls Are Automated
+### 4.4 Why Only 70 of 324 Controls Are Automated
 
-NIST SP 800-53 Rev 5 defines 324 security controls, but only 93 (28%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 231 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
+NIST SP 800-53 Rev 5 defines 324 security controls, but only 70 (21%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 254 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
 
 **Controls That Cannot Be Automated:**
 
@@ -201,14 +201,14 @@ Even in families with automated checks, many controls ask: *"Does the organizati
 
 **What *Can* Be Automated:**
 
-The 93 automated controls share a common trait: their compliance state is observable through cloud provider APIs as a **configuration property** that is either present or absent. Examples:
+The 70 automated controls share a common trait: their compliance state is observable through cloud provider APIs as a **configuration property** that is either present or absent. Examples:
 
 - **AC-6(3):** *Is privileged access restricted to specific accounts?* → Check IAM policies for least-privilege roles (API-verifiable)
 - **AU-6:** *Are audit records reviewed and analyzed?* → Check CloudTrail/Activity Log enabled and forwarded (API-verifiable)
 - **SC-8:** *Is transmitted information protected?* → Check TLS/SSL configuration on load balancers (API-verifiable)
 - **PE-3:** *Is physical access controlled?* → Requires on-site inspection of badge readers and guard stations (not API-verifiable)
 
-> **Bottom line:** The 93/324 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
+> **Bottom line:** The 70/324 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
 
 ---
 
@@ -220,8 +220,8 @@ The 93 automated controls share a common trait: their compliance state is observ
 |--------|-------|
 | NIST 800-53 Rev 5 Controls | 324 |
 | NIST 800-53A Assessment Objectives | 254 |
-| Controls with Automated Checks | 93 (28%) |
-| Controls Requiring Manual Assessment | 231 (71%) |
+| Controls with Automated Checks | 70 (21%) |
+| Controls Requiring Manual Assessment | 254 (78%) |
 | Total Cloud-Specific Technical Checks | 496 |
 | AWS Checks | 203 |
 | Azure Checks | 147 |
@@ -234,27 +234,27 @@ The table below shows the scanner's coverage across all 20 FedRAMP control famil
 
 | Domain | Name | Controls | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |
 |--------|------|-----------|-----------|--------|------------|-----|-------|-----|-----------------|
-| AC | Access Control | 25 | 14 | 11 | 44 | 35 | 25 | 26 | 56% |
-| AT | Awareness and Training | 6 | 2 | 4 | 7 | 0 | 0 | 0 | 33% |
+| AC | Access Control | 25 | 13 | 12 | 44 | 35 | 25 | 26 | 52% |
+| AT | Awareness and Training | 6 | 0 | 6 | 7 | 0 | 0 | 0 | 0% |
 | AU | Audit and Accountability | 16 | 7 | 9 | 24 | 18 | 11 | 11 | 44% |
-| CA | Assessment, Authorization, and Monitoring | 9 | 3 | 6 | 10 | 3 | 2 | 2 | 33% |
+| CA | Assessment, Authorization, and Monitoring | 9 | 1 | 8 | 10 | 3 | 2 | 2 | 11% |
 | CM | Configuration Management | 14 | 6 | 8 | 25 | 15 | 10 | 10 | 43% |
 | CP | Contingency Planning | 13 | 6 | 7 | 13 | 16 | 14 | 14 | 46% |
-| IA | Identification and Authentication | 13 | 6 | 7 | 15 | 18 | 13 | 12 | 46% |
-| IR | Incident Response | 10 | 3 | 7 | 14 | 4 | 3 | 3 | 30% |
-| MA | Maintenance | 7 | 4 | 3 | 8 | 5 | 3 | 3 | 57% |
-| MP | Media Protection | 8 | 6 | 2 | 11 | 9 | 6 | 5 | 75% |
-| PE | Physical and Environmental Protection | 23 | 5 | 18 | 13 | 0 | 0 | 0 | 22% |
+| IA | Identification and Authentication | 13 | 5 | 8 | 15 | 18 | 13 | 12 | 38% |
+| IR | Incident Response | 10 | 1 | 9 | 14 | 4 | 3 | 3 | 10% |
+| MA | Maintenance | 7 | 2 | 5 | 8 | 5 | 3 | 3 | 29% |
+| MP | Media Protection | 8 | 2 | 6 | 11 | 9 | 6 | 5 | 25% |
+| PE | Physical and Environmental Protection | 23 | 0 | 23 | 13 | 0 | 0 | 0 | 0% |
 | PL | Planning | 11 | 2 | 9 | 2 | 3 | 3 | 3 | 18% |
 | PM | Program Management | 32 | 0 | 32 | 0 | 0 | 0 | 0 | 0% |
-| PS | Personnel Security | 9 | 2 | 7 | 4 | 0 | 0 | 0 | 22% |
+| PS | Personnel Security | 9 | 0 | 9 | 4 | 0 | 0 | 0 | 0% |
 | PT | Personally Identifiable Information Processing and Transparency | 8 | 3 | 5 | 4 | 5 | 5 | 5 | 38% |
-| RA | Risk Assessment | 10 | 2 | 8 | 7 | 5 | 5 | 5 | 20% |
+| RA | Risk Assessment | 10 | 1 | 9 | 7 | 5 | 5 | 5 | 10% |
 | SA | System and Services Acquisition | 24 | 6 | 18 | 9 | 10 | 7 | 7 | 25% |
-| SC | System and Communications Protection | 51 | 9 | 42 | 25 | 31 | 21 | 21 | 18% |
+| SC | System and Communications Protection | 51 | 8 | 43 | 25 | 31 | 21 | 21 | 16% |
 | SI | System and Information Integrity | 23 | 4 | 19 | 14 | 21 | 16 | 16 | 17% |
 | SR | Supply Chain Risk Management | 12 | 3 | 9 | 5 | 5 | 3 | 3 | 25% |
-| **Total** | | **324** | **93** | **231** | **254** | **203** | **147** | **146** | **29%** |
+| **Total** | | **324** | **70** | **254** | **254** | **203** | **147** | **146** | **22%** |
 
 ### 5.3 Objective Automatable Classification
 
@@ -278,7 +278,7 @@ This section provides the complete technical reference for every NIST SP 800-53 
 
 ### AC — Access Control
 
-**Controls:** 25 | **Automated:** 14 | **Manual:** 11 | **Objectives:** 44 | **Checks:** AWS 35, Azure 25, GCP 26
+**Controls:** 25 | **Automated:** 13 | **Manual:** 12 | **Objectives:** 44 | **Checks:** AWS 35, Azure 25, GCP 26
 
 #### AC-1 — Develop, document, and disseminate to {{ insert: param, ac-1_prm_1 }}: {{ insert: param, ac-01_odp.03 }} access control policy that: Addresses purpose, scope, roles, responsibilities, management commi
 
@@ -305,14 +305,14 @@ This section provides the complete technical reference for every NIST SP 800-53 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `ac-2-aws-001` | AWS | Root account access keys disabled | IAM | `iam.get_account_summary` | critical | [d] |
-| `ac-2-aws-002` | AWS | IAM users have active credentials reviewed | IAM | `iam.generate_credential_report` | high | [a], [d] |
-| `ac-2-aws-003` | AWS | IAM password policy enforced | IAM | `iam.get_account_password_policy` | high | [a], [d] |
-| `ac-2-azure-001` | AZURE | Conditional Access policies configured | Authorization | `AuthorizationManagementClient.role_assignments.list_for_scope` | high | [a], [d], [f] |
-| `ac-2-azure-002` | AZURE | Guest user access restricted | Azure AD | `graph.authorization_policy.get` | medium | [a], [d] |
-| `ac-2-azure-003` | AZURE | Security defaults or Conditional Access enabled | Azure AD | `graph.identity_security_defaults_enforcement_policy.get` | high | [a], [d], [f] |
-| `ac-2-gcp-001` | GCP | Organization-level IAM bindings reviewed | IAM | `cloudresourcemanager.projects.getIamPolicy` | critical | [a], [c] |
-| `ac-2-gcp-002` | GCP | Service account keys rotated | IAM | `iam.projects.serviceAccounts.keys.list` | high | [b], [e] |
-| `ac-2-gcp-003` | GCP | Default service account not used | IAM | `compute.instances.list` | high | [b], [e] |
+| `ac-2-aws-002` | AWS | IAM users have active credentials reviewed | IAM | `iam.generate_credential_report` | high | [d], [e] |
+| `ac-2-aws-003` | AWS | IAM password policy enforced | IAM | `iam.get_account_password_policy` | high | [f] |
+| `ac-2-azure-001` | AZURE | Conditional Access policies configured | Authorization | `AuthorizationManagementClient.role_assignments.list_for_scope` | high | [d], [f] |
+| `ac-2-azure-002` | AZURE | Guest user access restricted | Azure AD | `graph.authorization_policy.get` | medium | [d] |
+| `ac-2-azure-003` | AZURE | Security defaults or Conditional Access enabled | Azure AD | `graph.identity_security_defaults_enforcement_policy.get` | high | [d], [f] |
+| `ac-2-gcp-001` | GCP | Organization-level IAM bindings reviewed | IAM | `cloudresourcemanager.projects.getIamPolicy` | critical | [d], [f] |
+| `ac-2-gcp-002` | GCP | Service account keys rotated | IAM | `iam.projects.serviceAccounts.keys.list` | high | [d] |
+| `ac-2-gcp-003` | GCP | Default service account not used | IAM | `compute.instances.list` | high | [d] |
 
 
 #### AC-2(9) (Enhancement) — Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use of shared or group accounts, organizations consider the increased risk due to th
@@ -354,7 +354,7 @@ This section provides the complete technical reference for every NIST SP 800-53 
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ac-3-aws-001` | AWS | IAM policies follow least privilege | IAM | `iam.list_policies` | high | [b] |
+| `ac-3-aws-001` | AWS | IAM policies follow least privilege | IAM | `iam.list_policies` | high | [a], [b] |
 | `ac-3-aws-002` | AWS | IAM permission boundaries configured for delegated admin | IAM | `iam.list_users` | medium | [a], [b] |
 | `ac-3-azure-001` | AZURE | Custom RBAC roles use least privilege | Authorization | `authorization.role_definitions.list` | high | [a], [b] |
 | `ac-3-azure-002` | AZURE | PIM enabled for privileged roles | Azure AD | `graph/roleManagement/directory/roleAssignmentScheduleInstances` | high | [a], [b] |
@@ -407,11 +407,11 @@ This section provides the complete technical reference for every NIST SP 800-53 
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ac-4-aws-001` | AWS | VPC Flow Logs enabled | VPC | `ec2.describe_flow_logs` | high | [a], [b], [d], [e] |
+| `ac-4-aws-001` | AWS | VPC Flow Logs enabled | VPC | `ec2.describe_flow_logs` | high | [a], [b] |
 | `ac-4-aws-002` | AWS | S3 Block Public Access enabled at account level | S3 | `s3control.get_public_access_block` | critical | [a], [b], [d], [e] |
-| `ac-4-azure-001` | AZURE | NSG flow logs enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b], [d], [e] |
+| `ac-4-azure-001` | AZURE | NSG flow logs enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b] |
 | `ac-4-azure-002` | AZURE | Azure Firewall or Network Virtual Appliance deployed | Network | `network.azure_firewalls.list` | high | [a], [b], [d], [e] |
-| `ac-4-gcp-001` | GCP | VPC Flow Logs enabled | VPC | `compute.subnetworks.list` | high | [a], [b], [d], [e] |
+| `ac-4-gcp-001` | GCP | VPC Flow Logs enabled | VPC | `compute.subnetworks.list` | high | [a], [b] |
 | `ac-4-gcp-002` | GCP | Firewall rules reviewed for least privilege | VPC | `compute.firewalls.list` | critical | [a], [b], [d], [e] |
 
 **Documentation Requirements:**
@@ -484,13 +484,13 @@ procedures addressing d | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ac-6-aws-001` | AWS | No inline IAM policies with wildcard permissions | IAM | `iam.list_user_policies` | high | [b] |
+| `ac-6-aws-001` | AWS | No inline IAM policies with wildcard permissions | IAM | `iam.list_user_policies` | high | [a], [b] |
 | `ac-6-aws-002` | AWS | IAM Access Analyzer enabled | IAM | `accessanalyzer.list_analyzers` | medium | [a], [b] |
-| `ac-6-aws-003` | AWS | No IAM users with AdministratorAccess policy | IAM | `iam.list_entities_for_policy` | high | [a], [b], [c], [d] |
-| `ac-6-azure-001` | AZURE | Global Administrator role limited | Azure AD | `graph.directory_roles.members.list` | high | [a], [b], [c], [d] |
-| `ac-6-azure-002` | AZURE | JIT VM access configured | Security Center | `security.jit_network_access_policies.list` | medium | [a], [b], [d] |
-| `ac-6-gcp-001` | GCP | No user has Owner role on multiple projects | IAM | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [d] |
-| `ac-6-gcp-002` | GCP | IAM recommender reviewed | IAM | `recommender.projects.locations.recommenders.recommendations.list` | medium | [b] |
+| `ac-6-aws-003` | AWS | No IAM users with AdministratorAccess policy | IAM | `iam.list_entities_for_policy` | high | [a], [b] |
+| `ac-6-azure-001` | AZURE | Global Administrator role limited | Azure AD | `graph.directory_roles.members.list` | high | [a], [b] |
+| `ac-6-azure-002` | AZURE | JIT VM access configured | Security Center | `security.jit_network_access_policies.list` | medium | [a], [b] |
+| `ac-6-gcp-001` | GCP | No user has Owner role on multiple projects | IAM | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b] |
+| `ac-6-gcp-002` | GCP | IAM recommender reviewed | IAM | `recommender.projects.locations.recommenders.recommendations.list` | medium | [a], [b] |
 
 
 #### AC-6(3) (Enhancement) — Authorize network access to {{ insert: param, ac-06.03_odp.01 }} only for {{ insert: param, ac-06.03_odp.02 }} and document the rationale for such access in the security plan for the system. Network a
@@ -529,9 +529,9 @@ procedures addressing d | Yes |
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `ac-7-aws-001` | AWS | Account lockout policy configured in IAM Identity Center | IAM Identity Center | `sso-admin.list_instances()` | high | [a], [b] |
-| `ac-7-aws-002` | AWS | GuardDuty brute force finding type enabled | GuardDuty | `guardduty.list_detectors` | medium | [a], [b] |
+| `ac-7-aws-002` | AWS | GuardDuty brute force finding type enabled | GuardDuty | `guardduty.list_detectors` | medium | [a] |
 | `ac-7-azure-001` | AZURE | Smart lockout configured in Azure AD | Azure AD | `graph.settings.list` | high | [a], [b] |
-| `ac-7-gcp-001` | GCP | Google Workspace login challenge enabled | Workspace Admin | `admin.directory.users.list` | medium | [a], [b] |
+| `ac-7-gcp-001` | GCP | Google Workspace login challenge enabled | Workspace Admin | `admin.directory.users.list` | medium | [a] |
 
 
 #### AC-8 — Display {{ insert: param, ac-08_odp.01 }} to users before granting access to the system that provides privacy and security notices consistent with applicable laws, executive orders, directives, regula
@@ -862,7 +862,7 @@ procedures addressing remote  | Yes |
 
 ### AT — Awareness and Training
 
-**Controls:** 6 | **Automated:** 2 | **Manual:** 4 | **Objectives:** 7 | **Checks:** AWS 0, Azure 0, GCP 0
+**Controls:** 6 | **Automated:** 0 | **Manual:** 6 | **Objectives:** 7 | **Checks:** AWS 0, Azure 0, GCP 0
 
 #### AT-1 — Develop, document, and disseminate to {{ insert: param, at-1_prm_1 }}: {{ insert: param, at-01_odp.03 }} awareness and training policy that: Addresses purpose, scope, roles, responsibilities, manageme
 
@@ -969,16 +969,16 @@ procedures addressing remote  | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `au-2-aws-001` | AWS | CloudTrail enabled in all regions | CloudTrail | `cloudtrail.describe_trails` | critical | [a], [b], [c], [d], [e], [f] |
-| `au-2-aws-002` | AWS | CloudTrail log file validation enabled | CloudTrail | `cloudtrail.describe_trails` | high | [a], [b], [c], [d], [e], [f] |
-| `au-2-aws-003` | AWS | CloudTrail logs retained for at least 365 days | S3 | `s3.get_bucket_lifecycle_configuration` | high | [a], [b], [c], [d], [e], [f] |
-| `au-2-aws-004` | AWS | CloudTrail data events enabled for S3 and Lambda | CloudTrail | `cloudtrail.get_event_selectors` | medium | [a], [b], [c], [d], [e], [f] |
-| `au-2-azure-001` | AZURE | Azure Activity Log retention configured | Monitor | `MonitorManagementClient.activity_log_alerts.list_by_subscription_id` | critical | [a], [b], [c], [d], [e], [f] |
-| `au-2-azure-002` | AZURE | Azure AD audit logs retained | Azure AD | `NetworkManagementClient.network_watchers.list_all + resources.list` | high | [a], [b], [c], [d], [e], [f] |
-| `au-2-azure-003` | AZURE | Resource diagnostic settings enabled | Monitor | `monitor.diagnostic_settings.list` | high | [a], [b], [c], [d], [e], [f] |
-| `au-2-gcp-001` | GCP | Admin Activity audit logs active | Logging | `logging.projects.logs.list` | critical | [a], [b], [c], [d], [e], [f] |
-| `au-2-gcp-002` | GCP | Data Access audit logs enabled | Logging | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b], [c], [d], [e], [f] |
-| `au-2-gcp-003` | GCP | Audit log sink to long-term storage | Logging | `logging.projects.sinks.list` | high | [a], [b], [c], [d], [e], [f] |
+| `au-2-aws-001` | AWS | CloudTrail enabled in all regions | CloudTrail | `cloudtrail.describe_trails` | critical | [a], [b], [c] |
+| `au-2-aws-002` | AWS | CloudTrail log file validation enabled | CloudTrail | `cloudtrail.describe_trails` | high | [e], [f] |
+| `au-2-aws-003` | AWS | CloudTrail logs retained for at least 365 days | S3 | `s3.get_bucket_lifecycle_configuration` | high | [f] |
+| `au-2-aws-004` | AWS | CloudTrail data events enabled for S3 and Lambda | CloudTrail | `cloudtrail.get_event_selectors` | medium | [a], [b], [c] |
+| `au-2-azure-001` | AZURE | Azure Activity Log retention configured | Monitor | `MonitorManagementClient.activity_log_alerts.list_by_subscription_id` | critical | [a], [c], [f] |
+| `au-2-azure-002` | AZURE | Azure AD audit logs retained | Azure AD | `NetworkManagementClient.network_watchers.list_all + resources.list` | high | [a], [c], [f] |
+| `au-2-azure-003` | AZURE | Resource diagnostic settings enabled | Monitor | `monitor.diagnostic_settings.list` | high | [a], [b], [c] |
+| `au-2-gcp-001` | GCP | Admin Activity audit logs active | Logging | `logging.projects.logs.list` | critical | [a], [b], [c] |
+| `au-2-gcp-002` | GCP | Data Access audit logs enabled | Logging | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b], [c] |
+| `au-2-gcp-003` | GCP | Audit log sink to long-term storage | Logging | `logging.projects.sinks.list` | high | [c], [f] |
 
 
 #### AU-3 — Ensure that audit records contain information that establishes the following: What type of event occurred; When the event occurred; Where the event occurred; Source of the event; Outcome of the event;
@@ -1043,9 +1043,9 @@ procedures addressing remote  | Yes |
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `au-5-aws-001` | AWS | CloudWatch alarm for CloudTrail logging changes | CloudWatch | `cloudwatch.describe_alarms` | high | [a], [b], [c] |
-| `au-5-aws-002` | AWS | SNS topic configured for audit failure notifications | SNS | `sns.list_topics()` | medium | [a], [b], [c] |
-| `au-5-azure-001` | AZURE | Activity log alert for diagnostic settings changes | Monitor | `monitor.activity_log_alerts.list` | high | [a], [b], [c] |
-| `au-5-gcp-001` | GCP | Alert policy for log sink changes | Monitoring | `monitoring.projects.alertPolicies.list` | high | [a], [b], [c] |
+| `au-5-aws-002` | AWS | SNS topic configured for audit failure notifications | SNS | `sns.list_topics()` | medium | [a], [b] |
+| `au-5-azure-001` | AZURE | Activity log alert for diagnostic settings changes | Monitor | `monitor.activity_log_alerts.list` | high | [a], [b] |
+| `au-5-gcp-001` | GCP | Alert policy for log sink changes | Monitoring | `monitoring.projects.alertPolicies.list` | high | [a], [b] |
 
 
 #### AU-6 — Review and analyze system audit records {{ insert: param, au-06_odp.01 }} for indications of {{ insert: param, au-06_odp.02 }} and the potential impact of the inappropriate or unusual activity; Report
@@ -1063,10 +1063,10 @@ procedures addressing remote  | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `au-6-aws-001` | AWS | AWS Security Hub enabled | Security Hub | `securityhub.describe_hub` | high | [a], [b] |
-| `au-6-aws-002` | AWS | CloudTrail integrated with CloudWatch Logs | CloudTrail | `cloudtrail.describe_trails` | high | [a], [b] |
-| `au-6-azure-001` | AZURE | Microsoft Sentinel enabled | Sentinel | `securityinsight.sentinel_onboarding_states.list` | high | [a], [b] |
-| `au-6-gcp-001` | GCP | Security Command Center enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b] |
+| `au-6-aws-001` | AWS | AWS Security Hub enabled | Security Hub | `securityhub.describe_hub` | high | [a] |
+| `au-6-aws-002` | AWS | CloudTrail integrated with CloudWatch Logs | CloudTrail | `cloudtrail.describe_trails` | high | [a] |
+| `au-6-azure-001` | AZURE | Microsoft Sentinel enabled | Sentinel | `securityinsight.sentinel_onboarding_states.list` | high | [a] |
+| `au-6-gcp-001` | GCP | Security Command Center enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
 
 
 #### AU-7 — Provide and implement an audit record reduction and report generation capability that: Supports on-demand audit record review, analysis, and reporting requirements and after-the-fact investigations of
@@ -1130,13 +1130,13 @@ procedures addressing remote  | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `au-9-aws-001` | AWS | CloudTrail S3 bucket has access logging | S3 | `s3.get_bucket_logging` | high | [a], [b], [c], [d], [e], [f] |
-| `au-9-aws-002` | AWS | CloudTrail S3 bucket encrypted | S3 | `s3.get_bucket_encryption` | high | [a], [b], [c], [d], [e], [f] |
-| `au-9-aws-003` | AWS | CloudTrail S3 bucket MFA Delete enabled | S3 | `s3.get_bucket_versioning` | medium | [a], [b], [c], [d], [e], [f] |
-| `au-9-azure-001` | AZURE | Log Analytics workspace access controlled | Monitor | `operationalinsights.workspaces.list` | high | [a], [b], [c], [d], [e], [f] |
-| `au-9-azure-002` | AZURE | Audit log storage uses immutable blobs | Storage | `storage_accounts.list` | high | [a], [b], [c], [d], [e], [f] |
-| `au-9-gcp-001` | GCP | Audit log bucket has retention policy | Storage | `storage.buckets.get` | high | [a], [b], [c], [d], [e], [f] |
-| `au-9-gcp-002` | GCP | Audit log bucket access restricted | Storage | `storage.buckets.getIamPolicy` | high | [a], [b], [c], [d], [e], [f] |
+| `au-9-aws-001` | AWS | CloudTrail S3 bucket has access logging | S3 | `s3.get_bucket_logging` | high | [a], [b] |
+| `au-9-aws-002` | AWS | CloudTrail S3 bucket encrypted | S3 | `s3.get_bucket_encryption` | high | [c], [d] |
+| `au-9-aws-003` | AWS | CloudTrail S3 bucket MFA Delete enabled | S3 | `s3.get_bucket_versioning` | medium | [e], [f] |
+| `au-9-azure-001` | AZURE | Log Analytics workspace access controlled | Monitor | `operationalinsights.workspaces.list` | high | [a], [b] |
+| `au-9-azure-002` | AZURE | Audit log storage uses immutable blobs | Storage | `storage_accounts.list` | high | [e], [f] |
+| `au-9-gcp-001` | GCP | Audit log bucket has retention policy | Storage | `storage.buckets.get` | high | [e], [f] |
+| `au-9-gcp-002` | GCP | Audit log bucket access restricted | Storage | `storage.buckets.getIamPolicy` | high | [a], [b] |
 
 
 #### AU-9(4) (Enhancement) — Authorize access to management of audit logging functionality to only {{ insert: param, au-09.04_odp }}. Individuals or roles with privileged access to a system and who are also the subject of an audi
@@ -1197,7 +1197,7 @@ procedures addressing remote  | Yes |
 
 ### CA — Assessment, Authorization, and Monitoring
 
-**Controls:** 9 | **Automated:** 3 | **Manual:** 6 | **Objectives:** 10 | **Checks:** AWS 3, Azure 2, GCP 2
+**Controls:** 9 | **Automated:** 1 | **Manual:** 8 | **Objectives:** 10 | **Checks:** AWS 3, Azure 2, GCP 2
 
 #### CA-1 — Develop, document, and disseminate to {{ insert: param, ca-1_prm_1 }}: {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy that: Addresses purpose, scope, roles, respons
 
@@ -1329,11 +1329,11 @@ procedures addressing remote  | Yes |
 |----------|-------|------|---------|---------|----------|------------|
 | `cm-2-aws-001` | AWS | AWS Config enabled in all regions | Config | `config.describe_configuration_recorders` | critical | [a], [c], [d], [f] |
 | `cm-2-aws-002` | AWS | Systems Manager Inventory enabled | SSM | `ssm.describe_instance_information` | high | [a], [c], [d], [f] |
-| `cm-2-aws-003` | AWS | AMI baseline documented and maintained | EC2 | `ec2.describe_images` | medium | [a], [c], [d], [f] |
+| `cm-2-aws-003` | AWS | AMI baseline documented and maintained | EC2 | `ec2.describe_images` | medium | [a], [c], [d] |
 | `cm-2-azure-001` | AZURE | Azure Resource Graph inventory available | Resource Graph | `resourcegraph.resources` | high | [a], [c], [d], [f] |
-| `cm-2-azure-002` | AZURE | Azure Policy Guest Configuration enabled | Policy | `policy_assignments.list` | high | [a], [c], [d], [f] |
+| `cm-2-azure-002` | AZURE | Azure Policy Guest Configuration enabled | Policy | `policy_assignments.list` | high | [a], [c], [d] |
 | `cm-2-gcp-001` | GCP | Cloud Asset Inventory enabled | Asset Inventory | `cloudasset.assets.list` | high | [a], [c], [d], [f] |
-| `cm-2-gcp-002` | GCP | OS Config inventory management enabled | OS Config | `compute.instances.aggregatedList` | medium | [a], [c], [d], [f] |
+| `cm-2-gcp-002` | GCP | OS Config inventory management enabled | OS Config | `compute.instances.aggregatedList` | medium | [a], [c], [d] |
 
 **Documentation Requirements:**
 
@@ -1440,9 +1440,9 @@ procedu | Yes |
 | `cm-6-aws-001` | AWS | AWS Config rules for CIS Benchmark | Config | `config.describe_config_rules` | high | [a], [b] |
 | `cm-6-aws-002` | AWS | Security Hub CIS standard enabled | Security Hub | `securityhub.describe_standards_subscriptions` | high | [a], [b] |
 | `cm-6-azure-001` | AZURE | Azure Policy assignments for security baseline | Policy | `policy.policy_assignments.list` | high | [a], [b] |
-| `cm-6-azure-002` | AZURE | Defender for Cloud secure score reviewed | Security Center | `security.secure_scores.list` | medium | [a], [b] |
+| `cm-6-azure-002` | AZURE | Defender for Cloud secure score reviewed | Security Center | `security.secure_scores.list` | medium | [b] |
 | `cm-6-gcp-001` | GCP | Organization policies configured | Organization Policy | `orgpolicy.projects.policies.list` | high | [a], [b] |
-| `cm-6-gcp-002` | GCP | SCC findings for CIS compliance | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b] |
+| `cm-6-gcp-002` | GCP | SCC findings for CIS compliance | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [b] |
 
 
 #### CM-7 — Configure the system to provide only {{ insert: param, cm-07_odp.01 }} ; and Prohibit or restrict the use of the following functions, ports, protocols, software, and/or services: {{ insert: param, cm-
@@ -1596,9 +1596,9 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `cp-2-aws-001` | AWS | Resources tagged with DR plan metadata | EC2 + RDS | `ec2.describe_instances + rds.describe_db_instances` | medium | [a], [c] |
-| `cp-2-azure-001` | AZURE | Resources tagged with DR plan metadata | Resources | `ResourceManagementClient.resources.list` | medium | [a], [c] |
-| `cp-2-gcp-001` | GCP | Resources labeled with DR plan metadata | Compute Engine | `compute.instances.aggregatedList` | medium | [a], [c] |
+| `cp-2-aws-001` | AWS | Resources tagged with DR plan metadata | EC2 + RDS | `ec2.describe_instances + rds.describe_db_instances` | medium | [a] |
+| `cp-2-azure-001` | AZURE | Resources tagged with DR plan metadata | Resources | `ResourceManagementClient.resources.list` | medium | [a] |
+| `cp-2-gcp-001` | GCP | Resources labeled with DR plan metadata | Compute Engine | `compute.instances.aggregatedList` | medium | [a] |
 
 
 #### CP-3 — Provide contingency training to system users consistent with assigned roles and responsibilities: Within {{ insert: param, cp-03_odp.01 }} of assuming a contingency role or responsibility; When requir
@@ -1621,9 +1621,9 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `cp-4-aws-001` | AWS | AWS Resilience Hub assessments completed | ResilienceHub | `resiliencehub.list_app_assessments` | medium | [a], [b] |
-| `cp-4-azure-001` | AZURE | Azure Site Recovery test failover documented | Recovery Services | `backup.backup_jobs.list` | medium | [a], [b] |
-| `cp-4-gcp-001` | GCP | Disaster recovery test documented in Cloud Logging | Logging | `logging.entries.list` | medium | [a], [b] |
+| `cp-4-aws-001` | AWS | AWS Resilience Hub assessments completed | ResilienceHub | `resiliencehub.list_app_assessments` | medium | [a] |
+| `cp-4-azure-001` | AZURE | Azure Site Recovery test failover documented | Recovery Services | `backup.backup_jobs.list` | medium | [a] |
+| `cp-4-gcp-001` | GCP | Disaster recovery test documented in Cloud Logging | Logging | `logging.entries.list` | medium | [a] |
 
 
 #### CP-5
@@ -1646,12 +1646,12 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `cp-6-aws-001` | AWS | S3 buckets have cross-region replication enabled | S3 | `s3.get_bucket_replication` | high | [a], [b] |
-| `cp-6-aws-002` | AWS | RDS databases have cross-region read replicas | RDS | `rds.describe_db_instances` | high | [a], [b] |
-| `cp-6-azure-001` | AZURE | Storage accounts have geo-redundant replication | Storage | `StorageManagementClient.storage_accounts.list` | high | [a], [b] |
-| `cp-6-azure-002` | AZURE | SQL databases have geo-replication configured | SQL | `sql.servers.list + sql.replication_links.list_by_database` | high | [a], [b] |
-| `cp-6-gcp-001` | GCP | Cloud Storage buckets use multi-region or dual-region | Storage | `storage.buckets.list` | high | [a], [b] |
-| `cp-6-gcp-002` | GCP | Cloud SQL instances have HA and cross-region replicas | Cloud SQL | `sqladmin.instances.list` | high | [a], [b] |
+| `cp-6-aws-001` | AWS | S3 buckets have cross-region replication enabled | S3 | `s3.get_bucket_replication` | high | [a] |
+| `cp-6-aws-002` | AWS | RDS databases have cross-region read replicas | RDS | `rds.describe_db_instances` | high | [a] |
+| `cp-6-azure-001` | AZURE | Storage accounts have geo-redundant replication | Storage | `StorageManagementClient.storage_accounts.list` | high | [a] |
+| `cp-6-azure-002` | AZURE | SQL databases have geo-replication configured | SQL | `sql.servers.list + sql.replication_links.list_by_database` | high | [a] |
+| `cp-6-gcp-001` | GCP | Cloud Storage buckets use multi-region or dual-region | Storage | `storage.buckets.list` | high | [a] |
+| `cp-6-gcp-002` | GCP | Cloud SQL instances have HA and cross-region replicas | Cloud SQL | `sqladmin.instances.list` | high | [a] |
 
 
 #### CP-7 — Establish an alternate processing site, including necessary agreements to permit the transfer and resumption of {{ insert: param, cp-07_odp.01 }} for essential mission and business functions within {{
@@ -1670,12 +1670,12 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `cp-7-aws-001` | AWS | Application deployed to multiple regions | EC2 | `ec2.describe_regions + ec2.describe_instances` | high | [a], [b], [d] |
-| `cp-7-aws-002` | AWS | Route 53 health checks configured for failover | Route53 | `route53.list_health_checks` | high | [a], [d] |
-| `cp-7-azure-001` | AZURE | Application deployed to multiple regions | Compute | `compute.virtual_machines.list_all` | high | [a], [b], [d] |
-| `cp-7-azure-002` | AZURE | Traffic Manager or Front Door configured for failover | Resources | `resource.resources.list` | high | [a], [d] |
-| `cp-7-gcp-001` | GCP | Application deployed to multiple regions | Compute Engine | `compute.instanceGroupManagers.aggregatedList` | high | [a], [b], [d] |
-| `cp-7-gcp-002` | GCP | Cloud Load Balancing configured with multi-region backends | Compute Engine | `compute.backendServices.list` | high | [a], [d] |
+| `cp-7-aws-001` | AWS | Application deployed to multiple regions | EC2 | `ec2.describe_regions + ec2.describe_instances` | high | [a], [b] |
+| `cp-7-aws-002` | AWS | Route 53 health checks configured for failover | Route53 | `route53.list_health_checks` | high | [a] |
+| `cp-7-azure-001` | AZURE | Application deployed to multiple regions | Compute | `compute.virtual_machines.list_all` | high | [a], [b] |
+| `cp-7-azure-002` | AZURE | Traffic Manager or Front Door configured for failover | Resources | `resource.resources.list` | high | [a] |
+| `cp-7-gcp-001` | GCP | Application deployed to multiple regions | Compute Engine | `compute.instanceGroupManagers.aggregatedList` | high | [a], [b] |
+| `cp-7-gcp-002` | GCP | Cloud Load Balancing configured with multi-region backends | Compute Engine | `compute.backendServices.list` | high | [a] |
 
 
 #### CP-8 — Establish alternate telecommunications services, including necessary agreements to permit the resumption of {{ insert: param, cp-08_odp.01 }} for essential mission and business functions within {{ ins
@@ -1699,14 +1699,14 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `cp-9-aws-001` | AWS | AWS Backup vaults configured with backup plans | Backup | `backup.list_backup_vaults` | critical | [a], [c], [d] |
+| `cp-9-aws-001` | AWS | AWS Backup vaults configured with backup plans | Backup | `backup.list_backup_vaults` | critical | [a], [c] |
 | `cp-9-aws-002` | AWS | RDS automated backups enabled | RDS | `rds.describe_db_instances` | critical | [a], [c] |
 | `cp-9-aws-003` | AWS | EBS snapshots scheduled for volumes | EC2 | `ec2.describe_snapshots` | high | [a], [c] |
 | `cp-9-aws-004` | AWS | DynamoDB point-in-time recovery enabled | DynamoDB | `dynamodb.describe_continuous_backups` | high | [a], [c] |
-| `cp-9-azure-001` | AZURE | Azure Backup configured for VMs | Recovery Services | `RecoveryServicesBackupClient.backup_protected_items.list` | critical | [a], [c], [d] |
+| `cp-9-azure-001` | AZURE | Azure Backup configured for VMs | Recovery Services | `RecoveryServicesBackupClient.backup_protected_items.list` | critical | [a], [c] |
 | `cp-9-azure-002` | AZURE | SQL Database automated backups configured | SQL | `sql.servers.list + sql.backup_short_term_retention_policies.get` | critical | [a], [c] |
 | `cp-9-azure-003` | AZURE | Storage account soft delete enabled | Storage | `StorageManagementClient.blob_services.get_service_properties` | high | [a], [c] |
-| `cp-9-gcp-001` | GCP | Compute Engine persistent disk snapshots scheduled | Compute Engine | `compute.resourcePolicies.list` | critical | [a], [c], [d] |
+| `cp-9-gcp-001` | GCP | Compute Engine persistent disk snapshots scheduled | Compute Engine | `compute.resourcePolicies.list` | critical | [a], [c] |
 | `cp-9-gcp-002` | GCP | Cloud SQL automated backups enabled | Cloud SQL | `sqladmin.instances.list` | critical | [a], [c] |
 | `cp-9-gcp-003` | GCP | Cloud Storage bucket versioning enabled | Storage | `storage.buckets.get` | high | [a], [c] |
 
@@ -1824,7 +1824,7 @@ procedu | Yes |
 
 ### IA — Identification and Authentication
 
-**Controls:** 13 | **Automated:** 6 | **Manual:** 7 | **Objectives:** 15 | **Checks:** AWS 18, Azure 13, GCP 12
+**Controls:** 13 | **Automated:** 5 | **Manual:** 8 | **Objectives:** 15 | **Checks:** AWS 18, Azure 13, GCP 12
 
 #### IA-1 — Develop, document, and disseminate to {{ insert: param, ia-1_prm_1 }}: {{ insert: param, ia-01_odp.03 }} identification and authentication policy that: Addresses purpose, scope, roles, responsibilitie
 
@@ -1847,13 +1847,13 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ia-2-aws-001` | AWS | All IAM users uniquely identified | IAM | `iam.list_users` | high | [a], [b], [c] |
-| `ia-2-aws-002` | AWS | Service accounts have descriptive names | IAM | `iam.list_roles` | medium | [a], [b], [c] |
-| `ia-2-aws-003` | AWS | EC2 instances use instance profiles | EC2 | `ec2.describe_instances` | high | [a], [b], [c] |
-| `ia-2-azure-001` | AZURE | All Azure AD users uniquely identified | Azure AD | `graph.users.list` | high | [a], [b], [c] |
-| `ia-2-azure-002` | AZURE | Managed identities used for service authentication | Compute | `compute.virtual_machines.list` | high | [a], [b], [c] |
-| `ia-2-gcp-001` | GCP | All users identified via Google Cloud Identity | IAM | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b], [c] |
-| `ia-2-gcp-002` | GCP | Service accounts clearly identified | IAM | `iam.projects.serviceAccounts.list` | medium | [a], [b], [c] |
+| `ia-2-aws-001` | AWS | All IAM users uniquely identified | IAM | `iam.list_users` | high | [a], [b] |
+| `ia-2-aws-002` | AWS | Service accounts have descriptive names | IAM | `iam.list_roles` | medium | [a] |
+| `ia-2-aws-003` | AWS | EC2 instances use instance profiles | EC2 | `ec2.describe_instances` | high | [a], [b] |
+| `ia-2-azure-001` | AZURE | All Azure AD users uniquely identified | Azure AD | `graph.users.list` | high | [a], [b] |
+| `ia-2-azure-002` | AZURE | Managed identities used for service authentication | Compute | `compute.virtual_machines.list` | high | [a], [b] |
+| `ia-2-gcp-001` | GCP | All users identified via Google Cloud Identity | IAM | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b] |
+| `ia-2-gcp-002` | GCP | Service accounts clearly identified | IAM | `iam.projects.serviceAccounts.list` | medium | [a] |
 
 
 #### IA-2(1) (Enhancement) — Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of two or more different factors to achieve authentication. The authentication fac
@@ -1918,11 +1918,11 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ia-3-aws-001` | AWS | Root account has MFA enabled | IAM | `iam.get_account_summary` | critical | [a], [b], [c] |
-| `ia-3-aws-002` | AWS | All IAM users with console access have MFA | IAM | `iam.generate_credential_report` | critical | [a], [b], [c] |
-| `ia-3-azure-001` | AZURE | MFA registration required for all users | Azure AD | `graph.reports.credential_user_registration_details.list` | critical | [a], [b], [c] |
-| `ia-3-azure-002` | AZURE | Legacy authentication blocked | Azure AD | `graph.conditional_access_policies.list` | high | [a], [b], [c] |
-| `ia-3-gcp-001` | GCP | 2-Step Verification enforced | Workspace Admin | `admin.directory.users.list` | critical | [a], [b], [c] |
+| `ia-3-aws-001` | AWS | Root account has MFA enabled | IAM | `iam.get_account_summary` | critical | [b] |
+| `ia-3-aws-002` | AWS | All IAM users with console access have MFA | IAM | `iam.generate_credential_report` | critical | [b] |
+| `ia-3-azure-001` | AZURE | MFA registration required for all users | Azure AD | `graph.reports.credential_user_registration_details.list` | critical | [b] |
+| `ia-3-azure-002` | AZURE | Legacy authentication blocked | Azure AD | `graph.conditional_access_policies.list` | high | [a], [b] |
+| `ia-3-gcp-001` | GCP | 2-Step Verification enforced | Workspace Admin | `admin.directory.users.list` | critical | [b] |
 
 
 #### IA-4 — Manage system identifiers by: Receiving authorization from {{ insert: param, ia-04_odp.01 }} to assign an individual, group, role, service, or device identifier; Selecting an identifier that identifie
@@ -2095,7 +2095,7 @@ procedu | Yes |
 
 ### IR — Incident Response
 
-**Controls:** 10 | **Automated:** 3 | **Manual:** 7 | **Objectives:** 14 | **Checks:** AWS 4, Azure 3, GCP 3
+**Controls:** 10 | **Automated:** 1 | **Manual:** 9 | **Objectives:** 14 | **Checks:** AWS 4, Azure 3, GCP 3
 
 #### IR-1 — Develop, document, and disseminate to {{ insert: param, ir-1_prm_1 }}: {{ insert: param, ir-01_odp.03 }} incident response policy that: Addresses purpose, scope, roles, responsibilities, management co
 
@@ -2122,16 +2122,16 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ir-2-aws-001` | AWS | GuardDuty enabled in all regions | GuardDuty | `guardduty.list_detectors` | critical | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-aws-002` | AWS | Security Hub enabled with automated findings | Security Hub | `securityhub.describe_hub` | high | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-aws-003` | AWS | EventBridge rules for security events | EventBridge | `events.list_rules` | high | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-aws-004` | AWS | IR playbooks documented in SSM Automation | SSM | `ssm.list_documents` | medium | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-azure-001` | AZURE | Microsoft Defender for Cloud enabled | Security Center | `security.pricings.list` | critical | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-azure-002` | AZURE | Microsoft Sentinel deployed | Sentinel | `securityinsight.sentinel_onboarding_states.list` | high | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-azure-003` | AZURE | Sentinel automation rules configured | Sentinel | `securityinsight.automation_rules.list` | medium | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-gcp-001` | GCP | Security Command Center Premium enabled | SCC | `securitycenter.organizations.getOrganizationSettings` | critical | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-gcp-002` | GCP | Event Threat Detection enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b], [c], [d], [e], [f], [g] |
-| `ir-2-gcp-003` | GCP | Pub/Sub notifications for SCC findings | SCC | `securitycenter.organizations.notificationConfigs.list` | high | [a], [b], [c], [d], [e], [f], [g] |
+| `ir-2-aws-001` | AWS | GuardDuty enabled in all regions | GuardDuty | `guardduty.list_detectors` | critical | [a] |
+| `ir-2-aws-002` | AWS | Security Hub enabled with automated findings | Security Hub | `securityhub.describe_hub` | high | [a] |
+| `ir-2-aws-003` | AWS | EventBridge rules for security events | EventBridge | `events.list_rules` | high | [a] |
+| `ir-2-aws-004` | AWS | IR playbooks documented in SSM Automation | SSM | `ssm.list_documents` | medium | [a] |
+| `ir-2-azure-001` | AZURE | Microsoft Defender for Cloud enabled | Security Center | `security.pricings.list` | critical | [a] |
+| `ir-2-azure-002` | AZURE | Microsoft Sentinel deployed | Sentinel | `securityinsight.sentinel_onboarding_states.list` | high | [a] |
+| `ir-2-azure-003` | AZURE | Sentinel automation rules configured | Sentinel | `securityinsight.automation_rules.list` | medium | [a] |
+| `ir-2-gcp-001` | GCP | Security Command Center Premium enabled | SCC | `securitycenter.organizations.getOrganizationSettings` | critical | [a] |
+| `ir-2-gcp-002` | GCP | Event Threat Detection enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
+| `ir-2-gcp-003` | GCP | Pub/Sub notifications for SCC findings | SCC | `securitycenter.organizations.notificationConfigs.list` | high | [a] |
 
 
 #### IR-3 — Test the effectiveness of the incident response capability for the system {{ insert: param, ir-03_odp.01 }} using the following tests: {{ insert: param, ir-03_odp.02 }}. Organizations test incident re
@@ -2206,7 +2206,7 @@ procedu | Yes |
 
 ### MA — Maintenance
 
-**Controls:** 7 | **Automated:** 4 | **Manual:** 3 | **Objectives:** 8 | **Checks:** AWS 5, Azure 3, GCP 3
+**Controls:** 7 | **Automated:** 2 | **Manual:** 5 | **Objectives:** 8 | **Checks:** AWS 5, Azure 3, GCP 3
 
 #### MA-1 — Develop, document, and disseminate to {{ insert: param, ma-1_prm_1 }}: {{ insert: param, ma-01_odp.03 }} maintenance policy that: Addresses purpose, scope, roles, responsibilities, management commitme
 
@@ -2302,10 +2302,10 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ma-4-aws-001` | AWS | Session Manager requires MFA for remote maintenance | SSM | `iam.get_policy_version` | high | [a], [b] |
-| `ma-4-aws-002` | AWS | VPN connections require MFA | VPC | `ec2.describe_client_vpn_endpoints` | high | [a], [b] |
-| `ma-4-azure-001` | AZURE | MFA required for Azure Bastion access | Azure AD | `graph.conditional_access_policies.list` | high | [a], [b] |
-| `ma-4-gcp-001` | GCP | 2SV required for admin console access | Workspace Admin | `admin.directory.users.list` | high | [a], [b] |
+| `ma-4-aws-001` | AWS | Session Manager requires MFA for remote maintenance | SSM | `iam.get_policy_version` | high | [a] |
+| `ma-4-aws-002` | AWS | VPN connections require MFA | VPC | `ec2.describe_client_vpn_endpoints` | high | [a] |
+| `ma-4-azure-001` | AZURE | MFA required for Azure Bastion access | Azure AD | `graph.conditional_access_policies.list` | high | [a] |
+| `ma-4-gcp-001` | GCP | 2SV required for admin console access | Workspace Admin | `admin.directory.users.list` | high | [a] |
 
 
 #### MA-5 — Establish a process for maintenance personnel authorization and maintain a list of authorized maintenance organizations or personnel; Verify that non-escorted personnel performing maintenance on the s
@@ -2335,7 +2335,7 @@ procedu | Yes |
 
 ### MP — Media Protection
 
-**Controls:** 8 | **Automated:** 6 | **Manual:** 2 | **Objectives:** 11 | **Checks:** AWS 9, Azure 6, GCP 5
+**Controls:** 8 | **Automated:** 2 | **Manual:** 6 | **Objectives:** 11 | **Checks:** AWS 9, Azure 6, GCP 5
 
 #### MP-1 — Develop, document, and disseminate to {{ insert: param, mp-1_prm_1 }}: {{ insert: param, mp-01_odp.03 }} media protection policy that: Addresses purpose, scope, roles, responsibilities, management com
 
@@ -2519,7 +2519,7 @@ procedu | Yes |
 
 ### PE — Physical and Environmental Protection
 
-**Controls:** 23 | **Automated:** 5 | **Manual:** 18 | **Objectives:** 13 | **Checks:** AWS 0, Azure 0, GCP 0
+**Controls:** 23 | **Automated:** 0 | **Manual:** 23 | **Objectives:** 13 | **Checks:** AWS 0, Azure 0, GCP 0
 
 #### PE-1 — Develop, document, and disseminate to {{ insert: param, pe-1_prm_1 }}: {{ insert: param, pe-01_odp.03 }} physical and environmental protection policy that: Addresses purpose, scope, roles, responsibil
 
@@ -2977,7 +2977,7 @@ procedu | Yes |
 
 ### PS — Personnel Security
 
-**Controls:** 9 | **Automated:** 2 | **Manual:** 7 | **Objectives:** 4 | **Checks:** AWS 0, Azure 0, GCP 0
+**Controls:** 9 | **Automated:** 0 | **Manual:** 9 | **Objectives:** 4 | **Checks:** AWS 0, Azure 0, GCP 0
 
 #### PS-1 — Develop, document, and disseminate to {{ insert: param, ps-1_prm_1 }}: {{ insert: param, ps-01_odp.03 }} personnel security policy that: Addresses purpose, scope, roles, responsibilities, management c
 
@@ -3143,7 +3143,7 @@ procedu | Yes |
 
 ### RA — Risk Assessment
 
-**Controls:** 10 | **Automated:** 2 | **Manual:** 8 | **Objectives:** 7 | **Checks:** AWS 5, Azure 5, GCP 5
+**Controls:** 10 | **Automated:** 1 | **Manual:** 9 | **Objectives:** 7 | **Checks:** AWS 5, Azure 5, GCP 5
 
 #### RA-1 — Develop, document, and disseminate to {{ insert: param, ra-1_prm_1 }}: {{ insert: param, ra-01_odp.03 }} risk assessment policy that: Addresses purpose, scope, roles, responsibilities, management comm
 
@@ -3195,15 +3195,15 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ra-5-aws-001` | AWS | Amazon Inspector enabled | Inspector | `inspector2.list_account_permissions` | high | [a], [b], [c], [d], [e] |
-| `ra-5-aws-002` | AWS | ECR image scanning enabled | ECR | `ecr.describe_repositories` | high | [a], [b], [c], [d], [e] |
-| `ra-5-aws-003` | AWS | Vulnerability findings reviewed regularly | Inspector | `inspector2.list_findings` | high | [a], [b], [c], [d], [e] |
-| `ra-5-azure-001` | AZURE | Defender for Cloud vulnerability assessment enabled | Security Center | `security.sub_assessments.list` | high | [a], [b], [c], [d], [e] |
-| `ra-5-azure-002` | AZURE | Container vulnerability scanning enabled | Security Center | `security.pricings.get` | high | [a], [b], [c], [d], [e] |
-| `ra-5-azure-003` | AZURE | SQL vulnerability assessment enabled | SQL | `sql.server_vulnerability_assessments.get` | high | [a], [b], [c], [d], [e] |
-| `ra-5-gcp-001` | GCP | Web Security Scanner enabled | SCC | `websecurityscanner.projects.scanConfigs.list` | high | [a], [b], [c], [d], [e] |
-| `ra-5-gcp-002` | GCP | Container Analysis vulnerability scanning | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a], [b], [c], [d], [e] |
-| `ra-5-gcp-003` | GCP | Security Health Analytics enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b], [c], [d], [e] |
+| `ra-5-aws-001` | AWS | Amazon Inspector enabled | Inspector | `inspector2.list_account_permissions` | high | [a] |
+| `ra-5-aws-002` | AWS | ECR image scanning enabled | ECR | `ecr.describe_repositories` | high | [a] |
+| `ra-5-aws-003` | AWS | Vulnerability findings reviewed regularly | Inspector | `inspector2.list_findings` | high | [a], [e] |
+| `ra-5-azure-001` | AZURE | Defender for Cloud vulnerability assessment enabled | Security Center | `security.sub_assessments.list` | high | [a] |
+| `ra-5-azure-002` | AZURE | Container vulnerability scanning enabled | Security Center | `security.pricings.get` | high | [a] |
+| `ra-5-azure-003` | AZURE | SQL vulnerability assessment enabled | SQL | `sql.server_vulnerability_assessments.get` | high | [a] |
+| `ra-5-gcp-001` | GCP | Web Security Scanner enabled | SCC | `websecurityscanner.projects.scanConfigs.list` | high | [a] |
+| `ra-5-gcp-002` | GCP | Container Analysis vulnerability scanning | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a] |
+| `ra-5-gcp-003` | GCP | Security Health Analytics enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
 
 
 #### RA-5(5) (Enhancement) — Implement privileged access authorization to {{ insert: param, ra-05.05_odp.01 }} for {{ insert: param, ra-05.05_odp.02 }}. In certain situations, the nature of the vulnerability scanning may be more 
@@ -3221,12 +3221,12 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `ra-5-5-aws-001` | AWS | SSM Patch Manager compliance monitored | SSM | `ssm.describe_instance_patch_states` | high | [a], [b] |
-| `ra-5-5-aws-002` | AWS | Inspector critical findings remediated | Inspector | `inspector2.list_findings` | high | [a], [b] |
-| `ra-5-5-azure-001` | AZURE | Update Management compliance tracked | Automation | `automation_account.list` | high | [a], [b] |
-| `ra-5-5-azure-002` | AZURE | Defender recommendations addressed | Security Center | `security.assessments.list` | high | [a], [b] |
-| `ra-5-5-gcp-001` | GCP | OS Config patch compliance monitored | OS Config | `osconfig.patchDeployments.list` | high | [a], [b] |
-| `ra-5-5-gcp-002` | GCP | SCC critical findings remediated | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b] |
+| `ra-5-5-aws-001` | AWS | SSM Patch Manager compliance monitored | SSM | `ssm.describe_instance_patch_states` | high | [a] |
+| `ra-5-5-aws-002` | AWS | Inspector critical findings remediated | Inspector | `inspector2.list_findings` | high | [a] |
+| `ra-5-5-azure-001` | AZURE | Update Management compliance tracked | Automation | `automation_account.list` | high | [a] |
+| `ra-5-5-azure-002` | AZURE | Defender recommendations addressed | Security Center | `security.assessments.list` | high | [a] |
+| `ra-5-5-gcp-001` | GCP | OS Config patch compliance monitored | OS Config | `osconfig.patchDeployments.list` | high | [a] |
+| `ra-5-5-gcp-002` | GCP | SCC critical findings remediated | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
 
 
 #### RA-6 — Employ a technical surveillance countermeasures survey at {{ insert: param, ra-06_odp.01 }} {{ insert: param, ra-06_odp.02 }}. A technical surveillance countermeasures survey is a service provided by 
@@ -3284,10 +3284,10 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `sa-3-aws-001` | AWS | CodePipeline configured for CI/CD | CodePipeline | `codepipeline.list_pipelines` | medium | [a], [b] |
-| `sa-3-aws-002` | AWS | CodeBuild projects configured with security scanning | CodeBuild | `codebuild.list_projects` | medium | [a], [c] |
-| `sa-3-azure-001` | AZURE | Azure DevOps pipelines configured | Resources | `resource.resources.list` | medium | [a], [b] |
-| `sa-3-gcp-001` | GCP | Cloud Build triggers configured | Cloud Build | `cloudbuild.projects.triggers.list` | medium | [a], [b] |
+| `sa-3-aws-001` | AWS | CodePipeline configured for CI/CD | CodePipeline | `codepipeline.list_pipelines` | medium | [a] |
+| `sa-3-aws-002` | AWS | CodeBuild projects configured with security scanning | CodeBuild | `codebuild.list_projects` | medium | [a] |
+| `sa-3-azure-001` | AZURE | Azure DevOps pipelines configured | Resources | `resource.resources.list` | medium | [a] |
+| `sa-3-gcp-001` | GCP | Cloud Build triggers configured | Cloud Build | `cloudbuild.projects.triggers.list` | medium | [a] |
 
 
 #### SA-4 — Include the following requirements, descriptions, and criteria, explicitly or by reference, using {{ insert: param, sa-04_odp.01 }} in the acquisition contract for the system, system component, or sys
@@ -3483,10 +3483,10 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `sa-22-aws-001` | AWS | Systems Manager inventory tracks software versions | SSM | `ssm.get_inventory` | high | [a], [b] |
-| `sa-22-aws-002` | AWS | Inspector scans for EOL software packages | Inspector2 | `inspector2.list_findings` | high | [a], [b] |
-| `sa-22-azure-001` | AZURE | Microsoft Defender for Cloud detects EOL software | Security Center | `SecurityCenter.assessments.list` | high | [a], [b] |
-| `sa-22-gcp-001` | GCP | Security Command Center detects EOL software | Security Command Center | `securitycenter.organizations.findings.list` | high | [a], [b] |
+| `sa-22-aws-001` | AWS | Systems Manager inventory tracks software versions | SSM | `ssm.get_inventory` | high | [a] |
+| `sa-22-aws-002` | AWS | Inspector scans for EOL software packages | Inspector2 | `inspector2.list_findings` | high | [a] |
+| `sa-22-azure-001` | AZURE | Microsoft Defender for Cloud detects EOL software | Security Center | `SecurityCenter.assessments.list` | high | [a] |
+| `sa-22-gcp-001` | GCP | Security Command Center detects EOL software | Security Command Center | `securitycenter.organizations.findings.list` | high | [a] |
 
 
 #### SA-23 — Employ {{ insert: param, sa-23_odp.01 }} on {{ insert: param, sa-23_odp.02 }} supporting mission essential services or functions to increase the trustworthiness in those systems or components. It is o
@@ -3501,7 +3501,7 @@ procedu | Yes |
 
 ### SC — System and Communications Protection
 
-**Controls:** 51 | **Automated:** 9 | **Manual:** 42 | **Objectives:** 25 | **Checks:** AWS 31, Azure 21, GCP 21
+**Controls:** 51 | **Automated:** 8 | **Manual:** 43 | **Objectives:** 25 | **Checks:** AWS 31, Azure 21, GCP 21
 
 #### SC-1 — Develop, document, and disseminate to {{ insert: param, sc-1_prm_1 }}: {{ insert: param, sc-01_odp.03 }} system and communications protection policy that: Addresses purpose, scope, roles, responsibili
 
@@ -3554,16 +3554,16 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `sc-7-aws-001` | AWS | WAF deployed on internet-facing resources | WAFv2 | `wafv2.list_web_acls` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-aws-002` | AWS | VPC Flow Logs enabled for all VPCs | VPC | `ec2.describe_flow_logs` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-aws-003` | AWS | Network Firewall deployed for CUI VPCs | Network Firewall | `network-firewall.list_firewalls` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-aws-004` | AWS | GuardDuty monitors network anomalies | GuardDuty | `guardduty.get_detector` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-azure-001` | AZURE | Azure Firewall or NVA deployed | Network | `network.azure_firewalls.list` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-azure-002` | AZURE | NSG flow logs enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-azure-003` | AZURE | Azure WAF deployed | Network | `network.web_application_firewall_policies.list` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-gcp-001` | GCP | Cloud Armor WAF deployed | Cloud Armor | `compute.securityPolicies.list` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-gcp-002` | GCP | VPC Flow Logs enabled | VPC | `compute.subnetworks.list` | high | [a], [b], [c], [d], [e], [f], [g], [h] |
-| `sc-7-gcp-003` | GCP | Packet Mirroring or IDS configured | VPC | `compute.packetMirrorings.list` | medium | [a], [b], [c], [d], [e], [f], [g], [h] |
+| `sc-7-aws-001` | AWS | WAF deployed on internet-facing resources | WAFv2 | `wafv2.list_web_acls` | high | [a], [b], [c], [d] |
+| `sc-7-aws-002` | AWS | VPC Flow Logs enabled for all VPCs | VPC | `ec2.describe_flow_logs` | high | [a], [b] |
+| `sc-7-aws-003` | AWS | Network Firewall deployed for CUI VPCs | Network Firewall | `network-firewall.list_firewalls` | high | [a], [b], [c], [d] |
+| `sc-7-aws-004` | AWS | GuardDuty monitors network anomalies | GuardDuty | `guardduty.get_detector` | high | [a], [b] |
+| `sc-7-azure-001` | AZURE | Azure Firewall or NVA deployed | Network | `network.azure_firewalls.list` | high | [a], [b], [c], [d] |
+| `sc-7-azure-002` | AZURE | NSG flow logs enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b] |
+| `sc-7-azure-003` | AZURE | Azure WAF deployed | Network | `network.web_application_firewall_policies.list` | high | [a], [b], [c], [d] |
+| `sc-7-gcp-001` | GCP | Cloud Armor WAF deployed | Cloud Armor | `compute.securityPolicies.list` | high | [a], [b], [c], [d] |
+| `sc-7-gcp-002` | GCP | VPC Flow Logs enabled | VPC | `compute.subnetworks.list` | high | [a], [b] |
+| `sc-7-gcp-003` | GCP | Packet Mirroring or IDS configured | VPC | `compute.packetMirrorings.list` | medium | [a], [b] |
 
 
 #### SC-7(4) (Enhancement) — Implement a managed interface for each external telecommunication service; Establish a traffic flow policy for each managed interface; Protect the confidentiality and integrity of the information bein
@@ -4090,15 +4090,15 @@ procedu | Yes |
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `si-2-aws-001` | AWS | SSM Patch Manager deployed | SSM | `ssm.describe_patch_baselines` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-aws-002` | AWS | Patch compliance within SLA | SSM | `ssm.describe_instance_patch_states` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-aws-003` | AWS | Amazon Inspector vulnerability findings addressed | Inspector | `inspector2.list_findings` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-aws-004` | AWS | RDS automatic minor version upgrade enabled | RDS | `rds.describe_db_instances` | medium | [a], [b], [c], [d], [e], [f] |
+| `si-2-aws-002` | AWS | Patch compliance within SLA | SSM | `ssm.describe_instance_patch_states` | high | [c], [d], [e] |
+| `si-2-aws-003` | AWS | Amazon Inspector vulnerability findings addressed | Inspector | `inspector2.list_findings` | high | [a], [b], [e] |
+| `si-2-aws-004` | AWS | RDS automatic minor version upgrade enabled | RDS | `rds.describe_db_instances` | medium | [c], [d] |
 | `si-2-azure-001` | AZURE | Azure Update Manager configured | Compute | `compute.virtual_machines.list` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-azure-002` | AZURE | Defender vulnerability assessment findings addressed | Security Center | `security.sub_assessments.list` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-azure-003` | AZURE | App Service platform version current | App Service | `web.web_apps.list` | medium | [a], [b], [c], [d], [e], [f] |
+| `si-2-azure-002` | AZURE | Defender vulnerability assessment findings addressed | Security Center | `security.sub_assessments.list` | high | [a], [b], [e] |
+| `si-2-azure-003` | AZURE | App Service platform version current | App Service | `web.web_apps.list` | medium | [c], [d] |
 | `si-2-gcp-001` | GCP | OS Config patch management active | OS Config | `osconfig.projects.patchDeployments.list` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-gcp-002` | GCP | GKE cluster auto-upgrade enabled | GKE | `container.projects.locations.clusters.list` | high | [a], [b], [c], [d], [e], [f] |
-| `si-2-gcp-003` | GCP | Container vulnerability findings addressed | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a], [b], [c], [d], [e], [f] |
+| `si-2-gcp-002` | GCP | GKE cluster auto-upgrade enabled | GKE | `container.projects.locations.clusters.list` | high | [c], [d] |
+| `si-2-gcp-003` | GCP | Container vulnerability findings addressed | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a], [b], [e] |
 
 
 #### SI-3 — Implement {{ insert: param, si-03_odp.01 }} malicious code protection mechanisms at system entry and exit points to detect and eradicate malicious code; Automatically update malicious code protection 
@@ -4116,13 +4116,13 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `si-3-aws-001` | AWS | GuardDuty malware protection enabled | GuardDuty | `guardduty.get_detector` | high | [a], [b] |
-| `si-3-aws-002` | AWS | EC2 instances have endpoint protection | SSM | `ssm.list_inventory_entries` | high | [a], [b] |
-| `si-3-aws-003` | AWS | S3 Malware Scanning configured | GuardDuty | `guardduty.get_detector()` | medium | [a], [b] |
-| `si-3-azure-001` | AZURE | Defender for Endpoint deployed | Security Center | `security.pricings.get` | high | [a], [b] |
-| `si-3-azure-002` | AZURE | Microsoft Antimalware extension deployed | Compute | `compute.virtual_machine_extensions.list` | high | [a], [b] |
-| `si-3-gcp-001` | GCP | Endpoint protection deployed on GCE instances | Compute | `compute.instances.list` | high | [a], [b] |
-| `si-3-gcp-002` | GCP | Malware scanning enabled for Cloud Storage | Storage | `storage.buckets.list` | medium | [a], [b] |
+| `si-3-aws-001` | AWS | GuardDuty malware protection enabled | GuardDuty | `guardduty.get_detector` | high | [a] |
+| `si-3-aws-002` | AWS | EC2 instances have endpoint protection | SSM | `ssm.list_inventory_entries` | high | [a] |
+| `si-3-aws-003` | AWS | S3 Malware Scanning configured | GuardDuty | `guardduty.get_detector()` | medium | [a] |
+| `si-3-azure-001` | AZURE | Defender for Endpoint deployed | Security Center | `security.pricings.get` | high | [a] |
+| `si-3-azure-002` | AZURE | Microsoft Antimalware extension deployed | Compute | `compute.virtual_machine_extensions.list` | high | [a] |
+| `si-3-gcp-001` | GCP | Endpoint protection deployed on GCE instances | Compute | `compute.instances.list` | high | [a] |
+| `si-3-gcp-002` | GCP | Malware scanning enabled for Cloud Storage | Storage | `storage.buckets.list` | medium | [a] |
 
 
 #### SI-3(1) (Enhancement)
@@ -4187,13 +4187,13 @@ procedu | Yes |
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `si-4-aws-001` | AWS | GuardDuty monitors network traffic | GuardDuty | `guardduty.get_detector` | high | [a], [b], [c] |
-| `si-4-aws-002` | AWS | VPC Flow Logs analyzed for anomalies | VPC | `ec2.describe_flow_logs` | high | [a], [b], [c] |
+| `si-4-aws-002` | AWS | VPC Flow Logs analyzed for anomalies | VPC | `ec2.describe_flow_logs` | high | [a], [b] |
 | `si-4-aws-003` | AWS | Network Firewall IDS/IPS rules configured | Network Firewall | `network-firewall.list_firewall_policies` | high | [a], [b], [c] |
 | `si-4-azure-001` | AZURE | Defender for Network deployed | Security Center | `ResourceManagementClient.providers.get('Microsoft.Security')` | high | [a], [b], [c] |
 | `si-4-azure-002` | AZURE | Azure Firewall IDPS enabled | Network | `network.azure_firewalls.list` | high | [a], [b], [c] |
-| `si-4-azure-003` | AZURE | NSG flow log analytics enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b], [c] |
+| `si-4-azure-003` | AZURE | NSG flow log analytics enabled | Network | `network_watchers.list_all + nsgs.list_all` | high | [a], [b] |
 | `si-4-gcp-001` | GCP | Cloud IDS deployed for network monitoring | Cloud IDS | `ids.projects.locations.endpoints.list` | high | [a], [b], [c] |
-| `si-4-gcp-002` | GCP | VPC Flow Logs analyzed | VPC | `compute.subnetworks.list` | high | [a], [b], [c] |
+| `si-4-gcp-002` | GCP | VPC Flow Logs analyzed | VPC | `compute.subnetworks.list` | high | [a], [b] |
 | `si-4-gcp-003` | GCP | Event Threat Detection monitors for attacks | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b], [c] |
 
 
@@ -4362,10 +4362,10 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `sr-2-aws-001` | AWS | ECR images scanned for vulnerabilities | ECR | `ecr.describe_repositories + ecr.get_registry_scanning_configuration` | high | [a], [b] |
+| `sr-2-aws-001` | AWS | ECR images scanned for vulnerabilities | ECR | `ecr.describe_repositories + ecr.get_registry_scanning_configuration` | high | [a] |
 | `sr-2-aws-002` | AWS | Inspector scans for software bill of materials | Inspector2 | `inspector2.list_coverage` | medium | [a] |
-| `sr-2-azure-001` | AZURE | Container Registry images scanned | Resources | `resource.resources.list` | high | [a], [b] |
-| `sr-2-gcp-001` | GCP | Artifact Registry images scanned | Artifact Registry | `artifactregistry.projects.locations.repositories.list` | high | [a], [b] |
+| `sr-2-azure-001` | AZURE | Container Registry images scanned | Resources | `resource.resources.list` | high | [a] |
+| `sr-2-gcp-001` | GCP | Artifact Registry images scanned | Artifact Registry | `artifactregistry.projects.locations.repositories.list` | high | [a] |
 
 
 #### SR-3 — Establish a process or processes to identify and address weaknesses or deficiencies in the supply chain elements and processes of {{ insert: param, sr-03_odp.01 }} in coordination with {{ insert: para
@@ -4437,10 +4437,10 @@ procedu | Yes |
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
-| `sr-11-aws-001` | AWS | ECR images signed with AWS Signer | ECR | `ecr.get_registry_policy + ecr.describe_repositories` | high | [a], [b] |
+| `sr-11-aws-001` | AWS | ECR images signed with AWS Signer | ECR | `ecr.get_registry_policy + ecr.describe_repositories` | high | [a] |
 | `sr-11-aws-002` | AWS | Lambda code signing configured | Lambda | `lambda.list_functions` | high | [a] |
-| `sr-11-azure-001` | AZURE | Container Registry content trust enabled | Resources | `resource.resources.list` | high | [a], [b] |
-| `sr-11-gcp-001` | GCP | Binary Authorization enforced | Binary Authorization | `binaryauthorization.projects.policy.get` | high | [a], [b] |
+| `sr-11-azure-001` | AZURE | Container Registry content trust enabled | Resources | `resource.resources.list` | high | [a] |
+| `sr-11-gcp-001` | GCP | Binary Authorization enforced | Binary Authorization | `binaryauthorization.projects.policy.get` | high | [a] |
 
 
 #### SR-12 — Dispose of {{ insert: param, sr-12_odp.01 }} using the following techniques and methods: {{ insert: param, sr-12_odp.02 }}. Data, documentation, tools, or system components can be disposed of at any t
@@ -4454,7 +4454,7 @@ procedu | Yes |
 
 ### 7.1 How to Use This Guide
 
-For the 231 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.
+For the 254 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.
 
 For each manual control, this guide provides:
 
@@ -11375,12 +11375,12 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Service | API Call | Used By (Controls) |
 |---------|---------|---------------------|
 | ACM | `acm.list_certificates` | SC-12, SC-23 |
-| API Gateway | `apigateway.get_rest_apis` | PT-4, SA-9.2, SC-10 |
+| API Gateway | `apigateway.get_rest_apis` | PT-4, SA-9(2), SC-10 |
 | Athena | `athena.list_named_queries` | AU-7 |
-| Backup | `backup.describe_backup_vault` | CP-9.8 |
+| Backup | `backup.describe_backup_vault` | CP-9(8) |
 | Backup | `backup.get_backup_vault_access_policy` | MP-4(2) |
-| Backup | `backup.list_backup_vaults` | CP-9, CP-9.3, MP-4(2) |
-| Backup | `backup.list_restore_jobs` | CP-9.1 |
+| Backup | `backup.list_backup_vaults` | CP-9, CP-9(3), MP-4(2) |
+| Backup | `backup.list_restore_jobs` | CP-9(1) |
 | CloudFormation | `cloudformation.list_stacks` | SA-10 |
 | CloudFront | `cloudfront.list_distributions` | SC-8 |
 | CloudTrail | `cloudtrail.describe_trails` | AC-2(9), AU-2, AU-3, AU-6, CM-3 |
@@ -11392,7 +11392,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | CodeBuild | `codebuild.batch_get_projects` | SA-11, SR-3 |
 | CodeBuild | `codebuild.list_projects` | SA-3 |
 | CodeCommit | `codecommit.list_repositories` | SA-10 |
-| CodeGuru | `codeguru-reviewer.list_repository_associations` | SA-11.1 |
+| CodeGuru | `codeguru-reviewer.list_repository_associations` | SA-11(1) |
 | CodePipeline | `codepipeline.list_pipelines` | CM-5, SA-3 |
 | Config | `config.describe_compliance_by_config_rule` | CA-7 |
 | Config | `config.describe_config_rules` | CM-6 |
@@ -11406,7 +11406,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | EC2 | `ec2.describe_instances` | AC-4(4), IA-2 |
 | EC2 | `ec2.describe_instances()` | AU-8 |
 | EC2 | `ec2.describe_regions + ec2.describe_instances` | CP-7 |
-| EC2 | `ec2.describe_security_groups` | AC-17(3), CM-7, CM-7(1), SA-4.9, SC-7(21) |
+| EC2 | `ec2.describe_security_groups` | AC-17(3), CM-7, CM-7(1), SA-4(9), SC-7(21) |
 | EC2 | `ec2.describe_snapshot_attribute` | SC-7(8) |
 | EC2 | `ec2.describe_snapshots` | CP-9 |
 | EC2 | `ec2.describe_volumes` | MP-4 |
@@ -11457,8 +11457,8 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Network Firewall | `network-firewall.list_firewall_policies` | SI-4 |
 | Network Firewall | `network-firewall.list_firewalls` | SC-7 |
 | Organizations | `organizations.list_policies` | AC-2(9), AU-9(4), CM-7(1) |
-| RDS | `rds.describe_db_instances` | CP-6, CP-9, CP-10.2, IA-8, MA-2 (+3 more) |
-| RDS | `rds.describe_db_snapshots` | CP-9.8 |
+| RDS | `rds.describe_db_instances` | CP-6, CP-9, CP-10(2), IA-8, MA-2 (+3 more) |
+| RDS | `rds.describe_db_snapshots` | CP-9(8) |
 | RDS | `rds.list_tags_for_resource` | PT-2 |
 | ResilienceHub | `resiliencehub.list_app_assessments` | CP-4 |
 | Route 53 | `route53.list_hosted_zones` | SC-23 |
@@ -11540,7 +11540,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Monitor | `operationalinsights.workspaces.list` | AU-7, AU-9 |
 | Multiple | `network/keyvault/monitor/security` | SC-7(5) |
 | Network | `NetworkManagementClient.flow_logs.list` | PL-8 |
-| Network | `NetworkManagementClient.network_security_groups.list_all` | SA-4.9 |
+| Network | `NetworkManagementClient.network_security_groups.list_all` | SA-4(9) |
 | Network | `network.application_gateways.list` | SC-10 |
 | Network | `network.azure_firewalls.list` | AC-4, SC-7, SC-7(21), SI-4 |
 | Network | `network.bastion_hosts.list` | AC-17(1) |
@@ -11555,16 +11555,16 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Policy | `policy.policy_states.list` | CA-7 |
 | Policy | `policy_assignments.list` | CM-2 |
 | Recovery Services | `RecoveryServicesBackupClient.backup_protected_items.list` | CP-9 |
-| Recovery Services | `RecoveryServicesBackupClient.restore_jobs.list` | CP-9.1 |
+| Recovery Services | `RecoveryServicesBackupClient.restore_jobs.list` | CP-9(1) |
 | Recovery Services | `RecoveryServicesClient.replication_protected_items.list` | CP-10 |
-| Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | CP-9.3 |
+| Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | CP-9(3) |
 | Recovery Services | `backup.backup_jobs.list` | CP-4 |
-| Recovery Services | `recoveryservices.vaults.list` | CP-9.8, MP-4(2) |
+| Recovery Services | `recoveryservices.vaults.list` | CP-9(8), MP-4(2) |
 | Resource Graph | `resourcegraph.resources` | CM-2 |
 | Resources | `ResourceManagementClient.resources.list` | CP-2, PL-8, PT-3 |
-| Resources | `resource.resources.list` | CP-7, PT-2, PT-4, SA-3, SA-9.2 (+2 more) |
+| Resources | `resource.resources.list` | CP-7, PT-2, PT-4, SA-3, SA-9(2) (+2 more) |
 | Resources | `resources.management_locks.list` | CM-5 |
-| SQL | `SqlManagementClient.restorable_dropped_databases.list` | CP-10.2 |
+| SQL | `SqlManagementClient.restorable_dropped_databases.list` | CP-10(2) |
 | SQL | `sql.encryption_protectors.get` | SC-28(1) |
 | SQL | `sql.server_vulnerability_assessments.get` | RA-5 |
 | SQL | `sql.servers.list` | PT-2 |
@@ -11575,7 +11575,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Security Center | `SecurityCenter.assessments.list` | SA-22 |
 | Security Center | `assessments.list` | SI-3(2) |
 | Security Center | `security.assessments.list` | CA-7, CM-7(5), RA-5(5), SR-3 |
-| Security Center | `security.dev_ops_configurations.list` | SA-11.1 |
+| Security Center | `security.dev_ops_configurations.list` | SA-11(1) |
 | Security Center | `security.jit_network_access_policies.list` | AC-6 |
 | Security Center | `security.pricings.get` | RA-5, SI-3, SI-3(1) |
 | Security Center | `security.pricings.list` | IR-2 |
@@ -11595,7 +11595,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 
 | Service | API Call | Used By (Controls) |
 |---------|---------|---------------------|
-| API Gateway | `apigateway.projects.locations.apis.list` | SA-9.2 |
+| API Gateway | `apigateway.projects.locations.apis.list` | SA-9(2) |
 | Artifact Registry | `artifactregistry.projects.locations.repositories.list` | SR-2 |
 | Artifact Registry | `containeranalysis.projects.occurrences.list` | MA-2 |
 | Asset Inventory | `cloudasset.assets.list` | CM-2 |
@@ -11604,10 +11604,10 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Binary Authorization | `binaryauthorization.projects.getPolicy` | CM-7(5) |
 | Binary Authorization | `binaryauthorization.projects.policy.get` | SR-11 |
 | Cloud Armor | `compute.securityPolicies.list` | SC-7, SC-18 |
-| Cloud Build | `cloudbuild.projects.builds.list` | SA-11, SA-11.1, SR-3 |
+| Cloud Build | `cloudbuild.projects.builds.list` | SA-11, SA-11(1), SR-3 |
 | Cloud Build | `cloudbuild.projects.triggers.list` | SA-3 |
 | Cloud IDS | `ids.projects.locations.endpoints.list` | SI-4 |
-| Cloud SQL | `sqladmin.instances.list` | CP-6, CP-9, CP-10.2, IA-8, MP-5 (+2 more) |
+| Cloud SQL | `sqladmin.instances.list` | CP-6, CP-9, CP-10(2), IA-8, MP-5 (+2 more) |
 | Cloud Source Repositories | `sourcerepo.projects.repos.list` | SA-10 |
 | Compute | `compute.backendServices.list` | SC-10 |
 | Compute | `compute.disks.list` | MP-4 |
@@ -11618,12 +11618,12 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Compute | `compute.sslCertificates.list` | SC-23 |
 | Compute | `compute.sslPolicies.list` | SC-8 |
 | Compute Engine | `compute.backendServices.list` | CP-7 |
-| Compute Engine | `compute.firewalls.list` | SA-4.9 |
+| Compute Engine | `compute.firewalls.list` | SA-4(9) |
 | Compute Engine | `compute.instanceGroupManagers.aggregatedList` | CP-7 |
 | Compute Engine | `compute.instances.aggregatedList` | CP-2, CP-10, PL-8 |
 | Compute Engine | `compute.instances.aggregatedList + storage.buckets.list` | PT-3 |
 | Compute Engine | `compute.resourcePolicies.list` | CP-9 |
-| Compute Engine | `compute.snapshots.list` | CP-9.1, CP-9.3, CP-9.8 |
+| Compute Engine | `compute.snapshots.list` | CP-9(1), CP-9(3), CP-9(8) |
 | Compute Engine | `compute.subnetworks.list` | PL-8 |
 | Container Analysis | `containeranalysis.projects.occurrences.list` | RA-5, SI-2, SI-3(2) |
 | DLP | `dlp.projects.dlpJobs.list` | PT-2 |

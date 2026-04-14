@@ -2911,8 +2911,10 @@ class AwsScanner(BaseScanner):
     def check_no_public_s3_buckets(self, check_def: dict) -> CheckResult:
         """Check no S3 buckets are publicly accessible."""
         try:
-            buckets = self._get_all_s3_buckets()
-            if not buckets:
+            import concurrent.futures
+
+            all_buckets = self._get_all_s3_buckets()
+            if not all_buckets:
                 return self._result(check_def, "met", "No S3 buckets found.",
                     raw_evidence=self._build_evidence(
                         api_call="s3.get_bucket_policy_status()",
@@ -2921,30 +2923,61 @@ class AwsScanner(BaseScanner):
                         service="S3",
                         assessor_guidance="Verify no S3 buckets exist. If buckets exist, check PolicyStatus.IsPublic = false.",
                     ))
-            public_buckets = []
-            for bucket in buckets:
+
+            # CHG-00007: Cap + parallelize. The original implementation iterated
+            # all buckets serially with get_bucket_policy_status, which is slow
+            # enough to time out the per-check budget on accounts with many or
+            # cross-region buckets.
+            BUCKET_CAP = 100
+            buckets = all_buckets[:BUCKET_CAP]
+            truncated = len(all_buckets) > BUCKET_CAP
+
+            def _is_public(bucket: str) -> str | None:
                 try:
                     status = self._s3.get_bucket_policy_status(Bucket=bucket)
                     if status.get("PolicyStatus", {}).get("IsPublic"):
-                        public_buckets.append(bucket)
+                        return bucket
                 except Exception:
-                    pass  # No policy = not public
+                    pass  # No policy / access issue → treat as not public
+                return None
+
+            public_buckets: list[str] = []
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
+                for result in pool.map(_is_public, buckets):
+                    if result:
+                        public_buckets.append(result)
+
+            partial_note = (
+                f" (sampled first {BUCKET_CAP} of {len(all_buckets)} buckets)"
+                if truncated else ""
+            )
             if not public_buckets:
                 return self._result(check_def, "met",
-                    f"No public S3 buckets found among {len(buckets)} bucket(s).",
+                    f"No public S3 buckets found among {len(buckets)} bucket(s){partial_note}.",
                     raw_evidence=self._build_evidence(
                         api_call="s3.get_bucket_policy_status()",
                         cli_command="aws s3api get-bucket-policy-status --bucket BUCKET",
-                        response={"bucket_count": len(buckets), "buckets_checked": buckets[:20]},
+                        response={
+                            "total_bucket_count": len(all_buckets),
+                            "evaluated_bucket_count": len(buckets),
+                            "truncated": truncated,
+                            "buckets_checked": buckets[:20],
+                        },
                         service="S3",
                         assessor_guidance="Verify PolicyStatus.IsPublic = false for all buckets. Check bucket policies and ACLs.",
                     ))
             return self._result(check_def, "not_met",
-                f"{len(public_buckets)} public bucket(s): {', '.join(public_buckets[:10])}",
+                f"{len(public_buckets)} public bucket(s){partial_note}: {', '.join(public_buckets[:10])}",
                 raw_evidence=self._build_evidence(
                     api_call="s3.get_bucket_policy_status()",
                     cli_command="aws s3api get-bucket-policy-status --bucket BUCKET",
-                    response={"bucket_count": len(buckets), "public_bucket_count": len(public_buckets), "public_buckets": public_buckets[:20]},
+                    response={
+                        "total_bucket_count": len(all_buckets),
+                        "evaluated_bucket_count": len(buckets),
+                        "truncated": truncated,
+                        "public_bucket_count": len(public_buckets),
+                        "public_buckets": public_buckets[:20],
+                    },
                     service="S3",
                     assessor_guidance="Confirm PolicyStatus.IsPublic = true. Remove public principals from bucket policy and ACLs.",
                 ))
@@ -5255,7 +5288,8 @@ class AwsScanner(BaseScanner):
     def check_security_hub_notifications(self, check_def: dict) -> CheckResult:
         """Check Security Hub findings are sent to SNS/EventBridge."""
         try:
-            rules = self._events.list_rules(NamePrefix="").get("Rules", [])
+            # CHG-00004: EventBridge rejects empty NamePrefix; omit it.
+            rules = self._events.list_rules().get("Rules", [])
             sh_rules = [r for r in rules
                 if "securityhub" in json.dumps(r).lower() or "security" in r.get("Name", "").lower()]
             raw = self._build_evidence(
@@ -5290,7 +5324,8 @@ class AwsScanner(BaseScanner):
     def check_guardduty_alerting(self, check_def: dict) -> CheckResult:
         """Check GuardDuty findings are routed to SNS/SIEM."""
         try:
-            rules = self._events.list_rules(NamePrefix="").get("Rules", [])
+            # CHG-00004: EventBridge rejects empty NamePrefix; omit it.
+            rules = self._events.list_rules().get("Rules", [])
             gd_rules = [r for r in rules
                 if "guardduty" in r.get("Name", "").lower()
                 or "guardduty" in (r.get("EventPattern", "") or "").lower()]
@@ -7823,8 +7858,11 @@ class AwsScanner(BaseScanner):
                             "bucket": bucket_name,
                             "rules": len(rules)
                         })
-                except self._s3.exceptions.ReplicationConfigurationNotFoundError:
-                    pass
+                except self._s3.exceptions.ClientError as e:
+                    # CHG-00004: ReplicationConfigurationNotFoundError is not a
+                    # named exception class on current botocore — match by code.
+                    if e.response.get("Error", {}).get("Code") != "ReplicationConfigurationNotFoundError":
+                        pass  # ignore other errors silently to keep original behavior
                 except Exception:
                     pass
 
@@ -8057,11 +8095,16 @@ class AwsScanner(BaseScanner):
     def check_ebs_snapshots_scheduled(self, check_def: dict) -> CheckResult:
         """Check EBS snapshot schedules via DLM."""
         try:
-            policies = self._ec2.describe_snapshot_lifecycle_policies().get("Policies", [])
+            # CHG-00004: DLM policies live on the dlm client, not ec2.
+            if not hasattr(self, "_dlm") or self._dlm is None:
+                self._dlm = self._session.client("dlm", region_name=self.region)
+            policies = self._dlm.get_lifecycle_policies(
+                ResourceTypes=["VOLUME"]
+            ).get("Policies", [])
 
             raw = self._build_evidence(
-                api_call="ec2.describe_snapshot_lifecycle_policies()",
-                cli_command="aws ec2 describe-snapshot-lifecycle-policies",
+                api_call="dlm.get_lifecycle_policies(ResourceTypes=['VOLUME'])",
+                cli_command="aws dlm get-lifecycle-policies --resource-types VOLUME",
                 response=_sanitize_response({
                     "total_policies": len(policies),
                     "policies": [{"PolicyId": p.get("PolicyId"),
@@ -8069,7 +8112,7 @@ class AwsScanner(BaseScanner):
                                  "State": p.get("State")}
                                 for p in policies[:20]]
                 }),
-                service="EC2",
+                service="DLM",
                 assessor_guidance=(
                     "Verify EBS volumes have automated snapshot schedules via Data Lifecycle Manager (DLM). "
                     "Check that policies define snapshot frequency, retention, and target resources. "
@@ -8504,7 +8547,20 @@ class AwsScanner(BaseScanner):
             if not hasattr(self, '_macie2') or self._macie2 is None:
                 self._macie2 = self._session.client('macie2', region_name=self.region)
 
-            session = self._macie2.get_macie_session()
+            try:
+                session = self._macie2.get_macie_session()
+            except self._macie2.exceptions.ClientError as e:
+                # CHG-00006: Macie returns AccessDeniedException with the
+                # message "Macie is not enabled" when the service is simply
+                # turned off in this account/region. Treat as not_met, not error.
+                msg = str(e)
+                if "Macie is not enabled" in msg or "not enabled" in msg.lower():
+                    return self._result(
+                        check_def,
+                        "not_met",
+                        "Amazon Macie is not enabled in this account/region.",
+                    )
+                raise
             status = session.get("status")
 
             raw = self._build_evidence(
@@ -8548,8 +8604,11 @@ class AwsScanner(BaseScanner):
                         if tag.get("Key") in ["DataClassification", "DataSensitivity", "Classification"]:
                             buckets_with_classification.append(bucket_name)
                             break
-                except self._s3.exceptions.NoSuchTagSet:
-                    pass
+                except self._s3.exceptions.ClientError as e:
+                    # CHG-00004: NoSuchTagSet is not a named exception class on
+                    # current botocore — match by code.
+                    if e.response.get("Error", {}).get("Code") != "NoSuchTagSet":
+                        pass
                 except Exception:
                     pass
 

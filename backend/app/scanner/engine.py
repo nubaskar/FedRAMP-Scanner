@@ -19,7 +19,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal
-from app.models.schemas import Client, Finding, Scan
+from app.models.schemas import Client, Finding, Scan, SubCheckResult
 from app.scanner.aws_scanner import AwsScanner
 from app.scanner.azure_scanner import AzureScanner
 from app.scanner.base import BaseScanner, CheckResult
@@ -657,6 +657,9 @@ def _load_environment_config(environment: str) -> dict:
     return data.get("environments", {}).get(environment, {})
 
 
+# Note: control_id keys in config/checks/*.json use parenthetical enhancement
+# format (e.g. "AC-17(1)") to match NIST SP 800-53 Rev 5 / OSCAL conventions.
+# config/nist_800_53_controls.json uses the same format. See CHG-00001.
 def _load_checks(environment: str) -> list[dict]:
     """
     Load check definitions from config/checks/ directory.
@@ -1791,7 +1794,11 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             check_id = f"{domain.lower()}-{control_id}"
             check_name = control_names.get(control_id, results[0].check_name)
 
-            status_counts[agg_status] = status_counts.get(agg_status, 0) + 1
+            # CHG-00003: Tally each individual sub-check status (not the
+            # aggregated control-level status) so the headline tiles match
+            # the "Total Checks" sub-check count.
+            for r in results:
+                status_counts[r.status] = status_counts.get(r.status, 0) + 1
 
             finding = Finding(
                 scan_id=scan_id,
@@ -1807,6 +1814,31 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
                 objective_coverage=coverage,
             )
             db.add(finding)
+            db.flush()  # populate finding.id for FK below
+
+            # Persist each sub-check result (CHG-00002).
+            # Look up the matching check_def for service/api_call/expected metadata.
+            defs_by_id = {
+                cd.get("check_id"): cd
+                for cd in control_check_defs.get(control_id, [])
+            }
+            for r in results:
+                cd = defs_by_id.get(r.check_id, {})
+                db.add(SubCheckResult(
+                    finding_id=finding.id,
+                    scan_id=scan_id,
+                    control_id=control_id,
+                    check_id=r.check_id,
+                    check_name=r.check_name,
+                    status=r.status,
+                    severity=r.severity,
+                    service=cd.get("service"),
+                    api_call=cd.get("api_call"),
+                    expected=cd.get("expected"),
+                    evidence=r.evidence,
+                    remediation=r.remediation,
+                    supports_objectives=cd.get("supports_objectives"),
+                ))
 
         # 6. Cleanup scanner connection
         try:
@@ -1833,8 +1865,16 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             all_covered_objs += cov["covered_objectives"]
         obj_coverage_pct = round((all_covered_objs / all_total_objs * 100), 1) if all_total_objs > 0 else 0.0
 
+        # CHG-00002: total_subchecks = number of automated sub-checks executed
+        # across all controls in this scan. Manual-review entries are excluded
+        # so this matches the "203 AWS checks" figure on the methodology page.
+        total_subchecks = sum(
+            1 for c in checks if c.get("check_type") == "automated"
+        )
+
         scan.status = "completed"
         scan.completed_at = datetime.now(timezone.utc)
+        scan.total_subchecks = total_subchecks
         scan.summary = {
             "total": total,
             "met": status_counts["met"],
@@ -1845,6 +1885,8 @@ def run_scan(scan_id: str, client_id: str, db_session: Optional[Session] = None)
             "total_objectives": all_total_objs,
             "covered_objectives": all_covered_objs,
             "objective_coverage_pct": obj_coverage_pct,
+            "total_subchecks": total_subchecks,
+            "total_controls": len(control_results),
         }
         db.commit()
         elapsed = time.time() - scan_start

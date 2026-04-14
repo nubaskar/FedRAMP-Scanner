@@ -89,7 +89,7 @@ A web-based platform that scans client cloud environments against FedRAMP requir
 
 The FedRAMP Cloud Compliance Scanner connects to client cloud environments via read-only IAM roles, evaluates security configurations against NIST 800-53 Rev 5 controls, and generates professional HTML and XLSX reports.
 
-The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Cloud Service Providers (CSPs). It automates the evaluation of 93 of the 324 NIST 800-53 Rev 5 controls (including enhancement controls) with 496 cloud-specific checks (AWS 203, Azure 147, GCP 146) and flags the remaining 231 policy/process controls as "Manual Review Required."
+The scanner is designed for Securitybricks assessors performing FedRAMP readiness consulting for Cloud Service Providers (CSPs). It automates the evaluation of 70 of the 324 NIST 800-53 Rev 5 controls (including enhancement controls) with 496 cloud-specific checks (AWS 203, Azure 147, GCP 146) and flags the remaining 254 policy/process controls as "Manual Review Required."
 
 ### 1.2 How It Works
 
@@ -107,8 +107,8 @@ The workflow proceeds through five stages:
 
 1. **Client onboarding** — The client grants a read-only cross-account role (AWS IAM role, Azure service principal, or GCP service account) using the provided template.
 2. **Scan execution** — A Securitybricks consultant triggers a scan from the Web UI, selecting the client, environment, and FedRAMP baseline.
-3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates 93 automated controls (including enhancement controls) with 496 cloud-specific checks across all 20 NIST 800-53 control families.
-4. **Manual review markers** — 231 policy/process controls that cannot be automated are flagged as "Manual Review Required."
+3. **Automated checks** — The scan engine connects to the client's cloud via the read-only role and evaluates 70 automated controls (including enhancement controls) with 496 cloud-specific checks across all 20 NIST 800-53 control families.
+4. **Manual review markers** — 254 policy/process controls that cannot be automated are flagged as "Manual Review Required."
 5. **Report generation** — Professional HTML and XLSX reports are produced with executive summary, per-domain breakdown, detailed findings, and remediation guidance.
 
 > **Scan scope:** Each client entry scans a single cloud account (AWS account, Azure subscription, or GCP project). If a client has multiple accounts or subscriptions in scope for FedRAMP assessment, onboard each one as a separate client entry. Reports are generated per scan, so each account/subscription gets its own assessment report.
@@ -162,7 +162,7 @@ The scanner covers NIST 800-53 Rev 5 controls across 20 control families. Each a
 | SC | System and Communications Protection | 9 | 42 |
 | SI | System and Information Integrity | 4 | 19 |
 | SR | Supply Chain Risk Management | 3 | 9 |
-| **Total** | | **93 automated** | **231 manual** |
+| **Total** | | **70 automated** | **254 manual** |
 
 ---
 

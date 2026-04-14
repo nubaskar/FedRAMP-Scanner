@@ -49,3 +49,6 @@ CLAUDE.md
 
 # Temp
 tmp/
+
+# Local change-management (CRs)
+change-management/

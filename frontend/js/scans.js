@@ -798,14 +798,22 @@
         '</div>' +
       '</div>';
     }
+    // CHG-00002: Show executed sub-check count when available, falling back
+    // to the per-control aggregated total for legacy scans (where
+    // total_subchecks is NULL).
+    var subchecks = (scan.total_subchecks != null)
+      ? scan.total_subchecks
+      : (s.total_subchecks != null ? s.total_subchecks : (s.total || 0));
+    var controlsAssessed = (s.total_controls != null) ? s.total_controls : (s.total || 0);
     html +=
       '<div class="stat-card">' +
         '<div class="stat-card-icon navy">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>' +
         '</div>' +
         '<div class="stat-card-content">' +
-          '<div class="stat-card-value">' + (s.total || 0) + '</div>' +
+          '<div class="stat-card-value">' + subchecks + '</div>' +
           '<div class="stat-card-label">Total Checks</div>' +
+          '<div class="stat-card-sublabel">across ' + controlsAssessed + ' controls</div>' +
         '</div>' +
       '</div>' +
     '</div>';

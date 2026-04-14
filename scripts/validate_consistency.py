@@ -101,6 +101,25 @@ def main():
     total_azure = sum(v["azure"] for v in check_control_ids.values())
     total_gcp = sum(v["gcp"] for v in check_control_ids.values())
 
+    # Canonical automated/manual counts (recomputed from config — no hardcoding).
+    # A base control is automated if it OR any of its enhancements has at least
+    # one non-empty cloud-specific check list. See CHG-00001.
+    _ids_with_real_checks = {
+        cid for cid, v in check_control_ids.items()
+        if v["aws"] > 0 or v["azure"] > 0 or v["gcp"] > 0
+    }
+    _automated_bases = set()
+    for cid in _ids_with_real_checks:
+        m = re.match(r'^([A-Z]{2}-\d+)', cid)
+        if m:
+            _automated_bases.add(m.group(1))
+    _all_base_controls = set()
+    for fam in master["families"].values():
+        for pid in fam.get("controls", {}):
+            _all_base_controls.add(pid)
+    canonical_automated = len(_automated_bases & _all_base_controls)
+    canonical_manual = len(_all_base_controls) - canonical_automated
+
     print(f"  Check configs: {len(check_control_ids)} control IDs, "
           f"AWS={total_aws}, Azure={total_azure}, GCP={total_gcp}")
 
@@ -114,10 +133,10 @@ def main():
             continue
         fam = master["families"][family]
         if is_enhancement(cid):
-            dot_id = paren_to_dot(cid)
+            # Master list now uses paren form (CHG-00001) — direct lookup.
             parent = find_parent(cid)
             found = (parent in fam["controls"] and
-                     dot_id in fam["controls"][parent].get("enhancements", {}))
+                     cid in fam["controls"][parent].get("enhancements", {}))
         else:
             found = cid in fam["controls"]
         if not found:
@@ -130,7 +149,8 @@ def main():
     # ---- Check 2: Automated flags match check implementations ----
     print("\n[2] Automated flags match actual check implementations")
     check_ids_base = {c for c in check_control_ids if not is_enhancement(c)}
-    check_ids_dot = {paren_to_dot(c) for c in check_control_ids}
+    # Master list now uses paren form (CHG-00001) — no conversion needed.
+    check_ids_paren = set(check_control_ids)
 
     flag_mismatches_base = []
     flag_mismatches_enh = []
@@ -143,7 +163,7 @@ def main():
                 flag_mismatches_base.append((pid, has_checks, is_auto))
 
             for eid, e in p.get("enhancements", {}).items():
-                has_checks = eid in check_ids_dot
+                has_checks = eid in check_ids_paren
                 is_auto = e.get("automated", False)
                 if has_checks != is_auto:
                     flag_mismatches_enh.append((eid, has_checks, is_auto))
@@ -251,8 +271,8 @@ def main():
             check(int(doc_gcp_match.group(1)) == total_gcp,
                   f"Doc GCP checks: {doc_gcp_match.group(1)} == actual {total_gcp}")
         if doc_auto_match:
-            check(int(doc_auto_match.group(1)) == 93,
-                  f"Doc automated controls: {doc_auto_match.group(1)} == 93")
+            check(int(doc_auto_match.group(1)) == canonical_automated,
+                  f"Doc automated controls: {doc_auto_match.group(1)} == {canonical_automated}")
         if doc_families_match:
             check(int(doc_families_match.group(1)) == 20,
                   f"Doc families count: {doc_families_match.group(1)} == 20")
@@ -271,14 +291,14 @@ def main():
         readme_93_match = re.search(r'automates the evaluation of (\d+) of the (\d+)', readme)
 
         if readme_auto_match:
-            check(int(readme_auto_match.group(1)) == 93,
-                  f"README automated: {readme_auto_match.group(1)} == 93")
+            check(int(readme_auto_match.group(1)) == canonical_automated,
+                  f"README automated: {readme_auto_match.group(1)} == {canonical_automated}")
         if readme_manual_match:
-            check(int(readme_manual_match.group(1)) == 231,
-                  f"README manual: {readme_manual_match.group(1)} == 231")
+            check(int(readme_manual_match.group(1)) == canonical_manual,
+                  f"README manual: {readme_manual_match.group(1)} == {canonical_manual}")
         if readme_93_match:
-            check(int(readme_93_match.group(1)) == 93,
-                  f"README overview automated: {readme_93_match.group(1)} == 93")
+            check(int(readme_93_match.group(1)) == canonical_automated,
+                  f"README overview automated: {readme_93_match.group(1)} == {canonical_automated}")
     else:
         check(False, "README.md exists")
 

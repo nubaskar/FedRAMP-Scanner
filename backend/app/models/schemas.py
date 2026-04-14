@@ -14,6 +14,7 @@ from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
+    Integer,
     String,
     Text,
     func,
@@ -68,6 +69,9 @@ class Scan(Base):
     started_at = Column(DateTime, default=func.now(), nullable=False)
     completed_at = Column(DateTime, nullable=True)
     summary = Column(SQLiteJSON, nullable=True)
+    # Total individual sub-checks executed (e.g. 203 for AWS Moderate). NULL for
+    # scans that pre-date CHG-00002 — frontend falls back to len(findings).
+    total_subchecks = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=func.now(), nullable=False)
 
     client = relationship("Client", back_populates="scans")
@@ -98,9 +102,56 @@ class Finding(Base):
     created_at = Column(DateTime, default=func.now(), nullable=False)
 
     scan = relationship("Scan", back_populates="findings")
+    sub_checks = relationship(
+        "SubCheckResult",
+        back_populates="finding",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Finding {self.check_id} status={self.status}>"
+
+
+class SubCheckResult(Base):
+    """
+    A single sub-check result (one row per executed cloud API check).
+
+    Multiple SubCheckResults roll up into one parent Finding per control_id.
+    Added by CHG-00002 to enable per-check audit trails for 3PAOs.
+    """
+
+    __tablename__ = "sub_check_results"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    finding_id = Column(
+        String(36),
+        ForeignKey("findings.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    scan_id = Column(
+        String(36),
+        ForeignKey("scans.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    control_id = Column(String(20), nullable=False)
+    check_id = Column(String(100), nullable=False)        # e.g., "ac-2-aws-001"
+    check_name = Column(String(500), nullable=False)
+    status = Column(String(20), nullable=False)           # met/not_met/manual/error
+    severity = Column(String(20), nullable=False)
+    service = Column(String(100), nullable=True)          # e.g., "IAM"
+    api_call = Column(String(255), nullable=True)         # e.g., "iam.get_account_summary"
+    expected = Column(Text, nullable=True)
+    evidence = Column(Text, nullable=True)
+    remediation = Column(Text, nullable=True)
+    supports_objectives = Column(SQLiteJSON, nullable=True)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+
+    finding = relationship("Finding", back_populates="sub_checks")
+
+    def __repr__(self) -> str:
+        return f"<SubCheckResult {self.check_id} status={self.status}>"
 
 
 # ---------------------------------------------------------------------------
@@ -172,6 +223,25 @@ class ScanResponse(BaseModel):
     started_at: datetime
     completed_at: Optional[datetime] = None
     summary: Optional[dict[str, Any]] = None
+    total_subchecks: Optional[int] = None
+
+
+class SubCheckResponse(BaseModel):
+    """Single sub-check result returned by the API."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    control_id: str
+    check_id: str
+    check_name: str
+    status: str
+    severity: str
+    service: Optional[str] = None
+    api_call: Optional[str] = None
+    expected: Optional[str] = None
+    evidence: Optional[str] = None
+    remediation: Optional[str] = None
+    supports_objectives: Optional[Any] = None
 
 
 class FindingResponse(BaseModel):
@@ -190,6 +260,7 @@ class FindingResponse(BaseModel):
     evidence: Optional[str] = None
     remediation: Optional[str] = None
     objective_coverage: Optional[dict[str, Any]] = None
+    sub_checks: list[SubCheckResponse] = Field(default_factory=list)
 
 
 class ScanDetail(BaseModel):

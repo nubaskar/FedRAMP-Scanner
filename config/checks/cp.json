@@ -3,7 +3,11 @@
   "name": "Contingency Planning",
   "checks": {
     "CP-2": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-2-aws-001",
@@ -13,7 +17,9 @@
           "expected": "Critical resources tagged with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Tag critical resources with DR/contingency plan metadata.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-2"
         }
       ],
@@ -26,7 +32,9 @@
           "expected": "Critical resources tagged with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Tag critical resources with DR/contingency plan metadata in Azure.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-2"
         }
       ],
@@ -39,13 +47,19 @@
           "expected": "Critical resources labeled with contingency plan identifiers",
           "severity": "medium",
           "remediation": "Label critical resources with DR/contingency plan metadata in GCP.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-2"
         }
       ]
     },
     "CP-4": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-4-aws-001",
@@ -55,7 +69,9 @@
           "expected": "Recent resilience assessments exist showing DR testing results",
           "severity": "medium",
           "remediation": "Use AWS Resilience Hub to test and document DR plan testing.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-4"
         }
       ],
@@ -68,7 +84,9 @@
           "expected": "Test failover completed within required timeframe",
           "severity": "medium",
           "remediation": "Perform and document test failovers in Azure Site Recovery.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-4"
         }
       ],
@@ -81,13 +99,18 @@
           "expected": "DR test logs exist showing recent testing activity",
           "severity": "medium",
           "remediation": "Document DR testing activities in Cloud Logging.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-4"
         }
       ]
     },
     "CP-6": {
-      "baselines": ["Moderate", "High"],
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-6-aws-001",
@@ -97,7 +120,9 @@
           "expected": "Critical S3 buckets replicate to alternate region",
           "severity": "high",
           "remediation": "Enable cross-region replication for critical S3 buckets.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         },
         {
@@ -108,7 +133,9 @@
           "expected": "Critical RDS instances have read replicas in alternate regions",
           "severity": "high",
           "remediation": "Configure cross-region read replicas for critical RDS databases.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         }
       ],
@@ -121,7 +148,9 @@
           "expected": "Critical storage accounts use GRS or GZRS replication",
           "severity": "high",
           "remediation": "Enable geo-redundant storage (GRS/GZRS) for critical storage accounts.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         },
         {
@@ -132,7 +161,9 @@
           "expected": "Critical SQL databases have active geo-replication",
           "severity": "high",
           "remediation": "Configure active geo-replication for critical Azure SQL databases.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         }
       ],
@@ -145,7 +176,9 @@
           "expected": "Critical buckets use MULTI_REGIONAL or DUAL_REGIONAL storage class",
           "severity": "high",
           "remediation": "Configure multi-region or dual-region storage for critical buckets.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         },
         {
@@ -156,13 +189,18 @@
           "expected": "Critical Cloud SQL instances have cross-region read replicas",
           "severity": "high",
           "remediation": "Configure cross-region read replicas for critical Cloud SQL instances.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-6"
         }
       ]
     },
     "CP-7": {
-      "baselines": ["Moderate", "High"],
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-7-aws-001",
@@ -172,7 +210,10 @@
           "expected": "Load balancers exist in multiple regions for failover",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple AWS regions.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "CP-7"
         },
         {
@@ -183,7 +224,9 @@
           "expected": "Health checks monitor critical endpoints with failover routing",
           "severity": "high",
           "remediation": "Configure Route 53 health checks and failover routing policies.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-7"
         }
       ],
@@ -196,7 +239,10 @@
           "expected": "Load balancers or Application Gateways exist in multiple regions",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple Azure regions.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "CP-7"
         },
         {
@@ -207,7 +253,9 @@
           "expected": "Traffic Manager profiles with multiple endpoints for regional failover",
           "severity": "high",
           "remediation": "Configure Azure Traffic Manager or Front Door with multi-region endpoints.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-7"
         }
       ],
@@ -220,7 +268,10 @@
           "expected": "Managed instance groups exist in multiple regions",
           "severity": "high",
           "remediation": "Deploy application infrastructure to multiple GCP regions.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "CP-7"
         },
         {
@@ -231,13 +282,19 @@
           "expected": "Backend services include instances from multiple regions",
           "severity": "high",
           "remediation": "Configure Cloud Load Balancing with backends in multiple regions.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-7"
         }
       ]
     },
     "CP-9": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-9-aws-001",
@@ -247,7 +304,10 @@
           "expected": "At least one backup vault exists with active backup plans",
           "severity": "critical",
           "remediation": "Configure AWS Backup with vaults and backup plans for critical resources.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -258,7 +318,10 @@
           "expected": "All RDS instances have automated backups enabled with retention >= 7 days",
           "severity": "critical",
           "remediation": "Enable automated backups with minimum 7-day retention for all RDS instances.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -269,7 +332,10 @@
           "expected": "Regular EBS snapshots exist for critical volumes",
           "severity": "high",
           "remediation": "Configure automated EBS snapshot lifecycle policies for critical volumes.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -280,7 +346,10 @@
           "expected": "Point-in-time recovery enabled for all production DynamoDB tables",
           "severity": "high",
           "remediation": "Enable point-in-time recovery for all DynamoDB tables.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         }
       ],
@@ -293,7 +362,10 @@
           "expected": "Critical VMs are protected with backup policies",
           "severity": "critical",
           "remediation": "Configure Azure Backup for all critical virtual machines.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -304,7 +376,10 @@
           "expected": "All SQL databases have automated backups with retention >= 7 days",
           "severity": "critical",
           "remediation": "Ensure Azure SQL databases have automated backups with appropriate retention.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -315,7 +390,10 @@
           "expected": "Blob soft delete enabled with retention >= 7 days",
           "severity": "high",
           "remediation": "Enable soft delete for Azure Storage blobs with appropriate retention period.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         }
       ],
@@ -328,7 +406,10 @@
           "expected": "Snapshot schedules exist for critical persistent disks",
           "severity": "critical",
           "remediation": "Configure snapshot schedules for critical Compute Engine persistent disks.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -339,7 +420,10 @@
           "expected": "All Cloud SQL instances have automated backups enabled",
           "severity": "critical",
           "remediation": "Enable automated backups for all Cloud SQL instances.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         },
         {
@@ -350,13 +434,19 @@
           "expected": "Critical buckets have versioning enabled",
           "severity": "high",
           "remediation": "Enable object versioning for critical Cloud Storage buckets.",
-          "supports_objectives": ["[a]", "[c]"],
+          "supports_objectives": [
+            "[a]",
+            "[c]"
+          ],
           "control_id": "CP-9"
         }
       ]
     },
-    "CP-9.1": {
-      "baselines": ["Moderate", "High"],
+    "CP-9(1)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-9-1-aws-001",
@@ -366,7 +456,9 @@
           "expected": "Recent test restore jobs show successful completion",
           "severity": "high",
           "remediation": "Regularly test backup restoration and document successful restores.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(1)"
         }
       ],
@@ -379,7 +471,9 @@
           "expected": "Recent test restore operations completed successfully",
           "severity": "high",
           "remediation": "Regularly test Azure Backup restoration and document results.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(1)"
         }
       ],
@@ -392,13 +486,17 @@
           "expected": "Logs show successful snapshot restore testing",
           "severity": "high",
           "remediation": "Regularly test snapshot restoration and log verification results.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(1)"
         }
       ]
     },
-    "CP-9.3": {
-      "baselines": ["High"],
+    "CP-9(3)": {
+      "baselines": [
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-9-3-aws-001",
@@ -408,7 +506,9 @@
           "expected": "Backup vaults configured with cross-region copy",
           "severity": "high",
           "remediation": "Configure cross-region backup copy for AWS Backup vaults.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(3)"
         }
       ],
@@ -421,7 +521,9 @@
           "expected": "Recovery Services vaults configured with GRS or cross-region replication",
           "severity": "high",
           "remediation": "Configure geo-redundant storage for Recovery Services vaults.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(3)"
         }
       ],
@@ -434,13 +536,18 @@
           "expected": "Snapshots stored in multi-region or separate region from source",
           "severity": "high",
           "remediation": "Store critical snapshots in separate regions from source resources.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(3)"
         }
       ]
     },
-    "CP-9.8": {
-      "baselines": ["Moderate", "High"],
+    "CP-9(8)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-9-8-aws-001",
@@ -450,7 +557,9 @@
           "expected": "All backup vaults encrypted with KMS keys",
           "severity": "high",
           "remediation": "Enable KMS encryption for all AWS Backup vaults.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(8)"
         },
         {
@@ -461,7 +570,9 @@
           "expected": "All RDS snapshots are encrypted",
           "severity": "high",
           "remediation": "Enable encryption for all RDS instances to ensure encrypted backups.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(8)"
         }
       ],
@@ -474,7 +585,9 @@
           "expected": "Recovery Services vaults use customer-managed keys or platform encryption",
           "severity": "high",
           "remediation": "Configure encryption for Azure Recovery Services vaults.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(8)"
         }
       ],
@@ -487,13 +600,19 @@
           "expected": "All snapshots encrypted with customer-managed or Google-managed keys",
           "severity": "high",
           "remediation": "Ensure all snapshots are encrypted with Cloud KMS keys.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-9(8)"
         }
       ]
     },
     "CP-10": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-10-aws-001",
@@ -503,7 +622,9 @@
           "expected": "SSM documents exist for system recovery procedures",
           "severity": "medium",
           "remediation": "Document system recovery procedures in AWS Systems Manager documents.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10"
         }
       ],
@@ -516,7 +637,9 @@
           "expected": "Critical VMs protected with Site Recovery for disaster recovery",
           "severity": "medium",
           "remediation": "Configure Azure Site Recovery for critical virtual machines.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10"
         }
       ],
@@ -529,13 +652,18 @@
           "expected": "Recovery runbooks and procedures logged in Cloud Operations",
           "severity": "medium",
           "remediation": "Document system recovery procedures in Cloud Operations.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10"
         }
       ]
     },
-    "CP-10.2": {
-      "baselines": ["Moderate", "High"],
+    "CP-10(2)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "cp-10-2-aws-001",
@@ -545,7 +673,9 @@
           "expected": "RDS instances have automated backups with point-in-time recovery",
           "severity": "high",
           "remediation": "Enable automated backups for transaction recovery on RDS instances.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10(2)"
         }
       ],
@@ -558,7 +688,9 @@
           "expected": "SQL databases support point-in-time restore for transaction recovery",
           "severity": "high",
           "remediation": "Ensure Azure SQL databases have automated backups for PITR.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10(2)"
         }
       ],
@@ -571,7 +703,9 @@
           "expected": "Cloud SQL instances have binary logging enabled for PITR",
           "severity": "high",
           "remediation": "Enable binary logging on Cloud SQL instances for point-in-time recovery.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "CP-10(2)"
         }
       ]

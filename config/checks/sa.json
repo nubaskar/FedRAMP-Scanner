@@ -3,7 +3,11 @@
   "name": "System and Services Acquisition",
   "checks": {
     "SA-3": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-3-aws-001",
@@ -13,7 +17,9 @@
           "expected": "At least one active CodePipeline exists for SDLC automation",
           "severity": "medium",
           "remediation": "Configure AWS CodePipeline to implement automated CI/CD workflows.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-3"
         },
         {
@@ -24,7 +30,9 @@
           "expected": "CodeBuild projects include security scanning in build specs",
           "severity": "medium",
           "remediation": "Add security scanning steps to CodeBuild project build specifications.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-3"
         }
       ],
@@ -37,7 +45,9 @@
           "expected": "Active Azure Pipelines exist for CI/CD automation",
           "severity": "medium",
           "remediation": "Configure Azure Pipelines to implement CI/CD workflows.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-3"
         }
       ],
@@ -50,13 +60,18 @@
           "expected": "Cloud Build triggers exist for automated builds and deployments",
           "severity": "medium",
           "remediation": "Configure Cloud Build triggers for CI/CD automation.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-3"
         }
       ]
     },
-    "SA-4.9": {
-      "baselines": ["Moderate", "High"],
+    "SA-4(9)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-4-9-aws-001",
@@ -66,7 +81,9 @@
           "expected": "Security groups only allow required ports and protocols",
           "severity": "high",
           "remediation": "Review and restrict security group rules to only necessary ports.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-4(9)"
         }
       ],
@@ -79,7 +96,9 @@
           "expected": "NSGs only allow required ports and protocols",
           "severity": "high",
           "remediation": "Review and restrict NSG rules to only necessary ports.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-4(9)"
         }
       ],
@@ -92,13 +111,18 @@
           "expected": "Firewall rules only allow required ports and protocols",
           "severity": "high",
           "remediation": "Review and restrict VPC firewall rules to only necessary ports.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-4(9)"
         }
       ]
     },
-    "SA-9.2": {
-      "baselines": ["Moderate", "High"],
+    "SA-9(2)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-9-2-aws-001",
@@ -108,7 +132,9 @@
           "expected": "API Gateway REST APIs have descriptions documenting functions",
           "severity": "medium",
           "remediation": "Document all API Gateway endpoints with descriptions of their functions.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-9(2)"
         }
       ],
@@ -121,7 +147,9 @@
           "expected": "API Management services have documented APIs and operations",
           "severity": "medium",
           "remediation": "Document all Azure API Management APIs with their functions and purposes.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-9(2)"
         }
       ],
@@ -134,13 +162,18 @@
           "expected": "API Gateway APIs have documented configurations and functions",
           "severity": "medium",
           "remediation": "Document all Cloud API Gateway APIs with descriptions.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-9(2)"
         }
       ]
     },
     "SA-10": {
-      "baselines": ["Moderate", "High"],
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-10-aws-001",
@@ -150,7 +183,10 @@
           "expected": "Source code managed in CodeCommit repositories with branch protection",
           "severity": "high",
           "remediation": "Store all application code in CodeCommit with branch protection rules.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-10"
         },
         {
@@ -161,7 +197,10 @@
           "expected": "CloudFormation templates managed via version control systems",
           "severity": "high",
           "remediation": "Manage all CloudFormation templates in version control systems.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-10"
         }
       ],
@@ -174,7 +213,10 @@
           "expected": "Azure Repos have branch policies enforcing reviews and checks",
           "severity": "high",
           "remediation": "Configure branch policies on Azure Repos requiring pull request reviews.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-10"
         }
       ],
@@ -187,13 +229,19 @@
           "expected": "Source code managed in Cloud Source Repositories",
           "severity": "high",
           "remediation": "Store application code in Cloud Source Repositories with appropriate access controls.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-10"
         }
       ]
     },
     "SA-11": {
-      "baselines": ["Moderate", "High"],
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-11-aws-001",
@@ -203,7 +251,10 @@
           "expected": "CodeBuild projects include automated testing phases",
           "severity": "high",
           "remediation": "Add automated testing stages to CodeBuild project specifications.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-11"
         }
       ],
@@ -216,7 +267,10 @@
           "expected": "Azure Pipelines include automated test stages",
           "severity": "high",
           "remediation": "Add automated testing stages to Azure Pipeline definitions.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-11"
         }
       ],
@@ -229,13 +283,19 @@
           "expected": "Cloud Build configurations include automated test steps",
           "severity": "high",
           "remediation": "Add automated testing steps to Cloud Build configurations.",
-          "supports_objectives": ["[a]", "[b]"],
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
           "control_id": "SA-11"
         }
       ]
     },
-    "SA-11.1": {
-      "baselines": ["Moderate", "High"],
+    "SA-11(1)": {
+      "baselines": [
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-11-1-aws-001",
@@ -245,7 +305,9 @@
           "expected": "CodeGuru Reviewer or SAST tools integrated in CI/CD pipeline",
           "severity": "high",
           "remediation": "Integrate Amazon CodeGuru Reviewer or other SAST tools into build pipeline.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-11(1)"
         }
       ],
@@ -258,7 +320,9 @@
           "expected": "Microsoft Security DevOps or SAST tools integrated in pipelines",
           "severity": "high",
           "remediation": "Install and configure Microsoft Security DevOps extension for static analysis.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-11(1)"
         }
       ],
@@ -271,13 +335,19 @@
           "expected": "Cloud Build includes SAST scanning steps",
           "severity": "high",
           "remediation": "Integrate static analysis security testing tools into Cloud Build.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-11(1)"
         }
       ]
     },
     "SA-22": {
-      "baselines": ["Low", "Moderate", "High"],
+      "baselines": [
+        "Low",
+        "Moderate",
+        "High"
+      ],
       "aws": [
         {
           "check_id": "sa-22-aws-001",
@@ -287,7 +357,9 @@
           "expected": "Systems Manager tracks installed software and versions for EOL detection",
           "severity": "high",
           "remediation": "Enable AWS Systems Manager inventory to track software versions.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-22"
         },
         {
@@ -298,7 +370,9 @@
           "expected": "Inspector findings include EOL software detections",
           "severity": "high",
           "remediation": "Enable Amazon Inspector to scan for end-of-life software packages.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-22"
         }
       ],
@@ -311,7 +385,9 @@
           "expected": "Defender for Cloud assessments include EOL software detection",
           "severity": "high",
           "remediation": "Enable Microsoft Defender for Cloud to detect unsupported software.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-22"
         }
       ],
@@ -324,7 +400,9 @@
           "expected": "SCC findings include EOL and unsupported software detections",
           "severity": "high",
           "remediation": "Enable Security Command Center to detect end-of-life software.",
-          "supports_objectives": ["[a]"],
+          "supports_objectives": [
+            "[a]"
+          ],
           "control_id": "SA-22"
         }
       ]
