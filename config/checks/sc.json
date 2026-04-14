@@ -180,6 +180,40 @@
           "remediation": "Implement multiple security layers: VPC segmentation, threat detection (GuardDuty), audit logging (CloudTrail), encryption (KMS), and network monitoring (VPC Flow Logs).",
           "supports_objectives": [],
           "control_id": "SC-7(5)"
+        },
+        {
+          "check_id": "ac-4-4-aws-001",
+          "name": "No S3 buckets publicly accessible",
+          "service": "S3",
+          "api_call": "s3.get_bucket_policy_status",
+          "expected": "No S3 buckets have IsPublic=true",
+          "severity": "critical",
+          "remediation": "Enable S3 Block Public Access and review bucket policies for public access.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ],
+          "control_id": "SC-7(5)"
+        },
+        {
+          "check_id": "ac-4-4-aws-002",
+          "name": "No EC2 instances with public IPs in CUI subnets",
+          "service": "EC2",
+          "api_call": "ec2.describe_instances",
+          "expected": "No instances in CUI-designated subnets have public IP addresses",
+          "severity": "high",
+          "remediation": "Remove public IPs from instances in CUI subnets; use NAT gateway for outbound.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ],
+          "control_id": "SC-7(5)"
         }
       ],
       "azure": [
@@ -193,6 +227,23 @@
           "remediation": "Implement multiple security layers: NSGs, Key Vault for secrets, Activity Log alerts, Microsoft Defender for Cloud, and Network Watcher.",
           "supports_objectives": [],
           "control_id": "SC-7(5)"
+        },
+        {
+          "check_id": "ac-4-4-azure-001",
+          "name": "No storage accounts with public blob access",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "AllowBlobPublicAccess is false on all storage accounts",
+          "severity": "critical",
+          "remediation": "Disable public blob access on all storage accounts.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ],
+          "control_id": "SC-7(5)"
         }
       ],
       "gcp": [
@@ -205,6 +256,23 @@
           "severity": "high",
           "remediation": "Implement multiple security layers: VPC firewall rules, Cloud KMS encryption, Cloud Logging sinks, and Organization Policy constraints.",
           "supports_objectives": [],
+          "control_id": "SC-7(5)"
+        },
+        {
+          "check_id": "ac-4-4-gcp-001",
+          "name": "No Cloud Storage buckets publicly accessible",
+          "service": "Storage",
+          "api_call": "storage.buckets.getIamPolicy",
+          "expected": "No buckets have allUsers or allAuthenticatedUsers bindings",
+          "severity": "critical",
+          "remediation": "Remove public access bindings from Cloud Storage buckets.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]",
+            "[d]",
+            "[e]"
+          ],
           "control_id": "SC-7(5)"
         }
       ],
@@ -446,6 +514,45 @@
             "[b]"
           ],
           "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "ac-3-8-aws-001",
+          "name": "S3 Block Public Access enabled at account level",
+          "service": "S3",
+          "api_call": "s3control.get_public_access_block",
+          "expected": "All four S3 Block Public Access settings enabled at account level",
+          "severity": "high",
+          "remediation": "Enable all four S3 Block Public Access settings at the account level to prevent public exposure of stored data.",
+          "supports_objectives": [],
+          "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "sc-7-21-aws-001",
+          "name": "Default security group restricts all traffic",
+          "service": "EC2",
+          "api_call": "ec2.describe_security_groups",
+          "expected": "Default security groups have no inbound or outbound rules (deny all)",
+          "severity": "high",
+          "remediation": "Remove all rules from default security groups in every VPC.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "sc-7-21-aws-002",
+          "name": "NACLs implement deny-by-default",
+          "service": "VPC",
+          "api_call": "ec2.describe_network_acls",
+          "expected": "Network ACLs have explicit deny rules and allow only necessary traffic",
+          "severity": "medium",
+          "remediation": "Configure NACLs with explicit allow rules and deny-all default.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "SC-7(4)"
         }
       ],
       "azure": [
@@ -457,6 +564,45 @@
           "expected": "Dedicated DMZ/perimeter subnet for public-facing workloads",
           "severity": "high",
           "remediation": "Create dedicated DMZ subnet for public-facing resources with NSG isolation.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "ac-3-8-azure-001",
+          "name": "Storage accounts block public blob access",
+          "service": "Storage",
+          "api_call": "storage.storage_accounts.list",
+          "expected": "AllowBlobPublicAccess is false on all storage accounts",
+          "severity": "high",
+          "remediation": "Disable public blob access on all storage accounts to prevent unauthorized data exposure.",
+          "supports_objectives": [],
+          "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "sc-7-21-azure-001",
+          "name": "NSG default deny rules active",
+          "service": "Network",
+          "api_call": "network.network_security_groups.list",
+          "expected": "All NSGs have DenyAllInBound as the last rule (default behavior)",
+          "severity": "high",
+          "remediation": "Verify NSG default deny rules are not overridden by overly permissive allow rules.",
+          "supports_objectives": [
+            "[a]",
+            "[b]"
+          ],
+          "control_id": "SC-7(4)"
+        },
+        {
+          "check_id": "sc-7-21-azure-002",
+          "name": "Azure Firewall default deny configured",
+          "service": "Network",
+          "api_call": "network.azure_firewalls.list",
+          "expected": "Azure Firewall configured with deny-by-default and explicit allow rules",
+          "severity": "high",
+          "remediation": "Configure Azure Firewall with deny-all default and explicit allow rules.",
           "supports_objectives": [
             "[a]",
             "[b]"
@@ -478,73 +624,18 @@
             "[b]"
           ],
           "control_id": "SC-7(4)"
-        }
-      ]
-    },
-    "SC-7(21)": {
-      "cmmc_source": "3.13.6",
-      "baselines": [],
-      "aws": [
-        {
-          "check_id": "sc-7-21-aws-001",
-          "name": "Default security group restricts all traffic",
-          "service": "EC2",
-          "api_call": "ec2.describe_security_groups",
-          "expected": "Default security groups have no inbound or outbound rules (deny all)",
-          "severity": "high",
-          "remediation": "Remove all rules from default security groups in every VPC.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "SC-7(21)"
         },
         {
-          "check_id": "sc-7-21-aws-002",
-          "name": "NACLs implement deny-by-default",
-          "service": "VPC",
-          "api_call": "ec2.describe_network_acls",
-          "expected": "Network ACLs have explicit deny rules and allow only necessary traffic",
-          "severity": "medium",
-          "remediation": "Configure NACLs with explicit allow rules and deny-all default.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "SC-7(21)"
-        }
-      ],
-      "azure": [
-        {
-          "check_id": "sc-7-21-azure-001",
-          "name": "NSG default deny rules active",
-          "service": "Network",
-          "api_call": "network.network_security_groups.list",
-          "expected": "All NSGs have DenyAllInBound as the last rule (default behavior)",
+          "check_id": "ac-3-8-gcp-001",
+          "name": "Uniform bucket-level access org policy enforced",
+          "service": "OrgPolicy",
+          "api_call": "orgpolicy.projects.policies.get",
+          "expected": "uniformBucketLevelAccess org policy constraint enforced to prevent per-object ACLs",
           "severity": "high",
-          "remediation": "Verify NSG default deny rules are not overridden by overly permissive allow rules.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "SC-7(21)"
+          "remediation": "Enforce the storage.uniformBucketLevelAccess org policy constraint to prevent fine-grained ACLs on Cloud Storage.",
+          "supports_objectives": [],
+          "control_id": "SC-7(4)"
         },
-        {
-          "check_id": "sc-7-21-azure-002",
-          "name": "Azure Firewall default deny configured",
-          "service": "Network",
-          "api_call": "network.azure_firewalls.list",
-          "expected": "Azure Firewall configured with deny-by-default and explicit allow rules",
-          "severity": "high",
-          "remediation": "Configure Azure Firewall with deny-all default and explicit allow rules.",
-          "supports_objectives": [
-            "[a]",
-            "[b]"
-          ],
-          "control_id": "SC-7(21)"
-        }
-      ],
-      "gcp": [
         {
           "check_id": "sc-7-21-gcp-001",
           "name": "Default deny ingress firewall rule",
@@ -557,7 +648,7 @@
             "[a]",
             "[b]"
           ],
-          "control_id": "SC-7(21)"
+          "control_id": "SC-7(4)"
         },
         {
           "check_id": "sc-7-21-gcp-002",
@@ -571,7 +662,7 @@
             "[a]",
             "[b]"
           ],
-          "control_id": "SC-7(21)"
+          "control_id": "SC-7(4)"
         }
       ]
     },
@@ -1169,6 +1260,45 @@
             "[a]"
           ],
           "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-aws-001",
+          "name": "Backup vault encrypted with KMS",
+          "service": "Backup",
+          "api_call": "backup.list_backup_vaults",
+          "expected": "All backup vaults use KMS encryption",
+          "severity": "high",
+          "remediation": "Configure AWS Backup vaults with KMS encryption.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-aws-002",
+          "name": "Backup vault access policy restricts access",
+          "service": "Backup",
+          "api_call": "backup.get_backup_vault_access_policy",
+          "expected": "Backup vault access policies restrict access to authorized roles",
+          "severity": "high",
+          "remediation": "Configure backup vault access policies to restrict access.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-aws-003",
+          "name": "S3 cross-region replication encrypted",
+          "service": "S3",
+          "api_call": "s3.get_bucket_replication",
+          "expected": "Cross-region replication uses KMS encryption for replicated objects",
+          "severity": "medium",
+          "remediation": "Configure S3 replication rules to use KMS encryption for destination.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
         }
       ],
       "azure": [
@@ -1210,6 +1340,32 @@
             "[a]"
           ],
           "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-azure-001",
+          "name": "Recovery Services vault encrypted",
+          "service": "Recovery Services",
+          "api_call": "recoveryservices.vaults.list",
+          "expected": "All Recovery Services vaults use platform or customer-managed encryption",
+          "severity": "high",
+          "remediation": "Configure Recovery Services vaults with appropriate encryption settings.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-azure-002",
+          "name": "Backup vault soft delete enabled",
+          "service": "Recovery Services",
+          "api_call": "recoveryservices.vaults.list",
+          "expected": "Soft delete enabled on all backup vaults to protect against deletion",
+          "severity": "medium",
+          "remediation": "Enable soft delete on Recovery Services vaults.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
         }
       ],
       "gcp": [
@@ -1247,6 +1403,19 @@
           "expected": "BigQuery datasets use customer-managed encryption keys",
           "severity": "high",
           "remediation": "Configure BigQuery datasets with CMEK from Cloud KMS.",
+          "supports_objectives": [
+            "[a]"
+          ],
+          "control_id": "SC-28(1)"
+        },
+        {
+          "check_id": "mp-4-2-gcp-001",
+          "name": "Backup encrypted with CMEK",
+          "service": "Backup and DR",
+          "api_call": "backupdr.projects.locations.backupVaults.list",
+          "expected": "Backup vaults use customer-managed encryption keys",
+          "severity": "high",
+          "remediation": "Configure backup vaults with CMEK encryption.",
           "supports_objectives": [
             "[a]"
           ],

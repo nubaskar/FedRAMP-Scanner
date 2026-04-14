@@ -78,6 +78,51 @@
             "[e]"
           ],
           "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-aws-001",
+          "name": "Periodic vulnerability scanning configured",
+          "service": "Inspector",
+          "api_call": "inspector2.list_account_permissions",
+          "expected": "Amazon Inspector continuous scanning enabled",
+          "severity": "high",
+          "remediation": "Enable Amazon Inspector for continuous vulnerability scanning.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-aws-002",
+          "name": "GuardDuty real-time malware scanning",
+          "service": "GuardDuty",
+          "api_call": "guardduty.get_detector",
+          "expected": "GuardDuty Malware Protection scans EBS volumes on suspicious activity",
+          "severity": "high",
+          "remediation": "Enable GuardDuty Malware Protection for real-time malware detection.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-aws-003",
+          "name": "S3 object scanning for uploads",
+          "service": "GuardDuty",
+          "api_call": "guardduty.get_detector()",
+          "expected": "Real-time scanning configured for S3 objects from external sources",
+          "severity": "medium",
+          "remediation": "Enable malware scanning for S3 objects uploaded from external sources.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
         }
       ],
       "azure": [
@@ -119,6 +164,36 @@
             "[a]"
           ],
           "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-azure-001",
+          "name": "Scheduled VM vulnerability scans configured",
+          "service": "Security Center",
+          "api_call": "assessments.list",
+          "expected": "Periodic vulnerability assessment scans configured for all VMs",
+          "severity": "high",
+          "remediation": "Enable periodic vulnerability assessment scanning in Defender for Cloud.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-azure-002",
+          "name": "Real-time protection enabled on endpoints",
+          "service": "Compute",
+          "api_call": "compute.virtual_machine_extensions.list",
+          "expected": "Real-time protection enabled on all Defender for Endpoint managed VMs",
+          "severity": "high",
+          "remediation": "Enable real-time protection in Defender for Endpoint settings.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
         }
       ],
       "gcp": [
@@ -158,6 +233,36 @@
           "remediation": "Ensure Security Health Analytics is enabled in Security Command Center.",
           "supports_objectives": [
             "[a]"
+          ],
+          "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-gcp-001",
+          "name": "Container vulnerability scanning continuous",
+          "service": "Container Analysis",
+          "api_call": "containeranalysis.projects.occurrences.list",
+          "expected": "Continuous vulnerability scanning enabled on all container registries",
+          "severity": "high",
+          "remediation": "Enable continuous vulnerability scanning on Artifact Registry.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
+          ],
+          "control_id": "RA-5"
+        },
+        {
+          "check_id": "si-3-2-gcp-002",
+          "name": "Web Security Scanner periodic scans",
+          "service": "SCC",
+          "api_call": "websecurityscanner.projects.scanConfigs.list",
+          "expected": "Periodic scan schedules configured for all web applications",
+          "severity": "medium",
+          "remediation": "Configure periodic Web Security Scanner scans for all web applications.",
+          "supports_objectives": [
+            "[a]",
+            "[b]",
+            "[c]"
           ],
           "control_id": "RA-5"
         }
