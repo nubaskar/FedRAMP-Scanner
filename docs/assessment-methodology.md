@@ -15,7 +15,7 @@
    - 4.1 [Check-to-Objective Mapping](#41-check-to-objective-mapping)
    - 4.2 [Three-Tier Evaluation Model](#42-three-tier-evaluation-model)
    - 4.3 [Cloud Provider API Baselines](#43-cloud-provider-api-baselines)
-   - 4.4 [Why Only 70 of 323 Controls Are Automated](#44-why-only-70-of-323-controls-are-automated)
+   - 4.4 [Why Only 67 of 323 Controls Are Automated](#44-why-only-67-of-323-controls-are-automated)
 5. [Coverage Matrix Summary](#5-coverage-matrix-summary)
    - 5.1 [Overall Statistics](#51-overall-statistics)
    - 5.2 [Domain-Level Coverage](#52-domain-level-coverage)
@@ -58,10 +58,10 @@ This document serves as the **authoritative methodology reference** for FedRAMP 
 - **How** each of the 323 NIST 800-53 Rev 5 controls is evaluated
 - **Which** cloud APIs are queried and what constitutes a passing or failing check
 - **Why** each check maps to specific NIST SP 800-53A assessment objectives
-- **What** 3PAOs must do for the 254 controls that require manual assessment
+- **What** 3PAOs must do for the 114 controls that require manual assessment
 - **Where** the authoritative sources and traceability chain originates
 
-The scanner implements **496 cloud-specific technical checks** across AWS (203), Azure (147), and GCP (146), mapped to **254 NIST SP 800-53A assessment objectives** across all 323 controls and 20 FedRAMP control families.
+The scanner implements **481 cloud-specific technical checks** across AWS (198), Azure (142), and GCP (141), mapped to **250 NIST SP 800-53A assessment objectives** across all 323 controls and 20 FedRAMP control families.
 
 ---
 
@@ -97,7 +97,7 @@ The scanner's check library is derived from and traceable to the following autho
 | Source | Version | Purpose | Reference |
 |--------|---------|---------|-----------|
 | **NIST SP 800-53 Rev 5** | Sep 2020 | 323 security controls across 20 families | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final) |
-| **NIST SP 800-53A Rev 5** | Jan 2022 | 254 assessment objectives ("determine if" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53a/rev-5/final) |
+| **NIST SP 800-53A Rev 5** | Jan 2022 | 250 assessment objectives ("determine if" statements) | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-53a/rev-5/final) |
 | **NIST SP 800-172** | Feb 2021 | Enhanced security controls for Level 3 | [csrc.nist.gov](https://csrc.nist.gov/publications/detail/sp/800-172/final) |
 | **FAR 52.204-21** | 2016 | 17 basic safeguarding controls for Level 1 | [acquisition.gov](https://www.acquisition.gov/far/52.204-21) |
 | **FedRAMP Model** | Dec 2021 | Three-level certification model | [dodcio.defense.gov](https://dodcio.defense.gov/FedRAMP/) |
@@ -126,7 +126,7 @@ Every finding in the scanner report traces back through this chain to the author
 
 ### 4.1 Check-to-Objective Mapping
 
-NIST SP 800-53A defines **254 assessment objectives** across the 323 NIST SP 800-53 Rev 5 controls. Each objective is a discrete "determine if" statement that an assessor must evaluate.
+NIST SP 800-53A defines **250 assessment objectives** across the 323 NIST SP 800-53 Rev 5 controls. Each objective is a discrete "determine if" statement that an assessor must evaluate.
 
 The scanner maps every automated check to the specific 800-53A objectives it supports via the `supports_objectives` field. For example:
 
@@ -155,7 +155,7 @@ The scanner classifies every 800-53A assessment objective into one of three tier
 
 | Tier | Classification | Count | Description |
 |------|---------------|-------|-------------|
-| **Tier 1** | Fully Automatable | 180 | Cloud API configuration check provides a definitive Met/Not Met determination |
+| **Tier 1** | Fully Automatable | 176 | Cloud API configuration check provides a definitive Met/Not Met determination |
 | **Tier 2** | Partially Automatable | 0 | Cloud API provides supporting evidence, but 3PAO must verify organizational context |
 | **Tier 3** | Not Automatable | 74 | Requires documentation review, interviews, or physical inspection |
 
@@ -171,9 +171,9 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 | Provider | Access Method | Permissions Required | Checks |
 |----------|--------------|---------------------|--------|
-| **AWS** | STS AssumeRole (cross-account) | `SecurityAudit` + `ViewOnlyAccess` managed policies | 203 |
-| **Azure** | Service Principal (ClientSecretCredential) | `Reader` + `Security Reader` roles + Microsoft Graph API | 147 |
-| **GCP** | Service Account (JSON key) | `Viewer` + `Security Reviewer` + `Security Center Admin` roles | 146 |
+| **AWS** | STS AssumeRole (cross-account) | `SecurityAudit` + `ViewOnlyAccess` managed policies | 198 |
+| **Azure** | Service Principal (ClientSecretCredential) | `Reader` + `Security Reader` roles + Microsoft Graph API | 142 |
+| **GCP** | Service Account (JSON key) | `Viewer` + `Security Reviewer` + `Security Center Admin` roles | 141 |
 
 **Key AWS Services Queried:** IAM, STS, EC2, VPC, S3, CloudTrail, CloudWatch, Config, GuardDuty, Security Hub, KMS, SSM, Inspector, WAFv2, ELB, CloudFront, RDS, Organizations, ACM, Route 53, Network Firewall, DynamoDB, API Gateway, CodePipeline, Athena, SNS, ECR, Health
 
@@ -181,34 +181,34 @@ The scanner uses read-only API calls across three cloud service providers. All a
 
 **Key GCP Services Queried:** IAM, Cloud Resource Manager, Compute, VPC, Storage, Cloud KMS, Cloud Logging, Cloud Monitoring, Security Command Center, OS Config, Binary Authorization, Container Analysis, Web Security Scanner, Cloud SQL, BigQuery, Cloud DNS, Recommender, Cloud IDS, Cloud Armor, BeyondCorp, Organization Policy
 
-### 4.4 Why Only 70 of 323 Controls Are Automated
+### 4.4 Why Only 67 of 323 Controls Are Automated
 
-NIST SP 800-53 Rev 5 defines 323 security controls, but only 70 (21%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 254 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
+NIST SP 800-53 Rev 5 defines 323 security controls, but only 67 (20%) can be meaningfully evaluated through cloud API queries. This is not a gap in scanner coverage — it reflects the fundamental nature of the controls themselves. The remaining 114 controls govern activities that occur outside of cloud infrastructure and cannot be observed through any API.
 
 **Controls That Cannot Be Automated:**
 
 | Category | Families | Controls | Why Not Automatable |
 |----------|----------|----------|---------------------|
-| Physical & Environmental | PE (23 controls) | 23 | Facility access, environmental protections, fire suppression — no API can verify a locked door |
-| Organizational Governance | PM (32 controls) | 32 | Risk strategy, authorization processes, insider threat programs — organizational policies, not cloud configs |
+| Physical & Environmental | PE (16 controls) | 16 | Facility access, environmental protections, fire suppression — no API can verify a locked door |
+| Organizational Governance | PM (0 controls) | 0 | Risk strategy, authorization processes, insider threat programs — organizational policies, not cloud configs |
 | Personnel Security | PS (9 controls) | 9 | Background checks, screening, access agreements, termination — HR processes requiring human verification |
-| Awareness & Training | AT (6 controls) | 6 | Security training programs, role-based training — requires review of materials and completion records |
-| **Subtotal** | **4 families (0% automation)** | **70** | **21% of the framework** |
+| Awareness & Training | AT (4 controls) | 4 | Security training programs, role-based training — requires review of materials and completion records |
+| **Subtotal** | **4 families (0% automation)** | **29** | **8% of the framework** |
 
 **Policy & Procedure Objectives Within Automated Families:**
 
-Even in families with automated checks, many controls ask: *"Does the organization define and document a policy/procedure for X?"* These Tier 3 objectives require a 3PAO to review written policies and standard operating procedures — artifacts that exist as documents, not as cloud API states. This is why families like Access Control (AC) show only 13/25 automation: the automated controls check *configuration states* (MFA, least-privilege roles, session timeouts), while the manual controls verify that policies, procedures, and approval workflows exist and are followed.
+Even in families with automated checks, many controls ask: *"Does the organization define and document a policy/procedure for X?"* These Tier 3 objectives require a 3PAO to review written policies and standard operating procedures — artifacts that exist as documents, not as cloud API states. This is why families like Access Control (AC) show only 13/17 automation: the automated controls check *configuration states* (MFA, least-privilege roles, session timeouts), while the manual controls verify that policies, procedures, and approval workflows exist and are followed.
 
 **What *Can* Be Automated:**
 
-The 70 automated controls share a common trait: their compliance state is observable through cloud provider APIs as a **configuration property** that is either present or absent. Examples:
+The 67 automated controls share a common trait: their compliance state is observable through cloud provider APIs as a **configuration property** that is either present or absent. Examples:
 
 - **AC-6(3):** *Is privileged access restricted to specific accounts?* → Check IAM policies for least-privilege roles (API-verifiable)
 - **AU-6:** *Are audit records reviewed and analyzed?* → Check CloudTrail/Activity Log enabled and forwarded (API-verifiable)
 - **SC-8:** *Is transmitted information protected?* → Check TLS/SSL configuration on load balancers (API-verifiable)
 - **PE-3:** *Is physical access controlled?* → Requires on-site inspection of badge readers and guard stations (not API-verifiable)
 
-> **Bottom line:** The 70/323 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
+> **Bottom line:** The 67/323 automation ratio is inherent to the NIST 800-53 framework, which intentionally covers physical, procedural, and organizational security alongside technical controls. A scanner claiming 100% automation of 800-53 would be misrepresenting what the framework requires.
 
 ---
 
@@ -219,14 +219,14 @@ The 70 automated controls share a common trait: their compliance state is observ
 | Metric | Value |
 |--------|-------|
 | NIST 800-53 Rev 5 Controls | 323 |
-| NIST 800-53A Assessment Objectives | 254 |
-| Controls with Automated Checks | 70 (21%) |
-| Controls Requiring Manual Assessment | 254 (78%) |
-| Total Cloud-Specific Technical Checks | 496 |
-| AWS Checks | 203 |
-| Azure Checks | 147 |
-| GCP Checks | 146 |
-| Documentation Evidence Requirements | 104 |
+| NIST 800-53A Assessment Objectives | 250 |
+| Controls with Automated Checks | 67 (20%) |
+| Controls Requiring Manual Assessment | 114 (35%) |
+| Total Cloud-Specific Technical Checks | 481 |
+| AWS Checks | 198 |
+| Azure Checks | 142 |
+| GCP Checks | 141 |
+| Documentation Evidence Requirements | 98 |
 
 ### 5.2 Domain-Level Coverage
 
@@ -234,33 +234,33 @@ The table below shows the scanner's coverage across all 20 FedRAMP control famil
 
 | Domain | Name | Controls | Automated | Manual | Objectives | AWS | Azure | GCP | Automation Rate |
 |--------|------|-----------|-----------|--------|------------|-----|-------|-----|-----------------|
-| AC | Access Control | 25 | 13 | 12 | 44 | 35 | 25 | 26 | 52% |
-| AT | Awareness and Training | 6 | 0 | 6 | 7 | 0 | 0 | 0 | 0% |
-| AU | Audit and Accountability | 16 | 7 | 9 | 24 | 18 | 11 | 11 | 44% |
-| CA | Assessment, Authorization, and Monitoring | 9 | 1 | 8 | 10 | 3 | 2 | 2 | 11% |
-| CM | Configuration Management | 14 | 6 | 8 | 25 | 15 | 10 | 10 | 43% |
-| CP | Contingency Planning | 13 | 6 | 7 | 13 | 16 | 14 | 14 | 46% |
-| IA | Identification and Authentication | 13 | 5 | 8 | 15 | 18 | 13 | 12 | 38% |
-| IR | Incident Response | 10 | 1 | 9 | 14 | 4 | 3 | 3 | 10% |
-| MA | Maintenance | 7 | 2 | 5 | 8 | 5 | 3 | 3 | 29% |
-| MP | Media Protection | 8 | 2 | 6 | 11 | 9 | 6 | 5 | 25% |
-| PE | Physical and Environmental Protection | 23 | 0 | 23 | 13 | 0 | 0 | 0 | 0% |
-| PL | Planning | 11 | 2 | 9 | 2 | 3 | 3 | 3 | 18% |
-| PM | Program Management | 32 | 0 | 32 | 0 | 0 | 0 | 0 | 0% |
+| AC | Access Control | 17 | 13 | 4 | 44 | 32 | 23 | 24 | 76% |
+| AT | Awareness and Training | 4 | 0 | 4 | 7 | 0 | 0 | 0 | 0% |
+| AU | Audit and Accountability | 11 | 7 | 4 | 24 | 18 | 11 | 11 | 64% |
+| CA | Assessment, Authorization, and Monitoring | 8 | 1 | 7 | 10 | 3 | 2 | 2 | 12% |
+| CM | Configuration Management | 12 | 6 | 6 | 25 | 15 | 10 | 10 | 50% |
+| CP | Contingency Planning | 9 | 6 | 3 | 13 | 16 | 14 | 14 | 67% |
+| IA | Identification and Authentication | 10 | 5 | 5 | 15 | 18 | 13 | 12 | 50% |
+| IR | Incident Response | 9 | 1 | 8 | 14 | 4 | 3 | 3 | 11% |
+| MA | Maintenance | 6 | 2 | 4 | 8 | 5 | 3 | 3 | 33% |
+| MP | Media Protection | 7 | 2 | 5 | 11 | 6 | 4 | 4 | 29% |
+| PE | Physical and Environmental Protection | 16 | 0 | 16 | 13 | 0 | 0 | 0 | 0% |
+| PL | Planning | 6 | 2 | 4 | 2 | 3 | 3 | 3 | 33% |
+| PM | Program Management | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0% |
 | PS | Personnel Security | 9 | 0 | 9 | 4 | 0 | 0 | 0 | 0% |
-| PT | Personally Identifiable Information Processing and Transparency | 8 | 3 | 5 | 4 | 5 | 5 | 5 | 38% |
-| RA | Risk Assessment | 10 | 1 | 9 | 7 | 5 | 5 | 5 | 10% |
-| SA | System and Services Acquisition | 24 | 6 | 18 | 9 | 10 | 7 | 7 | 25% |
-| SC | System and Communications Protection | 51 | 8 | 43 | 25 | 31 | 21 | 21 | 16% |
-| SI | System and Information Integrity | 23 | 4 | 19 | 14 | 21 | 16 | 16 | 17% |
-| SR | Supply Chain Risk Management | 12 | 3 | 9 | 5 | 5 | 3 | 3 | 25% |
-| **Total** | | **323** | **70** | **254** | **254** | **203** | **147** | **146** | **22%** |
+| PT | Personally Identifiable Information Processing and Transparency | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0% |
+| RA | Risk Assessment | 6 | 1 | 5 | 7 | 8 | 7 | 7 | 17% |
+| SA | System and Services Acquisition | 11 | 6 | 5 | 9 | 10 | 7 | 7 | 55% |
+| SC | System and Communications Protection | 19 | 8 | 11 | 25 | 37 | 25 | 24 | 42% |
+| SI | System and Information Integrity | 12 | 4 | 8 | 14 | 18 | 14 | 14 | 33% |
+| SR | Supply Chain Risk Management | 9 | 3 | 6 | 5 | 5 | 3 | 3 | 33% |
+| **Total** | | **323** | **67** | **114** | **250** | **198** | **142** | **141** | **21%** |
 
 ### 5.3 Objective Automatable Classification
 
 | Classification | Count | Percentage | Scanner Handling |
 |---------------|-------|------------|-----------------|
-| Fully Automatable | 180 | 70% | Automated check provides Met/Not Met determination |
+| Fully Automatable | 176 | 70% | Automated check provides Met/Not Met determination |
 | Partially Automatable | 0 | 0% | Automated check provides evidence; 3PAO verifies context |
 | Not Automatable | 74 | 29% | Flagged as Documentation Required; 3PAO assesses manually |
 
@@ -278,7 +278,7 @@ This section provides the complete technical reference for every NIST SP 800-53 
 
 ### AC — Access Control
 
-**Controls:** 25 | **Automated:** 13 | **Manual:** 12 | **Objectives:** 44 | **Checks:** AWS 35, Azure 25, GCP 26
+**Controls:** 17 | **Automated:** 13 | **Manual:** 4 | **Objectives:** 44 | **Checks:** AWS 32, Azure 23, GCP 24
 
 #### AC-1 — Develop, document, and disseminate to {{ insert: param, ac-1_prm_1 }}: {{ insert: param, ac-01_odp.03 }} access control policy that: Addresses purpose, scope, roles, responsibilities, management commi
 
@@ -315,18 +315,9 @@ This section provides the complete technical reference for every NIST SP 800-53 
 | `ac-2-gcp-003` | GCP | Default service account not used | IAM | `compute.instances.list` | high | [d] |
 
 
-#### AC-2(9) (Enhancement) — Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use of shared or group accounts, organizations consider the increased risk due to th
+#### AC-2(9) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 4
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-2(9)[a] | Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use  | Yes |
-| AC-2(9)[b] | Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use  | Yes |
-| AC-2(9)[c] | Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use  | Yes |
-| AC-2(9)[d] | Only permit the use of shared and group accounts that meet {{ insert: param, ac-02.09_odp }}. Before permitting the use  | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -374,20 +365,6 @@ This section provides the complete technical reference for every NIST SP 800-53 
 | AC-3(8)[b] | revocation of access authorizations is enforced resulting from changes to the security attributes of objects based on {{ | No |
 | AC-3(8)[c] | revocation of access authorizations is enforced resulting from changes to the security attributes of objects based on {{ | No |
 
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `ac-3-8-aws-001` | AWS | S3 Block Public Access enabled at account level | S3 | `s3control.get_public_access_block` | high |  |
-| `ac-3-8-azure-001` | AZURE | Storage accounts block public blob access | Storage | `storage.storage_accounts.list` | high |  |
-| `ac-3-8-gcp-001` | GCP | Uniform bucket-level access org policy enforced | OrgPolicy | `orgpolicy.projects.policies.get` | high |  |
-
-**Documentation Requirements:**
-
-- **AC-3(8)[a]**: use of organizational portable storage devices containing CUI on external systems is identified and documented. — *Provide documentation showing that use of organizational portable storage devices containing cui on external systems are identified and documented.*
-- **AC-3(8)[b]**: limits on the use of organizational portable storage devices containing CUI on external systems are defined. — *Provide documentation showing that limits on the use of organizational portable storage devices containing cui on external systems are defined.*
-- **AC-3(8)[c]**: use of organizational portable storage devices containing CUI on external systems is limited as defined. — *Provide documentation or process evidence: use of organizational portable storage devices containing CUI on external systems is limited as defined.*
-
 
 #### AC-4 — Enforce approved authorizations for controlling the flow of information within the system and between connected systems based on {{ insert: param, ac-04_odp }}. Information flow control regulates wher
 
@@ -432,15 +409,6 @@ This section provides the complete technical reference for every NIST SP 800-53 
 | AC-4(4)[c] | Prevent encrypted information from bypassing {{ insert: param, ac-04.04_odp.01 }} by {{ insert: param, ac-04.04_odp.02 } | Yes |
 | AC-4(4)[d] | Prevent encrypted information from bypassing {{ insert: param, ac-04.04_odp.01 }} by {{ insert: param, ac-04.04_odp.02 } | Yes |
 | AC-4(4)[e] | Prevent encrypted information from bypassing {{ insert: param, ac-04.04_odp.01 }} by {{ insert: param, ac-04.04_odp.02 } | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `ac-4-4-aws-001` | AWS | No S3 buckets publicly accessible | S3 | `s3.get_bucket_policy_status` | critical | [a], [b], [c], [d], [e] |
-| `ac-4-4-aws-002` | AWS | No EC2 instances with public IPs in CUI subnets | EC2 | `ec2.describe_instances` | high | [a], [b], [c], [d], [e] |
-| `ac-4-4-azure-001` | AZURE | No storage accounts with public blob access | Storage | `storage.storage_accounts.list` | critical | [a], [b], [c], [d], [e] |
-| `ac-4-4-gcp-001` | GCP | No Cloud Storage buckets publicly accessible | Storage | `storage.buckets.getIamPolicy` | critical | [a], [b], [c], [d], [e] |
 
 
 #### AC-5 — Identify and document {{ insert: param, ac-05_odp }} ; and Define system access authorizations to support separation of duties. Separation of duties addresses the potential for abuse of authorized pri
@@ -493,6 +461,19 @@ procedures addressing d | Yes |
 | `ac-6-gcp-002` | GCP | IAM recommender reviewed | IAM | `recommender.projects.locations.recommenders.recommendations.list` | medium | [a], [b] |
 
 
+#### AC-6(1) (Enhancement)
+
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
+
+**Automated Checks:**
+
+| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
+|----------|-------|------|---------|---------|----------|------------|
+| `ac-6-3-aws-001` | AWS | Separate admin and standard user roles defined | IAM | `iam.list_roles` | medium | [a], [b] |
+| `ac-6-3-azure-001` | AZURE | Admin accounts separate from daily-use accounts | Azure AD | `graph/directoryRoles/*/members` | medium | [a], [b] |
+| `ac-6-3-gcp-001` | GCP | Admin and user roles separated | IAM | `cloudresourcemanager.projects.getIamPolicy` | medium | [a], [b] |
+
+
 #### AC-6(3) (Enhancement) — Authorize network access to {{ insert: param, ac-06.03_odp.01 }} only for {{ insert: param, ac-06.03_odp.02 }} and document the rationale for such access in the security plan for the system. Network a
 
 **Baseline:** High | **Type:** Automated | **Objectives:** 2
@@ -503,14 +484,6 @@ procedures addressing d | Yes |
 |----|-----------|-------------|
 | AC-6(3)[a] | Authorize network access to {{ insert: param, ac-06.03_odp.01 }} only for {{ insert: param, ac-06.03_odp.02 }} and docum | Yes |
 | AC-6(3)[b] | the rationale for authorizing network access to privileged commands is documented in the security plan for the system. A | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `ac-6-3-aws-001` | AWS | Separate admin and standard user roles defined | IAM | `iam.list_roles` | medium | [a], [b] |
-| `ac-6-3-azure-001` | AZURE | Admin accounts separate from daily-use accounts | Azure AD | `graph/directoryRoles/*/members` | medium | [a], [b] |
-| `ac-6-3-gcp-001` | GCP | Admin and user roles separated | IAM | `cloudresourcemanager.projects.getIamPolicy` | medium | [a], [b] |
 
 
 #### AC-7 — Enforce a limit of {{ insert: param, ac-07_odp.01 }} consecutive invalid logon attempts by a user during a {{ insert: param, ac-07_odp.02 }} ; and Automatically {{ insert: param, ac-07_odp.03 }} when 
@@ -549,16 +522,6 @@ procedures addressing d | Yes |
 
 - **AC-8[a]**: privacy and security notices required by CUI-specified rules are identified, consistent, and associated with the specific CUI category — *Provide documentation showing that privacy and security notices required by cui-specified rules are identified and documented.*
 - **AC-8[b]**: privacy and security notices are displayed. — *Provide documentation or process evidence: privacy and security notices are displayed.*
-
-
-#### AC-9 — Notify the user, upon successful logon to the system, of the date and time of the last logon. Previous logon notification is applicable to system access via human user interfaces and access to systems
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AC-10 — Limit the number of concurrent sessions for each {{ insert: param, ac-10_odp.01 }} to {{ insert: param, ac-10_odp.02 }}. Organizations may define the maximum number of concurrent sessions for system a
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
 
 
 #### AC-11 — Prevent further access to the system by {{ insert: param, ac-11_odp.01 }} ; and Retain the device lock until the user reestablishes access using established identification and authentication procedure
@@ -603,24 +566,9 @@ procedures addressing d | Yes |
 | `ac-12-gcp-001` | GCP | OAuth token expiration configured | IAM | `iam.projects.serviceAccounts.list` | medium | [a], [b] |
 
 
-#### AC-13
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### AC-14 — Identify {{ insert: param, ac-14_odp }} that can be performed on the system without identification or authentication consistent with organizational mission and business functions; and Document and pro
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### AC-15
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AC-16 — Provide the means to associate {{ insert: param, ac-16_prm_1 }} with {{ insert: param, ac-16_prm_2 }} for information in storage, in process, and/or in transmission; Ensure that the attribute associat
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### AC-17 — Establish and document usage restrictions, configuration/connection requirements, and implementation guidance for each type of remote access allowed; and Authorize each type of remote access to the sy
@@ -628,24 +576,9 @@ procedures addressing d | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### AC-17(1) (Enhancement) — Employ automated mechanisms to monitor and control remote access methods. Monitoring and control of remote access methods allows organizations to detect attacks and help ensure compliance with remote 
+#### AC-17(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 4
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-17(1)[a] | Employ automated mechanisms to monitor and control remote access methods. Monitoring and control of remote access method | Yes |
-| AC-17(1)[b] | automated mechanisms are employed to control remote access methods. Access control policy
-
-procedures addressing remote  | Yes |
-| AC-17(1)[c] | automated mechanisms are employed to control remote access methods. Access control policy
-
-procedures addressing remote  | Yes |
-| AC-17(1)[d] | automated mechanisms are employed to control remote access methods. Access control policy
-
-procedures addressing remote  | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -657,16 +590,9 @@ procedures addressing remote  | Yes |
 | `ac-17-1-gcp-001` | GCP | IAP for TCP forwarding enabled | Compute | `compute.firewalls.list` | high | [a], [b], [c], [d] |
 
 
-#### AC-17(2) (Enhancement) — Implement cryptographic mechanisms to protect the confidentiality and integrity of remote access sessions. Virtual private networks can be used to protect the confidentiality and integrity of remote a
+#### AC-17(2) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-17(2)[a] | Implement cryptographic mechanisms to protect the confidentiality and integrity of remote access sessions. Virtual priva | Yes |
-| AC-17(2)[b] | Implement cryptographic mechanisms to protect the confidentiality and integrity of remote access sessions. Virtual priva | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -678,16 +604,9 @@ procedures addressing remote  | Yes |
 | `ac-17-2-gcp-001` | GCP | Cloud VPN uses IKEv2 with strong ciphers | VPN | `compute.vpnTunnels.list` | high | [a], [b] |
 
 
-#### AC-17(3) (Enhancement) — Route remote accesses through authorized and managed network access control points. Organizations consider the Trusted Internet Connections (TIC) initiative [DHS TIC](#4f42ee6e-86cc-403b-a51f-76c2b4f8
+#### AC-17(3) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-17(3)[a] | Route remote accesses through authorized and managed network access control points. Organizations consider the Trusted I | Yes |
-| AC-17(3)[b] | Route remote accesses through authorized and managed network access control points. Organizations consider the Trusted I | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -746,16 +665,9 @@ procedures addressing remote  | Yes |
 - **AC-19[b]**: wireless access is authorized prior to allowing such connections. — *Provide documentation or process evidence: wireless access is authorized prior to allowing such connections.*
 
 
-#### AC-19(5) (Enhancement) — Employ {{ insert: param, ac-19.05_odp.01 }} to protect the confidentiality and integrity of information on {{ insert: param, ac-19.05_odp.02 }}. Container-based encryption provides a more fine-grained
+#### AC-19(5) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-19(5)[a] | Employ {{ insert: param, ac-19.05_odp.01 }} to protect the confidentiality and integrity of information on {{ insert: pa | No |
-| AC-19(5)[b] | Employ {{ insert: param, ac-19.05_odp.01 }} to protect the confidentiality and integrity of information on {{ insert: pa | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
@@ -790,16 +702,9 @@ procedures addressing remote  | Yes |
 - **AC-20[c]**: mobile device connections are monitored and logged. — *Provide documentation or process evidence: mobile device connections are monitored and logged.*
 
 
-#### AC-20(1) (Enhancement) — Permit authorized individuals to use an external system to access the system or to process, store, or transmit organization-controlled information only after: Verification of the implementation of con
+#### AC-20(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AC-20(1)[a] | Permit authorized individuals to use an external system to access the system or to process, store, or transmit organizat | No |
-| AC-20(1)[b] | or Retention of approved system connection or processing agreements with the organizational entity hosting the external  | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -845,24 +750,9 @@ procedures addressing remote  | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### AC-23 — Employ {{ insert: param, ac-23_odp.01 }} for {{ insert: param, ac-23_odp.02 }} to detect and protect against unauthorized data mining. Data mining is an analytical process that attempts to find correl
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AC-24 — {{ insert: param, ac-24_odp.01 }} to ensure {{ insert: param, ac-24_odp.02 }} are applied to each access request prior to access enforcement. Access control decisions (also known as authorization deci
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AC-25 — Implement a reference monitor for {{ insert: param, ac-25_odp }} that is tamperproof, always invoked, and small enough to be subject to analysis and testing, the completeness of which can be assured. 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### AT — Awareness and Training
 
-**Controls:** 6 | **Automated:** 0 | **Manual:** 6 | **Objectives:** 7 | **Checks:** AWS 0, Azure 0, GCP 0
+**Controls:** 4 | **Automated:** 0 | **Manual:** 4 | **Objectives:** 7 | **Checks:** AWS 0, Azure 0, GCP 0
 
 #### AT-1 — Develop, document, and disseminate to {{ insert: param, at-1_prm_1 }}: {{ insert: param, at-01_odp.03 }} awareness and training policy that: Addresses purpose, scope, roles, responsibilities, manageme
 
@@ -890,16 +780,9 @@ procedures addressing remote  | Yes |
 - **AT-2[d]**: managers, systems administrators, and users of the system are made aware of the applicable policies, standards, and procedures related to the security of the system. — *Provide documentation or process evidence: managers, systems administrators, and users of the system are made aware of the applicable policies, standards, and procedures related to the security of the system.*
 
 
-#### AT-2(2) (Enhancement) — Provide literacy training on recognizing and reporting potential indicators of insider threat. Potential indicators and possible precursors of insider threat can include behaviors such as inordinate, 
+#### AT-2(2) (Enhancement)
 
-**Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AT-2(2)[a] | Provide literacy training on recognizing and reporting potential indicators of insider threat. Potential indicators and  | No |
-| AT-2(2)[b] | attempts to gain access to information not required for job performance | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
@@ -931,19 +814,9 @@ procedures addressing remote  | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### AT-5
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AT-6 — Provide feedback on organizational training results to the following personnel {{ insert: param, at-06_odp.01 }}: {{ insert: param, at-06_odp.02 }}. Training feedback includes awareness training resul
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### AU — Audit and Accountability
 
-**Controls:** 16 | **Automated:** 7 | **Manual:** 9 | **Objectives:** 24 | **Checks:** AWS 18, Azure 11, GCP 11
+**Controls:** 11 | **Automated:** 7 | **Manual:** 4 | **Objectives:** 24 | **Checks:** AWS 18, Azure 11, GCP 11
 
 #### AU-1 — Develop, document, and disseminate to {{ insert: param, au-1_prm_1 }}: {{ insert: param, au-01_odp.03 }} audit and accountability policy that: Addresses purpose, scope, roles, responsibilities, manage
 
@@ -1002,17 +875,9 @@ procedures addressing remote  | Yes |
 | `au-3-gcp-001` | GCP | Audit logs include principal identity | Logging | `logging.entries.list` | high | [a], [b] |
 
 
-#### AU-3(1) (Enhancement) — Generate audit records containing the following additional information: {{ insert: param, au-03.01_odp }}. The ability to add information generated in audit records is dependent on system functionalit
+#### AU-3(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 3
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AU-3(1)[a] | Generate audit records containing the following additional information: {{ insert: param, au-03.01_odp }}. The ability t | No |
-| AU-3(1)[b] | Generate audit records containing the following additional information: {{ insert: param, au-03.01_odp }}. The ability t | No |
-| AU-3(1)[c] | Generate audit records containing the following additional information: {{ insert: param, au-03.01_odp }}. The ability t | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
@@ -1139,16 +1004,9 @@ procedures addressing remote  | Yes |
 | `au-9-gcp-002` | GCP | Audit log bucket access restricted | Storage | `storage.buckets.getIamPolicy` | high | [a], [b] |
 
 
-#### AU-9(4) (Enhancement) — Authorize access to management of audit logging functionality to only {{ insert: param, au-09.04_odp }}. Individuals or roles with privileged access to a system and who are also the subject of an audi
+#### AU-9(4) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| AU-9(4)[a] | Authorize access to management of audit logging functionality to only {{ insert: param, au-09.04_odp }}. Individuals or  | Yes |
-| AU-9(4)[b] | Authorize access to management of audit logging functionality to only {{ insert: param, au-09.04_odp }}. Individuals or  | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1158,11 +1016,6 @@ procedures addressing remote  | Yes |
 | `au-9-4-aws-002` | AWS | SCP prevents non-security users from modifying audit config | Organizations | `organizations.list_policies` | high | [a], [b] |
 | `au-9-4-azure-001` | AZURE | Diagnostic settings management restricted | Authorization | `authorization.role_assignments.list` | high | [a], [b] |
 | `au-9-4-gcp-001` | GCP | Logging admin role restricted | IAM | `cloudresourcemanager.projects.getIamPolicy` | high | [a], [b] |
-
-
-#### AU-10 — Provide irrefutable evidence that an individual (or process acting on behalf of an individual) has performed {{ insert: param, au-10_odp }}. Types of individual actions covered by non-repudiation incl
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
 
 
 #### AU-11 — Retain audit records for {{ insert: param, au-11_odp }} to provide support for after-the-fact investigations of incidents and to meet regulatory and organizational information retention requirements. 
@@ -1175,29 +1028,9 @@ procedures addressing remote  | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### AU-13 — Monitor {{ insert: param, au-13_odp.01 }} {{ insert: param, au-13_odp.02 }} for evidence of unauthorized disclosure of organizational information; and If an information disclosure is discovered: Notif
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AU-14 — Provide and implement the capability for {{ insert: param, au-14_odp.01 }} to {{ insert: param, au-14_odp.02 }} the content of a user session under {{ insert: param, au-14_odp.03 }} ; and Develop, int
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AU-15
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### AU-16 — Employ {{ insert: param, au-16_odp.01 }} for coordinating {{ insert: param, au-16_odp.02 }} among external organizations when audit information is transmitted across organizational boundaries. When or
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### CA — Assessment, Authorization, and Monitoring
 
-**Controls:** 9 | **Automated:** 1 | **Manual:** 8 | **Objectives:** 10 | **Checks:** AWS 3, Azure 2, GCP 2
+**Controls:** 8 | **Automated:** 1 | **Manual:** 7 | **Objectives:** 10 | **Checks:** AWS 3, Azure 2, GCP 2
 
 #### CA-1 — Develop, document, and disseminate to {{ insert: param, ca-1_prm_1 }}: {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy that: Addresses purpose, scope, roles, respons
 
@@ -1224,11 +1057,6 @@ procedures addressing remote  | Yes |
 #### CA-3 — Approve and manage the exchange of information between the system and other systems using {{ insert: param, ca-03_odp.01 }}; Document, as part of each exchange agreement, the interface characteristics
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### CA-4
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### CA-5 — Develop a plan of action and milestones for the system to document the planned remediation actions of the organization to correct weaknesses or deficiencies noted during the assessment of the controls
@@ -1301,7 +1129,7 @@ procedures addressing remote  | Yes |
 
 ### CM — Configuration Management
 
-**Controls:** 14 | **Automated:** 6 | **Manual:** 8 | **Objectives:** 25 | **Checks:** AWS 15, Azure 10, GCP 10
+**Controls:** 12 | **Automated:** 6 | **Manual:** 6 | **Objectives:** 25 | **Checks:** AWS 15, Azure 10, GCP 10
 
 #### CM-1 — Develop, document, and disseminate to {{ insert: param, cm-1_prm_1 }}: {{ insert: param, cm-01_odp.03 }} configuration management policy that: Addresses purpose, scope, roles, responsibilities, manage
 
@@ -1364,15 +1192,9 @@ procedures addressing remote  | Yes |
 | `cm-3-gcp-001` | GCP | Admin Activity logs capture changes | Logging | `logging.entries.list` | high | [a], [b], [c], [d] |
 
 
-#### CM-3(4) (Enhancement) — Require {{ insert: param, cm-3.4_prm_1 }} to be members of the {{ insert: param, cm-03.04_odp.03 }}. Information security and privacy representatives include system security officers, senior agency in
+#### CM-3(4) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CM-3(4)[a] | Require {{ insert: param, cm-3.4_prm_1 }} to be members of the {{ insert: param, cm-03.04_odp.03 }}. Information securit | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
@@ -1466,29 +1288,9 @@ procedu | Yes |
 | `cm-7-gcp-001` | GCP | Unused firewall rules identified | VPC | `compute.firewalls.list` | medium | [a], [b] |
 
 
-#### CM-7(1) (Enhancement) — Review the system {{ insert: param, cm-07.01_odp.01 }} to identify unnecessary and/or nonsecure functions, ports, protocols, software, and services; and Disable or remove {{ insert: param, cm-7.1_prm_
+#### CM-7(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 15
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CM-7(1)[a] | Review the system {{ insert: param, cm-07.01_odp.01 }} to identify unnecessary and/or nonsecure functions, ports, protoc | Yes |
-| CM-7(1)[b] | and Disable or remove {{ insert: param, cm-7.1_prm_2 }}. Organizations review functions, ports, protocols, and services  | Yes |
-| CM-7(1)[c] | {{ insert: param, cm-07.01_odp.03 }} deemed to be unnecessary and/or non-secure are disabled or removed | Yes |
-| CM-7(1)[d] | {{ insert: param, cm-07.01_odp.04 }} deemed to be unnecessary and/or non-secure are disabled or removed | Yes |
-| CM-7(1)[e] | {{ insert: param, cm-07.01_odp.05 }} deemed to be unnecessary and/or non-secure is disabled or removed | Yes |
-| CM-7(1)[f] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[g] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[h] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[i] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[j] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[k] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[l] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[m] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[n] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
-| CM-7(1)[o] | {{ insert: param, cm-07.01_odp.06 }} deemed to be unnecessary and/or non-secure are disabled or removed. Configuration m | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1500,17 +1302,9 @@ procedu | Yes |
 | `cm-7-1-gcp-001` | GCP | Firewall rules restrict unnecessary ports | VPC | `compute.firewalls.list` | high | [a], [b], [c], [d], [e], [f], [g], [h], [i], [j], [k], [l], [m], [n], [o] |
 
 
-#### CM-7(5) (Enhancement) — Identify {{ insert: param, cm-07.05_odp.01 }}; Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system; and Review and update the list of aut
+#### CM-7(5) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 3
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CM-7(5)[a] | Identify {{ insert: param, cm-07.05_odp.01 }} | Yes |
-| CM-7(5)[b] | Employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs on the system | Yes |
-| CM-7(5)[c] | and Review and update the list of authorized software programs {{ insert: param, cm-07.05_odp.02 }}. Authorized software | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1562,19 +1356,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### CM-13 — Develop and document a map of system data actions. Data actions are system operations that process personally identifiable information. The processing of such information encompasses the full informat
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### CM-14 — Prevent the installation of {{ insert: param, cm-14_prm_1 }} without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization. 
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
 ### CP — Contingency Planning
 
-**Controls:** 13 | **Automated:** 6 | **Manual:** 7 | **Objectives:** 13 | **Checks:** AWS 16, Azure 14, GCP 14
+**Controls:** 9 | **Automated:** 6 | **Manual:** 3 | **Objectives:** 13 | **Checks:** AWS 16, Azure 14, GCP 14
 
 #### CP-1 — Develop, document, and disseminate to {{ insert: param, cp-1_prm_1 }}: {{ insert: param, cp-01_odp.03 }} contingency planning policy that: Addresses purpose, scope, roles, responsibilities, management
 
@@ -1624,11 +1408,6 @@ procedu | Yes |
 | `cp-4-aws-001` | AWS | AWS Resilience Hub assessments completed | ResilienceHub | `resiliencehub.list_app_assessments` | medium | [a] |
 | `cp-4-azure-001` | AZURE | Azure Site Recovery test failover documented | Recovery Services | `backup.backup_jobs.list` | medium | [a] |
 | `cp-4-gcp-001` | GCP | Disaster recovery test documented in Cloud Logging | Logging | `logging.entries.list` | medium | [a] |
-
-
-#### CP-5
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### CP-6 — Establish an alternate storage site, including necessary agreements to permit the storage and retrieval of system backup information; and Ensure that the alternate storage site provides controls equiv
@@ -1703,23 +1482,20 @@ procedu | Yes |
 | `cp-9-aws-002` | AWS | RDS automated backups enabled | RDS | `rds.describe_db_instances` | critical | [a], [c] |
 | `cp-9-aws-003` | AWS | EBS snapshots scheduled for volumes | EC2 | `ec2.describe_snapshots` | high | [a], [c] |
 | `cp-9-aws-004` | AWS | DynamoDB point-in-time recovery enabled | DynamoDB | `dynamodb.describe_continuous_backups` | high | [a], [c] |
+| `cp-9-3-aws-001` | AWS | Backups replicated to alternate region | Backup | `backup.list_backup_vaults` | high | [a] |
 | `cp-9-azure-001` | AZURE | Azure Backup configured for VMs | Recovery Services | `RecoveryServicesBackupClient.backup_protected_items.list` | critical | [a], [c] |
 | `cp-9-azure-002` | AZURE | SQL Database automated backups configured | SQL | `sql.servers.list + sql.backup_short_term_retention_policies.get` | critical | [a], [c] |
 | `cp-9-azure-003` | AZURE | Storage account soft delete enabled | Storage | `StorageManagementClient.blob_services.get_service_properties` | high | [a], [c] |
+| `cp-9-3-azure-001` | AZURE | Backup data replicated to separate region | Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | high | [a] |
 | `cp-9-gcp-001` | GCP | Compute Engine persistent disk snapshots scheduled | Compute Engine | `compute.resourcePolicies.list` | critical | [a], [c] |
 | `cp-9-gcp-002` | GCP | Cloud SQL automated backups enabled | Cloud SQL | `sqladmin.instances.list` | critical | [a], [c] |
 | `cp-9-gcp-003` | GCP | Cloud Storage bucket versioning enabled | Storage | `storage.buckets.get` | high | [a], [c] |
+| `cp-9-3-gcp-001` | GCP | Snapshots stored in separate region | Compute Engine | `compute.snapshots.list` | high | [a] |
 
 
-#### CP-9(1) (Enhancement) — Test backup information {{ insert: param, cp-9.1_prm_1 }} to verify media reliability and information integrity. Organizations need assurance that backup information can be reliably retrieved. Reliabi
+#### CP-9(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CP-9(1)[a] | Test backup information {{ insert: param, cp-9.1_prm_1 }} to verify media reliability and information integrity. Organiz | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1740,24 +1516,10 @@ procedu | Yes |
 |----|-----------|-------------|
 | CP-9(3)[a] | Store backup copies of {{ insert: param, cp-09.03_odp }} in a separate facility or in a fire rated container that is not | Yes |
 
-**Automated Checks:**
 
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `cp-9-3-aws-001` | AWS | Backups replicated to alternate region | Backup | `backup.list_backup_vaults` | high | [a] |
-| `cp-9-3-azure-001` | AZURE | Backup data replicated to separate region | Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | high | [a] |
-| `cp-9-3-gcp-001` | GCP | Snapshots stored in separate region | Compute Engine | `compute.snapshots.list` | high | [a] |
+#### CP-9(8) (Enhancement)
 
-
-#### CP-9(8) (Enhancement) — Implement cryptographic mechanisms to prevent unauthorized disclosure and modification of {{ insert: param, cp-09.08_odp }}. The selection of cryptographic mechanisms is based on the need to protect t
-
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CP-9(8)[a] | Implement cryptographic mechanisms to prevent unauthorized disclosure and modification of {{ insert: param, cp-09.08_odp | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1788,15 +1550,9 @@ procedu | Yes |
 | `cp-10-gcp-001` | GCP | Recovery procedures documented in Cloud Operations | Compute Engine | `compute.instances.aggregatedList` | medium | [a] |
 
 
-#### CP-10(2) (Enhancement) — Implement transaction recovery for systems that are transaction-based. Transaction-based systems include database management systems and transaction processing systems. Mechanisms supporting transacti
+#### CP-10(2) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| CP-10(2)[a] | Implement transaction recovery for systems that are transaction-based. Transaction-based systems include database manage | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1807,24 +1563,9 @@ procedu | Yes |
 | `cp-10-2-gcp-001` | GCP | Cloud SQL point-in-time recovery enabled | Cloud SQL | `sqladmin.instances.list` | high | [a] |
 
 
-#### CP-11 — Provide the capability to employ {{ insert: param, cp-11_odp }} in support of maintaining continuity of operations. Contingency plans and the contingency training or testing associated with those plan
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### CP-12 — When {{ insert: param, cp-12_odp.02 }} are detected, enter a safe mode of operation with {{ insert: param, cp-12_odp.01 }}. For systems that support critical mission and business functions—including m
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### CP-13 — Employ {{ insert: param, cp-13_odp.01 }} for satisfying {{ insert: param, cp-13_odp.02 }} when the primary means of implementing the security function is unavailable or compromised. Use of alternative
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### IA — Identification and Authentication
 
-**Controls:** 13 | **Automated:** 5 | **Manual:** 8 | **Objectives:** 15 | **Checks:** AWS 18, Azure 13, GCP 12
+**Controls:** 10 | **Automated:** 5 | **Manual:** 5 | **Objectives:** 15 | **Checks:** AWS 18, Azure 13, GCP 12
 
 #### IA-1 — Develop, document, and disseminate to {{ insert: param, ia-1_prm_1 }}: {{ insert: param, ia-01_odp.03 }} identification and authentication policy that: Addresses purpose, scope, roles, responsibilitie
 
@@ -1856,18 +1597,9 @@ procedu | Yes |
 | `ia-2-gcp-002` | GCP | Service accounts clearly identified | IAM | `iam.projects.serviceAccounts.list` | medium | [a] |
 
 
-#### IA-2(1) (Enhancement) — Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of two or more different factors to achieve authentication. The authentication fac
+#### IA-2(1) (Enhancement)
 
-**Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 4
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| IA-2(1)[a] | Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of | Yes |
-| IA-2(1)[b] | Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of | Yes |
-| IA-2(1)[c] | Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of | Yes |
-| IA-2(1)[d] | Implement multi-factor authentication for access to privileged accounts. Multi-factor authentication requires the use of | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1882,15 +1614,9 @@ procedu | Yes |
 | `ia-2-1-gcp-002` | GCP | Security key required for admin accounts | Workspace Admin | `admin.directory.users.list` | high | [a], [b], [c], [d] |
 
 
-#### IA-2(2) (Enhancement) — Implement multi-factor authentication for access to non-privileged accounts. Multi-factor authentication requires the use of two or more different factors to achieve authentication. The authentication
+#### IA-2(2) (Enhancement)
 
-**Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| IA-2(2)[a] | Implement multi-factor authentication for access to non-privileged accounts. Multi-factor authentication requires the us | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1945,16 +1671,9 @@ procedu | Yes |
 | `ia-4-gcp-001` | GCP | User account identifiers not reused | Workspace Admin | `admin.directory.users.list` | medium | [a], [b] |
 
 
-#### IA-4(4) (Enhancement) — Manage individual identifiers by uniquely identifying each individual as {{ insert: param, ia-04.04_odp }}. Characteristics that identify the status of individuals include contractors, foreign nationa
+#### IA-4(4) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| IA-4(4)[a] | Manage individual identifiers by uniquely identifying each individual as {{ insert: param, ia-04.04_odp }}. Characterist | Yes |
-| IA-4(4)[b] | Manage individual identifiers by uniquely identifying each individual as {{ insert: param, ia-04.04_odp }}. Characterist | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -1988,16 +1707,9 @@ procedu | Yes |
 | `ia-5-gcp-001` | GCP | Password policy enforced in Workspace | Workspace Admin | `admin.directory.users.list` | high | [a], [b], [c], [d] |
 
 
-#### IA-5(1) (Enhancement) — For password-based authentication: Maintain a list of commonly-used, expected, or compromised passwords and update the list {{ insert: param, ia-05.01_odp.01 }} and when organizational passwords are s
+#### IA-5(1) (Enhancement)
 
-**Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| IA-5(1)[a] | For password-based authentication: Maintain a list of commonly-used, expected, or compromised passwords and update the l | Yes |
-| IA-5(1)[b] | Verify, when users create or update passwords, that the passwords are not found on the list of commonly-used, expected,  | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -2008,15 +1720,9 @@ procedu | Yes |
 | `ia-5-1-gcp-001` | GCP | Password reuse restricted in Workspace | Workspace Admin | `admin.directory.users.list` | high | [a], [b] |
 
 
-#### IA-5(2) (Enhancement) — For public key-based authentication: Enforce authorized access to the corresponding private key; and Map the authenticated identity to the account of the individual or group; and When public key infra
+#### IA-5(2) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| IA-5(2)[a] | For public key-based authentication: Enforce authorized access to the corresponding private key | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -2058,16 +1764,6 @@ procedu | Yes |
 | `ia-8-gcp-001` | GCP | SSL enforced on Cloud SQL instances | Cloud SQL | `sqladmin.instances.list` | high | [a], [b] |
 
 
-#### IA-9 — Uniquely identify and authenticate {{ insert: param, ia-09_odp }} before establishing communications with devices, users, or other services or applications. Services that may require identification an
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### IA-10 — Require individuals accessing the system to employ {{ insert: param, ia-10_odp.01 }} under specific {{ insert: param, ia-10_odp.02 }}. Adversaries may compromise individual authentication mechanisms e
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### IA-11 — Require users to re-authenticate when {{ insert: param, ia-11_odp }}. In addition to the re-authentication requirements associated with device locks, organizations may require re-authentication of ind
 
 **Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 1
@@ -2088,14 +1784,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### IA-13 — Employ identity providers and authorization servers to manage user, device, and non-person entity (NPE) identities, attributes, and access rights supporting authentication and authorization decisions 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### IR — Incident Response
 
-**Controls:** 10 | **Automated:** 1 | **Manual:** 9 | **Objectives:** 14 | **Checks:** AWS 4, Azure 3, GCP 3
+**Controls:** 9 | **Automated:** 1 | **Manual:** 8 | **Objectives:** 14 | **Checks:** AWS 4, Azure 3, GCP 3
 
 #### IR-1 — Develop, document, and disseminate to {{ insert: param, ir-1_prm_1 }}: {{ insert: param, ir-01_odp.03 }} incident response policy that: Addresses purpose, scope, roles, responsibilities, management co
 
@@ -2199,14 +1890,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### IR-10
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### MA — Maintenance
 
-**Controls:** 7 | **Automated:** 2 | **Manual:** 5 | **Objectives:** 8 | **Checks:** AWS 5, Azure 3, GCP 3
+**Controls:** 6 | **Automated:** 2 | **Manual:** 4 | **Objectives:** 8 | **Checks:** AWS 5, Azure 3, GCP 3
 
 #### MA-1 — Develop, document, and disseminate to {{ insert: param, ma-1_prm_1 }}: {{ insert: param, ma-01_odp.03 }} maintenance policy that: Addresses purpose, scope, roles, responsibilities, management commitme
 
@@ -2257,30 +1943,18 @@ procedu | Yes |
 - **MA-3[d]**: personnel used to conduct system maintenance are controlled. — *Provide personnel records: personnel used to conduct system maintenance are controlled.*
 
 
-#### MA-3(1) (Enhancement) — Inspect the maintenance tools used by maintenance personnel for improper or unauthorized modifications. Maintenance tools can be directly brought into a facility by maintenance personnel or downloaded
+#### MA-3(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| MA-3(1)[a] | Inspect the maintenance tools used by maintenance personnel for improper or unauthorized modifications. Maintenance tool | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
 - **MA-3(1)[a]**: equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI. — *Provide documentation or process evidence: equipment to be removed from organizational spaces for off-site maintenance is sanitized of any CUI.*
 
 
-#### MA-3(2) (Enhancement) — Check media containing diagnostic and test programs for malicious code before the media are used in the system. If, upon inspection of media containing maintenance, diagnostic, and test programs, orga
+#### MA-3(2) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| MA-3(2)[a] | Check media containing diagnostic and test programs for malicious code before the media are used in the system. If, upon | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
@@ -2328,14 +2002,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### MA-7 — Restrict or prohibit field maintenance on {{ insert: param, ma-07_odp.01 }} to {{ insert: param, ma-07_odp.02 }}. Field maintenance is the type of maintenance conducted on a system or system component
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### MP — Media Protection
 
-**Controls:** 8 | **Automated:** 2 | **Manual:** 6 | **Objectives:** 11 | **Checks:** AWS 9, Azure 6, GCP 5
+**Controls:** 7 | **Automated:** 2 | **Manual:** 5 | **Objectives:** 11 | **Checks:** AWS 6, Azure 4, GCP 4
 
 #### MP-1 — Develop, document, and disseminate to {{ insert: param, mp-1_prm_1 }}: {{ insert: param, mp-01_odp.03 }} media protection policy that: Addresses purpose, scope, roles, responsibilities, management com
 
@@ -2413,17 +2082,6 @@ procedu | Yes |
 |----|-----------|-------------|
 | MP-4(2)[a] | Restrict access to media storage areas and log access attempts and access granted using {{ insert: param, mp-4.2_prm_1 } | Yes |
 
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `mp-4-2-aws-001` | AWS | Backup vault encrypted with KMS | Backup | `backup.list_backup_vaults` | high | [a] |
-| `mp-4-2-aws-002` | AWS | Backup vault access policy restricts access | Backup | `backup.get_backup_vault_access_policy` | high | [a] |
-| `mp-4-2-aws-003` | AWS | S3 cross-region replication encrypted | S3 | `s3.get_bucket_replication` | medium | [a] |
-| `mp-4-2-azure-001` | AZURE | Recovery Services vault encrypted | Recovery Services | `recoveryservices.vaults.list` | high | [a] |
-| `mp-4-2-azure-002` | AZURE | Backup vault soft delete enabled | Recovery Services | `recoveryservices.vaults.list` | medium | [a] |
-| `mp-4-2-gcp-001` | GCP | Backup encrypted with CMEK | Backup and DR | `backupdr.projects.locations.backupVaults.list` | high | [a] |
-
 
 #### MP-5 — Protect and control {{ insert: param, mp-05_odp.01 }} during transport outside of controlled areas using {{ insert: param, mp-5_prm_2 }}; Maintain accountability for system media during transport outs
 
@@ -2476,11 +2134,6 @@ procedu | Yes |
 | MP-6(1)[a] | Review, approve, track, document, and verify media sanitization and disposal actions. Organizations review and approve m | No |
 | MP-6(1)[b] | media sanitization and disposal actions are approved | No |
 
-**Documentation Requirements:**
-
-- **MP-6(1)[a]**: media containing CUI is marked with applicable CUI markings. — *Provide documentation or process evidence: media containing CUI is marked with applicable CUI markings.*
-- **MP-6(1)[b]**: media containing CUI is marked with distribution limitations. — *Provide documentation or process evidence: media containing CUI is marked with distribution limitations.*
-
 
 #### MP-7 — {{ insert: param, mp-07_odp.02 }} the use of {{ insert: param, mp-07_odp.01 }} on {{ insert: param, mp-07_odp.03 }} using {{ insert: param, mp-07_odp.04 }} ; and Prohibit the use of portable storage d
 
@@ -2507,19 +2160,10 @@ procedu | Yes |
 |----|-----------|-------------|
 | MP-7(1)[a] | Organization-defined requirement | No |
 
-**Documentation Requirements:**
-
-- **MP-7(1)[a]**: the use of portable storage devices is prohibited when such devices have no identifiable owner. — *Provide documentation or process evidence: the use of portable storage devices is prohibited when such devices have no identifiable owner.*
-
-
-#### MP-8 — Establish {{ insert: param, mp-08_odp.01 }} that includes employing downgrading mechanisms with strength and integrity commensurate with the security category or classification of the information; Ver
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
 
 ### PE — Physical and Environmental Protection
 
-**Controls:** 23 | **Automated:** 0 | **Manual:** 23 | **Objectives:** 13 | **Checks:** AWS 0, Azure 0, GCP 0
+**Controls:** 16 | **Automated:** 0 | **Manual:** 16 | **Objectives:** 13 | **Checks:** AWS 0, Azure 0, GCP 0
 
 #### PE-1 — Develop, document, and disseminate to {{ insert: param, pe-1_prm_1 }}: {{ insert: param, pe-01_odp.03 }} physical and environmental protection policy that: Addresses purpose, scope, roles, responsibil
 
@@ -2605,28 +2249,15 @@ procedu | Yes |
 - **PE-6[d]**: the support infrastructure for that system is monitored. — *Provide documentation or process evidence: the support infrastructure for that system is monitored.*
 
 
-#### PE-6(1) (Enhancement) — Monitor physical access to the facility where the system resides using physical intrusion alarms and surveillance equipment. Physical intrusion alarms can be employed to alert security personnel when 
+#### PE-6(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 3
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| PE-6(1)[a] | Monitor physical access to the facility where the system resides using physical intrusion alarms and surveillance equipm | No |
-| PE-6(1)[b] | physical access to the facility where the system resides is monitored using physical surveillance equipment. Physical an | No |
-| PE-6(1)[c] | physical access to the facility where the system resides is monitored using physical surveillance equipment. Physical an | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Documentation Requirements:**
 
 - **PE-6(1)[a]**: physical access devices are identified. — *Provide documentation showing that physical access devices are identified and documented.*
 - **PE-6(1)[b]**: physical access devices are controlled. — *Provide physical security evidence: physical access devices are controlled.*
 - **PE-6(1)[c]**: physical access devices are managed. — *Provide physical security evidence: physical access devices are managed.*
-
-
-#### PE-7
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### PE-8 — Maintain visitor access records to the facility where the system resides for {{ insert: param, pe-08_odp.01 }}; Review visitor access records {{ insert: param, pe-08_odp.02 }} ; and Report anomalies i
@@ -2691,39 +2322,9 @@ procedu | Yes |
 - **PE-17[b]**: safeguarding measures for CUI are enforced for alternate work sites. — *Provide documentation or process evidence: safeguarding measures for CUI are enforced for alternate work sites.*
 
 
-#### PE-18 — Position system components within the facility to minimize potential damage from {{ insert: param, pe-18_odp }} and to minimize the opportunity for unauthorized access. Physical and environmental haza
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
-#### PE-19 — Protect the system from information leakage due to electromagnetic signals emanations. Information leakage is the intentional or unintentional release of data or information to an untrusted environmen
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PE-20 — Employ {{ insert: param, pe-20_odp.01 }} to track and monitor the location and movement of {{ insert: param, pe-20_odp.02 }} within {{ insert: param, pe-20_odp.03 }}. Asset location technologies can h
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PE-21 — Employ {{ insert: param, pe-21_odp.01 }} against electromagnetic pulse damage for {{ insert: param, pe-21_odp.02 }}. An electromagnetic pulse (EMP) is a short burst of electromagnetic energy that is s
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PE-22 — Mark {{ insert: param, pe-22_odp }} indicating the impact level or classification level of the information permitted to be processed, stored, or transmitted by the hardware component. Hardware compone
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PE-23 — Plan the location or site of the facility where the system resides considering physical and environmental hazards; and For existing facilities, consider the physical and environmental hazards in the o
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### PL — Planning
 
-**Controls:** 11 | **Automated:** 2 | **Manual:** 9 | **Objectives:** 2 | **Checks:** AWS 3, Azure 3, GCP 3
+**Controls:** 6 | **Automated:** 2 | **Manual:** 4 | **Objectives:** 2 | **Checks:** AWS 3, Azure 3, GCP 3
 
 #### PL-1 — Develop, document, and disseminate to {{ insert: param, pl-1_prm_1 }}: {{ insert: param, pl-01_odp.03 }} planning policy that: Addresses purpose, scope, roles, responsibilities, management commitment,
 
@@ -2749,29 +2350,9 @@ procedu | Yes |
 | `pl-2-gcp-001` | GCP | Organization policies document security requirements | Organization Policy | `cloudresourcemanager.projects.getEffectiveOrgPolicy` | medium | [a] |
 
 
-#### PL-3
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### PL-4 — Establish and provide to individuals requiring access to the system, the rules that describe their responsibilities and expected behavior for information and system usage, security, and privacy; Recei
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### PL-5
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PL-6
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PL-7 — Develop a Concept of Operations (CONOPS) for the system describing how the organization intends to operate the system from the perspective of information security and privacy; and Review and update th
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### PL-8 — Develop security and privacy architectures for the system that: Describe the requirements and approach to be taken for protecting the confidentiality, integrity, and availability of organizational inf
@@ -2796,11 +2377,6 @@ procedu | Yes |
 | `pl-8-gcp-002` | GCP | VPC architecture documented with flow logs | Compute Engine | `compute.subnetworks.list` | medium | [a] |
 
 
-#### PL-9 — Centrally manage {{ insert: param, pl-09_odp }}. Central management refers to organization-wide management and implementation of selected controls and processes. This includes planning, implementing, 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### PL-10 — Select a control baseline for the system. Control baselines are predefined sets of controls specifically assembled to address the protection needs of a group, organization, or community of interest. C
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
@@ -2813,167 +2389,7 @@ procedu | Yes |
 
 ### PM — Program Management
 
-**Controls:** 32 | **Automated:** 0 | **Manual:** 32 | **Objectives:** 0 | **Checks:** AWS 0, Azure 0, GCP 0
-
-#### PM-1 — Develop and disseminate an organization-wide information security program plan that: Provides an overview of the requirements for the security program and a description of the security program managem
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-2 — Appoint a senior agency information security officer with the mission and resources to coordinate, develop, implement, and maintain an organization-wide information security program. The senior agency
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-3 — Include the resources needed to implement the information security and privacy programs in capital planning and investment requests and document all exceptions to this requirement; Prepare documentati
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-4 — Implement a process to ensure that plans of action and milestones for the information security, privacy, and supply chain risk management programs and associated organizational systems: Are developed 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-5 — Develop and update {{ insert: param, pm-05_odp }} an inventory of organizational systems. [OMB A-130](#27847491-5ce1-4f6a-a1e4-9e483782f0ef) provides guidance on developing systems inventories and ass
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-6 — Develop, monitor, and report on the results of information security and privacy measures of performance. Measures of performance are outcome-based metrics used by an organization to measure the effect
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-7 — Develop and maintain an enterprise architecture with consideration for information security, privacy, and the resulting risk to organizational operations and assets, individuals, other organizations, 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-8 — Address information security and privacy issues in the development, documentation, and updating of a critical infrastructure and key resources protection plan. Protection strategies are based on the p
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-9 — Develops a comprehensive strategy to manage: Security risk to organizational operations and assets, individuals, other organizations, and the Nation associated with the operation and use of organizati
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-10 — Manage the security and privacy state of organizational systems and the environments in which those systems operate through authorization processes; Designate individuals to fulfill specific roles and
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-11 — Define organizational mission and business processes with consideration for information security and privacy and the resulting risk to organizational operations, organizational assets, individuals, ot
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-12 — Implement an insider threat program that includes a cross-discipline insider threat incident handling team. Organizations that handle classified information are required, under Executive Order 13587 [
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-13 — Establish a security and privacy workforce development and improvement program. Security and privacy workforce development and improvement programs include defining the knowledge, skills, and abilitie
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-14 — Implement a process for ensuring that organizational plans for conducting security and privacy testing, training, and monitoring activities associated with organizational systems: Are developed and ma
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-15 — Establish and institutionalize contact with selected groups and associations within the security and privacy communities: To facilitate ongoing security and privacy education and training for organiza
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-16 — Implement a threat awareness program that includes a cross-organization information-sharing capability for threat intelligence. Because of the constantly changing and increasing sophistication of adve
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-17 — Establish policy and procedures to ensure that requirements for the protection of controlled unclassified information that is processed, stored or transmitted on external systems, are implemented in a
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-18 — Develop and disseminate an organization-wide privacy program plan that provides an overview of the agency’s privacy program, and: Includes a description of the structure of the privacy program and the
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-19 — Appoint a senior agency official for privacy with the authority, mission, accountability, and resources to coordinate, develop, and implement, applicable privacy requirements and manage privacy risks 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-20 — Maintain a central resource webpage on the organization’s principal public website that serves as a central source of information about the organization’s privacy program and that: Ensures that the pu
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-21 — Develop and maintain an accurate accounting of disclosures of personally identifiable information, including: Date, nature, and purpose of each disclosure; and Name and address, or other contact infor
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-22 — Develop and document organization-wide policies and procedures for: Reviewing for the accuracy, relevance, timeliness, and completeness of personally identifiable information across the information li
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-23 — Establish a Data Governance Body consisting of {{ insert: param, pm-23_odp.01 }} with {{ insert: param, pm-23_odp.02 }}. A Data Governance Body can help ensure that the organization has coherent polic
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-24 — Establish a Data Integrity Board to: Review proposals to conduct or participate in a matching program; and Conduct an annual review of all matching programs in which the agency has participated. A Dat
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-25 — Develop, document, and implement policies and procedures that address the use of personally identifiable information for internal testing, training, and research; Limit or minimize the amount of perso
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-26 — Implement a process for receiving and responding to complaints, concerns, or questions from individuals about the organizational security and privacy practices that includes: Mechanisms that are easy 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-27 — Develop {{ insert: param, pm-27_odp.01 }} and disseminate to: {{ insert: param, pm-27_odp.02 }} to demonstrate accountability with statutory, regulatory, and policy privacy mandates; and {{ insert: pa
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-28 — Identify and document: Assumptions affecting risk assessments, risk responses, and risk monitoring; Constraints affecting risk assessments, risk responses, and risk monitoring; Priorities and trade-of
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-29 — Appoint a Senior Accountable Official for Risk Management to align organizational information security and privacy management processes with strategic, operational, and budgetary planning processes; a
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-30 — Develop an organization-wide strategy for managing supply chain risks associated with the development, acquisition, maintenance, and disposal of systems, system components, and system services; Implem
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-31 — Develop an organization-wide continuous monitoring strategy and implement continuous monitoring programs that include: Establishing the following organization-wide metrics to be monitored: {{ insert: 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PM-32 — Analyze {{ insert: param, pm-32_odp }} supporting mission essential services or functions to ensure that the information resources are being used consistent with their intended purpose. Systems are de
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
+**Controls:** 0 | **Automated:** 0 | **Manual:** 0 | **Objectives:** 0 | **Checks:** AWS 0, Azure 0, GCP 0
 
 ### PS — Personnel Security
 
@@ -3050,100 +2466,11 @@ procedu | Yes |
 
 ### PT — Personally Identifiable Information Processing and Transparency
 
-**Controls:** 8 | **Automated:** 3 | **Manual:** 5 | **Objectives:** 4 | **Checks:** AWS 5, Azure 5, GCP 5
-
-#### PT-1 — Develop, document, and disseminate to {{ insert: param, pt-1_prm_1 }}: {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy that: Addresses purpose,
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PT-2 — Determine and document the {{ insert: param, pt-02_odp.01 }} that permits the {{ insert: param, pt-02_odp.02 }} of personally identifiable information; and Restrict the {{ insert: param, pt-02_odp.03 
-
-**Baseline:** N/A | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| PT-2[a] | Determine and document the {{ insert: param, pt-02_odp.01 }} that permits the {{ insert: param, pt-02_odp.02 }} of perso | Yes |
-| PT-2[b] | Restrict the {{ insert: param, pt-02_odp.03 }} of personally identifiable information to only that which is authorized.  | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `pt-2-aws-001` | AWS | Macie enabled for PII data discovery | Macie2 | `macie2.get_macie_session` | high | [a], [b] |
-| `pt-2-aws-002` | AWS | S3 buckets tagged with data classification | S3 | `s3.get_bucket_tagging` | high | [a] |
-| `pt-2-aws-003` | AWS | RDS databases tagged with data classification | RDS | `rds.list_tags_for_resource` | high | [a] |
-| `pt-2-azure-001` | AZURE | Microsoft Purview enabled for data discovery | Resources | `resource.resources.list` | high | [a], [b] |
-| `pt-2-azure-002` | AZURE | Storage accounts tagged with data classification | Storage | `StorageManagementClient.storage_accounts.list` | high | [a] |
-| `pt-2-azure-003` | AZURE | SQL databases tagged with data classification | SQL | `sql.servers.list` | high | [a] |
-| `pt-2-gcp-001` | GCP | Cloud DLP enabled for PII discovery | DLP | `dlp.projects.dlpJobs.list` | high | [a], [b] |
-| `pt-2-gcp-002` | GCP | Storage buckets labeled with data classification | Storage | `storage.buckets.get` | high | [a] |
-| `pt-2-gcp-003` | GCP | BigQuery datasets labeled with data classification | BigQuery | `bigquery.datasets.list` | high | [a] |
-
-
-#### PT-3 — Identify and document the {{ insert: param, pt-03_odp.01 }} for processing personally identifiable information; Describe the purpose(s) in the public privacy notices and policies of the organization; 
-
-**Baseline:** N/A | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| PT-3[a] | Identify and document the {{ insert: param, pt-03_odp.01 }} for processing personally identifiable information | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `pt-3-aws-001` | AWS | Resources tagged with data processing purpose | EC2 + RDS | `ec2.describe_instances + rds.describe_db_instances` | medium | [a] |
-| `pt-3-azure-001` | AZURE | Resources tagged with data processing purpose | Resources | `ResourceManagementClient.resources.list` | medium | [a] |
-| `pt-3-gcp-001` | GCP | Resources labeled with data processing purpose | Compute Engine | `compute.instances.aggregatedList + storage.buckets.list` | medium | [a] |
-
-
-#### PT-4 — Implement {{ insert: param, pt-04_odp }} for individuals to consent to the processing of their personally identifiable information prior to its collection that facilitate individuals’ informed decisio
-
-**Baseline:** N/A | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| PT-4[a] | Implement {{ insert: param, pt-04_odp }} for individuals to consent to the processing of their personally identifiable i | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `pt-4-aws-001` | AWS | API Gateway includes consent mechanism documentation | API Gateway | `apigateway.get_rest_apis` | medium | [a] |
-| `pt-4-azure-001` | AZURE | API Management includes consent documentation | Resources | `resource.resources.list` | medium | [a] |
-| `pt-4-gcp-001` | GCP | API Gateway includes consent mechanism documentation | Service Usage | `serviceusage.services.list` | medium | [a] |
-
-
-#### PT-5 — Provide notice to individuals about the processing of personally identifiable information that: Is available to individuals upon first interacting with an organization, and subsequently at {{ insert: 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PT-6 — For systems that process information that will be maintained in a Privacy Act system of records: Draft system of records notices in accordance with OMB guidance and submit new and significantly modifi
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PT-7 — Apply {{ insert: param, pt-07_odp }} for specific categories of personally identifiable information. Organizations apply any conditions or protections that may be necessary for specific categories of 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### PT-8 — When a system or organization processes information for the purpose of conducting a matching program: Obtain approval from the Data Integrity Board to conduct the matching program; Develop and enter i
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
+**Controls:** 0 | **Automated:** 0 | **Manual:** 0 | **Objectives:** 0 | **Checks:** AWS 0, Azure 0, GCP 0
 
 ### RA — Risk Assessment
 
-**Controls:** 10 | **Automated:** 1 | **Manual:** 9 | **Objectives:** 7 | **Checks:** AWS 5, Azure 5, GCP 5
+**Controls:** 6 | **Automated:** 1 | **Manual:** 5 | **Objectives:** 7 | **Checks:** AWS 8, Azure 7, GCP 7
 
 #### RA-1 — Develop, document, and disseminate to {{ insert: param, ra-1_prm_1 }}: {{ insert: param, ra-01_odp.03 }} risk assessment policy that: Addresses purpose, scope, roles, responsibilities, management comm
 
@@ -3172,11 +2499,6 @@ procedu | Yes |
 - **RA-3[b]**: risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency. — *Provide documentation or process evidence: risk to organizational operations, organizational assets, and individuals resulting from the operation of an organizational system that processes, stores, or transmits CUI is assessed with the defined frequency.*
 
 
-#### RA-4
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### RA-5 — Monitor and scan for vulnerabilities in the system and hosted applications {{ insert: param, ra-5_prm_1 }} and when new vulnerabilities potentially affecting the system are identified and reported; Em
 
 **Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 5
@@ -3198,24 +2520,24 @@ procedu | Yes |
 | `ra-5-aws-001` | AWS | Amazon Inspector enabled | Inspector | `inspector2.list_account_permissions` | high | [a] |
 | `ra-5-aws-002` | AWS | ECR image scanning enabled | ECR | `ecr.describe_repositories` | high | [a] |
 | `ra-5-aws-003` | AWS | Vulnerability findings reviewed regularly | Inspector | `inspector2.list_findings` | high | [a], [e] |
+| `si-3-2-aws-001` | AWS | Periodic vulnerability scanning configured | Inspector | `inspector2.list_account_permissions` | high | [a], [b], [c] |
+| `si-3-2-aws-002` | AWS | GuardDuty real-time malware scanning | GuardDuty | `guardduty.get_detector` | high | [a], [b], [c] |
+| `si-3-2-aws-003` | AWS | S3 object scanning for uploads | GuardDuty | `guardduty.get_detector()` | medium | [a], [b], [c] |
 | `ra-5-azure-001` | AZURE | Defender for Cloud vulnerability assessment enabled | Security Center | `security.sub_assessments.list` | high | [a] |
 | `ra-5-azure-002` | AZURE | Container vulnerability scanning enabled | Security Center | `security.pricings.get` | high | [a] |
 | `ra-5-azure-003` | AZURE | SQL vulnerability assessment enabled | SQL | `sql.server_vulnerability_assessments.get` | high | [a] |
+| `si-3-2-azure-001` | AZURE | Scheduled VM vulnerability scans configured | Security Center | `assessments.list` | high | [a], [b], [c] |
+| `si-3-2-azure-002` | AZURE | Real-time protection enabled on endpoints | Compute | `compute.virtual_machine_extensions.list` | high | [a], [b], [c] |
 | `ra-5-gcp-001` | GCP | Web Security Scanner enabled | SCC | `websecurityscanner.projects.scanConfigs.list` | high | [a] |
 | `ra-5-gcp-002` | GCP | Container Analysis vulnerability scanning | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a] |
 | `ra-5-gcp-003` | GCP | Security Health Analytics enabled | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
+| `si-3-2-gcp-001` | GCP | Container vulnerability scanning continuous | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a], [b], [c] |
+| `si-3-2-gcp-002` | GCP | Web Security Scanner periodic scans | SCC | `websecurityscanner.projects.scanConfigs.list` | medium | [a], [b], [c] |
 
 
-#### RA-5(5) (Enhancement) — Implement privileged access authorization to {{ insert: param, ra-05.05_odp.01 }} for {{ insert: param, ra-05.05_odp.02 }}. In certain situations, the nature of the vulnerability scanning may be more 
+#### RA-5(5) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| RA-5(5)[a] | Implement privileged access authorization to {{ insert: param, ra-05.05_odp.01 }} for {{ insert: param, ra-05.05_odp.02  | Yes |
-| RA-5(5)[b] | Implement privileged access authorization to {{ insert: param, ra-05.05_odp.01 }} for {{ insert: param, ra-05.05_odp.02  | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3229,19 +2551,9 @@ procedu | Yes |
 | `ra-5-5-gcp-002` | GCP | SCC critical findings remediated | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a] |
 
 
-#### RA-6 — Employ a technical surveillance countermeasures survey at {{ insert: param, ra-06_odp.01 }} {{ insert: param, ra-06_odp.02 }}. A technical surveillance countermeasures survey is a service provided by 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### RA-7 — Respond to findings from security and privacy assessments, monitoring, and audits in accordance with organizational risk tolerance. Organizations have many options for responding to risk including mit
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### RA-8 — Conduct privacy impact assessments for systems, programs, or other activities before: Developing or procuring information technology that processes personally identifiable information; and Initiating 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### RA-9 — Identify critical system components and functions by performing a criticality analysis for {{ insert: param, ra-09_odp.01 }} at {{ insert: param, ra-09_odp.02 }}. Not all system components, functions,
@@ -3249,14 +2561,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### RA-10 — Establish and maintain a cyber threat hunting capability to: Search for indicators of compromise in organizational systems; and Detect, track, and disrupt threats that evade existing controls; and Emp
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### SA — System and Services Acquisition
 
-**Controls:** 24 | **Automated:** 6 | **Manual:** 18 | **Objectives:** 9 | **Checks:** AWS 10, Azure 7, GCP 7
+**Controls:** 11 | **Automated:** 6 | **Manual:** 5 | **Objectives:** 9 | **Checks:** AWS 10, Azure 7, GCP 7
 
 #### SA-1 — Develop, document, and disseminate to {{ insert: param, sa-1_prm_1 }}: {{ insert: param, sa-01_odp.03 }} system and services acquisition policy that: Addresses purpose, scope, roles, responsibilities,
 
@@ -3295,15 +2602,9 @@ procedu | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SA-4(9) (Enhancement) — Require the developer of the system, system component, or system service to identify the functions, ports, protocols, and services intended for organizational use. The identification of functions, por
+#### SA-4(9) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SA-4(9)[a] | Require the developer of the system, system component, or system service to identify the functions, ports, protocols, an | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3319,16 +2620,6 @@ procedu | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SA-6
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-7
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SA-8 — Apply the following systems security and privacy engineering principles in the specification, design, development, implementation, and modification of the system and system components: {{ insert: para
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
@@ -3339,15 +2630,9 @@ procedu | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SA-9(2) (Enhancement) — Require providers of the following external system services to identify the functions, ports, protocols, and other services required for the use of such services: {{ insert: param, sa-09.02_odp }}. In
+#### SA-9(2) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SA-9(2)[a] | Require providers of the following external system services to identify the functions, ports, protocols, and other servi | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3399,15 +2684,9 @@ procedu | Yes |
 | `sa-11-gcp-001` | GCP | Cloud Build includes test steps | Cloud Build | `cloudbuild.projects.builds.list` | high | [a], [b] |
 
 
-#### SA-11(1) (Enhancement) — Require the developer of the system, system component, or system service to employ static code analysis tools to identify common flaws and document the results of the analysis. Static code analysis pr
+#### SA-11(1) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SA-11(1)[a] | Require the developer of the system, system component, or system service to employ static code analysis tools to identif | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3418,54 +2697,9 @@ procedu | Yes |
 | `sa-11-1-gcp-001` | GCP | Cloud Build integrated with SAST tools | Cloud Build | `cloudbuild.projects.builds.list` | high | [a] |
 
 
-#### SA-12
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-13
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-14
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SA-15 — Require the developer of the system, system component, or system service to follow a documented development process that: Explicitly addresses security and privacy requirements; Identifies the standar
 
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-16 — Require the developer of the system, system component, or system service to provide the following training on the correct use and operation of the implemented security and privacy functions, controls,
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-17 — Require the developer of the system, system component, or system service to produce a design specification and security and privacy architecture that: Is consistent with the organization’s security an
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-18
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-19
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-20 — Reimplement or custom develop the following critical system components: {{ insert: param, sa-20_odp }}. Organizations determine that certain system components likely cannot be trusted due to specific 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-21 — Require that the developer of {{ insert: param, sa-21_odp.01 }}: Has appropriate access authorizations as determined by assigned {{ insert: param, sa-21_odp.02 }} ; and Satisfies the following additio
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
 
 
 #### SA-22 — Replace system components when support for the components is no longer available from the developer, vendor, or manufacturer; or Provide the following options for alternative sources for continued sup
@@ -3489,19 +2723,9 @@ procedu | Yes |
 | `sa-22-gcp-001` | GCP | Security Command Center detects EOL software | Security Command Center | `securitycenter.organizations.findings.list` | high | [a] |
 
 
-#### SA-23 — Employ {{ insert: param, sa-23_odp.01 }} on {{ insert: param, sa-23_odp.02 }} supporting mission essential services or functions to increase the trustworthiness in those systems or components. It is o
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SA-24 — Design organizational systems, system components, or system services to achieve cyber resiliency by: Defining the following cyber resiliency goals: {{ insert: param, sa-24_odp.01 }}. Defining the foll
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### SC — System and Communications Protection
 
-**Controls:** 51 | **Automated:** 8 | **Manual:** 43 | **Objectives:** 25 | **Checks:** AWS 31, Azure 21, GCP 21
+**Controls:** 19 | **Automated:** 8 | **Manual:** 11 | **Objectives:** 25 | **Checks:** AWS 37, Azure 25, GCP 24
 
 #### SC-1 — Develop, document, and disseminate to {{ insert: param, sc-1_prm_1 }}: {{ insert: param, sc-01_odp.03 }} system and communications protection policy that: Addresses purpose, scope, roles, responsibili
 
@@ -3513,11 +2737,6 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SC-3 — Isolate security functions from nonsecurity functions. Security functions are isolated from nonsecurity functions by means of an isolation boundary implemented within a system via partitions and domai
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
 #### SC-4 — Prevent unauthorized and unintended information transfer via shared system resources. Preventing unauthorized and unintended information transfer via shared system resources stops information produced
 
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
@@ -3526,11 +2745,6 @@ procedu | Yes |
 #### SC-5 — {{ insert: param, sc-05_odp.02 }} the effects of the following types of denial-of-service events: {{ insert: param, sc-05_odp.01 }} ; and Employ the following controls to achieve the denial-of-service
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-6 — Protect the availability of resources by allocating {{ insert: param, sc-06_odp.01 }} by {{ insert: param, sc-06_odp.02 }}. Priority protection prevents lower-priority processes from delaying or inter
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### SC-7 — Monitor and control communications at the external managed interfaces to the system and at key internal managed interfaces within the system; Implement subnetworks for publicly accessible system compo
@@ -3566,16 +2780,9 @@ procedu | Yes |
 | `sc-7-gcp-003` | GCP | Packet Mirroring or IDS configured | VPC | `compute.packetMirrorings.list` | medium | [a], [b] |
 
 
-#### SC-7(4) (Enhancement) — Implement a managed interface for each external telecommunication service; Establish a traffic flow policy for each managed interface; Protect the confidentiality and integrity of the information bein
+#### SC-7(4) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SC-7(4)[a] | Implement a managed interface for each external telecommunication service | Yes |
-| SC-7(4)[b] | Establish a traffic flow policy for each managed interface | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3583,32 +2790,34 @@ procedu | Yes |
 |----------|-------|------|---------|---------|----------|------------|
 | `sc-7-4-aws-001` | AWS | Public subnets isolated from private subnets | VPC | `ec2.describe_subnets` | high | [a], [b] |
 | `sc-7-4-aws-002` | AWS | NAT Gateway used for private subnet outbound | VPC | `ec2.describe_nat_gateways` | high | [a], [b] |
+| `ac-3-8-aws-001` | AWS | S3 Block Public Access enabled at account level | S3 | `s3control.get_public_access_block` | high |  |
+| `sc-7-21-aws-001` | AWS | Default security group restricts all traffic | EC2 | `ec2.describe_security_groups` | high | [a], [b] |
+| `sc-7-21-aws-002` | AWS | NACLs implement deny-by-default | VPC | `ec2.describe_network_acls` | medium | [a], [b] |
 | `sc-7-4-azure-001` | AZURE | DMZ subnet implemented | Network | `network.virtual_networks.list` | high | [a], [b] |
+| `ac-3-8-azure-001` | AZURE | Storage accounts block public blob access | Storage | `storage.storage_accounts.list` | high |  |
+| `sc-7-21-azure-001` | AZURE | NSG default deny rules active | Network | `network.network_security_groups.list` | high | [a], [b] |
+| `sc-7-21-azure-002` | AZURE | Azure Firewall default deny configured | Network | `network.azure_firewalls.list` | high | [a], [b] |
 | `sc-7-4-gcp-001` | GCP | Public-facing resources in dedicated subnets | VPC | `compute.subnetworks.list` | high | [a], [b] |
+| `ac-3-8-gcp-001` | GCP | Uniform bucket-level access org policy enforced | OrgPolicy | `orgpolicy.projects.policies.get` | high |  |
+| `sc-7-21-gcp-001` | GCP | Default deny ingress firewall rule | VPC | `compute.firewalls.list` | high | [a], [b] |
+| `sc-7-21-gcp-002` | GCP | Default allow egress reviewed | VPC | `compute.firewalls.list` | medium | [a], [b] |
 
 
-#### SC-7(5) (Enhancement) — Deny network communications traffic by default and allow network communications traffic by exception {{ insert: param, sc-07.05_odp.01 }}. Denying by default and allowing by exception applies to inbou
+#### SC-7(5) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 6
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SC-7(5)[a] | Deny network communications traffic by default and allow network communications traffic by exception {{ insert: param, s | No |
-| SC-7(5)[b] | network communications traffic is allowed by exception {{ insert: param, sc-07.05_odp.01 }}. System and communications p | No |
-| SC-7(5)[c] | network communications traffic is allowed by exception {{ insert: param, sc-07.05_odp.01 }}. System and communications p | No |
-| SC-7(5)[d] | network communications traffic is allowed by exception {{ insert: param, sc-07.05_odp.01 }}. System and communications p | No |
-| SC-7(5)[e] | network communications traffic is allowed by exception {{ insert: param, sc-07.05_odp.01 }}. System and communications p | No |
-| SC-7(5)[f] | network communications traffic is allowed by exception {{ insert: param, sc-07.05_odp.01 }}. System and communications p | No |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
 | Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
 |----------|-------|------|---------|---------|----------|------------|
 | `sc-7-5-aws-001` | AWS | Defense-in-depth architecture layers present | Multiple | `ec2/guardduty/cloudtrail/kms` | high |  |
+| `ac-4-4-aws-001` | AWS | No S3 buckets publicly accessible | S3 | `s3.get_bucket_policy_status` | critical | [a], [b], [c], [d], [e] |
+| `ac-4-4-aws-002` | AWS | No EC2 instances with public IPs in CUI subnets | EC2 | `ec2.describe_instances` | high | [a], [b], [c], [d], [e] |
 | `sc-7-5-azure-001` | AZURE | Defense-in-depth architecture layers present | Multiple | `network/keyvault/monitor/security` | high |  |
+| `ac-4-4-azure-001` | AZURE | No storage accounts with public blob access | Storage | `storage.storage_accounts.list` | critical | [a], [b], [c], [d], [e] |
 | `sc-7-5-gcp-001` | GCP | Defense-in-depth architecture layers present | Multiple | `compute/kms/logging/orgpolicy` | high |  |
+| `ac-4-4-gcp-001` | GCP | No Cloud Storage buckets publicly accessible | Storage | `storage.buckets.getIamPolicy` | critical | [a], [b], [c], [d], [e] |
 
 **Documentation Requirements:**
 
@@ -3620,17 +2829,9 @@ procedu | Yes |
 - **SC-7(5)[f]**: identified systems engineering principles that promote effective information security are employed. — *Provide documentation or process evidence: identified systems engineering principles that promote effective information security are employed.*
 
 
-#### SC-7(7) (Enhancement) — Prevent split tunneling for remote devices connecting to organizational systems unless the split tunnel is securely provisioned using {{ insert: param, sc-07.07_odp }}. Split tunneling is the process 
+#### SC-7(7) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 3
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SC-7(7)[a] | Prevent split tunneling for remote devices connecting to organizational systems unless the split tunnel is securely prov | Yes |
-| SC-7(7)[b] | Prevent split tunneling for remote devices connecting to organizational systems unless the split tunnel is securely prov | Yes |
-| SC-7(7)[c] | Prevent split tunneling for remote devices connecting to organizational systems unless the split tunnel is securely prov | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3645,15 +2846,9 @@ procedu | Yes |
 | `sc-7-7-gcp-001` | GCP | VPN full tunnel policy enforced | VPN | `compute.vpnTunnels.list` | high | [a] |
 
 
-#### SC-7(8) (Enhancement) — Route {{ insert: param, sc-07.08_odp.01 }} to {{ insert: param, sc-07.08_odp.02 }} through authenticated proxy servers at managed interfaces. External networks are networks outside of organizational c
+#### SC-7(8) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SC-7(8)[a] | Route {{ insert: param, sc-07.08_odp.01 }} to {{ insert: param, sc-07.08_odp.02 }} through authenticated proxy servers a | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3675,17 +2870,6 @@ procedu | Yes |
 |----|-----------|-------------|
 | SC-7(21)[a] | Employ boundary protection mechanisms to isolate {{ insert: param, sc-07.21_odp.01 }} supporting {{ insert: param, sc-07 | Yes |
 | SC-7(21)[b] | cross-domain devices that separate subnetworks | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `sc-7-21-aws-001` | AWS | Default security group restricts all traffic | EC2 | `ec2.describe_security_groups` | high | [a], [b] |
-| `sc-7-21-aws-002` | AWS | NACLs implement deny-by-default | VPC | `ec2.describe_network_acls` | medium | [a], [b] |
-| `sc-7-21-azure-001` | AZURE | NSG default deny rules active | Network | `network.network_security_groups.list` | high | [a], [b] |
-| `sc-7-21-azure-002` | AZURE | Azure Firewall default deny configured | Network | `network.azure_firewalls.list` | high | [a], [b] |
-| `sc-7-21-gcp-001` | GCP | Default deny ingress firewall rule | VPC | `compute.firewalls.list` | high | [a], [b] |
-| `sc-7-21-gcp-002` | GCP | Default allow egress reviewed | VPC | `compute.firewalls.list` | medium | [a], [b] |
 
 
 #### SC-8 — Protect the {{ insert: param, sc-08_odp }} of transmitted information. Protecting the confidentiality and integrity of transmitted information applies to internal and external networks as well as any 
@@ -3713,11 +2897,6 @@ procedu | Yes |
 | `sc-8-gcp-002` | GCP | Cloud SQL requires SSL | Cloud SQL | `sqladmin.instances.list` | high | [a], [b], [c] |
 
 
-#### SC-9
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SC-10 — Terminate the network connection associated with a communications session at the end of the session or after {{ insert: param, sc-10_odp }} of inactivity. Network disconnect applies to internal and ex
 
 **Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 3
@@ -3738,11 +2917,6 @@ procedu | Yes |
 | `sc-10-aws-002` | AWS | API Gateway timeout configured | API Gateway | `apigateway.get_rest_apis` | medium | [a], [b], [c] |
 | `sc-10-azure-001` | AZURE | Application Gateway idle timeout configured | Network | `network.application_gateways.list` | medium | [a], [b], [c] |
 | `sc-10-gcp-001` | GCP | Load balancer timeout configured | Compute | `compute.backendServices.list` | medium | [a], [b], [c] |
-
-
-#### SC-11 — Provide a {{ insert: param, sc-11_odp.01 }} isolated trusted communications path for communications between the user and the trusted components of the system; and Permit users to invoke the trusted co
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### SC-12 — Establish and manage cryptographic keys when cryptography is employed within the system in accordance with the following key management requirements: {{ insert: param, sc-12_odp }}. Cryptographic key 
@@ -3789,11 +2963,6 @@ procedu | Yes |
 | `sc-13-gcp-001` | GCP | CMEK uses FIPS-validated Cloud KMS | KMS | `cloudkms.projects.locations.keyRings.cryptoKeys.list` | high | [a] |
 
 
-#### SC-14
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SC-15 — Prohibit remote activation of collaborative computing devices and applications with the following exceptions: {{ insert: param, sc-15_odp }} ; and Provide an explicit indication of use to users physic
 
 **Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 3
@@ -3811,11 +2980,6 @@ procedu | Yes |
 - **SC-15[a]**: collaborative computing devices are identified. — *Provide documentation showing that collaborative computing devices are identified and documented.*
 - **SC-15[b]**: collaborative computing devices provide indication to users of devices in use. — *Provide documentation or process evidence: collaborative computing devices provide indication to users of devices in use.*
 - **SC-15[c]**: remote activation of collaborative computing devices is prohibited. — *Provide documentation or process evidence: remote activation of collaborative computing devices is prohibited.*
-
-
-#### SC-16 — Associate {{ insert: param, sc-16_prm_1 }} with information exchanged between systems and between system components. Security and privacy attributes can be explicitly or implicitly associated with the
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### SC-17 — Issue public key certificates under an {{ insert: param, sc-17_odp }} or obtain public key certificates from an approved service provider; and Include only approved trust anchors in trust stores or ce
@@ -3841,11 +3005,6 @@ procedu | Yes |
 | `sc-18-aws-001` | AWS | WAF rules block malicious scripts | WAFv2 | `wafv2.list_web_acls` | high | [a], [b] |
 | `sc-18-azure-001` | AZURE | WAF OWASP rules enabled | Network | `network.web_application_firewall_policies.list` | high | [a], [b] |
 | `sc-18-gcp-001` | GCP | Cloud Armor preconfigured WAF rules | Cloud Armor | `compute.securityPolicies.list` | high | [a], [b] |
-
-
-#### SC-19 — Technology-specific; addressed as any other technology or protocol.
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
 
 
 #### SC-20 — Provide additional data origin authentication and integrity verification artifacts along with the authoritative name resolution data the system returns in response to external name/address resolution 
@@ -3883,26 +3042,6 @@ procedu | Yes |
 | `sc-23-gcp-001` | GCP | Managed SSL certificates valid | Compute | `compute.sslCertificates.list` | high | [a] |
 
 
-#### SC-24 — Fail to a {{ insert: param, sc-24_odp.02 }} for the following failures on the indicated components while preserving {{ insert: param, sc-24_odp.03 }} in failure: {{ insert: param, sc-24_odp.01 }}. Fai
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-25 — Employ minimal functionality and information storage on the following system components: {{ insert: param, sc-25_odp }}. The deployment of system components with minimal functionality reduces the need
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-26 — Include components within organizational systems specifically designed to be the target of malicious attacks for detecting, deflecting, and analyzing such attacks. Decoys (i.e., honeypots, honeynets, 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-27 — Include within organizational systems the following platform independent applications: {{ insert: param, sc-27_odp }}. Platforms are combinations of hardware, firmware, and software components used to
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SC-28 — Protect the {{ insert: param, sc-28_odp.01 }} of the following information at rest: {{ insert: param, sc-28_odp.02 }}. Information at rest refers to the state of information when it is not in process 
 
 **Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 2
@@ -3920,15 +3059,9 @@ procedu | Yes |
 - **SC-28[b]**: use of Voice over Internet Protocol (VoIP) technologies is monitored. — *Provide documentation or process evidence: use of Voice over Internet Protocol (VoIP) technologies is monitored.*
 
 
-#### SC-28(1) (Enhancement) — Implement cryptographic mechanisms to prevent unauthorized disclosure and modification of the following information at rest on {{ insert: param, sc-28.01_odp.02 }}: {{ insert: param, sc-28.01_odp.01 }
+#### SC-28(1) (Enhancement)
 
-**Baseline:** Low/Moderate/High | **Type:** Automated | **Objectives:** 1
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SC-28(1)[a] | Implement cryptographic mechanisms to prevent unauthorized disclosure and modification of the following information at r | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -3938,62 +3071,18 @@ procedu | Yes |
 | `sc-28-1-aws-002` | AWS | RDS encryption at rest enabled | RDS | `rds.describe_db_instances` | high | [a] |
 | `sc-28-1-aws-003` | AWS | DynamoDB encryption enabled | DynamoDB | `dynamodb.describe_table` | high | [a] |
 | `sc-28-1-aws-004` | AWS | EBS encryption by default enabled | EC2 | `ec2.get_ebs_encryption_by_default` | high | [a] |
+| `mp-4-2-aws-001` | AWS | Backup vault encrypted with KMS | Backup | `backup.list_backup_vaults` | high | [a] |
+| `mp-4-2-aws-002` | AWS | Backup vault access policy restricts access | Backup | `backup.get_backup_vault_access_policy` | high | [a] |
+| `mp-4-2-aws-003` | AWS | S3 cross-region replication encrypted | S3 | `s3.get_bucket_replication` | medium | [a] |
 | `sc-28-1-azure-001` | AZURE | Storage account encryption with CMK | Storage | `storage.storage_accounts.list` | high | [a] |
 | `sc-28-1-azure-002` | AZURE | Azure SQL TDE with CMK | SQL | `sql.encryption_protectors.get` | high | [a] |
 | `sc-28-1-azure-003` | AZURE | VM disk encryption enabled | Compute | `compute.disks.list` | high | [a] |
+| `mp-4-2-azure-001` | AZURE | Recovery Services vault encrypted | Recovery Services | `recoveryservices.vaults.list` | high | [a] |
+| `mp-4-2-azure-002` | AZURE | Backup vault soft delete enabled | Recovery Services | `recoveryservices.vaults.list` | medium | [a] |
 | `sc-28-1-gcp-001` | GCP | Cloud Storage CMEK encryption | Storage | `storage.buckets.get` | high | [a] |
 | `sc-28-1-gcp-002` | GCP | Cloud SQL CMEK encryption | Cloud SQL | `sqladmin.instances.list` | high | [a] |
 | `sc-28-1-gcp-003` | GCP | BigQuery CMEK encryption | BigQuery | `bigquery.datasets.list` | high | [a] |
-
-
-#### SC-29 — Employ a diverse set of information technologies for the following system components in the implementation of the system: {{ insert: param, sc-29_odp }}. Increasing the diversity of information techno
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-30 — Employ the following concealment and misdirection techniques for {{ insert: param, sc-30_odp.02 }} at {{ insert: param, sc-30_odp.03 }} to confuse and mislead adversaries: {{ insert: param, sc-30_odp.
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-31 — Perform a covert channel analysis to identify those aspects of communications within the system that are potential avenues for covert {{ insert: param, sc-31_odp }} channels; and Estimate the maximum 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-32 — Partition the system into {{ insert: param, sc-32_odp.01 }} residing in separate {{ insert: param, sc-32_odp.02 }} domains or environments based on {{ insert: param, sc-32_odp.03 }}. System partitioni
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-33
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-34 — For {{ insert: param, sc-34_odp.01 }} , load and execute: The operating environment from hardware-enforced, read-only media; and The following applications from hardware-enforced, read-only media: {{ 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-35 — Include system components that proactively seek to identify network-based malicious code or malicious websites. External malicious code identification differs from decoys in [SC-26](#sc-26) in that th
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-36 — Distribute the following processing and storage components across multiple {{ insert: param, sc-36_prm_1 }}: {{ insert: param, sc-36_prm_2 }}. Distributing processing and storage across multiple physi
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-37 — Employ the following out-of-band channels for the physical delivery or electronic transmission of {{ insert: param, sc-37_odp.02 }} to {{ insert: param, sc-37_odp.03 }}: {{ insert: param, sc-37_odp.01
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-38 — Employ the following operations security controls to protect key organizational information throughout the system development life cycle: {{ insert: param, sc-38_odp }}. Operations security (OPSEC) is
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
+| `mp-4-2-gcp-001` | GCP | Backup encrypted with CMEK | Backup and DR | `backupdr.projects.locations.backupVaults.list` | high | [a] |
 
 
 #### SC-39 — Maintain a separate execution domain for each executing system process. Systems can maintain separate execution domains for each executing process by assigning each process a separate address space. E
@@ -4001,69 +3090,14 @@ procedu | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SC-40 — Protect external and internal {{ insert: param, sc-40_prm_1 }} from the following signal parameter attacks: {{ insert: param, sc-40_prm_2 }}. Wireless link protection applies to internal and external 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-41 — {{ insert: param, sc-41_odp.02 }} disable or remove {{ insert: param, sc-41_odp.01 }} on the following systems or system components: {{ insert: param, sc-41_odp.03 }}. Connection ports include Univers
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-42 — Prohibit {{ insert: param, sc-42_odp.01 }} ; and Provide an explicit indication of sensor use to {{ insert: param, sc-42_odp.05 }}. Sensor capability and data applies to types of systems or system com
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-43 — Establish usage restrictions and implementation guidelines for the following system components: {{ insert: param, sc-43_odp }} ; and Authorize, monitor, and control the use of such components within t
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-44 — Employ a detonation chamber capability within {{ insert: param, sc-44_odp }}. Detonation chambers, also known as dynamic execution environments, allow organizations to open email attachments, execute 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SC-45 — Synchronize system clocks within and between systems and system components. Time synchronization of system clocks is essential for the correct execution of many system services, including identificati
 
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SC-46 — Implement a policy enforcement mechanism {{ insert: param, sc-46_odp }} between the physical and/or network interfaces for the connecting security domains. For logical policy enforcement mechanisms, o
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-47 — Establish {{ insert: param, sc-47_odp }} for system operations organizational command and control. An incident, whether adversarial- or nonadversarial-based, can disrupt established communications pat
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-48 — Relocate {{ insert: param, sc-48_odp.01 }} to {{ insert: param, sc-48_odp.02 }} under the following conditions or circumstances: {{ insert: param, sc-48_odp.03 }}. Adversaries may take various paths a
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-49 — Implement hardware-enforced separation and policy enforcement mechanisms between {{ insert: param, sc-49_odp }}. System owners may require additional strength of mechanism and robustness to ensure dom
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-50 — Implement software-enforced separation and policy enforcement mechanisms between {{ insert: param, sc-50_odp }}. System owners may require additional strength of mechanism to ensure domain separation 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SC-51 — Employ hardware-based, write-protect for {{ insert: param, sc-51_odp.01 }} ; and Implement specific procedures for {{ insert: param, sc-51_odp.02 }} to manually disable hardware write-protect for firm
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### SI — System and Information Integrity
 
-**Controls:** 23 | **Automated:** 4 | **Manual:** 19 | **Objectives:** 14 | **Checks:** AWS 21, Azure 16, GCP 16
+**Controls:** 12 | **Automated:** 4 | **Manual:** 8 | **Objectives:** 14 | **Checks:** AWS 18, Azure 14, GCP 14
 
 #### SI-1 — Develop, document, and disseminate to {{ insert: param, si-1_prm_1 }}: {{ insert: param, si-01_odp.03 }} system and information integrity policy that: Addresses purpose, scope, roles, responsibilities
 
@@ -4119,10 +3153,14 @@ procedu | Yes |
 | `si-3-aws-001` | AWS | GuardDuty malware protection enabled | GuardDuty | `guardduty.get_detector` | high | [a] |
 | `si-3-aws-002` | AWS | EC2 instances have endpoint protection | SSM | `ssm.list_inventory_entries` | high | [a] |
 | `si-3-aws-003` | AWS | S3 Malware Scanning configured | GuardDuty | `guardduty.get_detector()` | medium | [a] |
+| `si-3-1-aws-001` | AWS | Endpoint protection auto-update enabled | SSM | `ssm.describe_instance_information()` | high | [a] |
+| `si-3-1-aws-002` | AWS | GuardDuty threat intelligence auto-updated | GuardDuty | `guardduty.get_detector` | medium | [a] |
 | `si-3-azure-001` | AZURE | Defender for Endpoint deployed | Security Center | `security.pricings.get` | high | [a] |
 | `si-3-azure-002` | AZURE | Microsoft Antimalware extension deployed | Compute | `compute.virtual_machine_extensions.list` | high | [a] |
+| `si-3-1-azure-001` | AZURE | Defender for Endpoint signature updates current | Security Center | `security.pricings.get` | high | [a] |
 | `si-3-gcp-001` | GCP | Endpoint protection deployed on GCE instances | Compute | `compute.instances.list` | high | [a] |
 | `si-3-gcp-002` | GCP | Malware scanning enabled for Cloud Storage | Storage | `storage.buckets.list` | medium | [a] |
+| `si-3-1-gcp-001` | GCP | Endpoint protection auto-update configured | Compute | `compute.instances.list` | high | [a] |
 
 
 #### SI-3(1) (Enhancement)
@@ -4134,15 +3172,6 @@ procedu | Yes |
 | ID | Objective | Automatable |
 |----|-----------|-------------|
 | SI-3(1)[a] | Organization-defined requirement | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `si-3-1-aws-001` | AWS | Endpoint protection auto-update enabled | SSM | `ssm.describe_instance_information()` | high | [a] |
-| `si-3-1-aws-002` | AWS | GuardDuty threat intelligence auto-updated | GuardDuty | `guardduty.get_detector` | medium | [a] |
-| `si-3-1-azure-001` | AZURE | Defender for Endpoint signature updates current | Security Center | `security.pricings.get` | high | [a] |
-| `si-3-1-gcp-001` | GCP | Endpoint protection auto-update configured | Compute | `compute.instances.list` | high | [a] |
 
 
 #### SI-3(2) (Enhancement)
@@ -4156,18 +3185,6 @@ procedu | Yes |
 | SI-3(2)[a] | Organization-defined requirement | Yes |
 | SI-3(2)[b] | Organization-defined requirement | Yes |
 | SI-3(2)[c] | Organization-defined requirement | Yes |
-
-**Automated Checks:**
-
-| Check ID | Cloud | Name | Service | API Call | Severity | Objectives |
-|----------|-------|------|---------|---------|----------|------------|
-| `si-3-2-aws-001` | AWS | Periodic vulnerability scanning configured | Inspector | `inspector2.list_account_permissions` | high | [a], [b], [c] |
-| `si-3-2-aws-002` | AWS | GuardDuty real-time malware scanning | GuardDuty | `guardduty.get_detector` | high | [a], [b], [c] |
-| `si-3-2-aws-003` | AWS | S3 object scanning for uploads | GuardDuty | `guardduty.get_detector()` | medium | [a], [b], [c] |
-| `si-3-2-azure-001` | AZURE | Scheduled VM vulnerability scans configured | Security Center | `assessments.list` | high | [a], [b], [c] |
-| `si-3-2-azure-002` | AZURE | Real-time protection enabled on endpoints | Compute | `compute.virtual_machine_extensions.list` | high | [a], [b], [c] |
-| `si-3-2-gcp-001` | GCP | Container vulnerability scanning continuous | Container Analysis | `containeranalysis.projects.occurrences.list` | high | [a], [b], [c] |
-| `si-3-2-gcp-002` | GCP | Web Security Scanner periodic scans | SCC | `websecurityscanner.projects.scanConfigs.list` | medium | [a], [b], [c] |
 
 
 #### SI-4 — Monitor the system to detect: Attacks and indicators of potential attacks in accordance with the following monitoring objectives: {{ insert: param, si-04_odp.01 }} ; and Unauthorized local, network, a
@@ -4197,16 +3214,9 @@ procedu | Yes |
 | `si-4-gcp-003` | GCP | Event Threat Detection monitors for attacks | SCC | `securitycenter.securityHealthAnalyticsSettings` | high | [a], [b], [c] |
 
 
-#### SI-4(4) (Enhancement) — Determine criteria for unusual or unauthorized activities or conditions for inbound and outbound communications traffic; Monitor inbound and outbound communications traffic {{ insert: param, si-4.4_pr
+#### SI-4(4) (Enhancement)
 
-**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 2
-
-**Assessment Objectives:**
-
-| ID | Objective | Automatable |
-|----|-----------|-------------|
-| SI-4(4)[a] | Determine criteria for unusual or unauthorized activities or conditions for inbound and outbound communications traffic | Yes |
-| SI-4(4)[b] | Monitor inbound and outbound communications traffic {{ insert: param, si-4.4_prm_1 }} for {{ insert: param, si-4.4_prm_2 | Yes |
+**Baseline:** Moderate/High | **Type:** Automated | **Objectives:** 0
 
 **Automated Checks:**
 
@@ -4263,11 +3273,6 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SI-9
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SI-10 — Check the validity of the following information inputs: {{ insert: param, si-10_odp }}. Checking the valid syntax and semantics of system inputs—including character set, length, numerical range, and a
 
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
@@ -4283,64 +3288,14 @@ procedu | Yes |
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SI-13 — Determine mean time to failure (MTTF) for the following system components in specific environments of operation: {{ insert: param, si-13_odp.01 }} ; and Provide substitute system components and a mean
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-14 — Implement non-persistent {{ insert: param, si-14_odp.01 }} that are initiated in a known state and terminated {{ insert: param, si-14_odp.02 }}. Implementation of non-persistent components and service
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-15 — Validate information output from the following software programs and/or applications to ensure that the information is consistent with the expected content: {{ insert: param, si-15_odp }}. Certain typ
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SI-16 — Implement the following controls to protect the system memory from unauthorized code execution: {{ insert: param, si-16_odp }}. Some adversaries launch attacks with the intent of executing code in non
 
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SI-17 — Implement the indicated fail-safe procedures when the indicated failures occur: {{ insert: param, si-17_prm_1 }}. Failure conditions include the loss of communications among critical system components
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-18 — Check the accuracy, relevance, timeliness, and completeness of personally identifiable information across the information life cycle {{ insert: param, si-18_prm_1 }} ; and Correct or delete inaccurate
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-19 — Remove the following elements of personally identifiable information from datasets: {{ insert: param, si-19_odp.01 }} ; and Evaluate {{ insert: param, si-19_odp.02 }} for effectiveness of de-identific
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-20 — Embed data or capabilities in the following systems or system components to determine if organizational data has been exfiltrated or improperly removed from the organization: {{ insert: param, si-20_o
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-21 — Refresh {{ insert: param, si-21_odp.01 }} at {{ insert: param, si-21_odp.02 }} or generate the information on demand and delete the information when no longer needed. Retaining information for longer 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-22 — Identify the following alternative sources of information for {{ insert: param, si-22_odp.02 }}: {{ insert: param, si-22_odp.01 }} ; and Use an alternative information source for the execution of esse
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
-#### SI-23 — Based on {{ insert: param, si-23_odp.01 }}: Fragment the following information: {{ insert: param, si-23_odp.02 }} ; and Distribute the fragmented information across the following systems or system com
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 ### SR — Supply Chain Risk Management
 
-**Controls:** 12 | **Automated:** 3 | **Manual:** 9 | **Objectives:** 5 | **Checks:** AWS 5, Azure 3, GCP 3
+**Controls:** 9 | **Automated:** 3 | **Manual:** 6 | **Objectives:** 5 | **Checks:** AWS 5, Azure 3, GCP 3
 
 #### SR-1 — Develop, document, and disseminate to {{ insert: param, sr-1_prm_1 }}: {{ insert: param, sr-01_odp.03 }} supply chain risk management policy that: Addresses purpose, scope, roles, responsibilities, ma
 
@@ -4387,11 +3342,6 @@ procedu | Yes |
 | `sr-3-gcp-001` | GCP | Cloud Build includes dependency scanning | Cloud Build | `cloudbuild.projects.builds.list` | high | [a] |
 
 
-#### SR-4 — Document, monitor, and maintain valid provenance of the following systems, system components, and associated data: {{ insert: param, sr-04_odp }}. Every system and system component has a point of orig
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SR-5 — Employ the following acquisition strategies, contract tools, and procurement methods to protect against, identify, and mitigate supply chain risks: {{ insert: param, sr-05_odp }}. The use of the acqui
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
@@ -4402,19 +3352,9 @@ procedu | Yes |
 **Baseline:** Moderate/High | **Type:** Manual | **Objectives:** 0
 
 
-#### SR-7 — Employ the following Operations Security (OPSEC) controls to protect supply chain-related information for the system, system component, or system service: {{ insert: param, sr-07_odp }}. Supply chain 
-
-**Baseline:** N/A | **Type:** Manual | **Objectives:** 0
-
-
 #### SR-8 — Establish agreements and procedures with entities involved in the supply chain for the system, system component, or system service for the {{ insert: param, sr-08_odp.01 }}. The establishment of agree
 
 **Baseline:** Low/Moderate/High | **Type:** Manual | **Objectives:** 0
-
-
-#### SR-9 — Implement a tamper protection program for the system, system component, or system service. Anti-tamper technologies, tools, and techniques provide a level of protection for systems, system components,
-
-**Baseline:** High | **Type:** Manual | **Objectives:** 0
 
 
 #### SR-10 — Inspect the following systems or system components {{ insert: param, sr-10_odp.02 }} to detect tampering: {{ insert: param, sr-10_odp.01 }}. The inspection of systems or systems components for tamper 
@@ -4454,7 +3394,7 @@ procedu | Yes |
 
 ### 7.1 How to Use This Guide
 
-For the 254 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.
+For the 114 controls classified as **Manual Review Required**, the scanner cannot make an automated determination. The 3PAO must independently assess these controls using the guidance below.
 
 For each manual control, this guide provides:
 
@@ -4488,71 +3428,6 @@ organizational personnel with information security with information security and
 
 ---
 
-##### Control AC-9: Notify the user, upon successful logon to the system, of the date and time of the last logon. Previous logon notification is applicable to system access via human user interfaces and access to systems that occurs in other types of architectures. Information about the last successful logon allows the user to recognize if the date and time provided is not consistent with the user’s last access. the user is notified, upon successful logon to the system, of the date and time of the last logon. Access control policy
-
-procedures addressing previous logon notification
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system notification messages
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developers Mechanisms implementing access control policy for previous logon notification
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-10: Limit the number of concurrent sessions for each {{ insert: param, ac-10_odp.01 }} to {{ insert: param, ac-10_odp.02 }}. Organizations may define the maximum number of concurrent sessions for system accounts globally, by account type, by account, or any combination thereof. For example, organizations may limit the number of concurrent sessions for system administrators or other individuals working in particularly sensitive domains or mission-critical applications. Concurrent session control addresses concurrent sessions for system accounts. It does not, however, address concurrent sessions by single users via multiple system accounts. the number of concurrent sessions for each {{ insert: param, ac-10_odp.01 }} is limited to {{ insert: param, ac-10_odp.02 }}. Access control policy
-
-procedures addressing concurrent session control
-
-system design documentation
-
-system configuration settings and associated documentation
-
-security plan
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developers Mechanisms implementing access control policy for concurrent session control
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-13: 
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control AC-14: Identify {{ insert: param, ac-14_odp }} that can be performed on the system without identification or authentication consistent with organizational mission and business functions; and Document and provide supporting rationale in the security plan for the system, user actions not requiring identification or authentication. Specific user actions may be permitted without identification or authentication if organizations determine that identification and authentication are not required for the specified user actions. Organizations may allow a limited number of user actions without identification or authentication, including when individuals access public websites or other publicly accessible federal systems, when individuals use mobile phones to receive calls, or when facsimiles are received. Organizations identify actions that normally require identification or authentication but may, under certain circumstances, allow identification or authentication mechanisms to be bypassed. Such bypasses may occur, for example, via a software-readable physical switch that commands bypass of the logon functionality and is protected from accidental or unmonitored use. Permitting actions without identification or authentication does not apply to situations where identification and authentication have already occurred and are not repeated but rather to situations where identification and authentication have not yet occurred. Organizations may decide that there are no user actions that can be performed on organizational systems without identification and authentication, and therefore, the value for the assignment operation can be "none."  {{ insert: param, ac-14_odp }} that can be performed on the system without identification or authentication consistent with organizational mission and business functions are identified; user actions not requiring identification or authentication are documented in the security plan for the system; a rationale for user actions not requiring identification or authentication is provided in the security plan for the system. Access control policy
 
 procedures addressing permitted actions without identification or authentication
@@ -4570,50 +3445,6 @@ system security plan
 other relevant documents or records System/network administrators
 
 organizational personnel with information security responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-15: 
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-16: Provide the means to associate {{ insert: param, ac-16_prm_1 }} with {{ insert: param, ac-16_prm_2 }} for information in storage, in process, and/or in transmission; Ensure that the attribute associations are made and retained with the information; Establish the following permitted security and privacy attributes from the attributes defined in [AC-16a](#ac-16_smt.a) for {{ insert: param, ac-16_prm_3 }}: {{ insert: param, ac-16_prm_4 }}; Determine the following permitted attribute values or ranges for each of the established attributes: {{ insert: param, ac-16_odp.09 }}; Audit changes to attributes; and Review {{ insert: param, ac-16_prm_6 }} for applicability {{ insert: param, ac-16_prm_7 }}. Information is represented internally within systems using abstractions known as data structures. Internal data structures can represent different types of entities, both active and passive. Active entities, also known as subjects, are typically associated with individuals, devices, or processes acting on behalf of individuals. Passive entities, also known as objects, are typically associated with data structures, such as records, buffers, tables, files, inter-process pipes, and communications ports. Security attributes, a form of metadata, are abstractions that represent the basic properties or characteristics of active and passive entities with respect to safeguarding information. Privacy attributes, which may be used independently or in conjunction with security attributes, represent the basic properties or characteristics of active or passive entities with respect to the management of personally identifiable information. Attributes can be either explicitly or implicitly associated with the information contained in organizational systems or system components.
-
-Attributes may be associated with active entities (i.e., subjects) that have the potential to send or receive information, cause information to flow among objects, or change the system state. These attributes may also be associated with passive entities (i.e., objects) that contain or receive information. The association of attributes to subjects and objects by a system is referred to as binding and is inclusive of setting the attribute value and the attribute type. Attributes, when bound to data or information, permit the enforcement of security and privacy policies for access control and information flow control, including data retention limits, permitted uses of personally identifiable information, and identification of personal information within data objects. Such enforcement occurs through organizational processes or system functions or mechanisms. The binding techniques implemented by systems affect the strength of attribute binding to information. Binding strength and the assurance associated with binding techniques play important parts in the trust that organizations have in the information flow enforcement process. The binding techniques affect the number and degree of additional reviews required by organizations. The content or assigned values of attributes can directly affect the ability of individuals to access organizational information.
-
-Organizations can define the types of attributes needed for systems to support missions or business functions. There are many values that can be assigned to a security attribute. By specifying the permitted attribute ranges and values, organizations ensure that attribute values are meaningful and relevant. Labeling refers to the association of attributes with the subjects and objects represented by the internal data structures within systems. This facilitates system-based enforcement of information security and privacy policies. Labels include classification of information in accordance with legal and compliance requirements (e.g., top secret, secret, confidential, controlled unclassified), information impact level; high value asset information, access authorizations, nationality; data life cycle protection (i.e., encryption and data expiration), personally identifiable information processing permissions, including individual consent to personally identifiable information processing, and contractor affiliation. A related term to labeling is marking. Marking refers to the association of attributes with objects in a human-readable form and displayed on system media. Marking enables manual, procedural, or process-based enforcement of information security and privacy policies. Security and privacy labels may have the same value as media markings (e.g., top secret, secret, confidential). See [MP-3](#mp-3) (Media Marking). the means to associate {{ insert: param, ac-16_odp.01 }} with {{ insert: param, ac-16_odp.03 }} for information in storage, in process, and/or in transmission are provided; the means to associate {{ insert: param, ac-16_odp.02 }} with {{ insert: param, ac-16_odp.04 }} for information in storage, in process, and/or in transmission are provided; attribute associations are made; attribute associations are retained with the information; the following permitted security attributes are established from the attributes defined in AC-16_ODP[01] for {{ insert: param, ac-16_odp.05 }}: {{ insert: param, ac-16_odp.07 }}; the following permitted privacy attributes are established from the attributes defined in AC-16_ODP[02] for {{ insert: param, ac-16_odp.06 }}: {{ insert: param, ac-16_odp.08 }}; the following permitted attribute values or ranges for each of the established attributes are determined: {{ insert: param, ac-16_odp.09 }}; changes to attributes are audited; {{ insert: param, ac-16_odp.07 }} are reviewed for applicability {{ insert: param, ac-16_odp.10 }}; {{ insert: param, ac-16_odp.08 }} are reviewed for applicability {{ insert: param, ac-16_odp.11 }}. Access control policy
-
-procedures addressing the association of security and privacy attributes to information in storage, in process, and in transmission
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-privacy plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security and privacy responsibilities
-
-system developers Organizational capability supporting and maintaining the association of security and privacy attributes to information in storage, in process, and in transmission
 
 **FedRAMP Baseline:** L2 | **Domain:** AC
 
@@ -4684,107 +3515,6 @@ organizational personnel with information security responsibilities Mechanisms i
 
 ---
 
-##### Control AC-23: Employ {{ insert: param, ac-23_odp.01 }} for {{ insert: param, ac-23_odp.02 }} to detect and protect against unauthorized data mining. Data mining is an analytical process that attempts to find correlations or patterns in large data sets for the purpose of data or knowledge discovery. Data storage objects include database records and database fields. Sensitive information can be extracted from data mining operations. When information is personally identifiable information, it may lead to unanticipated revelations about individuals and give rise to privacy risks. Prior to performing data mining activities, organizations determine whether such activities are authorized. Organizations may be subject to applicable laws, executive orders, directives, regulations, or policies that address data mining requirements. Organizational personnel consult with the senior agency official for privacy and legal counsel regarding such requirements.
-
-Data mining prevention and detection techniques include limiting the number and frequency of database queries to increase the work factor needed to determine the contents of databases, limiting types of responses provided to database queries, applying differential privacy techniques or homomorphic encryption, and notifying personnel when atypical database queries or accesses occur. Data mining protection focuses on protecting information from data mining while such information resides in organizational data stores. In contrast, [AU-13](#au-13) focuses on monitoring for organizational information that may have been mined or otherwise obtained from data stores and is available as open-source information residing on external sites, such as social networking or social media websites.
-
-[EO 13587](#0af071a6-cf8e-48ee-8c82-fe91efa20f94) requires the establishment of an insider threat program for deterring, detecting, and mitigating insider threats, including the safeguarding of sensitive information from exploitation, compromise, or other unauthorized disclosure. Data mining protection requires organizations to identify appropriate techniques to prevent and detect unnecessary or unauthorized data mining. Data mining can be used by an insider to collect organizational information for the purpose of exfiltration. {{ insert: param, ac-23_odp.01 }} are employed for {{ insert: param, ac-23_odp.02 }} to detect and protect against unauthorized data mining. Access control policy
-
-procedures for preventing and detecting data mining
-
-policies and procedures addressing authorized data mining techniques
-
-procedures addressing protection of data storage objects against data mining
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit logs
-
-system audit records
-
-procedures addressing differential privacy techniques
-
-notifications of atypical database queries or accesses
-
-documentation or reports of insider threat program
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with responsibilities for implementing data mining detection and prevention techniques for data storage objects
-
-legal counsel
-
-organizational personnel with information security and privacy responsibilities
-
-system developers Mechanisms implementing data mining prevention and detection
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-24: {{ insert: param, ac-24_odp.01 }} to ensure {{ insert: param, ac-24_odp.02 }} are applied to each access request prior to access enforcement. Access control decisions (also known as authorization decisions) occur when authorization information is applied to specific accesses. In contrast, access enforcement occurs when systems enforce access control decisions. While it is common to have access control decisions and access enforcement implemented by the same entity, it is not required, and it is not always an optimal implementation choice. For some architectures and distributed systems, different entities may make access control decisions and enforce access. {{ insert: param, ac-24_odp.01 }} are taken to ensure that {{ insert: param, ac-24_odp.02 }} are applied to each access request prior to access enforcement. Access control policy
-
-procedures addressing access control decisions
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel with responsibilities for establishing procedures regarding access control decisions to the system
-
-organizational personnel with information security responsibilities Mechanisms applying established access control decisions and procedures
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AC-25: Implement a reference monitor for {{ insert: param, ac-25_odp }} that is tamperproof, always invoked, and small enough to be subject to analysis and testing, the completeness of which can be assured. A reference monitor is a set of design requirements on a reference validation mechanism that, as a key component of an operating system, enforces an access control policy over all subjects and objects. A reference validation mechanism is always invoked, tamper-proof, and small enough to be subject to analysis and tests, the completeness of which can be assured (i.e., verifiable). Information is represented internally within systems using abstractions known as data structures. Internal data structures can represent different types of entities, both active and passive. Active entities, also known as subjects, are associated with individuals, devices, or processes acting on behalf of individuals. Passive entities, also known as objects, are associated with data structures, such as records, buffers, communications ports, tables, files, and inter-process pipes. Reference monitors enforce access control policies that restrict access to objects based on the identity of subjects or groups to which the subjects belong. The system enforces the access control policy based on the rule set established by the policy. The tamper-proof property of the reference monitor prevents determined adversaries from compromising the functioning of the reference validation mechanism. The always invoked property prevents adversaries from bypassing the mechanism and violating the security policy. The smallness property helps to ensure completeness in the analysis and testing of the mechanism to detect any weaknesses or deficiencies (i.e., latent flaws) that would prevent the enforcement of the security policy. a reference monitor is implemented for {{ insert: param, ac-25_odp }} that is tamper-proof, always invoked, and small enough to be subject to analysis and testing, the completeness of which can be assured. Access control policy
-
-procedures addressing access enforcement
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel with access enforcement responsibilities
-
-system/network administrators
-
-organizational personnel with information security responsibilities
-
-system developers Mechanisms implementing access enforcement functions
-
-**FedRAMP Baseline:** L2 | **Domain:** AC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### AT — Awareness and Training (Manual Controls)
 
 ##### Control AT-1: Develop, document, and disseminate to {{ insert: param, at-1_prm_1 }}: {{ insert: param, at-01_odp.03 }} awareness and training policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the awareness and training policy and the associated awareness and training controls; Designate an {{ insert: param, at-01_odp.04 }} to manage the development, documentation, and dissemination of the awareness and training policy and procedures; and Review and update the current awareness and training: Policy {{ insert: param, at-01_odp.05 }} and following {{ insert: param, at-01_odp.06 }} ; and Procedures {{ insert: param, at-01_odp.07 }} and following {{ insert: param, at-01_odp.08 }}. Awareness and training policy and procedures address the controls in the AT family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of awareness and training policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to awareness and training policy and procedures include assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. an awareness and training policy is developed and documented;  the awareness and training policy is disseminated to {{ insert: param, at-01_odp.01 }}; awareness and training procedures to facilitate the implementation of the awareness and training policy and associated access controls are developed and documented; the awareness and training procedures are disseminated to {{ insert: param, at-01_odp.02 }}. the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses purpose; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses scope; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses roles; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses responsibilities; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses management commitment; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses coordination among organizational entities; the {{ insert: param, at-01_odp.03 }} awareness and training policy addresses compliance; and the {{ insert: param, at-01_odp.03 }} awareness and training policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; and the {{ insert: param, at-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the awareness and training policy and procedures; the current awareness and training policy is reviewed and updated {{ insert: param, at-01_odp.05 }};  the current awareness and training policy is reviewed and updated following {{ insert: param, at-01_odp.06 }}; the current awareness and training procedures are reviewed and updated {{ insert: param, at-01_odp.07 }}; the current awareness and training procedures are reviewed and updated following {{ insert: param, at-01_odp.08 }}. System security plan
@@ -4817,36 +3547,6 @@ system security plan
 privacy plan
 
 other relevant documents or records Organizational personnel with information security and privacy training record retention responsibilities Mechanisms supporting the management of security and privacy training records
-
-**FedRAMP Baseline:** L2 | **Domain:** AT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AT-5: 
-
-**FedRAMP Baseline:** L2 | **Domain:** AT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AT-6: Provide feedback on organizational training results to the following personnel {{ insert: param, at-06_odp.01 }}: {{ insert: param, at-06_odp.02 }}. Training feedback includes awareness training results and role-based training results. Training results, especially failures of personnel in critical roles, can be indicative of a potentially serious problem. Therefore, it is important that senior managers are made aware of such situations so that they can take appropriate response actions. Training feedback supports the evaluation and update of organizational training described in [AT-2b](#at-2_smt.b) and [AT-3b](#at-3_smt.b). feedback on organizational training results is provided {{ insert: param, at-06_odp.01 }} to {{ insert: param, at-06_odp.02 }}. Security awareness and training policy
-
-procedures addressing security training records
-
-security awareness and training records
-
-security plan
-
-other relevant documents or records Organizational personnel with information security training record retention responsibilities Mechanisms supporting the management of security training records
 
 **FedRAMP Baseline:** L2 | **Domain:** AT
 
@@ -4903,35 +3603,6 @@ organizational personnel with information security and privacy responsibilities
 system/network administrators
 
 system developers Audit record storage capacity and related configuration settings
-
-**FedRAMP Baseline:** L2 | **Domain:** AU
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AU-10: Provide irrefutable evidence that an individual (or process acting on behalf of an individual) has performed {{ insert: param, au-10_odp }}. Types of individual actions covered by non-repudiation include creating information, sending and receiving messages, and approving information. Non-repudiation protects against claims by authors of not having authored certain documents, senders of not having transmitted messages, receivers of not having received messages, and signatories of not having signed documents. Non-repudiation services can be used to determine if information originated from an individual or if an individual took specific actions (e.g., sending an email, signing a contract, approving a procurement request, or receiving specific information). Organizations obtain non-repudiation services by employing various techniques or mechanisms, including digital signatures and digital message receipts. irrefutable evidence is provided that an individual (or process acting on behalf of an individual) has performed {{ insert: param, au-10_odp }}. Audit and accountability policy
-
-system security plan
-
-privacy plan
-
-procedures addressing non-repudiation
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-other relevant documents or records Organizational personnel with information security and privacy responsibilities
-
-system/network administrators
-
-system developers Mechanisms implementing non-repudiation capability
 
 **FedRAMP Baseline:** L2 | **Domain:** AU
 
@@ -5008,106 +3679,6 @@ system developers Mechanisms implementing audit record generation capability
 
 ---
 
-##### Control AU-13: Monitor {{ insert: param, au-13_odp.01 }} {{ insert: param, au-13_odp.02 }} for evidence of unauthorized disclosure of organizational information; and If an information disclosure is discovered: Notify {{ insert: param, au-13_odp.03 }} ; and Take the following additional actions: {{ insert: param, au-13_odp.04 }}. Unauthorized disclosure of information is a form of data leakage. Open-source information includes social networking sites and code-sharing platforms and repositories. Examples of organizational information include personally identifiable information retained by the organization or proprietary information generated by the organization. {{ insert: param, au-13_odp.01 }} is/are monitored {{ insert: param, au-13_odp.02 }} for evidence of unauthorized disclosure of organizational information; {{ insert: param, au-13_odp.03 }} are notified if an information disclosure is discovered; {{ insert: param, au-13_odp.04 }} are taken if an information disclosure is discovered. Audit and accountability policy
-
-system security plan
-
-privacy plan
-
-procedures addressing information disclosure monitoring
-
-system design documentation
-
-system configuration settings and associated documentation
-
-monitoring records
-
-system audit records
-
-other relevant documents or records Organizational personnel with responsibilities for monitoring open-source information and/or information sites
-
-organizational personnel with security and privacy responsibilities Mechanisms implementing monitoring for information disclosure
-
-**FedRAMP Baseline:** L2 | **Domain:** AU
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AU-14: Provide and implement the capability for {{ insert: param, au-14_odp.01 }} to {{ insert: param, au-14_odp.02 }} the content of a user session under {{ insert: param, au-14_odp.03 }} ; and Develop, integrate, and use session auditing activities in consultation with legal counsel and in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Session audits can include monitoring keystrokes, tracking websites visited, and recording information and/or file transfers. Session audit capability is implemented in addition to event logging and may involve implementation of specialized session capture technology. Organizations consider how session auditing can reveal information about individuals that may give rise to privacy risk as well as how to mitigate those risks. Because session auditing can impact system and network performance, organizations activate the capability under well-defined situations (e.g., the organization is suspicious of a specific individual). Organizations consult with legal counsel, civil liberties officials, and privacy officials to ensure that any legal, privacy, civil rights, or civil liberties issues, including the use of personally identifiable information, are appropriately addressed. {{ insert: param, au-14_odp.01 }} are provided with the capability to {{ insert: param, au-14_odp.02 }} the content of a user session under {{ insert: param, au-14_odp.03 }}; the capability for {{ insert: param, au-14_odp.01 }} to {{ insert: param, au-14_odp.02 }} the content of a user session under {{ insert: param, au-14_odp.03 }} is implemented; session auditing activities are developed in consultation with legal counsel and in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; session auditing activities are integrated in consultation with legal counsel and in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; session auditing activities are used in consultation with legal counsel and in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; Audit and accountability policy
-
-system security plan
-
-privacy plan
-
-procedures addressing user session auditing
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-other relevant documents or records Organizational personnel with information security and privacy responsibilities
-
-system/network administrators
-
-system developers
-
-legal counsel
-
-personnel with civil liberties responsibilities Mechanisms implementing user session auditing capability
-
-**FedRAMP Baseline:** L2 | **Domain:** AU
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AU-15: 
-
-**FedRAMP Baseline:** L2 | **Domain:** AU
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control AU-16: Employ {{ insert: param, au-16_odp.01 }} for coordinating {{ insert: param, au-16_odp.02 }} among external organizations when audit information is transmitted across organizational boundaries. When organizations use systems or services of external organizations, the audit logging capability necessitates a coordinated, cross-organization approach. For example, maintaining the identity of individuals who request specific services across organizational boundaries may often be difficult, and doing so may prove to have significant performance and privacy ramifications. Therefore, it is often the case that cross-organizational audit logging simply captures the identity of individuals who issue requests at the initial system, and subsequent systems record that the requests originated from authorized individuals. Organizations consider including processes for coordinating audit information requirements and protection of audit information in information exchange agreements. {{ insert: param, au-16_odp.01 }} for coordinating {{ insert: param, au-16_odp.02 }} among external organizations when audit information is transmitted across organizational boundaries are employed. Audit and accountability policy
-
-system security plan
-
-privacy plan
-
-procedures addressing methods for coordinating audit information among external organizations
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-other relevant documents or records Organizational personnel with responsibilities for coordinating audit information among external organizations
-
-organizational personnel with information security and privacy responsibilities Mechanisms implementing cross-organizational auditing
-
-**FedRAMP Baseline:** L2 | **Domain:** AU
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### CA — Assessment, Authorization, and Monitoring (Manual Controls)
 
 ##### Control CA-1: Develop, document, and disseminate to {{ insert: param, ca-1_prm_1 }}: {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the assessment, authorization, and monitoring policy and the associated assessment, authorization, and monitoring controls; Designate an {{ insert: param, ca-01_odp.04 }} to manage the development, documentation, and dissemination of the assessment, authorization, and monitoring policy and procedures; and Review and update the current assessment, authorization, and monitoring: Policy {{ insert: param, ca-01_odp.05 }} and following {{ insert: param, ca-01_odp.06 }} ; and Procedures {{ insert: param, ca-01_odp.07 }} and following {{ insert: param, ca-01_odp.08 }}. Assessment, authorization, and monitoring policy and procedures address the controls in the CA family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of assessment, authorization, and monitoring policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to assessment, authorization, and monitoring policy and procedures include assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. an assessment, authorization, and monitoring policy is developed and documented; the assessment, authorization, and monitoring policy is disseminated to {{ insert: param, ca-01_odp.01 }}; assessment, authorization, and monitoring procedures to facilitate the implementation of the assessment, authorization, and monitoring policy and associated assessment, authorization, and monitoring controls are developed and documented; the assessment, authorization, and monitoring procedures are disseminated to {{ insert: param, ca-01_odp.02 }}; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses purpose; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses scope; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses roles; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses responsibilities; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses management commitment; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses coordination among organizational entities; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy addresses compliance; the {{ insert: param, ca-01_odp.03 }} assessment, authorization, and monitoring policy is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, ca-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the assessment, authorization, and monitoring policy and procedures; the current assessment, authorization, and monitoring policy is reviewed and updated {{ insert: param, ca-01_odp.05 }};  the current assessment, authorization, and monitoring policy is reviewed and updated following {{ insert: param, ca-01_odp.06 }}; the current assessment, authorization, and monitoring procedures are reviewed and updated {{ insert: param, ca-01_odp.07 }};  the current assessment, authorization, and monitoring procedures are reviewed and updated following {{ insert: param, ca-01_odp.08 }}. Assessment, authorization, and monitoring policy and procedures
@@ -5164,17 +3735,6 @@ other relevant documents or records Organizational personnel with responsibiliti
 organizational personnel with information security and privacy responsibilities
 
 personnel managing the system(s) to which the interconnection security agreement applies
-
-**FedRAMP Baseline:** L2 | **Domain:** CA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control CA-4: 
 
 **FedRAMP Baseline:** L2 | **Domain:** CA
 
@@ -5532,88 +4092,6 @@ mechanisms enforcing policies and methods for governing information location
 
 ---
 
-##### Control CM-13: Develop and document a map of system data actions. Data actions are system operations that process personally identifiable information. The processing of such information encompasses the full information life cycle, which includes collection, generation, transformation, use, disclosure, retention, and disposal. A map of system data actions includes discrete data actions, elements of personally identifiable information being processed in the data actions, system components involved in the data actions, and the owners or operators of the system components. Understanding what personally identifiable information is being processed (e.g., the sensitivity of the personally identifiable information), how personally identifiable information is being processed (e.g., if the data action is visible to the individual or is processed in another part of the system), and by whom (e.g., individuals may have different privacy perceptions based on the entity that is processing the personally identifiable information) provides a number of contextual factors that are important to assessing the degree of privacy risk created by the system. Data maps can be illustrated in different ways, and the level of detail may vary based on the mission and business needs of the organization. The data map may be an overlay of any system design artifact that the organization is using. The development of this map may necessitate coordination between the privacy and security programs regarding the covered data actions and the components that are identified as part of the system. a map of system data actions is developed and documented. Configuration management policy
-
-procedures for identification and documentation of information location
-
-procedures for mapping data actions
-
-configuration management plan
-
-system security plan
-
-privacy plan
-
-system design documentation
-
-PII inventory documentation
-
-data mapping documentation
-
-change control records
-
-system component inventory
-
-other relevant documents or records Organizational personnel with responsibilities for managing information location
-
-organizational personnel responsible for data action mapping
-
-organizational personnel with information security and privacy responsibilities
-
-system/network administrators
-
-system developers Organizational processes governing information location
-
-mechanisms supporting or implementing data action mapping
-
-**FedRAMP Baseline:** L2 | **Domain:** CM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control CM-14: Prevent the installation of {{ insert: param, cm-14_prm_1 }} without verification that the component has been digitally signed using a certificate that is recognized and approved by the organization. Software and firmware components prevented from installation unless signed with recognized and approved certificates include software and firmware version updates, patches, service packs, device drivers, and basic input/output system updates. Organizations can identify applicable software and firmware components by type, by specific items, or a combination of both. Digital signatures and organizational verification of such signatures is a method of code authentication. the installation of {{ insert: param, cm-14_odp.01 }} is prevented unless it is verified that the software has been digitally signed using a certificate recognized and approved by the organization; the installation of {{ insert: param, cm-14_odp.02 }} is prevented unless it is verified that the firmware has been digitally signed using a certificate recognized and approved by the organization. Configuration management policy
-
-procedures addressing digitally signed certificates for software and firmware components
-
-configuration management plan
-
-system security plan
-
-system design documentation
-
-change control records
-
-system component inventory
-
-system security plan
-
-other relevant documents or records Organizational personnel with responsibilities for verifying digitally signed certificates for software and firmware component installation
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developers Organizational processes governing information location
-
-mechanisms enforcing policies and methods for governing information location
-
-automated tools supporting or implementing digitally signatures for software and firmware components
-
-automated tools supporting or implementing verification of digital signatures for software and firmware component installation
-
-**FedRAMP Baseline:** L2 | **Domain:** CM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### CP — Contingency Planning (Manual Controls)
 
 ##### Control CP-1: Develop, document, and disseminate to {{ insert: param, cp-1_prm_1 }}: {{ insert: param, cp-01_odp.03 }} contingency planning policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the contingency planning policy and the associated contingency planning controls; Designate an {{ insert: param, cp-01_odp.04 }} to manage the development, documentation, and dissemination of the contingency planning policy and procedures; and Review and update the current contingency planning: Policy {{ insert: param, cp-01_odp.05 }} and following {{ insert: param, cp-01_odp.06 }} ; and Procedures {{ insert: param, cp-01_odp.07 }} and following {{ insert: param, cp-01_odp.08 }}. Contingency planning policy and procedures address the controls in the CP family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of contingency planning policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to contingency planning policy and procedures include assessment or audit findings, security incidents or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a contingency planning policy is developed and documented; the contingency planning policy is disseminated to {{ insert: param, cp-01_odp.01 }}; contingency planning procedures to facilitate the implementation of the contingency planning policy and associated contingency planning controls are developed and documented; the contingency planning procedures are disseminated to {{ insert: param, cp-01_odp.02 }}; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses purpose; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses scope; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses roles; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses responsibilities; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses management commitment; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses coordination among organizational entities; the {{ insert: param, cp-01_odp.03 }} contingency planning policy addresses compliance; the {{ insert: param, cp-01_odp.03 }} contingency planning policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, cp-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the contingency planning policy and procedures; the current contingency planning policy is reviewed and updated {{ insert: param, cp-01_odp.05 }}; the current contingency planning policy is reviewed and updated following {{ insert: param, cp-01_odp.06 }}; the current contingency planning procedures are reviewed and updated {{ insert: param, cp-01_odp.07 }}; the current contingency planning procedures are reviewed and updated following {{ insert: param, cp-01_odp.08 }}. Contingency planning policy and procedures
@@ -5662,17 +4140,6 @@ organizational personnel with information security responsibilities Organization
 
 ---
 
-##### Control CP-5: 
-
-**FedRAMP Baseline:** L2 | **Domain:** CP
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control CP-8: Establish alternate telecommunications services, including necessary agreements to permit the resumption of {{ insert: param, cp-08_odp.01 }} for essential mission and business functions within {{ insert: param, cp-08_odp.02 }} when the primary telecommunications capabilities are unavailable at either the primary or alternate processing or storage sites. Telecommunications services (for data and voice) for primary and alternate processing and storage sites are in scope for [CP-8](#cp-8) . Alternate telecommunications services reflect the continuity requirements in contingency plans to maintain essential mission and business functions despite the loss of primary telecommunications services. Organizations may specify different time periods for primary or alternate sites. Alternate telecommunications services include additional organizational or commercial ground-based circuits or lines, network-based approaches to telecommunications, or the use of satellites. Organizations consider factors such as availability, quality of service, and access when entering into alternate telecommunications agreements. alternate telecommunications services, including necessary agreements to permit the resumption of {{ insert: param, cp-08_odp.01 }} , are established for essential mission and business functions within {{ insert: param, cp-08_odp.02 }} when the primary telecommunications capabilities are unavailable at either the primary or alternate processing or storage sites. Contingency planning policy
 
 procedures addressing alternate telecommunications services
@@ -5692,113 +4159,6 @@ organizational personnel with knowledge of requirements for mission and business
 organizational personnel with information security responsibilities
 
 organizational personnel with responsibility for acquisitions/contractual agreements Mechanisms supporting telecommunications
-
-**FedRAMP Baseline:** L2 | **Domain:** CP
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control CP-11: Provide the capability to employ {{ insert: param, cp-11_odp }} in support of maintaining continuity of operations. Contingency plans and the contingency training or testing associated with those plans incorporate an alternate communications protocol capability as part of establishing resilience in organizational systems. Switching communications protocols may affect software applications and operational aspects of systems. Organizations assess the potential side effects of introducing alternate communications protocols prior to implementation. the capability to employ {{ insert: param, cp-11_odp }} are provided in support of maintaining continuity of operations. Contingency planning policy
-
-procedures addressing alternative communications protocols
-
-contingency plan
-
-continuity of operations plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of alternative communications protocols supporting continuity of operations
-
-system security plan
-
-other relevant documents or records Organizational personnel with contingency planning and plan implementation responsibilities
-
-organizational personnel with continuity of operations planning and plan implementation responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developers Mechanisms employing alternative communications protocols
-
-**FedRAMP Baseline:** L2 | **Domain:** CP
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control CP-12: When {{ insert: param, cp-12_odp.02 }} are detected, enter a safe mode of operation with {{ insert: param, cp-12_odp.01 }}. For systems that support critical mission and business functions—including military operations, civilian space operations, nuclear power plant operations, and air traffic control operations (especially real-time operational environments)—organizations can identify certain conditions under which those systems revert to a predefined safe mode of operation. The safe mode of operation, which can be activated either automatically or manually, restricts the operations that systems can execute when those conditions are encountered. Restriction includes allowing only selected functions to execute that can be carried out under limited power or with reduced communications bandwidth. a safe mode of operation is entered with {{ insert: param, cp-12_odp.01 }} when {{ insert: param, cp-12_odp.02 }} are detected. Contingency planning policy
-
-procedures addressing safe mode of operation for the system
-
-contingency plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system administration manuals
-
-system operation manuals
-
-system installation manuals
-
-contingency plan test records
-
-incident handling records
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel with system operation responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developers Mechanisms implementing safe mode of operation
-
-**FedRAMP Baseline:** L2 | **Domain:** CP
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control CP-13: Employ {{ insert: param, cp-13_odp.01 }} for satisfying {{ insert: param, cp-13_odp.02 }} when the primary means of implementing the security function is unavailable or compromised. Use of alternative security mechanisms supports system resiliency, contingency planning, and continuity of operations. To ensure mission and business continuity, organizations can implement alternative or supplemental security mechanisms. The mechanisms may be less effective than the primary mechanisms. However, having the capability to readily employ alternative or supplemental mechanisms enhances mission and business continuity that might otherwise be adversely impacted if operations had to be curtailed until the primary means of implementing the functions was restored. Given the cost and level of effort required to provide such alternative capabilities, the alternative or supplemental mechanisms are only applied to critical security capabilities provided by systems, system components, or system services. For example, an organization may issue one-time pads to senior executives, officials, and system administrators if multi-factor tokens—the standard means for achieving secure authentication— are compromised. {{ insert: param, cp-13_odp.01 }} are employed for satisfying {{ insert: param, cp-13_odp.02 }} when the primary means of implementing the security function is unavailable or compromised. Contingency planning policy
-
-procedures addressing alternate security mechanisms
-
-contingency plan
-
-continuity of operations plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-contingency plan test records
-
-contingency plan test results
-
-system security plan
-
-other relevant documents or records Organizational personnel with system operation responsibilities
-
-organizational personnel with information security responsibilities system capability implementing alternative security mechanisms
 
 **FedRAMP Baseline:** L2 | **Domain:** CP
 
@@ -5890,72 +4250,6 @@ system developers Mechanisms supporting and/or implementing cryptographic module
 
 ---
 
-##### Control IA-9: Uniquely identify and authenticate {{ insert: param, ia-09_odp }} before establishing communications with devices, users, or other services or applications. Services that may require identification and authentication include web applications using digital certificates or services or applications that query a database. Identification and authentication methods for system services and applications include information or code signing, provenance graphs, and electronic signatures that indicate the sources of services. Decisions regarding the validity of identification and authentication claims can be made by services separate from the services acting on those decisions. This can occur in distributed system architectures. In such situations, the identification and authentication decisions (instead of actual identifiers and authentication data) are provided to the services that need to act on those decisions. {{ insert: param, ia-09_odp }} are uniquely identified and authenticated before establishing communications with devices, users, or other services or applications. Identification and authentication policy
-
-procedures addressing service identification and authentication
-
-system security plan
-
-system design documentation
-
-security safeguards used to identify and authenticate system services
-
-system configuration settings and associated documentation
-
-system audit records
-
-other relevant documents or records Organizational personnel with system operations responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developers
-
-organizational personnel with identification and authentication responsibilities Security safeguards implementing service identification and authentication capabilities
-
-**FedRAMP Baseline:** L2 | **Domain:** IA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control IA-10: Require individuals accessing the system to employ {{ insert: param, ia-10_odp.01 }} under specific {{ insert: param, ia-10_odp.02 }}. Adversaries may compromise individual authentication mechanisms employed by organizations and subsequently attempt to impersonate legitimate users. To address this threat, organizations may employ specific techniques or mechanisms and establish protocols to assess suspicious behavior. Suspicious behavior may include accessing information that individuals do not typically access as part of their duties, roles, or responsibilities; accessing greater quantities of information than individuals would routinely access; or attempting to access information from suspicious network addresses. When pre-established conditions or triggers occur, organizations can require individuals to provide additional authentication information. Another potential use for adaptive authentication is to increase the strength of mechanism based on the number or types of records being accessed. Adaptive authentication does not replace and is not used to avoid the use of multi-factor authentication mechanisms but can augment implementations of multi-factor authentication. individuals accessing the system are required to employ {{ insert: param, ia-10_odp.01 }} under specific {{ insert: param, ia-10_odp.02 }}. Identification and authentication policy
-
-procedures addressing adaptive/supplemental identification and authentication techniques or mechanisms
-
-system security plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-supplemental identification and authentication techniques or mechanisms
-
-system audit records
-
-other relevant documents or records Organizational personnel with system operations responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developers
-
-organizational personnel with identification and authentication responsibilities Mechanisms supporting and/or implementing identification and authentication capabilities
-
-**FedRAMP Baseline:** L2 | **Domain:** IA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control IA-12: Identity proof users that require accounts for logical access to systems based on appropriate identity assurance level requirements as specified in applicable standards and guidelines; Resolve user identities to a unique individual; and Collect, validate, and verify identity evidence. Identity proofing is the process of collecting, validating, and verifying a user’s identity information for the purposes of establishing credentials for accessing a system. Identity proofing is intended to mitigate threats to the registration of users and the establishment of their accounts. Standards and guidelines specifying identity assurance levels for identity proofing include [SP 800-63-3](#737513fa-6758-403f-831d-5ddab5e23cb3) and [SP 800-63A](#9099ed2c-922a-493d-bcb4-d896192243ff) . Organizations may be subject to laws, executive orders, directives, regulations, or policies that address the collection of identity evidence. Organizational personnel consult with the senior agency official for privacy and legal counsel regarding such requirements. users who require accounts for logical access to systems based on appropriate identity assurance level requirements as specified in applicable standards and guidelines are identity proofed; user identities are resolved to a unique individual; identity evidence is collected; identity evidence is validated; identity evidence is verified. Identification and authentication policy
 
 procedures addressing identity proofing
@@ -5975,35 +4269,6 @@ system/network administrators
 system developers
 
 organizational personnel with identification and authentication responsibilities Mechanisms supporting and/or implementing identification and authentication capabilities
-
-**FedRAMP Baseline:** L2 | **Domain:** IA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control IA-13: Employ identity providers and authorization servers to manage user, device, and non-person entity (NPE) identities, attributes, and access rights supporting authentication and authorization decisions in accordance with {{ insert: param, ia-13_odp.01 }} using {{ insert: param, ia-13_odp.02 }}. Identity providers, both internal and external to the organization, manage the user, device, and NPE authenticators and issue statements, often called identity assertions, attesting to identities of other systems or systems components. Authorization servers create and issue access tokens to identified and authenticated users and devices that can be used to gain access to system or information resources. For example, single sign-on (SSO) provides identity provider and authorization server functions. Authenticator management (to include credential management) is covered by IA-05. identity providers are employed to manage user, device, and non-person entity (NPE) identities, attributes and access rights supporting authentication decisions in accordance with {{ insert: param, ia-13_odp.02 }} using {{ insert: param, ia-13_odp.02 }}; identity providers are employed to manage user, device, and non-person entity (NPE) identities, attributes and access rights supporting authorization decisions in accordance with {{ insert: param, ia-13_odp.02 }} using {{ insert: param, ia-13_odp.02 }}; authorization servers are employed to manage user, device, and non-person entity (NPE) identities, attributes and access rights supporting authentication decisions in accordance with {{ insert: param, ia-13_odp.02 }} using {{ insert: param, ia-13_odp.02 }}; authorization servers are employed to manage user, device, and non-person entity (NPE) identities, attributes and access rights supporting authorization decisions in accordance with {{ insert: param, ia-13_odp.02 }} using {{ insert: param, ia-13_odp.02 }};  Identification and authentication policy;
-
-procedures addressing user and device identification and authentication;
-
-system security plan;
-
-system design documentation;
-
-system configuration settings and associated documentation;
-
-other relevant documents or records Organizational personnel with system operations responsibilities;
-
-organizational personnel with information security responsibilities;
-
-system/network administrators;
-
-organizational personnel with account management responsibilities;
-
-system developers Mechanisms supporting and/or implementing identification and authentication capabilities and access rights
 
 **FedRAMP Baseline:** L2 | **Domain:** IA
 
@@ -6184,17 +4449,6 @@ mechanisms supporting and/or implementing information spillage response actions 
 
 ---
 
-##### Control IR-10: 
-
-**FedRAMP Baseline:** L2 | **Domain:** IR
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### MA — Maintenance (Manual Controls)
 
 ##### Control MA-1: Develop, document, and disseminate to {{ insert: param, ma-1_prm_1 }}: {{ insert: param, ma-01_odp.03 }} maintenance policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the maintenance policy and the associated maintenance controls; Designate an {{ insert: param, ma-01_odp.04 }} to manage the development, documentation, and dissemination of the maintenance policy and procedures; and Review and update the current maintenance: Policy {{ insert: param, ma-01_odp.05 }} and following {{ insert: param, ma-01_odp.06 }} ; and Procedures {{ insert: param, ma-01_odp.07 }} and following {{ insert: param, ma-01_odp.08 }}. Maintenance policy and procedures address the controls in the MA family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of maintenance policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to maintenance policy and procedures assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a maintenance policy is developed and documented; the maintenance policy is disseminated to {{ insert: param, ma-01_odp.01 }}; maintenance procedures to facilitate the implementation of the maintenance policy and associated maintenance controls are developed and documented; the maintenance procedures are disseminated to {{ insert: param, ma-01_odp.02 }}; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses purpose; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses scope; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses roles; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses responsibilities; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses management commitment; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses coordination among organizational entities; the {{ insert: param, ma-01_odp.03 }} maintenance policy addresses compliance; the {{ insert: param, ma-01_odp.03 }} maintenance policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, ma-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the maintenance policy and procedures; the current maintenance policy is reviewed and updated {{ insert: param, ma-01_odp.05 }}; the current maintenance policy is reviewed and updated following {{ insert: param, ma-01_odp.06 }}; the current maintenance procedures are reviewed and updated {{ insert: param, ma-01_odp.07 }}; the current maintenance procedures are reviewed and updated following {{ insert: param, ma-01_odp.08 }}. Maintenance policy and procedures
@@ -6247,41 +4501,6 @@ system/network administrators Organizational processes for ensuring timely maint
 
 ---
 
-##### Control MA-7: Restrict or prohibit field maintenance on {{ insert: param, ma-07_odp.01 }} to {{ insert: param, ma-07_odp.02 }}. Field maintenance is the type of maintenance conducted on a system or system component after the system or component has been deployed to a specific site (i.e., operational environment). In certain instances, field maintenance (i.e., local maintenance at the site) may not be executed with the same degree of rigor or with the same quality control checks as depot maintenance. For critical systems designated as such by the organization, it may be necessary to restrict or prohibit field maintenance at the local site and require that such maintenance be conducted in trusted facilities with additional controls. field maintenance on {{ insert: param, ma-07_odp.01 }} are restricted or prohibited to {{ insert: param, ma-07_odp.02 }}. Maintenance policy
-
-procedures addressing field maintenance
-
-system design documentation
-
-system configuration settings and associated documentation
-
-maintenance records
-
-diagnostic records
-
-system security plan
-
-other relevant documents or records. Organizational personnel with system maintenance responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators Organizational processes for managing field maintenance
-
-mechanisms implementing, supporting, and/or managing field maintenance
-
-mechanisms for strong authentication of field maintenance diagnostic sessions
-
-mechanisms for terminating field maintenance sessions and network connections
-
-**FedRAMP Baseline:** L2 | **Domain:** MA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### MP — Media Protection (Manual Controls)
 
 ##### Control MP-1: Develop, document, and disseminate to {{ insert: param, mp-1_prm_1 }}: {{ insert: param, mp-01_odp.03 }} media protection policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the media protection policy and the associated media protection controls; Designate an {{ insert: param, mp-01_odp.04 }} to manage the development, documentation, and dissemination of the media protection policy and procedures; and Review and update the current media protection: Policy {{ insert: param, mp-01_odp.05 }} and following {{ insert: param, mp-01_odp.06 }} ; and Procedures {{ insert: param, mp-01_odp.07 }} and following {{ insert: param, mp-01_odp.08 }}. Media protection policy and procedures address the controls in the MP family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of media protection policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to media protection policy and procedures include assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a media protection policy is developed and documented; the media protection policy is disseminated to {{ insert: param, mp-01_odp.01 }}; media protection procedures to facilitate the implementation of the media protection policy and associated media protection controls are developed and documented; the media protection procedures are disseminated to {{ insert: param, mp-01_odp.02 }}; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses purpose; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses scope; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses roles; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses responsibilities; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses management commitment; the {{ insert: param, mp-01_odp.03 }} media protection policy addresses coordination among organizational entities; the {{ insert: param, mp-01_odp.03 }} media protection policy compliance; the media protection policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, mp-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the media protection policy and procedures. the current media protection policy is reviewed and updated {{ insert: param, mp-01_odp.05 }};  the current media protection policy is reviewed and updated following {{ insert: param, mp-01_odp.06 }}; the current media protection procedures are reviewed and updated {{ insert: param, mp-01_odp.07 }};  the current media protection procedures are reviewed and updated following {{ insert: param, mp-01_odp.08 }}. Media protection policy and procedures
@@ -6295,37 +4514,6 @@ privacy plan
 other relevant documents or records Organizational personnel with media protection responsibilities
 
 organizational personnel with information security and privacy responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** MP
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control MP-8: Establish {{ insert: param, mp-08_odp.01 }} that includes employing downgrading mechanisms with strength and integrity commensurate with the security category or classification of the information; Verify that the system media downgrading process is commensurate with the security category and/or classification level of the information to be removed and the access authorizations of the potential recipients of the downgraded information; Identify {{ insert: param, mp-08_odp.02 }} ; and Downgrade the identified system media using the established process. Media downgrading applies to digital and non-digital media subject to release outside of the organization, whether the media is considered removable or not. When applied to system media, the downgrading process removes information from the media, typically by security category or classification level, such that the information cannot be retrieved or reconstructed. Downgrading of media includes redacting information to enable wider release and distribution. Downgrading ensures that empty space on the media is devoid of information. a {{ insert: param, mp-08_odp.01 }} is established; the {{ insert: param, mp-08_odp.01 }} includes employing downgrading mechanisms with strength and integrity commensurate with the security category or classification of the information; there is verification that the system media downgrading process is commensurate with the security category and/or classification level of the information to be removed; there is verification that the system media downgrading process is commensurate with the access authorizations of the potential recipients of the downgraded information; {{ insert: param, mp-08_odp.02 }} is identified; the identified system media is downgraded using the {{ insert: param, mp-08_odp.01 }}. System media protection policy
-
-procedures addressing media downgrading
-
-system categorization documentation
-
-list of media requiring downgrading
-
-records of media downgrading
-
-audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel with system media downgrading responsibilities
-
-organizational personnel with information security responsibilities
-
-system/network administrators Organizational processes for media downgrading
-
-mechanisms supporting and/or implementing media downgrading
 
 **FedRAMP Baseline:** L2 | **Domain:** MP
 
@@ -6376,17 +4564,6 @@ other relevant documents or records Organizational personnel with physical acces
 organizational personnel with information security responsibilities Organizational processes for access control to distribution and transmission lines
 
 mechanisms/security safeguards supporting and/or implementing access control to distribution and transmission lines
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-7: 
 
 **FedRAMP Baseline:** L2 | **Domain:** PE
 
@@ -6632,172 +4809,6 @@ mechanisms supporting and/or implementing, authorizing, monitoring, and controll
 
 ---
 
-##### Control PE-18: Position system components within the facility to minimize potential damage from {{ insert: param, pe-18_odp }} and to minimize the opportunity for unauthorized access. Physical and environmental hazards include floods, fires, tornadoes, earthquakes, hurricanes, terrorism, vandalism, an electromagnetic pulse, electrical interference, and other forms of incoming electromagnetic radiation. Organizations consider the location of entry points where unauthorized individuals, while not being granted access, might nonetheless be near systems. Such proximity can increase the risk of unauthorized access to organizational communications using wireless packet sniffers or microphones, or unauthorized disclosure of information. system components are positioned within the facility to minimize potential damage from {{ insert: param, pe-18_odp }} and to minimize the opportunity for unauthorized access. Physical and environmental protection policy
-
-procedures addressing the positioning of system components
-
-documentation providing the location and position of system components within the facility
-
-locations housing system components within the facility
-
-list of physical and environmental hazards with the potential to damage system components within the facility
-
-system security plan
-
-other relevant documents or records Organizational personnel with responsibilities for positioning system components
-
-organizational personnel with information security responsibilities Organizational processes for positioning system components
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-19: Protect the system from information leakage due to electromagnetic signals emanations. Information leakage is the intentional or unintentional release of data or information to an untrusted environment from electromagnetic signals emanations. The security categories or classifications of systems (with respect to confidentiality), organizational security policies, and risk tolerance guide the selection of controls employed to protect systems against information leakage due to electromagnetic signals emanations. the system is protected from information leakage due to electromagnetic signal emanations. Physical and environmental protection policy
-
-procedures addressing information leakage due to electromagnetic signal emanations
-
-mechanisms protecting the system against electronic signal emanations
-
-facility housing the system
-
-records from electromagnetic signal emanation tests
-
-system security plan
-
-other relevant documents or records Organizational personnel with responsibilities for system environmental controls
-
-organizational personnel with information security responsibilities Mechanisms supporting and/or implementing protection from information leakage due to electromagnetic signal emanations
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-20: Employ {{ insert: param, pe-20_odp.01 }} to track and monitor the location and movement of {{ insert: param, pe-20_odp.02 }} within {{ insert: param, pe-20_odp.03 }}. Asset location technologies can help ensure that critical assets—including vehicles, equipment, and system components—remain in authorized locations. Organizations consult with the Office of the General Counsel and senior agency official for privacy regarding the deployment and use of asset location technologies to address potential privacy concerns. {{ insert: param, pe-20_odp.01 }} are employed to track and monitor the location and movement of {{ insert: param, pe-20_odp.02 }} within {{ insert: param, pe-20_odp.03 }}. Physical and environmental protection policy
-
-procedures addressing asset monitoring and tracking
-
-documentation showing the use of asset location technologies
-
-system configuration documentation
-
-list of organizational assets requiring tracking and monitoring
-
-asset monitoring and tracking records
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with asset monitoring and tracking responsibilities
-
-legal counsel
-
-organizational personnel with information security and privacy responsibilities Organizational processes for tracking and monitoring assets
-
-mechanisms supporting and/or implementing the tracking and monitoring of assets
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-21: Employ {{ insert: param, pe-21_odp.01 }} against electromagnetic pulse damage for {{ insert: param, pe-21_odp.02 }}. An electromagnetic pulse (EMP) is a short burst of electromagnetic energy that is spread over a range of frequencies. Such energy bursts may be natural or man-made. EMP interference may be disruptive or damaging to electronic equipment. Protective measures used to mitigate EMP risk include shielding, surge suppressors, ferro-resonant transformers, and earth grounding. EMP protection may be especially significant for systems and applications that are part of the U.S. critical infrastructure. {{ insert: param, pe-21_odp.01 }} are employed against electromagnetic pulse damage for {{ insert: param, pe-21_odp.02 }}. Physical and environmental protection policy
-
-procedures addressing protective measures to mitigate EMP risk to systems and components
-
-documentation detailing protective measures to mitigate EMP risk
-
-list of locations where protective measures to mitigate EMP risk are implemented
-
-system security plan
-
-other relevant documents or records Organizational personnel with responsibilities for physical and environmental protection
-
-system developers/integrators
-
-organizational personnel with information security responsibilities Mechanisms for mitigating EMP risk
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-22: Mark {{ insert: param, pe-22_odp }} indicating the impact level or classification level of the information permitted to be processed, stored, or transmitted by the hardware component. Hardware components that may require marking include input and output devices. Input devices include desktop and notebook computers, keyboards, tablets, and smart phones. Output devices include printers, monitors/video displays, facsimile machines, scanners, copiers, and audio devices. Permissions controlling output to the output devices are addressed in [AC-3](#ac-3) or [AC-4](#ac-4) . Components are marked to indicate the impact level or classification level of the system to which the devices are connected, or the impact level or classification level of the information permitted to be output. Security marking refers to the use of human-readable security attributes. Security labeling refers to the use of security attributes for internal system data structures. Security marking is generally not required for hardware components that process, store, or transmit information determined by organizations to be in the public domain or to be publicly releasable. However, organizations may require markings for hardware components that process, store, or transmit public information in order to indicate that such information is publicly releasable. Marking of system hardware components reflects applicable laws, executive orders, directives, policies, regulations, and standards. {{ insert: param, pe-22_odp }} are marked indicating the impact level or classification level of the information permitted to be processed, stored, or transmitted by the hardware component. Physical and environmental protection policy
-
-procedures addressing component marking
-
-list of component marking security attributes
-
-component inventory
-
-information types and their impact/classification level
-
-system security plan
-
-other relevant documents or records Organizational personnel with component marking responsibilities
-
-organizational personnel with component inventory responsibilities
-
-organizational personnel with information categorization/classification responsibilities
-
-organizational personnel with information security responsibilities Organizational processes for component marking
-
-automated mechanisms supporting and/or implementing component marking
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PE-23: Plan the location or site of the facility where the system resides considering physical and environmental hazards; and For existing facilities, consider the physical and environmental hazards in the organizational risk management strategy. Physical and environmental hazards include floods, fires, tornadoes, earthquakes, hurricanes, terrorism, vandalism, an electromagnetic pulse, electrical interference, and other forms of incoming electromagnetic radiation. The location of system components within the facility is addressed in [PE-18](#pe-18). the location or site of the facility where the system resides is planned considering physical and environmental hazards; for existing facilities, physical and environmental hazards are considered in the organizational risk management strategy. Physical and environmental protection policy
-
-physical site planning documents
-
-organizational assessment of risk
-
-contingency plan
-
-risk mitigation strategy documentation
-
-system security plan
-
-other relevant documents or records Organizational personnel with site selection responsibilities for the facility housing the system
-
-organizational personnel with risk mitigation responsibilities
-
-organizational personnel with information security responsibilities Organizational processes for site planning
-
-**FedRAMP Baseline:** L2 | **Domain:** PE
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### PL — Planning (Manual Controls)
 
 ##### Control PL-1: Develop, document, and disseminate to {{ insert: param, pl-1_prm_1 }}: {{ insert: param, pl-01_odp.03 }} planning policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the planning policy and the associated planning controls; Designate an {{ insert: param, pl-01_odp.04 }} to manage the development, documentation, and dissemination of the planning policy and procedures; and Review and update the current planning: Policy {{ insert: param, pl-01_odp.05 }} and following {{ insert: param, pl-01_odp.06 }} ; and Procedures {{ insert: param, pl-01_odp.07 }} and following {{ insert: param, pl-01_odp.08 }}. Planning policy and procedures for the controls in the PL family implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on their development. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission level or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission/business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to planning policy and procedures include, but are not limited to, assessment or audit findings, security incidents or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a planning policy is developed and documented. the planning policy is disseminated to {{ insert: param, pl-01_odp.01 }}; planning procedures to facilitate the implementation of the planning policy and associated planning controls are developed and documented; the planning procedures are disseminated to {{ insert: param, pl-01_odp.02 }}; the {{ insert: param, pl-01_odp.03 }} planning policy addresses purpose; the {{ insert: param, pl-01_odp.03 }} planning policy addresses scope; the {{ insert: param, pl-01_odp.03 }} planning policy addresses roles; the {{ insert: param, pl-01_odp.03 }} planning policy addresses responsibilities; the {{ insert: param, pl-01_odp.03 }} planning policy addresses management commitment; the {{ insert: param, pl-01_odp.03 }} planning policy addresses coordination among organizational entities; the {{ insert: param, pl-01_odp.03 }} planning policy addresses compliance; the {{ insert: param, pl-01_odp.03 }} planning policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, pl-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the planning policy and procedures; the current planning policy is reviewed and updated {{ insert: param, pl-01_odp.05 }}; the current planning policy is reviewed and updated following {{ insert: param, pl-01_odp.06 }}; the current planning procedures are reviewed and updated {{ insert: param, pl-01_odp.07 }}; the current planning procedures are reviewed and updated following {{ insert: param, pl-01_odp.08 }}. Planning policy and procedures
@@ -6809,17 +4820,6 @@ privacy plan
 other relevant documents or records Organizational personnel with planning responsibilities
 
 organizational personnel with information security and privacy responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PL-3: 
 
 **FedRAMP Baseline:** L2 | **Domain:** PL
 
@@ -6849,86 +4849,6 @@ organizational personnel who are authorized users of the system and have signed 
 organizational personnel with information security and privacy responsibilities Organizational processes for establishing, reviewing, disseminating, and updating rules of behavior
 
 mechanisms supporting and/or implementing the establishment, review, dissemination, and update of rules of behavior
-
-**FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PL-5: 
-
-**FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PL-6: 
-
-**FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PL-7: Develop a Concept of Operations (CONOPS) for the system describing how the organization intends to operate the system from the perspective of information security and privacy; and Review and update the CONOPS {{ insert: param, pl-07_odp }}. The CONOPS may be included in the security or privacy plans for the system or in other system development life cycle documents. The CONOPS is a living document that requires updating throughout the system development life cycle. For example, during system design reviews, the concept of operations is checked to ensure that it remains consistent with the design for controls, the system architecture, and the operational procedures. Changes to the CONOPS are reflected in ongoing updates to the security and privacy plans, security and privacy architectures, and other organizational documents, such as procurement specifications, system development life cycle documents, and systems engineering documents. a CONOPS for the system describing how the organization intends to operate the system from the perspective of information security and privacy is developed; the CONOPS is reviewed and updated {{ insert: param, pl-07_odp }}. Security and privacy planning policy
-
-procedures addressing security and privacy CONOPS development
-
-procedures addressing security and privacy CONOPS reviews and updates
-
-security and privacy CONOPS for the system
-
-system security plan
-
-privacy plan
-
-records of security and privacy CONOPS reviews and updates
-
-other relevant documents or records Organizational personnel with security and privacy planning and plan implementation responsibilities
-
-organizational personnel with information security and privacy responsibilities Organizational processes for developing, reviewing, and updating the security CONOPS
-
-mechanisms supporting and/or implementing the development, review, and update of the security CONOPS
-
-**FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PL-9: Centrally manage {{ insert: param, pl-09_odp }}. Central management refers to organization-wide management and implementation of selected controls and processes. This includes planning, implementing, assessing, authorizing, and monitoring the organization-defined, centrally managed controls and processes. As the central management of controls is generally associated with the concept of common (inherited) controls, such management promotes and facilitates standardization of control implementations and management and the judicious use of organizational resources. Centrally managed controls and processes may also meet independence requirements for assessments in support of initial and ongoing authorizations to operate and as part of organizational continuous monitoring.
-
-Automated tools (e.g., security information and event management tools or enterprise security monitoring and management tools) can improve the accuracy, consistency, and availability of information associated with centrally managed controls and processes. Automation can also provide data aggregation and data correlation capabilities; alerting mechanisms; and dashboards to support risk-based decision-making within the organization.
-
-As part of the control selection processes, organizations determine the controls that may be suitable for central management based on resources and capabilities. It is not always possible to centrally manage every aspect of a control. In such cases, the control can be treated as a hybrid control with the control managed and implemented centrally or at the system level. The controls and control enhancements that are candidates for full or partial central management include but are not limited to: [AC-2(1)](#ac-2.1), [AC-2(2)](#ac-2.2), [AC-2(3)](#ac-2.3), [AC-2(4)](#ac-2.4), [AC-4(all)](#ac-4), [AC-17(1)](#ac-17.1), [AC-17(2)](#ac-17.2), [AC-17(3)](#ac-17.3), [AC-17(9)](#ac-17.9), [AC-18(1)](#ac-18.1), [AC-18(3)](#ac-18.3), [AC-18(4)](#ac-18.4), [AC-18(5)](#ac-18.5), [AC-19(4)](#ac-19.4), [AC-22](#ac-22), [AC-23](#ac-23), [AT-2(1)](#at-2.1), [AT-2(2)](#at-2.2), [AT-3(1)](#at-3.1), [AT-3(2)](#at-3.2), [AT-3(3)](#at-3.3), [AT-4](#at-4), [AU-3](#au-3), [AU-6(1)](#au-6.1), [AU-6(3)](#au-6.3), [AU-6(5)](#au-6.5), [AU-6(6)](#au-6.6), [AU-6(9)](#au-6.9), [AU-7(1)](#au-7.1), [AU-7(2)](#au-7.2), [AU-11](#au-11), [AU-13](#au-13), [AU-16](#au-16), [CA-2(1)](#ca-2.1), [CA-2(2)](#ca-2.2), [CA-2(3)](#ca-2.3), [CA-3(1)](#ca-3.1), [CA-3(2)](#ca-3.2), [CA-3(3)](#ca-3.3), [CA-7(1)](#ca-7.1), [CA-9](#ca-9), [CM-2(2)](#cm-2.2), [CM-3(1)](#cm-3.1), [CM-3(4)](#cm-3.4), [CM-4](#cm-4), [CM-6](#cm-6), [CM-6(1)](#cm-6.1), [CM-7(2)](#cm-7.2), [CM-7(4)](#cm-7.4), [CM-7(5)](#cm-7.5), [CM-8(all)](#cm-8), [CM-9(1)](#cm-9.1), [CM-10](#cm-10), [CM-11](#cm-11), [CP-7(all)](#cp-7), [CP-8(all)](#cp-8), [SC-43](#sc-43), [SI-2](#si-2), [SI-3](#si-3), [SI-4(all)](#si-4), [SI-7](#si-7), [SI-8](#si-8). {{ insert: param, pl-09_odp }} are centrally managed. Security and privacy planning policy
-
-procedures addressing security and privacy plan development and implementation
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with security and privacy planning and plan implementation responsibilities
-
-organizational personnel with responsibilities for planning/implementing central management of controls and related processes
-
-organizational personnel with information security and privacy responsibilities Organizational processes for the central management of controls and related processes
-
-mechanisms supporting and/or implementing central management of controls and related processes
 
 **FedRAMP Baseline:** L2 | **Domain:** PL
 
@@ -7031,924 +4951,6 @@ other relevant documents or records Organizational personnel with security and p
 organizational personnel with information security and privacy responsibilities
 
 **FedRAMP Baseline:** L2 | **Domain:** PL
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-#### PM — Program Management (Manual Controls)
-
-##### Control PM-1: Develop and disseminate an organization-wide information security program plan that: Provides an overview of the requirements for the security program and a description of the security program management controls and common controls in place or planned for meeting those requirements; Includes the identification and assignment of roles, responsibilities, management commitment, coordination among organizational entities, and compliance; Reflects the coordination among organizational entities responsible for information security; and Is approved by a senior official with responsibility and accountability for the risk being incurred to organizational operations (including mission, functions, image, and reputation), organizational assets, individuals, other organizations, and the Nation; Review and update the organization-wide information security program plan {{ insert: param, pm-01_odp.01 }} and following {{ insert: param, pm-01_odp.02 }} ; and Protect the information security program plan from unauthorized disclosure and modification. An information security program plan is a formal document that provides an overview of the security requirements for an organization-wide information security program and describes the program management controls and common controls in place or planned for meeting those requirements. An information security program plan can be represented in a single document or compilations of documents. Privacy program plans and supply chain risk management plans are addressed separately in [PM-18](#pm-18) and [SR-2](#sr-2) , respectively.
-
-An information security program plan documents implementation details about program management and common controls. The plan provides sufficient information about the controls (including specification of parameters for assignment and selection operations, explicitly or by reference) to enable implementations that are unambiguously compliant with the intent of the plan and a determination of the risk to be incurred if the plan is implemented as intended. Updates to information security program plans include organizational changes and problems identified during plan implementation or control assessments.
-
-Program management controls may be implemented at the organization level or the mission or business process level, and are essential for managing the organization’s information security program. Program management controls are distinct from common, system-specific, and hybrid controls because program management controls are independent of any particular system. Together, the individual system security plans and the organization-wide information security program plan provide complete coverage for the security controls employed within the organization.
-
-Common controls available for inheritance by organizational systems are documented in an appendix to the organization’s information security program plan unless the controls are included in a separate security plan for a system. The organization-wide information security program plan indicates which separate security plans contain descriptions of common controls.
-
-Events that may precipitate an update to the information security program plan include, but are not limited to, organization-wide assessment or audit findings, security incidents or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and guidelines. an organization-wide information security program plan is developed; the information security program plan is disseminated; the information security program plan provides an overview of the requirements for the security program; the information security program plan provides a description of the security program management controls in place or planned for meeting those requirements; the information security program plan provides a description of the common controls in place or planned for meeting those requirements; the information security program plan includes the identification and assignment of roles; the information security program plan includes the identification and assignment of responsibilities; the information security program plan addresses management commitment; the information security program plan addresses coordination among organizational entities; the information security program plan addresses compliance; the information security program plan reflects the coordination among the organizational entities responsible for information security; the information security program plan is approved by a senior official with responsibility and accountability for the risk being incurred to organizational operations (including mission, functions, image, and reputation), organizational assets, individuals, other organizations, and the Nation; the information security program plan is reviewed and updated {{ insert: param, pm-01_odp.01 }}; the information security program plan is reviewed and updated following {{ insert: param, pm-01_odp.02 }}; the information security program plan is protected from unauthorized disclosure; the information security program plan is protected from unauthorized modification. Information security program plan
-
-procedures addressing program plan development and implementation
-
-procedures addressing program plan reviews and updates
-
-procedures addressing coordination of the program plan with relevant entities
-
-procedures for program plan approvals
-
-records of program plan reviews and updates
-
-other relevant documents or records Organizational personnel with information security program planning and plan implementation responsibilities
-
-organizational personnel with information security responsibilities Organizational processes for information security program plan development, review, update, and approval
-
-mechanisms supporting and/or implementing the information security program plan
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-2: Appoint a senior agency information security officer with the mission and resources to coordinate, develop, implement, and maintain an organization-wide information security program. The senior agency information security officer is an organizational official. For federal agencies (as defined by applicable laws, executive orders, regulations, directives, policies, and standards), this official is the senior agency information security officer. Organizations may also refer to this official as the senior information security officer or chief information security officer. a senior agency information security officer is appointed; the senior agency information security officer is provided with the mission and resources to coordinate an organization-wide information security program; the senior agency information security officer is provided with the mission and resources to develop an organization-wide information security program; the senior agency information security officer is provided with the mission and resources to implement an organization-wide information security program; the senior agency information security officer is provided with the mission and resources to maintain an organization-wide information security program. Information security program plan
-
-procedures addressing program plan development and implementation
-
-procedures addressing program plan reviews and updates
-
-procedures addressing coordination of the program plan with relevant entities
-
-other relevant documents or records Organizational personnel with information security program planning and plan implementation responsibilities
-
-senior information security officer
-
-organizational personnel with information security responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-3: Include the resources needed to implement the information security and privacy programs in capital planning and investment requests and document all exceptions to this requirement; Prepare documentation required for addressing information security and privacy programs in capital planning and investment requests in accordance with applicable laws, executive orders, directives, policies, regulations, standards; and Make available for expenditure, the planned information security and privacy resources. Organizations consider establishing champions for information security and privacy and, as part of including the necessary resources, assign specialized expertise and resources as needed. Organizations may designate and empower an Investment Review Board or similar group to manage and provide oversight for the information security and privacy aspects of the capital planning and investment control process. the resources needed to implement the information security program are included in capital planning and investment requests, and all exceptions are documented; the resources needed to implement the privacy program are included in capital planning and investment requests, and all exceptions are documented; the documentation required for addressing the information security program in capital planning and investment requests is prepared in accordance with applicable laws, executive orders, directives, policies, regulations, standards; the documentation required for addressing the privacy program in capital planning and investment requests is prepared in accordance with applicable laws, executive orders, directives, policies, regulations, standards; information security resources are made available for expenditure as planned; privacy resources are made available for expenditure as planned. Information security program plan
-
-Exhibit 300
-
-Exhibit 53
-
-business cases for capital planning and investment
-
-procedures for capital planning and investment
-
-documentation of exceptions to capital planning requirements
-
-other relevant documents or records Organizational personnel with information security program planning responsibilities
-
-organizational personnel with privacy program planning responsibilities
-
-organizational personnel responsible for capital planning and investment
-
-organizational personnel with information security responsibilities
-
-organizational personnel with privacy responsibilities Organizational processes for capital planning and investment
-
-organizational processes for business case, Exhibit 300, and Exhibit 53 development
-
-mechanisms supporting the capital planning and investment process
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-4: Implement a process to ensure that plans of action and milestones for the information security, privacy, and supply chain risk management programs and associated organizational systems: Are developed and maintained; Document the remedial information security, privacy, and supply chain risk management actions to adequately respond to risk to organizational operations and assets, individuals, other organizations, and the Nation; and Are reported in accordance with established reporting requirements. Review plans of action and milestones for consistency with the organizational risk management strategy and organization-wide priorities for risk response actions. The plan of action and milestones is a key organizational document and is subject to reporting requirements established by the Office of Management and Budget. Organizations develop plans of action and milestones with an organization-wide perspective, prioritizing risk response actions and ensuring consistency with the goals and objectives of the organization. Plan of action and milestones updates are based on findings from control assessments and continuous monitoring activities. There can be multiple plans of action and milestones corresponding to the information system level, mission/business process level, and organizational/governance level. While plans of action and milestones are required for federal organizations, other types of organizations can help reduce risk by documenting and tracking planned remediations. Specific guidance on plans of action and milestones at the system level is provided in [CA-5](#ca-5). a process to ensure that plans of action and milestones for the information security program and associated organizational systems are developed; a process to ensure that plans of action and milestones for the information security program and associated organizational systems are maintained; a process to ensure that plans of action and milestones for the privacy program and associated organizational systems are developed; a process to ensure that plans of action and milestones for the privacy program and associated organizational systems are maintained; a process to ensure that plans of action and milestones for the supply chain risk management program and associated organizational systems are developed; a process to ensure that plans of action and milestones for the supply chain risk management program and associated organizational systems are maintained; a process to ensure that plans of action and milestones for the information security program and associated organizational systems document remedial information security risk management actions to adequately respond to risks to organizational operations and assets, individuals, other organizations, and the Nation; a process to ensure that plans of action and milestones for the privacy program and associated organizational systems document remedial privacy risk management actions to adequately respond to risks to organizational operations and assets, individuals, other organizations, and the Nation; a process to ensure that plans of action and milestones for the supply chain risk management program and associated organizational systems document remedial supply chain risk management actions to adequately respond to risks to organizational operations and assets, individuals, other organizations, and the Nation; a process to ensure that plans of action and milestones for the information security risk management programs and associated organizational systems are reported in accordance with established reporting requirements; a process to ensure that plans of action and milestones for the privacy risk management programs and associated organizational systems are reported in accordance with established reporting requirements; a process to ensure that plans of action and milestones for the supply chain risk management programs and associated organizational systems are reported in accordance with established reporting requirements; plans of action and milestones are reviewed for consistency with the organizational risk management strategy; plans of action and milestones are reviewed for consistency with organization-wide priorities for risk response actions. Information security program plan
-
-plans of action and milestones
-
-procedures addressing plans of action and milestones development and maintenance
-
-procedures addressing plans of action and milestones reporting
-
-procedures for reviewing plans of action and milestones for consistency with risk management strategy and risk response priorities
-
-results of risk assessments associated with plans of action and milestones
-
-OMB FISMA reporting requirements
-
-other relevant documents or records Organizational personnel with responsibilities for developing, maintaining, reviewing, and reporting plans of action and milestones
-
-organizational personnel with information security responsibilities Organizational processes for plan of action and milestones development, review, maintenance, and reporting
-
-mechanisms supporting plans of action and milestones
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-5: Develop and update {{ insert: param, pm-05_odp }} an inventory of organizational systems. [OMB A-130](#27847491-5ce1-4f6a-a1e4-9e483782f0ef) provides guidance on developing systems inventories and associated reporting requirements. System inventory refers to an organization-wide inventory of systems, not system components as described in [CM-8](#cm-8). an inventory of organizational systems is developed; the inventory of organizational systems is updated {{ insert: param, pm-05_odp }}. Information security program plan
-
-system inventory
-
-procedures addressing system inventory development and maintenance
-
-OMB FISMA reporting guidance
-
-other relevant documents or records Organizational personnel with information security program planning and plan implementation responsibilities
-
-organizational personnel responsible for developing and maintaining the system inventory
-
-organizational personnel with information security responsibilities Organizational processes for system inventory development and maintenance
-
-mechanisms supporting the system inventory
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-6: Develop, monitor, and report on the results of information security and privacy measures of performance. Measures of performance are outcome-based metrics used by an organization to measure the effectiveness or efficiency of the information security and privacy programs and the controls employed in support of the program. To facilitate security and privacy risk management, organizations consider aligning measures of performance with the organizational risk tolerance as defined in the risk management strategy. information security measures of performance are developed; information security measures of performance are monitored; the results of information security measures of performance are reported; privacy measures of performance are developed; privacy measures of performance are monitored; the results of privacy measures of performance are reported. Information security program plan
-
-privacy program plan
-
-information security measures of performance
-
-privacy measures of performance
-
-procedures addressing the development, monitoring, and reporting of information security and privacy measures of performance
-
-risk management strategy
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for developing, monitoring, and reporting information security and privacy measures of performance
-
-organizational personnel with information security and privacy responsibilities Organizational processes for developing, monitoring, and reporting information security and privacy measures of performance
-
-mechanisms supporting the development, monitoring, and reporting of information security and privacy measures of performance
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-7: Develop and maintain an enterprise architecture with consideration for information security, privacy, and the resulting risk to organizational operations and assets, individuals, other organizations, and the Nation. The integration of security and privacy requirements and controls into the enterprise architecture helps to ensure that security and privacy considerations are addressed throughout the system development life cycle and are explicitly related to the organization’s mission and business processes. The process of security and privacy requirements integration also embeds into the enterprise architecture and the organization’s security and privacy architectures consistent with the organizational risk management strategy. For PM-7, security and privacy architectures are developed at a system-of-systems level, representing all organizational systems. For [PL-8](#pl-8) , the security and privacy architectures are developed at a level that represents an individual system. The system-level architectures are consistent with the security and privacy architectures defined for the organization. Security and privacy requirements and control integration are most effectively accomplished through the rigorous application of the Risk Management Framework [SP 800-37](#482e4c99-9dc4-41ad-bba8-0f3f0032c1f8) and supporting security standards and guidelines. an enterprise architecture is developed with consideration for information security; an enterprise architecture is maintained with consideration for information security; an enterprise architecture is developed with consideration for privacy; an enterprise architecture is maintained with consideration for privacy; an enterprise architecture is developed with consideration for the resulting risk to organizational operations and assets, individuals, other organizations, and the Nation; an enterprise architecture is maintained with consideration for the resulting risk to organizational operations and assets, individuals, other organizations, and the Nation. Information security program plan
-
-privacy program plan
-
-enterprise architecture documentation
-
-procedures addressing enterprise architecture development
-
-results of risk assessments of enterprise architecture
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for developing enterprise architecture
-
-organizational personnel responsible for risk assessments of enterprise architecture
-
-organizational personnel with information security and privacy responsibilities Organizational processes for enterprise architecture development
-
-mechanisms supporting the enterprise architecture and its development
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-8: Address information security and privacy issues in the development, documentation, and updating of a critical infrastructure and key resources protection plan. Protection strategies are based on the prioritization of critical assets and resources. The requirement and guidance for defining critical infrastructure and key resources and for preparing an associated critical infrastructure protection plan are found in applicable laws, executive orders, directives, policies, regulations, standards, and guidelines. information security issues are addressed in the development of a critical infrastructure and key resources protection plan; information security issues are addressed in the documentation of a critical infrastructure and key resources protection plan; information security issues are addressed in the update of a critical infrastructure and key resources protection plan; privacy issues are addressed in the development of a critical infrastructure and key resources protection plan; privacy issues are addressed in the documentation of a critical infrastructure and key resources protection plan; privacy issues are addressed in the update of a critical infrastructure and key resources protection plan. Information security program plan
-
-privacy program plan
-
-critical infrastructure and key resources protection plan
-
-procedures addressing the development, documentation, and updating of the critical infrastructure and key resources protection plan
-
-HSPD 7
-
-National Infrastructure Protection Plan
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for developing, documenting, and updating the critical infrastructure and key resources protection plan
-
-organizational personnel with information security and privacy responsibilities Organizational processes for developing, documenting, and updating the critical infrastructure and key resources protection plan
-
-mechanisms supporting the development, documentation, and updating of the critical infrastructure and key resources protection plan
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-9: Develops a comprehensive strategy to manage: Security risk to organizational operations and assets, individuals, other organizations, and the Nation associated with the operation and use of organizational systems; and Privacy risk to individuals resulting from the authorized processing of personally identifiable information; Implement the risk management strategy consistently across the organization; and Review and update the risk management strategy {{ insert: param, pm-09_odp }} or as required, to address organizational changes. An organization-wide risk management strategy includes an expression of the security and privacy risk tolerance for the organization, security and privacy risk mitigation strategies, acceptable risk assessment methodologies, a process for evaluating security and privacy risk across the organization with respect to the organization’s risk tolerance, and approaches for monitoring risk over time. The senior accountable official for risk management (agency head or designated official) aligns information security management processes with strategic, operational, and budgetary planning processes. The risk executive function, led by the senior accountable official for risk management, can facilitate consistent application of the risk management strategy organization-wide. The risk management strategy can be informed by security and privacy risk-related inputs from other sources, both internal and external to the organization, to ensure that the strategy is broad-based and comprehensive. The supply chain risk management strategy described in [PM-30](#pm-30) can also provide useful inputs to the organization-wide risk management strategy. a comprehensive strategy is developed to manage security risk to organizational operations and assets, individuals, other organizations, and the Nation associated with the operation and use of organizational systems; a comprehensive strategy is developed to manage privacy risk to individuals resulting from the authorized processing of personally identifiable information; the risk management strategy is implemented consistently across the organization; the risk management strategy is reviewed and updated {{ insert: param, pm-09_odp }} or as required to address organizational changes. Information security program plan
-
-privacy program plan
-
-risk management strategy
-
-supply chain risk management strategy
-
-procedures addressing the development, implementation, review, and update of the risk management strategy
-
-risk assessment results relevant to the risk management strategy
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for the development, implementation, review, and update of the risk management strategy
-
-organizational personnel with information security and privacy responsibilities Organizational processes for the development, implementation, review, and update of the risk management strategy
-
-mechanisms supporting the development, implementation, review, and update of the risk management strategy
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-10: Manage the security and privacy state of organizational systems and the environments in which those systems operate through authorization processes; Designate individuals to fulfill specific roles and responsibilities within the organizational risk management process; and Integrate the authorization processes into an organization-wide risk management program. Authorization processes for organizational systems and environments of operation require the implementation of an organization-wide risk management process and associated security and privacy standards and guidelines. Specific roles for risk management processes include a risk executive (function) and designated authorizing officials for each organizational system and common control provider. The authorization processes for the organization are integrated with continuous monitoring processes to facilitate ongoing understanding and acceptance of security and privacy risks to organizational operations, organizational assets, individuals, other organizations, and the Nation. the security state of organizational systems and the environments in which those systems operate are managed through authorization processes; the privacy state of organizational systems and the environments in which those systems operate are managed through authorization processes; individuals are designated to fulfill specific roles and responsibilities within the organizational risk management process; the authorization processes are integrated into an organization-wide risk management program. Information security program plan
-
-privacy program plan
-
-procedures addressing management (i.e., documentation, tracking, and reporting) of the authorization process
-
-assessment, authorization, and monitoring policy
-
-assessment, authorization, and monitoring procedures
-
-system authorization documentation
-
-lists or other documentation about authorization process roles and responsibilities
-
-risk assessment results relevant to the authorization process and the organization-wide risk management program
-
-organizational risk management strategy
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for management of the authorization process
-
-organizational personnel with information security and privacy responsibilities Organizational processes for authorization
-
-mechanisms supporting the authorization process
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-11: Define organizational mission and business processes with consideration for information security and privacy and the resulting risk to organizational operations, organizational assets, individuals, other organizations, and the Nation; and Determine information protection and personally identifiable information processing needs arising from the defined mission and business processes; and Review and revise the mission and business processes {{ insert: param, pm-11_odp }}. Protection needs are technology-independent capabilities that are required to counter threats to organizations, individuals, systems, and the Nation through the compromise of information (i.e., loss of confidentiality, integrity, availability, or privacy). Information protection and personally identifiable information processing needs are derived from the mission and business needs defined by organizational stakeholders, the mission and business processes designed to meet those needs, and the organizational risk management strategy. Information protection and personally identifiable information processing needs determine the required controls for the organization and the systems. Inherent to defining protection and personally identifiable information processing needs is an understanding of the adverse impact that could result if a compromise or breach of information occurs. The categorization process is used to make such potential impact determinations. Privacy risks to individuals can arise from the compromise of personally identifiable information, but they can also arise as unintended consequences or a byproduct of the processing of personally identifiable information at any stage of the information life cycle. Privacy risk assessments are used to prioritize the risks that are created for individuals from system processing of personally identifiable information. These risk assessments enable the selection of the required privacy controls for the organization and systems. Mission and business process definitions and the associated protection requirements are documented in accordance with organizational policies and procedures. organizational mission and business processes are defined with consideration for information security; organizational mission and business processes are defined with consideration for privacy; organizational mission and business processes are defined with consideration for the resulting risk to organizational operations, organizational assets, individuals, other organizations, and the Nation; information protection needs arising from the defined mission and business processes are determined; personally identifiable information processing needs arising from the defined mission and business processes are determined; the mission and business processes are reviewed and revised {{ insert: param, pm-11_odp }}. Information security program plan
-
-privacy program plan
-
-risk management strategy
-
-procedures for determining mission and business protection needs
-
-information security and privacy risk assessment results relevant to the determination of mission and business protection needs
-
-personally identifiable information processing policy
-
-personally identifiable information inventory
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for enterprise risk management
-
-organizational personnel responsible for determining information protection needs for mission and business processes
-
-organizational personnel with information security and privacy responsibilities Organizational processes for defining mission and business processes and their information protection needs
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-12: Implement an insider threat program that includes a cross-discipline insider threat incident handling team. Organizations that handle classified information are required, under Executive Order 13587 [EO 13587](#0af071a6-cf8e-48ee-8c82-fe91efa20f94) and the National Insider Threat Policy [ODNI NITP](#06d74ea9-2178-449c-a9c5-b2980f804ac8) , to establish insider threat programs. The same standards and guidelines that apply to insider threat programs in classified environments can also be employed effectively to improve the security of controlled unclassified and other information in non-national security systems. Insider threat programs include controls to detect and prevent malicious insider activity through the centralized integration and analysis of both technical and nontechnical information to identify potential insider threat concerns. A senior official is designated by the department or agency head as the responsible individual to implement and provide oversight for the program. In addition to the centralized integration and analysis capability, insider threat programs require organizations to prepare department or agency insider threat policies and implementation plans, conduct host-based user monitoring of individual employee activities on government-owned classified computers, provide insider threat awareness training to employees, receive access to information from offices in the department or agency for insider threat analysis, and conduct self-assessments of department or agency insider threat posture.
-
-Insider threat programs can leverage the existence of incident handling teams that organizations may already have in place, such as computer security incident response teams. Human resources records are especially important in this effort, as there is compelling evidence to show that some types of insider crimes are often preceded by nontechnical behaviors in the workplace, including ongoing patterns of disgruntled behavior and conflicts with coworkers and other colleagues. These precursors can guide organizational officials in more focused, targeted monitoring efforts. However, the use of human resource records could raise significant concerns for privacy. The participation of a legal team, including consultation with the senior agency official for privacy, ensures that monitoring activities are performed in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. an insider threat program that includes a cross-discipline insider threat incident handling team is implemented. Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for the insider threat program
-
-members of the cross-discipline insider threat incident handling team
-
-legal counsel
-
-organizational personnel with information security and privacy responsibilities Organizational processes for implementing the insider threat program and the cross-discipline insider threat incident handling team
-
-mechanisms supporting and/or implementing the insider threat program and the cross-discipline insider threat incident handling team
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-13: Establish a security and privacy workforce development and improvement program. Security and privacy workforce development and improvement programs include defining the knowledge, skills, and abilities needed to perform security and privacy duties and tasks; developing role-based training programs for individuals assigned security and privacy roles and responsibilities; and providing standards and guidelines for measuring and building individual qualifications for incumbents and applicants for security- and privacy-related positions. Such workforce development and improvement programs can also include security and privacy career paths to encourage security and privacy professionals to advance in the field and fill positions with greater responsibility. The programs encourage organizations to fill security- and privacy-related positions with qualified personnel. Security and privacy workforce development and improvement programs are complementary to organizational security awareness and training programs and focus on developing and institutionalizing the core security and privacy capabilities of personnel needed to protect organizational operations, assets, and individuals. a security workforce development and improvement program is established; a privacy workforce development and improvement program is established. Information security program plan
-
-privacy program plan
-
-information security and privacy workforce development and improvement program documentation
-
-procedures for the information security and privacy workforce development and improvement program
-
-information security and privacy role-based training program documentation
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for the information security and privacy workforce development and improvement program
-
-organizational personnel with information security and privacy responsibilities Organizational processes for implementing the information security and privacy workforce development and improvement program
-
-mechanisms supporting and/or implementing the information security and privacy workforce development and improvement program
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-14: Implement a process for ensuring that organizational plans for conducting security and privacy testing, training, and monitoring activities associated with organizational systems: Are developed and maintained; and Continue to be executed; and Review testing, training, and monitoring plans for consistency with the organizational risk management strategy and organization-wide priorities for risk response actions. A process for organization-wide security and privacy testing, training, and monitoring helps ensure that organizations provide oversight for testing, training, and monitoring activities and that those activities are coordinated. With the growing importance of continuous monitoring programs, the implementation of information security and privacy across the three levels of the risk management hierarchy and the widespread use of common controls, organizations coordinate and consolidate the testing and monitoring activities that are routinely conducted as part of ongoing assessments supporting a variety of controls. Security and privacy training activities, while focused on individual systems and specific roles, require coordination across all organizational elements. Testing, training, and monitoring plans and activities are informed by current threat and vulnerability assessments. a process is implemented for ensuring that organizational plans for conducting security testing, training, and monitoring activities associated with organizational systems are developed; a process is implemented for ensuring that organizational plans for conducting security testing, training, and monitoring activities associated with organizational systems are maintained; a process is implemented for ensuring that organizational plans for conducting privacy testing, training, and monitoring activities associated with organizational systems are developed; a process is implemented for ensuring that organizational plans for conducting privacy testing, training, and monitoring activities associated with organizational systems are maintained; a process is implemented for ensuring that organizational plans for conducting security testing, training, and monitoring activities associated with organizational systems continue to be executed; a process is implemented for ensuring that organizational plans for conducting privacy testing, training, and monitoring activities associated with organizational systems continue to be executed; testing plans are reviewed for consistency with the organizational risk management strategy; training plans are reviewed for consistency with the organizational risk management strategy; monitoring plans are reviewed for consistency with the organizational risk management strategy; testing plans are reviewed for consistency with organization-wide priorities for risk response actions; training plans are reviewed for consistency with organization-wide priorities for risk response actions; monitoring plans are reviewed for consistency with organization-wide priorities for risk response actions. Information security program plan
-
-privacy program plan
-
-plans for conducting security and privacy testing, training, and monitoring activities
-
-organizational procedures addressing the development and maintenance of plans for conducting security and privacy testing, training, and monitoring activities
-
-risk management strategy
-
-procedures for the review of plans for conducting security and privacy testing, training, and monitoring activities for consistency with risk management strategy and risk response priorities
-
-results of risk assessments associated with conducting security and privacy testing, training, and monitoring activities
-
-documentation of the timely execution of plans for conducting security and privacy testing, training, and monitoring activities
-
-other relevant documents or records Organizational personnel with responsibilities for developing and maintaining plans for conducting security and privacy testing, training, and monitoring activities
-
-organizational personnel with information security and privacy responsibilities Organizational processes for the development and maintenance of plans for conducting security and privacy testing, training, and monitoring activities
-
-mechanisms supporting the development and maintenance of plans for conducting security and privacy testing, training, and monitoring activities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-15: Establish and institutionalize contact with selected groups and associations within the security and privacy communities: To facilitate ongoing security and privacy education and training for organizational personnel; To maintain currency with recommended security and privacy practices, techniques, and technologies; and To share current security and privacy information, including threats, vulnerabilities, and incidents. Ongoing contact with security and privacy groups and associations is important in an environment of rapidly changing technologies and threats. Groups and associations include special interest groups, professional associations, forums, news groups, users’ groups, and peer groups of security and privacy professionals in similar organizations. Organizations select security and privacy groups and associations based on mission and business functions. Organizations share threat, vulnerability, and incident information as well as contextual insights, compliance techniques, and privacy problems consistent with applicable laws, executive orders, directives, policies, regulations, standards, and guidelines. contact is established and institutionalized with selected groups and associations within the security community to facilitate ongoing security education and training for organizational personnel; contact is established and institutionalized with selected groups and associations within the privacy community to facilitate ongoing privacy education and training for organizational personnel; contact is established and institutionalized with selected groups and associations within the security community to maintain currency with recommended security practices, techniques, and technologies; contact is established and institutionalized with selected groups and associations within the privacy community to maintain currency with recommended privacy practices, techniques, and technologies; contact is established and institutionalized with selected groups and associations within the security community to share current security information, including threats, vulnerabilities, and incidents; contact is established and institutionalized with selected groups and associations within the privacy community to share current privacy information, including threats, vulnerabilities, and incidents. Information security program plan
-
-privacy program plan
-
-risk management strategy
-
-procedures for establishing and institutionalizing contacts with security and privacy groups and associations
-
-lists or other records of contacts with and/or membership in security and privacy groups and associations
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for establishing and institutionalizing contact with security and privacy groups and associations
-
-organizational personnel with information security and privacy responsibilities
-
-personnel from selected groups and associations with which the organization has established and institutionalized contact Organizational processes for establishing and institutionalizing contact with security and privacy groups and associations
-
-mechanisms supporting contact with security and privacy groups and associations
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-16: Implement a threat awareness program that includes a cross-organization information-sharing capability for threat intelligence. Because of the constantly changing and increasing sophistication of adversaries, especially the advanced persistent threat (APT), it may be more likely that adversaries can successfully breach or compromise organizational systems. One of the best techniques to address this concern is for organizations to share threat information, including threat events (i.e., tactics, techniques, and procedures) that organizations have experienced, mitigations that organizations have found are effective against certain types of threats, and threat intelligence (i.e., indications and warnings about threats). Threat information sharing may be bilateral or multilateral. Bilateral threat sharing includes government-to-commercial and government-to-government cooperatives. Multilateral threat sharing includes organizations taking part in threat-sharing consortia. Threat information may require special agreements and protection, or it may be freely shared. a threat awareness program that includes a cross-organization information-sharing capability for threat intelligence is implemented. Information security program plan
-
-privacy program plan
-
-threat awareness program policy
-
-threat awareness program procedures
-
-risk assessment results relevant to threat awareness
-
-documentation about the cross-organization information-sharing capability
-
-other relevant documents or records Organizational personnel with information security and privacy program planning and plan implementation responsibilities
-
-organizational personnel responsible for the threat awareness program
-
-organizational personnel responsible for the cross-organization information-sharing capability
-
-organizational personnel with information security and privacy responsibilities
-
-external personnel with whom threat awareness information is shared by the organization Organizational processes for implementing the threat awareness program
-
-organizational processes for implementing the cross-organization information-sharing capability
-
-mechanisms supporting and/or implementing the threat awareness program
-
-mechanisms supporting and/or implementing the cross-organization information-sharing capability
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-17: Establish policy and procedures to ensure that requirements for the protection of controlled unclassified information that is processed, stored or transmitted on external systems, are implemented in accordance with applicable laws, executive orders, directives, policies, regulations, and standards; and Review and update the policy and procedures {{ insert: param, pm-17_prm_1 }}. Controlled unclassified information is defined by the National Archives and Records Administration along with the safeguarding and dissemination requirements for such information and is codified in [32 CFR 2002](#91f992fb-f668-4c91-a50f-0f05b95ccee3) and, specifically for systems external to the federal organization, [32 CFR 2002.14h](https://www.govinfo.gov/content/pkg/CFR-2017-title32-vol6/xml/CFR-2017-title32-vol6-part2002.xml) . The policy prescribes the specific use and conditions to be implemented in accordance with organizational procedures, including via its contracting processes. policy is established to ensure that requirements for the protection of controlled unclassified information that is processed, stored, or transmitted on external systems are implemented in accordance with applicable laws, executive orders, directives, policies, regulations, and standards; procedures are established to ensure that requirements for the protection of controlled unclassified information that is processed, stored, or transmitted on external systems are implemented in accordance with applicable laws, executive orders, directives, policies, regulations, and standards; policy is reviewed and updated {{ insert: param, pm-17_odp.01 }}; procedures are reviewed and updated {{ insert: param, pm-17_odp.02 }}  Controlled unclassified information policy
-
-controlled unclassified information procedures
-
-other relevant documents or records. Organizational personnel with controlled unclassified information responsibilities
-
-organizational personnel with information security responsibilities.
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-18: Develop and disseminate an organization-wide privacy program plan that provides an overview of the agency’s privacy program, and: Includes a description of the structure of the privacy program and the resources dedicated to the privacy program; Provides an overview of the requirements for the privacy program and a description of the privacy program management controls and common controls in place or planned for meeting those requirements; Includes the role of the senior agency official for privacy and the identification and assignment of roles of other privacy officials and staff and their responsibilities; Describes management commitment, compliance, and the strategic goals and objectives of the privacy program; Reflects coordination among organizational entities responsible for the different aspects of privacy; and Is approved by a senior official with responsibility and accountability for the privacy risk being incurred to organizational operations (including mission, functions, image, and reputation), organizational assets, individuals, other organizations, and the Nation; and Update the plan {{ insert: param, pm-18_odp }} and to address changes in federal privacy laws and policy and organizational changes and problems identified during plan implementation or privacy control assessments. A privacy program plan is a formal document that provides an overview of an organization’s privacy program, including a description of the structure of the privacy program, the resources dedicated to the privacy program, the role of the senior agency official for privacy and other privacy officials and staff, the strategic goals and objectives of the privacy program, and the program management controls and common controls in place or planned for meeting applicable privacy requirements and managing privacy risks. Privacy program plans can be represented in single documents or compilations of documents.
-
-The senior agency official for privacy is responsible for designating which privacy controls the organization will treat as program management, common, system-specific, and hybrid controls. Privacy program plans provide sufficient information about the privacy program management and common controls (including the specification of parameters and assignment and selection operations explicitly or by reference) to enable control implementations that are unambiguously compliant with the intent of the plans and a determination of the risk incurred if the plans are implemented as intended.
-
-Program management controls are generally implemented at the organization level and are essential for managing the organization’s privacy program. Program management controls are distinct from common, system-specific, and hybrid controls because program management controls are independent of any particular information system. Together, the privacy plans for individual systems and the organization-wide privacy program plan provide complete coverage for the privacy controls employed within the organization.
-
-Common controls are documented in an appendix to the organization’s privacy program plan unless the controls are included in a separate privacy plan for a system. The organization-wide privacy program plan indicates which separate privacy plans contain descriptions of privacy controls. an organization-wide privacy program plan that provides an overview of the agency’s privacy program is developed; the privacy program plan includes a description of the structure of the privacy program; the privacy program plan includes a description of the resources dedicated to the privacy program; the privacy program plan provides an overview of the requirements for the privacy program; the privacy program plan provides a description of the privacy program management controls in place or planned for meeting the requirements of the privacy program; the privacy program plan provides a description of common controls in place or planned for meeting the requirements of the privacy program; the privacy program plan includes the role of the senior agency official for privacy; the privacy program plan includes the identification and assignment of the roles of other privacy officials and staff and their responsibilities; the privacy program plan describes management commitment; the privacy program plan describes compliance; the privacy program plan describes the strategic goals and objectives of the privacy program; the privacy program plan reflects coordination among organizational entities responsible for the different aspects of privacy; the privacy program plan is approved by a senior official with responsibility and accountability for the privacy risk being incurred by organizational operations (including, mission, functions, image, and reputation), organizational assets, individuals, other organizations, and the Nation; the privacy program plan is disseminated; the privacy program plan is updated {{ insert: param, pm-18_odp }}; the privacy program plan is updated to address changes in federal privacy laws and policies; the privacy program plan is updated to address organizational changes; the privacy program plan is updated to address problems identified during plan implementation or privacy control assessments. Privacy program plan
-
-procedures addressing program plan development and implementation
-
-procedures addressing program plan reviews, updates, and approvals
-
-procedures addressing coordination of the program plan with relevant entities
-
-records of program plan reviews, updates, and approvals
-
-other relevant documents or records Organizational personnel with privacy program planning and plan implementation responsibilities
-
-organizational personnel with privacy responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-19: Appoint a senior agency official for privacy with the authority, mission, accountability, and resources to coordinate, develop, and implement, applicable privacy requirements and manage privacy risks through the organization-wide privacy program. The privacy officer is an organizational official. For federal agencies—as defined by applicable laws, executive orders, directives, regulations, policies, standards, and guidelines—this official is designated as the senior agency official for privacy. Organizations may also refer to this official as the chief privacy officer. The senior agency official for privacy also has roles on the data management board (see [PM-23](#pm-23) ) and the data integrity board (see [PM-24](#pm-24)). a senior agency official for privacy with authority, mission, accountability, and resources is appointed; the senior agency official for privacy coordinates applicable privacy requirements; the senior agency official for privacy develops applicable privacy requirements; the senior agency official for privacy implements applicable privacy requirements; the senior agency official for privacy manages privacy risks through the organization-wide privacy program. Privacy program documents, including policies, procedures, plans, and reports
-
-public privacy notices, including Federal Register notices
-
-privacy impact assessments
-
-privacy risk assessments
-
-Privacy Act statements
-
-system of records notices
-
-computer matching agreements and notices
-
-contracts, information sharing agreements, and memoranda of understanding
-
-governing requirements, including laws, executive orders, regulations, standards, and guidance
-
-other relevant documents or records Organizational personnel with privacy program planning and plan implementation responsibilities
-
-organizational personnel with privacy responsibilities
-
-senior agency official for privacy
-
-privacy officials
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-20: Maintain a central resource webpage on the organization’s principal public website that serves as a central source of information about the organization’s privacy program and that: Ensures that the public has access to information about organizational privacy activities and can communicate with its senior agency official for privacy; Ensures that organizational privacy practices and reports are publicly available; and Employs publicly facing email addresses and/or phone lines to enable the public to provide feedback and/or direct questions to privacy offices regarding privacy practices. For federal agencies, the webpage is located at www.[agency].gov/privacy. Federal agencies include public privacy impact assessments, system of records notices, computer matching notices and agreements, [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) exemption and implementation rules, privacy reports, privacy policies, instructions for individuals making an access or amendment request, email addresses for questions/complaints, blogs, and periodic publications. a central resource webpage is maintained on the organization’s principal public website; the webpage serves as a central source of information about the organization’s privacy program; the webpage ensures that the public has access to information about organizational privacy activities; the webpage ensures that the public can communicate with its senior agency official for privacy; the webpage ensures that organizational privacy practices are publicly available; the webpage ensures that organizational privacy reports are publicly available; the webpage employs publicly facing email addresses and/or phone numbers to enable the public to provide feedback and/or direct questions to privacy offices regarding privacy practices. Public website
-
-publicly posted privacy program documents, including policies, procedures, plans, and reports
-
-position description of the senior agency official for privacy
-
-public privacy notices, including Federal Register notices
-
-privacy impact assessments
-
-privacy risk assessments
-
-Privacy Act statements and system of records notices
-
-computer matching agreements and notices
-
-other relevant documents or records Organizational personnel with privacy program information dissemination responsibilities
-
-organizational personnel with privacy responsibilities Location, access, availability, and functionality of privacy resource webpage
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-21: Develop and maintain an accurate accounting of disclosures of personally identifiable information, including: Date, nature, and purpose of each disclosure; and Name and address, or other contact information of the individual or organization to which the disclosure was made; Retain the accounting of disclosures for the length of the time the personally identifiable information is maintained or five years after the disclosure is made, whichever is longer; and Make the accounting of disclosures available to the individual to whom the personally identifiable information relates upon request. The purpose of accounting of disclosures is to allow individuals to learn to whom their personally identifiable information has been disclosed, to provide a basis for subsequently advising recipients of any corrected or disputed personally identifiable information, and to provide an audit trail for subsequent reviews of organizational compliance with conditions for disclosures. For federal agencies, keeping an accounting of disclosures is required by the [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) ; agencies should consult with their senior agency official for privacy and legal counsel on this requirement and be aware of the statutory exceptions and OMB guidance relating to the provision.
-
-Organizations can use any system for keeping notations of disclosures, if it can construct from such a system, a document listing of all disclosures along with the required information. Automated mechanisms can be used by organizations to determine when personally identifiable information is disclosed, including commercial services that provide notifications and alerts. Accounting of disclosures may also be used to help organizations verify compliance with applicable privacy statutes and policies governing the disclosure or dissemination of information and dissemination restrictions. an accurate accounting of disclosures of personally identifiable information is developed and maintained; the accounting includes the date of each disclosure; the accounting includes the nature of each disclosure; the accounting includes the purpose of each disclosure; the accounting includes the name of the individual or organization to whom the disclosure was made; the accounting includes the address or other contact information of the individual or organization to whom the disclosure was made; the accounting of disclosures is retained for the length of time that the personally identifiable information is maintained or five years after the disclosure is made, whichever is longer; the accounting of disclosures is made available to the individual to whom the personally identifiable information relates upon request. Privacy program plan
-
-disclosure policies and procedures
-
-records of disclosures
-
-audit logs
-
-Privacy Act policies and procedures
-
-system of records notice
-
-Privacy Act exemption rules. Organizational personnel with privacy program responsibilities
-
-organizational personnel with privacy responsibilities. Organizational processes for disclosures
-
-mechanisms supporting the accounting of disclosures, including commercial services that provide notifications and alerts.
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-22: Develop and document organization-wide policies and procedures for: Reviewing for the accuracy, relevance, timeliness, and completeness of personally identifiable information across the information life cycle; Correcting or deleting inaccurate or outdated personally identifiable information; Disseminating notice of corrected or deleted personally identifiable information to individuals or other appropriate entities; and Appeals of adverse decisions on correction or deletion requests. Personally identifiable information quality management includes steps that organizations take to confirm the accuracy and relevance of personally identifiable information throughout the information life cycle. The information life cycle includes the creation, collection, use, processing, storage, maintenance, dissemination, disclosure, and disposition of personally identifiable information. Organizational policies and procedures for personally identifiable information quality management are important because inaccurate or outdated personally identifiable information maintained by organizations may cause problems for individuals. Organizations consider the quality of personally identifiable information involved in business functions where inaccurate information may result in adverse decisions or the denial of benefits and services, or the disclosure of the information may cause stigmatization. Correct information, in certain circumstances, can cause problems for individuals that outweigh the benefits of organizations maintaining the information. Organizations consider creating policies and procedures for the removal of such information.
-
-The senior agency official for privacy ensures that practical means and mechanisms exist and are accessible for individuals or their authorized representatives to seek the correction or deletion of personally identifiable information. Processes for correcting or deleting data are clearly defined and publicly available. Organizations use discretion in determining whether data is to be deleted or corrected based on the scope of requests, the changes sought, and the impact of the changes. Additionally, processes include the provision of responses to individuals of decisions to deny requests for correction or deletion. The responses include the reasons for the decisions, a means to record individual objections to the decisions, and a means of requesting reviews of the initial determinations.
-
-Organizations notify individuals or their designated representatives when their personally identifiable information is corrected or deleted to provide transparency and confirm the completed action. Due to the complexity of data flows and storage, other entities may need to be informed of the correction or deletion. Notice supports the consistent correction and deletion of personally identifiable information across the data ecosystem. organization-wide policies for personally identifiable information quality management are developed and documented; organization-wide procedures for personally identifiable information quality management are developed and documented; the policies address reviewing the accuracy of personally identifiable information across the information life cycle; the policies address reviewing the relevance of personally identifiable information across the information life cycle; the policies address reviewing the timeliness of personally identifiable information across the information life cycle; the policies address reviewing the completeness of personally identifiable information across the information life cycle; the procedures address reviewing the accuracy of personally identifiable information across the information life cycle; the procedures address reviewing the relevance of personally identifiable information across the information life cycle; the procedures address reviewing the timeliness of personally identifiable information across the information life cycle; the procedures address reviewing the completeness of personally identifiable information across the information life cycle; the policies address correcting or deleting inaccurate or outdated personally identifiable information; the procedures address correcting or deleting inaccurate or outdated personally identifiable information; the policies address disseminating notice of corrected or deleted personally identifiable information to individuals or other appropriate entities; the procedures address disseminating notice of corrected or deleted personally identifiable information to individuals or other appropriate entities; the policies address appeals of adverse decisions on correction or deletion requests; the procedures address appeals of adverse decisions on correction or deletion requests. Privacy program plan
-
-policies and procedures addressing personally identifiable information quality management, information life cycle documentation, and sample notices of correction or deletion
-
-records of monitoring PII quality management practices
-
-documentation of reviews and updates of policies and procedures Organizational personnel with privacy program information dissemination responsibilities
-
-organizational personnel with privacy responsibilities [Organizational processes for data quality and personally identifiable information quality management procedures
-
-mechanisms supporting and/or implementing quality management requirements
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-23: Establish a Data Governance Body consisting of {{ insert: param, pm-23_odp.01 }} with {{ insert: param, pm-23_odp.02 }}. A Data Governance Body can help ensure that the organization has coherent policies and the ability to balance the utility of data with security and privacy requirements. The Data Governance Body establishes policies, procedures, and standards that facilitate data governance so that data, including personally identifiable information, is effectively managed and maintained in accordance with applicable laws, executive orders, directives, regulations, policies, standards, and guidance. Responsibilities can include developing and implementing guidelines that support data modeling, quality, integrity, and the de-identification needs of personally identifiable information across the information life cycle as well as reviewing and approving applications to release data outside of the organization, archiving the applications and the released data, and performing post-release monitoring to ensure that the assumptions made as part of the data release continue to be valid. Members include the chief information officer, senior agency information security officer, and senior agency official for privacy. Federal agencies are required to establish a Data Governance Body with specific roles and responsibilities in accordance with the [EVIDACT](#511da9ca-604d-43f7-be41-b862085420a9) and policies set forth under [OMB M-19-23](#d886c141-c832-4ad7-ac6d-4b94f4b550d3). a Data Governance Body consisting of {{ insert: param, pm-23_odp.01 }} with {{ insert: param, pm-23_odp.02 }} is established. Privacy program plan
-
-documentation relating to the Data Governance Body, including documents establishing such a body, its charter of operations, and any plans and reports
-
-records of board meetings and decisions
-
-records of requests to review data
-
-policies, procedures, and standards that facilitate data governance Officials serving on the Data Governance Body (e.g., chief information officer, senior agency information security officer, and senior agency official for privacy)
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-24: Establish a Data Integrity Board to: Review proposals to conduct or participate in a matching program; and Conduct an annual review of all matching programs in which the agency has participated. A Data Integrity Board is the board of senior officials designated by the head of a federal agency and is responsible for, among other things, reviewing the agency’s proposals to conduct or participate in a matching program and conducting an annual review of all matching programs in which the agency has participated. As a general matter, a matching program is a computerized comparison of records from two or more automated [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) systems of records or an automated system of records and automated records maintained by a non-federal agency (or agent thereof). A matching program either pertains to Federal benefit programs or Federal personnel or payroll records. At a minimum, the Data Integrity Board includes the Inspector General of the agency, if any, and the senior agency official for privacy. a Data Integrity Board is established; the Data Integrity Board reviews proposals to conduct or participate in a matching program; the Data Integrity Board conducts an annual review of all matching programs in which the agency has participated. Privacy program plan
-
-privacy program documents relating to the Data Integrity Board, including documents establishing the board, its charter of operations, and any plans and reports
-
-computer matching agreements and notices
-
-information sharing agreements
-
-memoranda of understanding
-
-records documenting annual reviews
-
-governing requirements, including laws, executive orders, regulations, standards, and guidance members of the Data Integrity Board (e.g., the chief information officer, senior information security officer, senior agency official for privacy, and agency Inspector General)
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-25: Develop, document, and implement policies and procedures that address the use of personally identifiable information for internal testing, training, and research; Limit or minimize the amount of personally identifiable information used for internal testing, training, and research purposes; Authorize the use of personally identifiable information when such information is required for internal testing, training, and research; and Review and update policies and procedures {{ insert: param, pm-25_prm_1 }}. The use of personally identifiable information in testing, research, and training increases the risk of unauthorized disclosure or misuse of such information. Organizations consult with the senior agency official for privacy and/or legal counsel to ensure that the use of personally identifiable information in testing, training, and research is compatible with the original purpose for which it was collected. When possible, organizations use placeholder data to avoid exposure of personally identifiable information when conducting testing, training, and research. policies that address the use of personally identifiable information for internal testing are developed and documented; policies that address the use of personally identifiable information for internal training are developed and documented; policies that address the use of personally identifiable information for internal research are developed and documented; procedures that address the use of personally identifiable information for internal testing are developed and documented; procedures that address the use of personally identifiable information for internal training are developed and documented; procedures that address the use of personally identifiable information for internal research are developed and documented; policies that address the use of personally identifiable information for internal testing, are implemented; policies that address the use of personally identifiable information for training are implemented; policies that address the use of personally identifiable information for research are implemented; procedures that address the use of personally identifiable information for internal testing are implemented; procedures that address the use of personally identifiable information for training are implemented; procedures that address the use of personally identifiable information for research are implemented; the amount of personally identifiable information used for internal testing purposes is limited or minimized; the amount of personally identifiable information used for internal training purposes is limited or minimized; the amount of personally identifiable information used for internal research purposes is limited or minimized; the required use of personally identifiable information for internal testing is authorized; the required use of personally identifiable information for internal training is authorized; the required use of personally identifiable information for internal research is authorized; policies are reviewed {{ insert: param, pm-25_odp.01 }}; policies are updated {{ insert: param, pm-25_odp.02 }}; procedures are reviewed {{ insert: param, pm-25_odp.03 }}; procedures are updated {{ insert: param, pm-25_odp.04 }}. Privacy program plan
-
-policies and procedures for the minimization of personally identifiable information used in testing, training, and research
-
-documentation supporting policy implementation (e.g., templates for testing, training, and research
-
-privacy threshold analysis
-
-privacy risk assessment)
-
-data sets used for testing, training, and research Organizational personnel with privacy program responsibilities
-
-organizational personnel with privacy responsibilities
-
-system developers
-
-personnel with IRB responsibilities Organizational processes for data quality and personally identifiable information management
-
-mechanisms supporting data quality management and personally identifiable information management to minimize the use of personally identifiable information
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-26: Implement a process for receiving and responding to complaints, concerns, or questions from individuals about the organizational security and privacy practices that includes: Mechanisms that are easy to use and readily accessible by the public; All information necessary for successfully filing complaints; Tracking mechanisms to ensure all complaints received are reviewed and addressed within {{ insert: param, pm-26_prm_1 }}; Acknowledgement of receipt of complaints, concerns, or questions from individuals within {{ insert: param, pm-26_odp.03 }} ; and Response to complaints, concerns, or questions from individuals within {{ insert: param, pm-26_odp.04 }}. Complaints, concerns, and questions from individuals can serve as valuable sources of input to organizations and ultimately improve operational models, uses of technology, data collection practices, and controls. Mechanisms that can be used by the public include telephone hotline, email, or web-based forms. The information necessary for successfully filing complaints includes contact information for the senior agency official for privacy or other official designated to receive complaints. Privacy complaints may also include personally identifiable information which is handled in accordance with relevant policies and processes. a process for receiving complaints, concerns, or questions from individuals about organizational security and privacy practices is implemented; a process for responding to complaints, concerns, or questions from individuals about organizational security and privacy practices is implemented; the complaint management process includes mechanisms that are easy to use by the public; the complaint management process includes mechanisms that are readily accessible by the public; the complaint management process includes all information necessary for successfully filing complaints; the complaint management process includes tracking mechanisms to ensure that all complaints are reviewed within {{ insert: param, pm-26_odp.01 }}; the complaint management process includes tracking mechanisms to ensure that all complaints are addressed within {{ insert: param, pm-26_odp.02 }}; the complaint management process includes acknowledging the receipt of complaints, concerns, or questions from individuals within {{ insert: param, pm-26_odp.03 }}; the complaint management process includes responding to complaints, concerns, or questions from individuals within {{ insert: param, pm-26_odp.04 }}. Privacy program plan
-
-procedures addressing complaint management
-
-complaint documentation
-
-procedures addressing the reviews of complaints
-
-other relevant documents or records Organizational personnel with privacy program responsibilities
-
-organizational personnel with privacy responsibilities Organizational processes for complaint management
-
-mechanisms supporting complaint management
-
-tools used by the public to submit complaints, concerns, and questions (e.g., telephone, hotline, email, or web-based forms
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-27: Develop {{ insert: param, pm-27_odp.01 }} and disseminate to: {{ insert: param, pm-27_odp.02 }} to demonstrate accountability with statutory, regulatory, and policy privacy mandates; and {{ insert: param, pm-27_odp.03 }} and other personnel with responsibility for monitoring privacy program compliance; and Review and update privacy reports {{ insert: param, pm-27_odp.04 }}. Through internal and external reporting, organizations promote accountability and transparency in organizational privacy operations. Reporting can also help organizations to determine progress in meeting privacy compliance requirements and privacy controls, compare performance across the federal government, discover vulnerabilities, identify gaps in policy and implementation, and identify models for success. For federal agencies, privacy reports include annual senior agency official for privacy reports to OMB, reports to Congress required by Implementing Regulations of the 9/11 Commission Act, and other public reports required by law, regulation, or policy, including internal policies of organizations. The senior agency official for privacy consults with legal counsel, where appropriate, to ensure that organizations meet all applicable privacy reporting requirements. {{ insert: param, pm-27_odp.01 }} are developed; the privacy reports are disseminated to {{ insert: param, pm-27_odp.02 }} to demonstrate accountability with statutory, regulatory, and policy privacy mandates; the privacy reports are disseminated to {{ insert: param, pm-27_odp.03 }}; the privacy reports are disseminated to other personnel responsible for monitoring privacy program compliance; the privacy reports are reviewed and updated {{ insert: param, pm-27_odp.04 }}. Privacy program plan
-
-internal and external privacy reports
-
-privacy program plan
-
-annual senior agency official for privacy reports to OMB
-
-reports to Congress required by law, regulation, or policy, including internal policies
-
-records documenting the dissemination of reports to oversight bodies and officials responsible for monitoring privacy program compliance
-
-records of review and updates of privacy reports. Organizational personnel with privacy program responsibilities
-
-organizational personnel with privacy responsibilities
-
-legal counsel.
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-28: Identify and document: Assumptions affecting risk assessments, risk responses, and risk monitoring; Constraints affecting risk assessments, risk responses, and risk monitoring; Priorities and trade-offs considered by the organization for managing risk; and Organizational risk tolerance; Distribute the results of risk framing activities to {{ insert: param, pm-28_odp.01 }} ; and Review and update risk framing considerations {{ insert: param, pm-28_odp.02 }}. Risk framing is most effective when conducted at the organization level and in consultation with stakeholders throughout the organization including mission, business, and system owners. The assumptions, constraints, risk tolerance, priorities, and trade-offs identified as part of the risk framing process inform the risk management strategy, which in turn informs the conduct of risk assessment, risk response, and risk monitoring activities. Risk framing results are shared with organizational personnel, including mission and business owners, information owners or stewards, system owners, authorizing officials, senior agency information security officer, senior agency official for privacy, and senior accountable official for risk management. assumptions affecting risk assessments are identified and documented; assumptions affecting risk responses are identified and documented; assumptions affecting risk monitoring are identified and documented; constraints affecting risk assessments are identified and documented; constraints affecting risk responses are identified and documented; constraints affecting risk monitoring are identified and documented; priorities considered by the organization for managing risk are identified and documented; trade-offs considered by the organization for managing risk are identified and documented; organizational risk tolerance is identified and documented; the results of risk framing activities are distributed to {{ insert: param, pm-28_odp.01 }}; risk framing considerations are reviewed and updated {{ insert: param, pm-28_odp.02 }}. Information security program plan
-
-privacy program plan
-
-supply chain risk management strategy
-
-documentation of risk framing activities
-
-policies and procedures for risk framing activities
-
-risk management strategy Organizational personnel (including mission, business, and system owners or stewards
-
-authorizing officials
-
-senior agency information security officer
-
-senior agency official for privacy
-
-and senior accountable official for risk management) Organizational procedures and practices for authorizing, conducting, managing, and reviewing personally identifiable information processing
-
-organizational processes for risk framing
-
-mechanisms supporting the development, review, update, and approval of risk framing
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-29: Appoint a Senior Accountable Official for Risk Management to align organizational information security and privacy management processes with strategic, operational, and budgetary planning processes; and Establish a Risk Executive (function) to view and analyze risk from an organization-wide perspective and ensure management of risk is consistent across the organization. The senior accountable official for risk management leads the risk executive (function) in organization-wide risk management activities. a Senior Accountable Official for Risk Management is appointed; a Senior Accountable Official for Risk Management aligns information security and privacy management processes with strategic, operational, and budgetary planning processes; a Risk Executive (function) is established; a Risk Executive (function) views and analyzes risk from an organization-wide perspective; a Risk Executive (function) ensures that the management of risk is consistent across the organization. Information security program plan
-
-privacy program plan
-
-risk management strategy
-
-supply chain risk management strategy
-
-documentation of appointment, roles, and responsibilities of a Senior Accountable Official for Risk Management
-
-documentation of actions taken by the Official
-
-documentation of the establishment, policies, and procedures of a Risk Executive (function) Senior Accountable Official for Risk Management
-
-chief information officer
-
-senior agency information security officer
-
-senior agency official for privacy
-
-organizational personnel with information security and privacy program responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-30: Develop an organization-wide strategy for managing supply chain risks associated with the development, acquisition, maintenance, and disposal of systems, system components, and system services; Implement the supply chain risk management strategy consistently across the organization; and Review and update the supply chain risk management strategy on {{ insert: param, pm-30_odp }} or as required, to address organizational changes. An organization-wide supply chain risk management strategy includes an unambiguous expression of the supply chain risk appetite and tolerance for the organization, acceptable supply chain risk mitigation strategies or controls, a process for consistently evaluating and monitoring supply chain risk, approaches for implementing and communicating the supply chain risk management strategy, and the associated roles and responsibilities. Supply chain risk management includes considerations of the security and privacy risks associated with the development, acquisition, maintenance, and disposal of systems, system components, and system services. The supply chain risk management strategy can be incorporated into the organization’s overarching risk management strategy and can guide and inform supply chain policies and system-level supply chain risk management plans. In addition, the use of a risk executive function can facilitate a consistent, organization-wide application of the supply chain risk management strategy. The supply chain risk management strategy is implemented at the organization and mission/business levels, whereas the supply chain risk management plan (see [SR-2](#sr-2) ) is implemented at the system level. an organization-wide strategy for managing supply chain risks is developed; the supply chain risk management strategy addresses risks associated with the development of systems; the supply chain risk management strategy addresses risks associated with the development of system components; the supply chain risk management strategy addresses risks associated with the development of system services; the supply chain risk management strategy addresses risks associated with the acquisition of systems; the supply chain risk management strategy addresses risks associated with the acquisition of system components; the supply chain risk management strategy addresses risks associated with the acquisition of system services; the supply chain risk management strategy addresses risks associated with the maintenance of systems; the supply chain risk management strategy addresses risks associated with the maintenance of system components; the supply chain risk management strategy addresses risks associated with the maintenance of system services; the supply chain risk management strategy addresses risks associated with the disposal of systems; the supply chain risk management strategy addresses risks associated with the disposal of system components; the supply chain risk management strategy addresses risks associated with the disposal of system services; the supply chain risk management strategy is implemented consistently across the organization; the supply chain risk management strategy is reviewed and updated {{ insert: param, pm-30_odp }} or as required to address organizational changes. Supply chain risk management strategy
-
-organizational risk management strategy
-
-enterprise risk management documents
-
-other relevant documents or records Organizational personnel with supply chain risk management responsibilities
-
-organizational personnel with information security responsibilities
-
-organizational personnel with acquisition responsibilities
-
-organizational personnel with enterprise risk management responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-31: Develop an organization-wide continuous monitoring strategy and implement continuous monitoring programs that include: Establishing the following organization-wide metrics to be monitored: {{ insert: param, pm-31_odp.01 }}; Establishing {{ insert: param, pm-31_odp.02 }} and {{ insert: param, pm-31_odp.03 }} for control effectiveness; Ongoing monitoring of organizationally-defined metrics in accordance with the continuous monitoring strategy; Correlation and analysis of information generated by control assessments and monitoring; Response actions to address results of the analysis of control assessment and monitoring information; and Reporting the security and privacy status of organizational systems to {{ insert: param, pm-31_prm_4 }} {{ insert: param, pm-31_prm_5 }}. Continuous monitoring at the organization level facilitates ongoing awareness of the security and privacy posture across the organization to support organizational risk management decisions. The terms "continuous" and "ongoing" imply that organizations assess and monitor their controls and risks at a frequency sufficient to support risk-based decisions. Different types of controls may require different monitoring frequencies. The results of continuous monitoring guide and inform risk response actions by organizations. Continuous monitoring programs allow organizations to maintain the authorizations of systems and common controls in highly dynamic environments of operation with changing mission and business needs, threats, vulnerabilities, and technologies. Having access to security- and privacy-related information on a continuing basis through reports and dashboards gives organizational officials the capability to make effective, timely, and informed risk management decisions, including ongoing authorization decisions. To further facilitate security and privacy risk management, organizations consider aligning organization-defined monitoring metrics with organizational risk tolerance as defined in the risk management strategy. Monitoring requirements, including the need for monitoring, may be referenced in other controls and control enhancements such as, [AC-2g](#ac-2_smt.g), [AC-2(7)](#ac-2.7), [AC-2(12)(a)](#ac-2.12_smt.a), [AC-2(7)(b)](#ac-2.7_smt.b), [AC-2(7)(c)](#ac-2.7_smt.c), [AC-17(1)](#ac-17.1), [AT-4a](#at-4_smt.a), [AU-13](#au-13), [AU-13(1)](#au-13.1), [AU-13(2)](#au-13.2), [CA-7](#ca-7), [CM-3f](#cm-3_smt.f), [CM-6d](#cm-6_smt.d), [CM-11c](#cm-11_smt.c), [IR-5](#ir-5), [MA-2b](#ma-2_smt.b), [MA-3a](#ma-3_smt.a), [MA-4a](#ma-4_smt.a), [PE-3d](#pe-3_smt.d), [PE-6](#pe-6), [PE-14b](#pe-14_smt.b), [PE-16](#pe-16), [PE-20](#pe-20), [PM-6](#pm-6), [PM-23](#pm-23), [PS-7e](#ps-7_smt.e), [SA-9c](#sa-9_smt.c), [SC-5(3)(b)](#sc-5.3_smt.b), [SC-7a](#sc-7_smt.a), [SC-7(24)(b)](#sc-7.24_smt.b), [SC-18b](#sc-18_smt.b), [SC-43b](#sc-43_smt.b), [SI-4](#si-4). an organization-wide continuous monitoring strategy is developed; continuous monitoring programs are implemented that include establishing {{ insert: param, pm-31_odp.01 }} to be monitored; continuous monitoring programs are implemented that establish {{ insert: param, pm-31_odp.02 }} for monitoring; continuous monitoring programs are implemented that establish {{ insert: param, pm-31_odp.03 }} for assessment of control effectiveness; continuous monitoring programs are implemented that include monitoring {{ insert: param, pm-31_odp.01 }} on an ongoing basis in accordance with the continuous monitoring strategy; continuous monitoring programs are implemented that include correlating information generated by control assessments and monitoring; continuous monitoring programs are implemented that include analyzing information generated by control assessments and monitoring; continuous monitoring programs are implemented that include response actions to address the analysis of control assessment information; continuous monitoring programs are implemented that include response actions to address the analysis of monitoring information; continuous monitoring programs are implemented that include reporting the security status of organizational systems to {{ insert: param, pm-31_odp.04 }} {{ insert: param, pm-31_odp.06 }}; continuous monitoring programs are implemented that include reporting the privacy status of organizational systems to {{ insert: param, pm-31_odp.05 }} {{ insert: param, pm-31_odp.07 }}. Information security program plan
-
-privacy program plan
-
-supply chain risk management plan
-
-continuous monitoring strategy
-
-risk management strategy
-
-information security continuous monitoring program documentation, reporting, metrics, and artifacts
-
-information security continuous monitoring program assessment documentation, reporting, metrics, and artifacts
-
-assessment and authorization policy
-
-procedures addressing the continuous monitoring of controls
-
-privacy program continuous monitoring documentation, reporting, metrics, and artifacts
-
-continuous monitoring program records, security, and privacy impact analyses
-
-status reports
-
-risk response documentation
-
-other relevant documents or records. Senior Accountable Official for Risk Management
-
-chief information officer
-
-senior agency information security officer
-
-senior agency official for privacy
-
-organizational personnel with information security, privacy, and supply chain risk management program responsibilities Organizational procedures and mechanisms used for information security, privacy, and supply chain continuous monitoring
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PM-32: Analyze {{ insert: param, pm-32_odp }} supporting mission essential services or functions to ensure that the information resources are being used consistent with their intended purpose. Systems are designed to support a specific mission or business function. However, over time, systems and system components may be used to support services and functions that are outside of the scope of the intended mission or business functions. This can result in exposing information resources to unintended environments and uses that can significantly increase threat exposure. In doing so, the systems are more vulnerable to compromise, which can ultimately impact the services and functions for which they were intended. This is especially impactful for mission-essential services and functions. By analyzing resource use, organizations can identify such potential exposures. {{ insert: param, pm-32_odp }} supporting mission-essential services or functions are analyzed to ensure that the information resources are being used in a manner that is consistent with their intended purpose. Information security program plan
-
-privacy program plan
-
-list of essential services and functions
-
-organizational analysis of information resources
-
-risk management strategy
-
-other relevant documents or records. Organizational personnel with information security, privacy, and supply chain risk management program responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PM
 
 **Determination Criteria:**
 
@@ -8176,141 +5178,6 @@ organizational personnel with human capital management responsibilities Organiza
 
 ---
 
-#### PT — Personally Identifiable Information Processing and Transparency (Manual Controls)
-
-##### Control PT-1: Develop, document, and disseminate to {{ insert: param, pt-1_prm_1 }}: {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the personally identifiable information processing and transparency policy and the associated personally identifiable information processing and transparency controls; Designate an {{ insert: param, pt-01_odp.04 }} to manage the development, documentation, and dissemination of the personally identifiable information processing and transparency policy and procedures; and Review and update the current personally identifiable information processing and transparency: Policy {{ insert: param, pt-01_odp.05 }} and following {{ insert: param, pt-01_odp.06 }} ; and Procedures {{ insert: param, pt-01_odp.07 }} and following {{ insert: param, pt-01_odp.08 }}. Personally identifiable information processing and transparency policy and procedures address the controls in the PT family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of personally identifiable information processing and transparency policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to personally identifiable information processing and transparency policy and procedures include assessment or audit findings, breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a personally identifiable information processing and transparency policy is developed and documented; the personally identifiable information processing and transparency policy is disseminated to {{ insert: param, pt-01_odp.01 }}; personally identifiable information processing and transparency procedures to facilitate the implementation of the personally identifiable information processing and transparency policy and associated personally identifiable information processing and transparency controls are developed and documented; the personally identifiable information processing and transparency procedures are disseminated to {{ insert: param, pt-01_odp.02 }}; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses purpose; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses scope; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses roles; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses responsibilities; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses management commitment; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses coordination among organizational entities; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy addresses compliance; the {{ insert: param, pt-01_odp.03 }} personally identifiable information processing and transparency policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, pt-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the personally identifiable information processing and transparency policy and procedures; the current personally identifiable information processing and transparency policy is reviewed and updated {{ insert: param, pt-01_odp.05 }}; the current personally identifiable information processing and transparency policy is reviewed and updated following {{ insert: param, pt-01_odp.06 }}; the current personally identifiable information processing and transparency procedures are reviewed and updated {{ insert: param, pt-01_odp.07 }}; the current personally identifiable information processing and transparency procedures are reviewed and updated following {{ insert: param, pt-01_odp.08 }}. Personally identifiable information processing and transparency policy and procedures
-
-privacy plan
-
-privacy program plan
-
-other relevant documents or records Organizational personnel with personally identifiable information processing and transparency responsibilities
-
-organizational personnel with information security and privacy responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** PT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PT-5: Provide notice to individuals about the processing of personally identifiable information that: Is available to individuals upon first interacting with an organization, and subsequently at {{ insert: param, pt-05_odp.01 }}; Is clear and easy-to-understand, expressing information about personally identifiable information processing in plain language; Identifies the authority that authorizes the processing of personally identifiable information; Identifies the purposes for which personally identifiable information is to be processed; and Includes {{ insert: param, pt-05_odp.02 }}. Privacy notices help inform individuals about how their personally identifiable information is being processed by the system or organization. Organizations use privacy notices to inform individuals about how, under what authority, and for what purpose their personally identifiable information is processed, as well as other information such as choices individuals might have with respect to that processing and other parties with whom information is shared. Laws, executive orders, directives, regulations, or policies may require that privacy notices include specific elements or be provided in specific formats. Federal agency personnel consult with the senior agency official for privacy and legal counsel regarding when and where to provide privacy notices, as well as elements to include in privacy notices and required formats. In circumstances where laws or government-wide policies do not require privacy notices, organizational policies and determinations may require privacy notices and may serve as a source of the elements to include in privacy notices.
-
-Privacy risk assessments identify the privacy risks associated with the processing of personally identifiable information and may help organizations determine appropriate elements to include in a privacy notice to manage such risks. To help individuals understand how their information is being processed, organizations write materials in plain language and avoid technical jargon. a notice to individuals about the processing of personally identifiable information is provided such that the notice is available to individuals upon first interacting with an organization; a notice to individuals about the processing of personally identifiable information is provided such that the notice is subsequently available to individuals {{ insert: param, pt-05_odp.01 }}; a notice to individuals about the processing of personally identifiable information is provided that is clear, easy-to-understand, and expresses information about personally identifiable information processing in plain language; a notice to individuals about the processing of personally identifiable information that identifies the authority that authorizes the processing of personally identifiable information is provided; a notice to individuals about the processing of personally identifiable information that identifies the purpose for which personally identifiable information is to be processed is provided; a notice to individuals about the processing of personally identifiable information which includes {{ insert: param, pt-05_odp.02 }} is provided. Personally identifiable information processing and transparency policy and procedures
-
-privacy notice
-
-Privacy Act statements
-
-privacy plan
-
-other relevant documents or records Organizational personnel with personally identifiable information processing and transparency responsibilities
-
-organizational personnel with user interface or user experience responsibilities
-
-organizational personnel with information security and privacy responsibilities Organizational processes and implementation support or mechanisms for providing notice to individuals regarding the processing of their personally identifiable information
-
-**FedRAMP Baseline:** L2 | **Domain:** PT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PT-6: For systems that process information that will be maintained in a Privacy Act system of records: Draft system of records notices in accordance with OMB guidance and submit new and significantly modified system of records notices to the OMB and appropriate congressional committees for advance review; Publish system of records notices in the Federal Register; and Keep system of records notices accurate, up-to-date, and scoped in accordance with policy. The [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) requires that federal agencies publish a system of records notice in the Federal Register upon the establishment and/or modification of a [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) system of records. As a general matter, a system of records notice is required when an agency maintains a group of any records under the control of the agency from which information is retrieved by the name of an individual or by some identifying number, symbol, or other identifier. The notice describes the existence and character of the system and identifies the system of records, the purpose(s) of the system, the authority for maintenance of the records, the categories of records maintained in the system, the categories of individuals about whom records are maintained, the routine uses to which the records are subject, and additional details about the system as described in [OMB A-108](#3671ff20-c17c-44d6-8a88-7de203fa74aa). system of records notices are drafted in accordance with OMB guidance for systems that process information that will be maintained in a Privacy Act system of records; new and significantly modified system of records notices are submitted to the OMB and appropriate congressional committees for advance review for systems that process information that will be maintained in a Privacy Act system of records; system of records notices are published in the Federal Register for systems that process information that will be maintained in a Privacy Act system of records; system of records notices are kept accurate, up-to-date, and scoped in accordance with policy for systems that process information that will be maintained in a Privacy Act system of records. Personally identifiable information processing and transparency policy and procedures
-
-privacy notice
-
-Privacy Act system of records
-
-Federal Register notices
-
-privacy plan
-
-other relevant documents or records Organizational personnel with personally identifiable information processing and transparency responsibilities
-
-organizational personnel with information security and privacy responsibilities Organizational processes for Privacy Act system of records maintenance
-
-**FedRAMP Baseline:** L2 | **Domain:** PT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PT-7: Apply {{ insert: param, pt-07_odp }} for specific categories of personally identifiable information. Organizations apply any conditions or protections that may be necessary for specific categories of personally identifiable information. These conditions may be required by laws, executive orders, directives, regulations, policies, standards, or guidelines. The requirements may also come from the results of privacy risk assessments that factor in contextual changes that may result in an organizational determination that a particular category of personally identifiable information is particularly sensitive or raises particular privacy risks. Organizations consult with the senior agency official for privacy and legal counsel regarding any protections that may be necessary. {{ insert: param, pt-07_odp }} are applied for specific categories of personally identifiable information. Personally identifiable information processing and transparency policy and procedures
-
-privacy notice
-
-Privacy Act system of records
-
-computer matching agreements and notices
-
-contracts
-
-privacy information sharing agreements
-
-memoranda of understanding
-
-governing requirements
-
-privacy plan
-
-other relevant documents or records Organizational personnel with personally identifiable information processing and transparency responsibilities
-
-organizational personnel with information security and privacy responsibilities Organizational processes for supporting and/or implementing personally identifiable information processing
-
-**FedRAMP Baseline:** L2 | **Domain:** PT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control PT-8: When a system or organization processes information for the purpose of conducting a matching program: Obtain approval from the Data Integrity Board to conduct the matching program; Develop and enter into a computer matching agreement; Publish a matching notice in the Federal Register; Independently verify the information produced by the matching program before taking adverse action against an individual, if required; and Provide individuals with notice and an opportunity to contest the findings before taking adverse action against an individual. The [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) establishes requirements for federal and non-federal agencies if they engage in a matching program. In general, a matching program is a computerized comparison of records from two or more automated [PRIVACT](#18e71fec-c6fd-475a-925a-5d8495cf8455) systems of records or an automated system of records and automated records maintained by a non-federal agency (or agent thereof). A matching program either pertains to federal benefit programs or federal personnel or payroll records. A federal benefit match is performed to determine or verify eligibility for payments under federal benefit programs or to recoup payments or delinquent debts under federal benefit programs. A matching program involves not just the matching activity itself but also the investigative follow-up and ultimate action, if any. approval to conduct the matching program is obtained from the Data Integrity Board when a system or organization processes information for the purpose of conducting a matching program; a computer matching agreement is developed when a system or organization processes information for the purpose of conducting a matching program; a computer matching agreement is entered into when a system or organization processes information for the purpose of conducting a matching program; a matching notice is published in the Federal Register when a system or organization processes information for the purpose of conducting a matching program; the information produced by the matching program is independently verified before taking adverse action against an individual, if required, when a system or organization processes information for the purpose of conducting a matching program; individuals are provided with notice when a system or organization processes information for the purpose of conducting a matching program; individuals are provided with an opportunity to contest the findings before adverse action is taken against them when a system or organization processes information for the purpose of conducting a matching program. Personally identifiable information processing and transparency policy and procedures
-
-privacy notice
-
-Privacy Act system of records
-
-Federal Register notices
-
-Data Integrity Board determinations
-
-contracts
-
-information sharing agreements
-
-memoranda of understanding
-
-governing requirements
-
-privacy plan
-
-other relevant documents or records Organizational personnel with personally identifiable information processing and transparency responsibilities
-
-organizational personnel with information security and privacy responsibilities Organizational processes for supporting and/or implementing personally identifiable information processing
-
-matching program
-
-**FedRAMP Baseline:** L2 | **Domain:** PT
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### RA — Risk Assessment (Manual Controls)
 
 ##### Control RA-1: Develop, document, and disseminate to {{ insert: param, ra-1_prm_1 }}: {{ insert: param, ra-01_odp.03 }} risk assessment policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the risk assessment policy and the associated risk assessment controls; Designate an {{ insert: param, ra-01_odp.04 }} to manage the development, documentation, and dissemination of the risk assessment policy and procedures; and Review and update the current risk assessment: Policy {{ insert: param, ra-01_odp.05 }} and following {{ insert: param, ra-01_odp.06 }} ; and Procedures {{ insert: param, ra-01_odp.07 }} and following {{ insert: param, ra-01_odp.08 }}. Risk assessment policy and procedures address the controls in the RA family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of risk assessment policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies reflecting the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to risk assessment policy and procedures include assessment or audit findings, security incidents or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a risk assessment policy is developed and documented; the risk assessment policy is disseminated to {{ insert: param, ra-01_odp.01 }}; risk assessment procedures to facilitate the implementation of the risk assessment policy and associated risk assessment controls are developed and documented; the risk assessment procedures are disseminated to {{ insert: param, ra-01_odp.02 }}; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses purpose; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses scope; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses roles; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses responsibilities; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses management commitment; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses coordination among organizational entities; the {{ insert: param, ra-01_odp.03 }} risk assessment policy addresses compliance; the {{ insert: param, ra-01_odp.03 }} risk assessment policy is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, ra-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the risk assessment policy and procedures; the current risk assessment policy is reviewed and updated {{ insert: param, ra-01_odp.05 }}; the current risk assessment policy is reviewed and updated following {{ insert: param, ra-01_odp.06 }}; the current risk assessment procedures are reviewed and updated {{ insert: param, ra-01_odp.07 }}; the current risk assessment procedures are reviewed and updated following {{ insert: param, ra-01_odp.08 }}. Risk assessment policy and procedures
@@ -8361,42 +5228,6 @@ organizational personnel with security and privacy responsibilities Organization
 
 ---
 
-##### Control RA-4: 
-
-**FedRAMP Baseline:** L2 | **Domain:** RA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control RA-6: Employ a technical surveillance countermeasures survey at {{ insert: param, ra-06_odp.01 }} {{ insert: param, ra-06_odp.02 }}. A technical surveillance countermeasures survey is a service provided by qualified personnel to detect the presence of technical surveillance devices and hazards and to identify technical security weaknesses that could be used in the conduct of a technical penetration of the surveyed facility. Technical surveillance countermeasures surveys also provide evaluations of the technical security posture of organizations and facilities and include visual, electronic, and physical examinations of surveyed facilities, internally and externally. The surveys also provide useful input for risk assessments and information regarding organizational exposure to potential adversaries. a technical surveillance countermeasures survey is employed at {{ insert: param, ra-06_odp.01 }} {{ insert: param, ra-06_odp.02 }}. Risk assessment policy
-
-procedures addressing technical surveillance countermeasures surveys
-
-audit records/event logs
-
-system security plan
-
-other relevant documents or records Organizational personnel with technical surveillance countermeasures surveys responsibilities
-
-system/network administrators
-
-organizational personnel with security responsibilities Organizational processes for technical surveillance countermeasures surveys
-
-mechanisms/tools supporting and/or implementing technical surveillance countermeasure surveys
-
-**FedRAMP Baseline:** L2 | **Domain:** RA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control RA-7: Respond to findings from security and privacy assessments, monitoring, and audits in accordance with organizational risk tolerance. Organizations have many options for responding to risk including mitigating risk by implementing new controls or strengthening existing controls, accepting risk with appropriate justification or rationale, sharing or transferring risk, or avoiding risk. The risk tolerance of the organization influences risk response decisions and actions. Risk response addresses the need to determine an appropriate response to risk before generating a plan of action and milestones entry. For example, the response may be to accept risk or reject risk, or it may be possible to mitigate the risk immediately so that a plan of action and milestones entry is not needed. However, if the risk response is to mitigate the risk, and the mitigation cannot be completed immediately, a plan of action and milestones entry is generated. findings from security assessments are responded to in accordance with organizational risk tolerance; findings from privacy assessments are responded to in accordance with organizational risk tolerance; findings from monitoring are responded to in accordance with organizational risk tolerance; findings from audits are responded to in accordance with organizational risk tolerance. Risk assessment policy
 
 assessment reports
@@ -8410,43 +5241,6 @@ privacy plan
 other relevant documents or records Organizational personnel with assessment and auditing responsibilities
 
 system/network administrators
-
-organizational personnel with security and privacy responsibilities Organizational processes for assessments and audits
-
-mechanisms/tools supporting and/or implementing assessments and auditing
-
-**FedRAMP Baseline:** L2 | **Domain:** RA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control RA-8: Conduct privacy impact assessments for systems, programs, or other activities before: Developing or procuring information technology that processes personally identifiable information; and Initiating a new collection of personally identifiable information that: Will be processed using information technology; and Includes personally identifiable information permitting the physical or virtual (online) contacting of a specific individual, if identical questions have been posed to, or identical reporting requirements imposed on, ten or more individuals, other than agencies, instrumentalities, or employees of the federal government. A privacy impact assessment is an analysis of how personally identifiable information is handled to ensure that handling conforms to applicable privacy requirements, determine the privacy risks associated with an information system or activity, and evaluate ways to mitigate privacy risks. A privacy impact assessment is both an analysis and a formal document that details the process and the outcome of the analysis.
-
-Organizations conduct and develop a privacy impact assessment with sufficient clarity and specificity to demonstrate that the organization fully considered privacy and incorporated appropriate privacy protections from the earliest stages of the organization’s activity and throughout the information life cycle. In order to conduct a meaningful privacy impact assessment, the organization’s senior agency official for privacy works closely with program managers, system owners, information technology experts, security officials, counsel, and other relevant organization personnel. Moreover, a privacy impact assessment is not a time-restricted activity that is limited to a particular milestone or stage of the information system or personally identifiable information life cycles. Rather, the privacy analysis continues throughout the system and personally identifiable information life cycles. Accordingly, a privacy impact assessment is a living document that organizations update whenever changes to the information technology, changes to the organization’s practices, or other factors alter the privacy risks associated with the use of such information technology.
-
-To conduct the privacy impact assessment, organizations can use security and privacy risk assessments. Organizations may also use other related processes that may have different names, including privacy threshold analyses. A privacy impact assessment can also serve as notice to the public regarding the organization’s practices with respect to privacy. Although conducting and publishing privacy impact assessments may be required by law, organizations may develop such policies in the absence of applicable laws. For federal agencies, privacy impact assessments may be required by [EGOV](#7b0b9634-741a-4335-b6fa-161228c3a76e) ; agencies should consult with their senior agency official for privacy and legal counsel on this requirement and be aware of the statutory exceptions and OMB guidance relating to the provision. privacy impact assessments are conducted for systems, programs, or other activities before developing or procuring information technology that processes personally identifiable information; privacy impact assessments are conducted for systems, programs, or other activities before initiating a collection of personally identifiable information that will be processed using information technology; privacy impact assessments are conducted for systems, programs, or other activities before initiating a collection of personally identifiable information that includes personally identifiable information permitting the physical or virtual (online) contacting of a specific individual, if identical questions have been posed to, or identical reporting requirements imposed on, ten or more individuals, other than agencies, instrumentalities, or employees of the federal government. Risk assessment policy
-
-security and privacy risk assessment reports
-
-acquisitions documents
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with assessment and auditing responsibilities
-
-system/network administrators
-
-system developers
-
-program managers
-
-legal counsel
 
 organizational personnel with security and privacy responsibilities Organizational processes for assessments and audits
 
@@ -8486,33 +5280,6 @@ system/network administrators
 organizational personnel with security responsibilities Organizational processes for assessments and audits
 
 mechanisms/tools supporting and/or implementing assessments and auditing
-
-**FedRAMP Baseline:** L2 | **Domain:** RA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control RA-10: Establish and maintain a cyber threat hunting capability to: Search for indicators of compromise in organizational systems; and Detect, track, and disrupt threats that evade existing controls; and Employ the threat hunting capability {{ insert: param, ra-10_odp }}. Threat hunting is an active means of cyber defense in contrast to traditional protection measures, such as firewalls, intrusion detection and prevention systems, quarantining malicious code in sandboxes, and Security Information and Event Management technologies and systems. Cyber threat hunting involves proactively searching organizational systems, networks, and infrastructure for advanced threats. The objective is to track and disrupt cyber adversaries as early as possible in the attack sequence and to measurably improve the speed and accuracy of organizational responses. Indications of compromise include unusual network traffic, unusual file changes, and the presence of malicious code. Threat hunting teams leverage existing threat intelligence and may create new threat intelligence, which is shared with peer organizations, Information Sharing and Analysis Organizations (ISAO), Information Sharing and Analysis Centers (ISAC), and relevant government departments and agencies. a cyber threat capability is established and maintained to search for indicators of compromise in organizational systems; a cyber threat capability is established and maintained to detect, track, and disrupt threats that evade existing controls; the threat hunting capability is employed {{ insert: param, ra-10_odp }}. Risk assessment policy
-
-assessment reports
-
-audit records/event logs
-
-threat hunting capability
-
-system security plan
-
-other relevant documents or records Organizational personnel with threat hunting responsibilities
-
-system/network administrators
-
-organizational personnel with security responsibilities Organizational processes for assessments and audits
-
-mechanisms/tools supporting and/or implementing threat hunting capabilities
 
 **FedRAMP Baseline:** L2 | **Domain:** RA
 
@@ -8679,28 +5446,6 @@ system developers Organizational processes for obtaining, protecting, and distri
 
 ---
 
-##### Control SA-6: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-7: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SA-8: Apply the following systems security and privacy engineering principles in the specification, design, development, implementation, and modification of the system and system components: {{ insert: param, sa-8_prm_1 }}. Systems security and privacy engineering principles are closely related to and implemented throughout the system development life cycle (see [SA-3](#sa-3) ). Organizations can apply systems security and privacy engineering principles to new systems under development or to systems undergoing upgrades. For existing systems, organizations apply systems security and privacy engineering principles to system upgrades and modifications to the extent feasible, given the current state of hardware, software, and firmware components within those systems.
 
 The application of systems security and privacy engineering principles helps organizations develop trustworthy, secure, and resilient systems and reduces the susceptibility to disruptions, hazards, threats, and the creation of privacy problems for individuals. Examples of system security engineering principles include: developing layered protections; establishing security and privacy policies, architecture, and controls as the foundation for design and development; incorporating security and privacy requirements into the system development life cycle; delineating physical and logical security boundaries; ensuring that developers are trained on how to build secure software; tailoring controls to meet organizational needs; and performing threat modeling to identify use cases, threat agents, attack vectors and patterns, design patterns, and compensating controls needed to mitigate risk.
@@ -8789,39 +5534,6 @@ mechanisms for monitoring security and privacy control compliance by external se
 
 ---
 
-##### Control SA-12: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-13: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-14: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SA-15: Require the developer of the system, system component, or system service to follow a documented development process that: Explicitly addresses security and privacy requirements; Identifies the standards and tools used in the development process; Documents the specific tool options and tool configurations used in the development process; and Documents, manages, and ensures the integrity of changes to the process and/or tools used in development; and Review the development process, standards, tools, tool options, and tool configurations {{ insert: param, sa-15_odp.01 }} to determine if the process, standards, tools, tool options and tool configurations selected and employed can satisfy the following security and privacy requirements: {{ insert: param, sa-15_prm_2 }}. Development tools include programming languages and computer-aided design systems. Reviews of development processes include the use of maturity models to determine the potential effectiveness of such processes. Maintaining the integrity of changes to tools and processes facilitates effective supply chain risk assessment and mitigation. Such integrity requires configuration control throughout the system development life cycle to track authorized changes and prevent unauthorized changes. the developer of the system, system component, or system service is required to follow a documented development process that explicitly addresses security requirements; the developer of the system, system component, or system service is required to follow a documented development process that explicitly addresses privacy requirements; the developer of the system, system component, or system service is required to follow a documented development process that identifies the standards used in the development process; the developer of the system, system component, or system service is required to follow a documented development process that identifies the tools used in the development process; the developer of the system, system component, or system service is required to follow a documented development process that documents the specific tool used in the development process; the developer of the system, system component, or system service is required to follow a documented development process that documents the specific tool configurations used in the development process; the developer of the system, system component, or system service is required to follow a documented development process that documents, manages, and ensures the integrity of changes to the process and/or tools used in development; the developer of the system, system component, or system service is required to follow a documented development process in which the development process, standards, tools, tool options, and tool configurations are reviewed {{ insert: param, sa-15_odp.01 }} to determine that the process, standards, tools, tool options, and tool configurations selected and employed satisfy {{ insert: param, sa-15_odp.02 }}; the developer of the system, system component, or system service is required to follow a documented development process in which the development process, standards, tools, tool options, and tool configurations are reviewed {{ insert: param, sa-15_odp.01 }} to determine that the process, standards, tools, tool options, and tool configurations selected and employed satisfy {{ insert: param, sa-15_odp.03 }}. System and services acquisition policy
 
 system and services acquisition procedures
@@ -8877,260 +5589,6 @@ system developer
 
 ---
 
-##### Control SA-16: Require the developer of the system, system component, or system service to provide the following training on the correct use and operation of the implemented security and privacy functions, controls, and/or mechanisms: {{ insert: param, sa-16_odp }}. Developer-provided training applies to external and internal (in-house) developers. Training personnel is essential to ensuring the effectiveness of the controls implemented within organizational systems. Types of training include web-based and computer-based training, classroom-style training, and hands-on training (including micro-training). Organizations can also request training materials from developers to conduct in-house training or offer self-training to organizational personnel. Organizations determine the type of training necessary and may require different types of training for different security and privacy functions, controls, and mechanisms. the developer of the system, system component, or system service is required to provide {{ insert: param, sa-16_odp }} on the correct use and operation of the implemented security and privacy functions, controls, and/or mechanisms. System and services acquisition policy
-
-system and services acquisition procedures
-
-procedures addressing developer-provided training
-
-solicitation documentation
-
-acquisition documentation
-
-service level agreements
-
-acquisition contracts for the system, system component, or system service
-
-organizational security and privacy training policy
-
-developer-provided training materials
-
-training records
-
-system security plan
-
-privacy plan
-
-privacy impact assessment
-
-privacy risk assessment documentation
-
-other relevant documents or records Organizational personnel with system and service acquisition responsibilities
-
-organizational personnel with information security and privacy responsibilities
-
-system developer
-
-external or internal (in-house) developers with training responsibilities for the system, system component, or information system service
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-17: Require the developer of the system, system component, or system service to produce a design specification and security and privacy architecture that: Is consistent with the organization’s security and privacy architecture that is an integral part the organization’s enterprise architecture; Accurately and completely describes the required security and privacy functionality, and the allocation of controls among physical and logical components; and Expresses how individual security and privacy functions, mechanisms, and services work together to provide required security and privacy capabilities and a unified approach to protection. Developer security and privacy architecture and design are directed at external developers, although they could also be applied to internal (in-house) development. In contrast, [PL-8](#pl-8) is directed at internal developers to ensure that organizations develop a security and privacy architecture that is integrated with the enterprise architecture. The distinction between SA-17 and [PL-8](#pl-8) is especially important when organizations outsource the development of systems, system components, or system services and when there is a requirement to demonstrate consistency with the enterprise architecture and security and privacy architecture of the organization. [ISO 15408-2](#87087451-2af5-43d4-88c1-d66ad850f614), [ISO 15408-3](#4452efc0-e79e-47b8-aa30-b54f3ef61c2f) , and [SP 800-160-1](#e3cc0520-a366-4fc9-abc2-5272db7e3564) provide information on security architecture and design, including formal policy models, security-relevant components, formal and informal correspondence, conceptually simple design, and structuring for least privilege and testing. the developer of the system, system component, or system service is required to produce a design specification and security architecture that are consistent with the organization’s security architecture, which is an integral part the organization’s enterprise architecture; the developer of the system, system component, or system service is required to produce a design specification and privacy architecture that are consistent with the organization’s privacy architecture, which is an integral part the organization’s enterprise architecture; the developer of the system, system component, or system service is required to produce a design specification and security architecture that accurately and completely describe the required security functionality and the allocation of controls among physical and logical components; the developer of the system, system component, or system service is required to produce a design specification and privacy architecture that accurately and completely describe the required privacy functionality and the allocation of controls among physical and logical components; the developer of the system, system component, or system service is required to produce a design specification and security architecture that express how individual security functions, mechanisms, and services work together to provide required security capabilities and a unified approach to protection; the developer of the system, system component, or system service is required to produce a design specification and privacy architecture that express how individual privacy functions, mechanisms, and services work together to provide required privacy capabilities and a unified approach to protection. System and services acquisition policy
-
-system and services acquisition procedures
-
-enterprise architecture policy
-
-enterprise architecture documentation
-
-procedures addressing developer security and privacy architecture and design specifications for the system
-
-solicitation documentation
-
-acquisition documentation
-
-service level agreements
-
-acquisition contracts for the system, system component, or system service
-
-system design documentation
-
-information system configuration settings and associated documentation
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with acquisition responsibilities
-
-organizational personnel with information security and privacy responsibilities
-
-system developer
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-18: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-19: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-20: Reimplement or custom develop the following critical system components: {{ insert: param, sa-20_odp }}. Organizations determine that certain system components likely cannot be trusted due to specific threats to and vulnerabilities in those components for which there are no viable security controls to adequately mitigate risk. Reimplementation or custom development of such components may satisfy requirements for higher assurance and is carried out by initiating changes to system components (including hardware, software, and firmware) such that the standard attacks by adversaries are less likely to succeed. In situations where no alternative sourcing is available and organizations choose not to reimplement or custom develop critical system components, additional controls can be employed. Controls include enhanced auditing, restrictions on source code and system utility access, and protection from deletion of system and application files. {{ insert: param, sa-20_odp }} are reimplemented or custom-developed. Supply chain risk management plan
-
-system and services acquisition policy
-
-procedures addressing the customized development of critical system components
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system development life cycle documentation addressing the custom development of critical system components
-
-configuration management records
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel with system and service acquisition responsibilities
-
-organizational personnel with information security responsibilities
-
-organizational personnel with responsibility for the reimplementation or customized development of critical system components Organizational processes for the reimplementation or customized development of critical system components
-
-mechanisms supporting and/or implementing the reimplementation or customized development of critical system components
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-21: Require that the developer of {{ insert: param, sa-21_odp.01 }}: Has appropriate access authorizations as determined by assigned {{ insert: param, sa-21_odp.02 }} ; and Satisfies the following additional personnel screening criteria: {{ insert: param, sa-21_odp.03 }}. Developer screening is directed at external developers. Internal developer screening is addressed by [PS-3](#ps-3) . Because the system, system component, or system service may be used in critical activities essential to the national or economic security interests of the United States, organizations have a strong interest in ensuring that developers are trustworthy. The degree of trust required of developers may need to be consistent with that of the individuals who access the systems, system components, or system services once deployed. Authorization and personnel screening criteria include clearances, background checks, citizenship, and nationality. Developer trustworthiness may also include a review and analysis of company ownership and relationships that the company has with entities that may potentially affect the quality and reliability of the systems, components, or services being developed. Satisfying the required access authorizations and personnel screening criteria includes providing a list of all individuals who are authorized to perform development activities on the selected system, system component, or system service so that organizations can validate that the developer has satisfied the authorization and screening requirements. the developer of {{ insert: param, sa-21_odp.01 }} is required to have appropriate access authorizations as determined by assigned {{ insert: param, sa-21_odp.02 }}; the developer of {{ insert: param, sa-21_odp.01 }} is required to satisfy {{ insert: param, sa-21_odp.03 }}. System and services acquisition policy
-
-personnel security policy and procedures
-
-procedures addressing personnel screening
-
-system design documentation
-
-acquisition documentation
-
-service level agreements
-
-acquisition contracts for developer services
-
-system configuration settings and associated documentation
-
-list of appropriate access authorizations required by the developers of the system
-
-personnel screening criteria and associated documentation
-
-system security plan
-
-supply chain risk management plan
-
-other relevant documents or records Organizational personnel with system and service acquisition responsibilities
-
-organizational personnel with information security responsibilities
-
-organizational personnel responsible for developer screening Organizational processes for developer screening
-
-mechanisms supporting developer screening
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-23: Employ {{ insert: param, sa-23_odp.01 }} on {{ insert: param, sa-23_odp.02 }} supporting mission essential services or functions to increase the trustworthiness in those systems or components. It is often necessary for a system or system component that supports mission-essential services or functions to be enhanced to maximize the trustworthiness of the resource. Sometimes this enhancement is done at the design level. In other instances, it is done post-design, either through modifications of the system in question or by augmenting the system with additional components. For example, supplemental authentication or non-repudiation functions may be added to the system to enhance the identity of critical resources to other resources that depend on the organization-defined resources. {{ insert: param, sa-23_odp.01 }} is employed on {{ insert: param, sa-23_odp.02 }} supporting essential services or functions to increase the trustworthiness in those systems or components. System and services acquisition policy
-
-procedures addressing design modification, augmentation, or reconfiguration of systems or system components
-
-documented evidence of design modification, augmentation, or reconfiguration
-
-system security plan
-
-supply chain risk management plan
-
-other relevant documents or records Organizational personnel with system and service acquisition responsibilities
-
-organizational personnel with information security responsibilities
-
-organizational personnel with the responsibility for security architecture
-
-organizational personnel responsible for configuration management Organizational processes for the modification of design, augmentation, or reconfiguration of systems or system components
-
-mechanisms supporting and/or implementing design modification, augmentation, or reconfiguration of systems or system components
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SA-24: Design organizational systems, system components, or system services to achieve cyber resiliency by: Defining the following cyber resiliency goals: {{ insert: param, sa-24_odp.01 }}. Defining the following cyber resiliency objectives: {{ insert: param, sa-24_odp.02 }}. Defining the following cyber resiliency techniques: {{ insert: param, sa-24_odp.03 }}. Defining the following cyber resiliency implementation approaches: {{ insert: param, sa-24_odp.04 }}. Defining the following cyber resiliency design principles: {{ insert: param, sa-24_odp.05 }}. Implement the selected cyber resiliency goals, objectives, techniques, implementation approaches, and design principles as part of an organizational risk management process or systems security engineering process. Cyber resiliency is critical to ensuring the survivability of mission critical systems and high value assets. Cyber resiliency focuses on limiting the damage from adversity or the conditions that can cause a loss of assets. Damage can affect: (1) organizations (e.g., loss of reputation, increased existential risk); (2) missions or business functions (e.g., decreased capability to complete current missions and to accomplish future missions); (3) security (e.g., decreased capability to achieve security objectives or to prevent, detect, and respond to cyber incidents); (4) systems (e.g., unauthorized use of system resources or decreased capability to meet system requirements); or (5) specific system elements (e.g., physical destruction; corruption, modification, or fabrication of information).
-
-Cyber resiliency goals are intended to help organizations maintain a state of informed preparedness for adversity, continue essential mission or business functions despite adversity, restore mission or business functions during and after adversity, and modify mission or business functions and their supporting capabilities in response to predicted changes in technical, operational, or threat environments.
-
-NIST SP 800-160, Volume 2 provides additional information on the Cyber Resiliency Engineering Framework to include detailed descriptions of cyber resiliency goals, objectives, techniques, implementation approaches, and design principles. NIST SP 800-160, Vol 1 provides additional information on achieving cyber resiliency as an emergent property of an engineered system. Determine if: organizational systems, system components, or system services achieve cyber resiliency through {{ insert: param, sa-24_odp.01 }}; organizational systems, system components, or system services achieve cyber resiliency through {{ insert: param, sa-24_odp.02 }}; organizational systems, system components, or system services achieve cyber resiliency through {{ insert: param, sa-24_odp.03 }}; organizational systems, system components, or system services achieve cyber resiliency through {{ insert: param, sa-24_odp.04 }}; organizational systems, system components, or system services achieve cyber resiliency through {{ insert: param, sa-24_odp.05 }}; selected cyber resiliency goals are implemented as part of an organizational risk management process of systems security engineering process; selected cyber resiliency objectives are implemented as part of an organizational risk management process of systems security engineering process; selected cyber resiliency techniques are implemented as part of an organizational risk management process of systems security engineering process; selected cyber resiliency implementation approaches are implemented as part of an organizational risk management process of systems security engineering process; selected cyber resiliency design principles are implemented as part of an organizational risk management process of systems security engineering process. System and services acquisition policy;
-
-system and services acquisition procedures;
-
-assessment and authorization procedures; 
-
-procedures addressing cyber resiliency goals, objectives, techniques, implementation approaches, and design principles used in the specification, design, development, implementation, and modification of the system; 
-
-system design documentation; 
-
-security and privacy requirements and specifications for the system; 
-
-system security plan;
-
-privacy plan; 
-
-privacy impact assessment; 
-
-privacy risk assessment documentation. Organizational personnel with acquisition/contracting responsibilities; 
-
-organizational personnel with information security and privacy responsibilities; 
-
-organizational personnel with system specification, design, development, implementation, and modification responsibilities; 
-
-system developers. Organizational processes for applying cyber resiliency principles in system specification, design, development, implementation, and modification;
-
-mechanisms supporting the application of cyber resiliency principles in system specification, design, development, implementation, and modification.
-
-**FedRAMP Baseline:** L2 | **Domain:** SA
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### SC — System and Communications Protection (Manual Controls)
 
 ##### Control SC-1: Develop, document, and disseminate to {{ insert: param, sc-1_prm_1 }}: {{ insert: param, sc-01_odp.03 }} system and communications protection policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the system and communications protection policy and the associated system and communications protection controls; Designate an {{ insert: param, sc-01_odp.04 }} to manage the development, documentation, and dissemination of the system and communications protection policy and procedures; and Review and update the current system and communications protection: Policy {{ insert: param, sc-01_odp.05 }} and following {{ insert: param, sc-01_odp.06 }} ; and Procedures {{ insert: param, sc-01_odp.07 }} and following {{ insert: param, sc-01_odp.08 }}. System and communications protection policy and procedures address the controls in the SC family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of system and communications protection policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to system and communications protection policy and procedures include assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a system and communications protection policy is developed and documented; the system and communications protection policy is disseminated to {{ insert: param, sc-01_odp.01 }}; system and communications protection procedures to facilitate the implementation of the system and communications protection policy and associated system and communications protection controls are developed and documented; the system and communications protection procedures are disseminated to {{ insert: param, sc-01_odp.02 }}; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses purpose; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses scope; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses roles; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses responsibilities; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses management commitment; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses coordination among organizational entities; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy addresses compliance; the {{ insert: param, sc-01_odp.03 }} system and communications protection policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, sc-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the system and communications protection policy and procedures; the current system and communications protection policy is reviewed and updated {{ insert: param, sc-01_odp.05 }}; the current system and communications protection policy is reviewed and updated following {{ insert: param, sc-01_odp.06 }}; the current system and communications protection procedures are reviewed and updated {{ insert: param, sc-01_odp.07 }}; the current system and communications protection procedures are reviewed and updated following {{ insert: param, sc-01_odp.08 }}. System and communications protection policy
@@ -9175,35 +5633,6 @@ other relevant documents or records System/network administrators
 organizational personnel with information security responsibilities
 
 system developer Separation of user functionality from system management functionality
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-3: Isolate security functions from nonsecurity functions. Security functions are isolated from nonsecurity functions by means of an isolation boundary implemented within a system via partitions and domains. The isolation boundary controls access to and protects the integrity of the hardware, software, and firmware that perform system security functions. Systems implement code separation in many ways, such as through the provision of security kernels via processor rings or processor modes. For non-kernel code, security function isolation is often achieved through file system protections that protect the code on disk and address space protections that protect executing code. Systems can restrict access to security functions using access control mechanisms and by implementing least privilege capabilities. While the ideal is for all code within the defined security function isolation boundary to only contain security-relevant code, it is sometimes necessary to include nonsecurity functions as an exception. The isolation of security functions from nonsecurity functions can be achieved by applying the systems security engineering design principles in [SA-8](#sa-8) , including [SA-8(1)](#sa-8.1), [SA-8(3)](#sa-8.3), [SA-8(4)](#sa-8.4), [SA-8(10)](#sa-8.10), [SA-8(12)](#sa-8.12), [SA-8(13)](#sa-8.13), [SA-8(14)](#sa-8.14) , and [SA-8(18)](#sa-8.18). security functions are isolated from non-security functions. System and communications protection policy
-
-procedures addressing security function isolation
-
-list of security functions to be isolated from non-security functions
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Separation of security functions from non-security functions within the system
 
 **FedRAMP Baseline:** L2 | **Domain:** SC
 
@@ -9274,119 +5703,6 @@ system developer Mechanisms protecting against or limiting the effects of denial
 
 ---
 
-##### Control SC-6: Protect the availability of resources by allocating {{ insert: param, sc-06_odp.01 }} by {{ insert: param, sc-06_odp.02 }}. Priority protection prevents lower-priority processes from delaying or interfering with the system that services higher-priority processes. Quotas prevent users or processes from obtaining more than predetermined amounts of resources. the availability of resources is protected by allocating {{ insert: param, sc-06_odp.01 }} by {{ insert: param, sc-06_odp.02 }}. System and communications protection policy
-
-procedures addressing prioritization of system resources
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Mechanisms supporting and/or implementing a resource allocation capability
-
-safeguards employed to protect availability of resources
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-9: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-11: Provide a {{ insert: param, sc-11_odp.01 }} isolated trusted communications path for communications between the user and the trusted components of the system; and Permit users to invoke the trusted communications path for communications between the user and the following security functions of the system, including at a minimum, authentication and re-authentication: {{ insert: param, sc-11_odp.02 }}. Trusted paths are mechanisms by which users can communicate (using input devices such as keyboards) directly with the security functions of systems with the requisite assurance to support security policies. Trusted path mechanisms can only be activated by users or the security functions of organizational systems. User responses that occur via trusted paths are protected from modification by and disclosure to untrusted applications. Organizations employ trusted paths for trustworthy, high-assurance connections between security functions of systems and users, including during system logons. The original implementations of trusted paths employed an out-of-band signal to initiate the path, such as using the <BREAK> key, which does not transmit characters that can be spoofed. In later implementations, a key combination that could not be hijacked was used (e.g., the <CTRL> + <ALT> + <DEL> keys). Such key combinations, however, are platform-specific and may not provide a trusted path implementation in every case. The enforcement of trusted communications paths is provided by a specific implementation that meets the reference monitor concept. a {{ insert: param, sc-11_odp.01 }} isolated trusted communication path is provided for communications between the user and the trusted components of the system; users are permitted to invoke the trusted communication path for communications between the user and the {{ insert: param, sc-11_odp.02 }} of the system, including authentication and re-authentication, at a minimum. System and communications protection policy
-
-procedures addressing trusted communication paths
-
-security plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-assessment results from independent, testing organizations
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Mechanisms supporting and/or implementing trusted communication paths
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-14: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-16: Associate {{ insert: param, sc-16_prm_1 }} with information exchanged between systems and between system components. Security and privacy attributes can be explicitly or implicitly associated with the information contained in organizational systems or system components. Attributes are abstractions that represent the basic properties or characteristics of an entity with respect to protecting information or the management of personally identifiable information. Attributes are typically associated with internal data structures, including records, buffers, and files within the system. Security and privacy attributes are used to implement access control and information flow control policies; reflect special dissemination, management, or distribution instructions, including permitted uses of personally identifiable information; or support other aspects of the information security and privacy policies. Privacy attributes may be used independently or in conjunction with security attributes. {{ insert: param, sc-16_odp.01 }} are associated with information exchanged between systems; {{ insert: param, sc-16_odp.01 }} are associated with information exchanged between system components; {{ insert: param, sc-16_odp.02 }} are associated with information exchanged between systems; {{ insert: param, sc-16_odp.02 }} are associated with information exchanged between system components. System and communications protection policy
-
-procedures addressing the transmission of security and privacy attributes
-
-access control policy and procedures
-
-information flow control policy
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-privacy plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security and privacy responsibilities Mechanisms supporting and/or implementing the transmission of security and privacy attributes between systems
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SC-17: Issue public key certificates under an {{ insert: param, sc-17_odp }} or obtain public key certificates from an approved service provider; and Include only approved trust anchors in trust stores or certificate stores managed by the organization. Public key infrastructure (PKI) certificates are certificates with visibility external to organizational systems and certificates related to the internal operations of systems, such as application-specific time services. In cryptographic systems with a hierarchical structure, a trust anchor is an authoritative source (i.e., a certificate authority) for which trust is assumed and not derived. A root certificate for a PKI system is an example of a trust anchor. A trust store or certificate store maintains a list of trusted root certificates. public key certificates are issued under {{ insert: param, sc-17_odp }} , or public key certificates are obtained from an approved service provider; only approved trust anchors are included in trust stores or certificate stores managed by the organization. System and communications protection policy
 
 procedures addressing public key infrastructure certificates
@@ -9404,17 +5720,6 @@ organizational personnel with information security responsibilities
 organizational personnel with responsibilities for issuing public key certificates
 
 service providers Mechanisms supporting and/or implementing the management of public key infrastructure certificates
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-19: Technology-specific; addressed as any other technology or protocol.
 
 **FedRAMP Baseline:** L2 | **Domain:** SC
 
@@ -9508,464 +5813,6 @@ organizational personnel with responsibilities for managing DNS Mechanisms suppo
 
 ---
 
-##### Control SC-24: Fail to a {{ insert: param, sc-24_odp.02 }} for the following failures on the indicated components while preserving {{ insert: param, sc-24_odp.03 }} in failure: {{ insert: param, sc-24_odp.01 }}. Failure in a known state addresses security concerns in accordance with the mission and business needs of organizations. Failure in a known state prevents the loss of confidentiality, integrity, or availability of information in the event of failures of organizational systems or system components. Failure in a known safe state helps to prevent systems from failing to a state that may cause injury to individuals or destruction to property. Preserving system state information facilitates system restart and return to the operational mode with less disruption of mission and business processes. {{ insert: param, sc-24_odp.01 }} fail to a {{ insert: param, sc-24_odp.02 }} while preserving {{ insert: param, sc-24_odp.03 }} in failure. System and communications protection policy
-
-procedures addressing system failure to known state
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of failures requiring system to fail in a known state
-
-state information to be preserved in system failure
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Mechanisms supporting and/or implementing the fail in known state capability
-
-mechanisms preserving system state information in the event of a system failure
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-25: Employ minimal functionality and information storage on the following system components: {{ insert: param, sc-25_odp }}. The deployment of system components with minimal functionality reduces the need to secure every endpoint and may reduce the exposure of information, systems, and services to attacks. Reduced or minimal functionality includes diskless nodes and thin client technologies. minimal functionality for {{ insert: param, sc-25_odp }} is employed; minimal information storage on {{ insert: param, sc-25_odp }} is allocated. System and communications protection policy
-
-procedures addressing use of thin nodes
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities Mechanisms supporting and/or implementing thin nodes
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-26: Include components within organizational systems specifically designed to be the target of malicious attacks for detecting, deflecting, and analyzing such attacks. Decoys (i.e., honeypots, honeynets, or deception nets) are established to attract adversaries and deflect attacks away from the operational systems that support organizational mission and business functions. Use of decoys requires some supporting isolation measures to ensure that any deflected malicious code does not infect organizational systems. Depending on the specific usage of the decoy, consultation with the Office of the General Counsel before deployment may be needed. components within organizational systems specifically designed to be the target of malicious attacks are included to detect such attacks; components within organizational systems specifically designed to be the target of malicious attacks are included to deflect such attacks; components within organizational systems specifically designed to be the target of malicious attacks are included to analyze such attacks. System and communications protection policy
-
-procedures addressing the use of decoys
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Mechanisms supporting and/or implementing decoys
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-27: Include within organizational systems the following platform independent applications: {{ insert: param, sc-27_odp }}. Platforms are combinations of hardware, firmware, and software components used to execute software applications. Platforms include operating systems, the underlying computer architectures, or both. Platform-independent applications are applications with the capability to execute on multiple platforms. Such applications promote portability and reconstitution on different platforms. Application portability and the ability to reconstitute on different platforms increase the availability of mission-essential functions within organizations in situations where systems with specific operating systems are under attack. {{ insert: param, sc-27_odp }} are included within organizational systems. System and communications protection policy
-
-procedures addressing platform-independent applications
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of platform-independent applications
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer Mechanisms supporting and/or implementing platform-independent applications
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-29: Employ a diverse set of information technologies for the following system components in the implementation of the system: {{ insert: param, sc-29_odp }}. Increasing the diversity of information technologies within organizational systems reduces the impact of potential exploitations or compromises of specific technologies. Such diversity protects against common mode failures, including those failures induced by supply chain attacks. Diversity in information technologies also reduces the likelihood that the means adversaries use to compromise one system component will be effective against other system components, thus further increasing the adversary work factor to successfully complete planned attacks. An increase in diversity may add complexity and management overhead that could ultimately lead to mistakes and unauthorized configurations. a diverse set of information technologies is employed for {{ insert: param, sc-29_odp }} in the implementation of the system. System and communications protection policy
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of technologies deployed in the system
-
-acquisition documentation
-
-acquisition contracts for system components or services
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel with system acquisition, development, and implementation responsibilities Mechanisms supporting and/or implementing the employment of a diverse set of information technologies
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-30: Employ the following concealment and misdirection techniques for {{ insert: param, sc-30_odp.02 }} at {{ insert: param, sc-30_odp.03 }} to confuse and mislead adversaries: {{ insert: param, sc-30_odp.01 }}. Concealment and misdirection techniques can significantly reduce the targeting capabilities of adversaries (i.e., window of opportunity and available attack surface) to initiate and complete attacks. For example, virtualization techniques provide organizations with the ability to disguise systems, potentially reducing the likelihood of successful attacks without the cost of having multiple platforms. The increased use of concealment and misdirection techniques and methods—including randomness, uncertainty, and virtualization—may sufficiently confuse and mislead adversaries and subsequently increase the risk of discovery and/or exposing tradecraft. Concealment and misdirection techniques may provide additional time to perform core mission and business functions. The implementation of concealment and misdirection techniques may add to the complexity and management overhead required for the system. {{ insert: param, sc-30_odp.01 }} are employed for {{ insert: param, sc-30_odp.02 }} for {{ insert: param, sc-30_odp.03 }} to confuse and mislead adversaries. System and communications protection policy
-
-procedures addressing concealment and misdirection techniques for the system
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-list of concealment and misdirection techniques to be employed for organizational systems
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel with the responsibility to implement concealment and misdirection techniques for systems Mechanisms supporting and/or implementing concealment and misdirection techniques
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-31: Perform a covert channel analysis to identify those aspects of communications within the system that are potential avenues for covert {{ insert: param, sc-31_odp }} channels; and Estimate the maximum bandwidth of those channels. Developers are in the best position to identify potential areas within systems that might lead to covert channels. Covert channel analysis is a meaningful activity when there is the potential for unauthorized information flows across security domains, such as in the case of systems that contain export-controlled information and have connections to external networks (i.e., networks that are not controlled by organizations). Covert channel analysis is also useful for multilevel secure systems, multiple security level systems, and cross-domain systems. a covert channel analysis is performed to identify those aspects of communications within the system that are potential avenues for covert {{ insert: param, sc-31_odp }} channels; the maximum bandwidth of those channels is estimated. System and communications protection policy
-
-procedures addressing covert channel analysis
-
-system design documentation
-
-system configuration settings and associated documentation
-
-covert channel analysis documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel with covert channel analysis responsibilities
-
-system developers/integrators Organizational process for conducting covert channel analysis
-
-mechanisms supporting and/or implementing covert channel analysis
-
-mechanisms supporting and/or implementing the capability to estimate the bandwidth of covert channels
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-32: Partition the system into {{ insert: param, sc-32_odp.01 }} residing in separate {{ insert: param, sc-32_odp.02 }} domains or environments based on {{ insert: param, sc-32_odp.03 }}. System partitioning is part of a defense-in-depth protection strategy. Organizations determine the degree of physical separation of system components. Physical separation options include physically distinct components in separate racks in the same room, critical components in separate rooms, and geographical separation of critical components. Security categorization can guide the selection of candidates for domain partitioning. Managed interfaces restrict or prohibit network access and information flow among partitioned system components. the system is partitioned into {{ insert: param, sc-32_odp.01 }} residing in separate {{ insert: param, sc-32_odp.02 }} domains or environments based on {{ insert: param, sc-32_odp.03 }}. System and communications protection policy
-
-procedures addressing system partitioning
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-list of system physical domains (or environments)
-
-system facility diagrams
-
-system network diagrams
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-system developers/integrators Mechanisms supporting and/or implementing the physical separation of system components
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-33: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-34: For {{ insert: param, sc-34_odp.01 }} , load and execute: The operating environment from hardware-enforced, read-only media; and The following applications from hardware-enforced, read-only media: {{ insert: param, sc-34_odp.02 }}. The operating environment for a system contains the code that hosts applications, including operating systems, executives, or virtual machine monitors (i.e., hypervisors). It can also include certain applications that run directly on hardware platforms. Hardware-enforced, read-only media include Compact Disc-Recordable (CD-R) and Digital Versatile Disc-Recordable (DVD-R) disk drives as well as one-time, programmable, read-only memory. The use of non-modifiable storage ensures the integrity of software from the point of creation of the read-only image. The use of reprogrammable, read-only memory can be accepted as read-only media provided that integrity can be adequately protected from the point of initial writing to the insertion of the memory into the system, and there are reliable hardware protections against reprogramming the memory while installed in organizational systems. the operating environment for {{ insert: param, sc-34_odp.01 }} is loaded and executed from hardware-enforced, read-only media; {{ insert: param, sc-34_odp.02 }} for {{ insert: param, sc-34_odp.01 }} are loaded and executed from hardware-enforced, read-only media. System and communications protection policy
-
-procedures addressing non-modifiable executable programs
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-list of operating system components to be loaded from hardware-enforced, read-only media
-
-list of applications to be loaded from hardware-enforced, read-only media
-
-media used to load and execute the system operating environment
-
-media used to load and execute system applications
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-system developers/integrators Mechanisms supporting and/or implementing, loading, and executing the operating environment from hardware-enforced, read-only media
-
-mechanisms supporting and/or implementing, loading, and executing applications from hardware-enforced, read-only media
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-35: Include system components that proactively seek to identify network-based malicious code or malicious websites. External malicious code identification differs from decoys in [SC-26](#sc-26) in that the components actively probe networks, including the Internet, in search of malicious code contained on external websites. Like decoys, the use of external malicious code identification techniques requires some supporting isolation measures to ensure that any malicious code discovered during the search and subsequently executed does not infect organizational systems. Virtualization is a common technique for achieving such isolation. system components that proactively seek to identify network-based malicious code or malicious websites are included. System and communications protection policy
-
-procedures addressing external malicious code identification
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system components deployed to identify malicious websites and/or web-based malicious code
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-system developers/integrators Automated mechanisms supporting and/or implementing external malicious code identification
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-36: Distribute the following processing and storage components across multiple {{ insert: param, sc-36_prm_1 }}: {{ insert: param, sc-36_prm_2 }}. Distributing processing and storage across multiple physical locations or logical domains provides a degree of redundancy or overlap for organizations. The redundancy and overlap increase the work factor of adversaries to adversely impact organizational operations, assets, and individuals. The use of distributed processing and storage does not assume a single primary processing or storage location. Therefore, it allows for parallel processing and storage. {{ insert: param, sc-36_odp.01 }} are distributed across {{ insert: param, sc-36_odp.02 }}; {{ insert: param, sc-36_odp.03 }} are distributed across {{ insert: param, sc-36_odp.04 }}. System and communications protection policy
-
-contingency planning policy and procedures
-
-contingency plan
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-list of system physical locations (or environments) with distributed processing and storage
-
-system facility diagrams
-
-processing site agreements
-
-storage site agreements
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-organizational personnel with contingency planning and plan implementation responsibilities
-
-system developers/integrators Organizational processes for distributed processing and storage across multiple physical locations
-
-mechanisms supporting and/or implementing the capability to distribute processing and storage across multiple physical locations
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-37: Employ the following out-of-band channels for the physical delivery or electronic transmission of {{ insert: param, sc-37_odp.02 }} to {{ insert: param, sc-37_odp.03 }}: {{ insert: param, sc-37_odp.01 }}. Out-of-band channels include local, non-network accesses to systems; network paths physically separate from network paths used for operational traffic; or non-electronic paths, such as the U.S. Postal Service. The use of out-of-band channels is contrasted with the use of in-band channels (i.e., the same channels) that carry routine operational traffic. Out-of-band channels do not have the same vulnerability or exposure as in-band channels. Therefore, the confidentiality, integrity, or availability compromises of in-band channels will not compromise or adversely affect the out-of-band channels. Organizations may employ out-of-band channels in the delivery or transmission of organizational items, including authenticators and credentials; cryptographic key management information; system and data backups; configuration management changes for hardware, firmware, or software; security updates; maintenance information; and malicious code protection updates. For example, cryptographic keys for encrypted files are delivered using a different channel than the file. {{ insert: param, sc-37_odp.01 }} are employed for the physical delivery or electronic transmission of {{ insert: param, sc-37_odp.02 }} to {{ insert: param, sc-37_odp.03 }}. System and communications protection policy
-
-procedures addressing the use of out-of-band channels
-
-access control policy and procedures
-
-identification and authentication policy and procedures
-
-system design documentation
-
-system architecture
-
-system configuration settings and associated documentation
-
-list of out-of-band channels
-
-types of information, system components, or devices requiring the use of out-of-band channels for physical delivery or electronic transmission to authorized individuals or systems
-
-physical delivery records
-
-electronic transmission records
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-organizational personnel authorizing, installing, configuring, operating, and/or using out-of-band channels
-
-system developers/integrators Organizational processes for the use of out-of-band channels
-
-mechanisms supporting and/or implementing the use of out-of-band channels
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-38: Employ the following operations security controls to protect key organizational information throughout the system development life cycle: {{ insert: param, sc-38_odp }}. Operations security (OPSEC) is a systematic process by which potential adversaries can be denied information about the capabilities and intentions of organizations by identifying, controlling, and protecting generally unclassified information that specifically relates to the planning and execution of sensitive organizational activities. The OPSEC process involves five steps: identification of critical information, analysis of threats, analysis of vulnerabilities, assessment of risks, and the application of appropriate countermeasures. OPSEC controls are applied to organizational systems and the environments in which those systems operate. OPSEC controls protect the confidentiality of information, including limiting the sharing of information with suppliers, potential suppliers, and other non-organizational elements and individuals. Information critical to organizational mission and business functions includes user identities, element uses, suppliers, supply chain processes, functional requirements, security requirements, system design specifications, testing and evaluation protocols, and security control implementation details. {{ insert: param, sc-38_odp }} are employed to protect key organizational information throughout the system development life cycle. System and communications protection policy
-
-procedures addressing operations security
-
-security plan
-
-list of operations security safeguards
-
-security control assessments
-
-risk assessments
-
-threat and vulnerability assessments
-
-plans of action and milestones
-
-system development life cycle documentation
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-system developers/integrators Organizational processes for protecting organizational information throughout the system development life cycle
-
-mechanisms supporting and/or implementing safeguards to protect organizational information throughout the system development life cycle
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SC-39: Maintain a separate execution domain for each executing system process. Systems can maintain separate execution domains for each executing process by assigning each process a separate address space. Each system process has a distinct address space so that communication between processes is performed in a manner controlled through the security functions, and one process cannot modify the executing code of another process. Maintaining separate execution domains for executing processes can be achieved, for example, by implementing separate address spaces. Process isolation technologies, including sandboxing or virtualization, logically separate software and firmware from other software, firmware, and data. Process isolation helps limit the access of potentially untrusted software to other system resources. The capability to maintain separate execution domains is available in commercial operating systems that employ multi-state processor technologies. a separate execution domain is maintained for each executing system process. System design documentation
 
 system architecture
@@ -9977,177 +5824,6 @@ testing and evaluation documentation
 other relevant documents or records System developers/integrators
 
 system security architect Mechanisms supporting and/or implementing separate execution domains for each executing process
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-40: Protect external and internal {{ insert: param, sc-40_prm_1 }} from the following signal parameter attacks: {{ insert: param, sc-40_prm_2 }}. Wireless link protection applies to internal and external wireless communication links that may be visible to individuals who are not authorized system users. Adversaries can exploit the signal parameters of wireless links if such links are not adequately protected. There are many ways to exploit the signal parameters of wireless links to gain intelligence, deny service, or spoof system users. Protection of wireless links reduces the impact of attacks that are unique to wireless systems. If organizations rely on commercial service providers for transmission services as commodity items rather than as fully dedicated services, it may not be possible to implement wireless link protections to the extent necessary to meet organizational security requirements. external {{ insert: param, sc-40_odp.01 }} are protected from {{ insert: param, sc-40_odp.02 }}. internal {{ insert: param, sc-40_odp.03 }} are protected from {{ insert: param, sc-40_odp.04 }}. System and communications protection policy
-
-access control policy and procedures
-
-procedures addressing wireless link protection
-
-system design documentation
-
-wireless network diagrams
-
-system configuration settings and associated documentation
-
-system architecture
-
-list of internal and external wireless links
-
-list of signal parameter attacks or references to sources for attacks
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developer
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-organizational personnel authorizing, installing, configuring, and/or maintaining internal and external wireless links Mechanisms supporting and/or implementing the protection of wireless links
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-41: {{ insert: param, sc-41_odp.02 }} disable or remove {{ insert: param, sc-41_odp.01 }} on the following systems or system components: {{ insert: param, sc-41_odp.03 }}. Connection ports include Universal Serial Bus (USB), Thunderbolt, and Firewire (IEEE 1394). Input/output (I/O) devices include compact disc and digital versatile disc drives. Disabling or removing such connection ports and I/O devices helps prevent the exfiltration of information from systems and the introduction of malicious code from those ports or devices. Physically disabling or removing ports and/or devices is the stronger action. {{ insert: param, sc-41_odp.01 }} are {{ insert: param, sc-41_odp.02 }} disabled or removed on {{ insert: param, sc-41_odp.03 }}. System and communications protection policy
-
-access control policy and procedures
-
-procedures addressing port and input/output device access
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-systems or system components
-
-list of connection ports or input/output devices to be physically disabled or removed on systems or system components
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing the disabling of connection ports or input/output devices
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-42: Prohibit {{ insert: param, sc-42_odp.01 }} ; and Provide an explicit indication of sensor use to {{ insert: param, sc-42_odp.05 }}. Sensor capability and data applies to types of systems or system components characterized as mobile devices, such as cellular telephones, smart phones, and tablets. Mobile devices often include sensors that can collect and record data regarding the environment where the system is in use. Sensors that are embedded within mobile devices include microphones, cameras, Global Positioning System (GPS) mechanisms, and accelerometers. While the sensors on mobiles devices provide an important function, if activated covertly, such devices can potentially provide a means for adversaries to learn valuable information about individuals and organizations. For example, remotely activating the GPS function on a mobile device could provide an adversary with the ability to track the movements of an individual. Organizations may prohibit individuals from bringing cellular telephones or digital cameras into certain designated facilities or controlled areas within facilities where classified information is stored or sensitive conversations are taking place. {{ insert: param, sc-42_odp.01 }} is/are prohibited; an explicit indication of sensor use is provided to {{ insert: param, sc-42_odp.05 }}. System and communications protection policy
-
-procedures addressing sensor capabilities and data collection
-
-access control policy and procedures
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-privacy plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security and privacy responsibilities
-
-system developer
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-organizational personnel responsible for sensor capabilities Mechanisms implementing access controls for the remote activation of system sensor capabilities
-
-mechanisms implementing the capability to indicate sensor use
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-43: Establish usage restrictions and implementation guidelines for the following system components: {{ insert: param, sc-43_odp }} ; and Authorize, monitor, and control the use of such components within the system. Usage restrictions apply to all system components including but not limited to mobile code, mobile devices, wireless access, and wired and wireless peripheral components (e.g., copiers, printers, scanners, optical devices, and other similar technologies). The usage restrictions and implementation guidelines are based on the potential for system components to cause damage to the system and help to ensure that only authorized system use occurs. usage restrictions and implementation guidelines are established for {{ insert: param, sc-43_odp }}; the use of {{ insert: param, sc-43_odp }} is authorized within the system; the use of {{ insert: param, sc-43_odp }} is monitored within the system; the use of {{ insert: param, sc-43_odp }} is controlled within the system. System and communications protection policy
-
-usage restrictions
-
-procedures addressing usage restrictions
-
-implementation policy and procedures
-
-authorization records
-
-system monitoring records
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Organizational processes for authorizing, monitoring, and controlling the use of components with usage restrictions
-
-mechanisms supporting and/or implementing, authorizing, monitoring, and controlling the use of components with usage restrictions
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-44: Employ a detonation chamber capability within {{ insert: param, sc-44_odp }}. Detonation chambers, also known as dynamic execution environments, allow organizations to open email attachments, execute untrusted or suspicious applications, and execute Universal Resource Locator requests in the safety of an isolated environment or a virtualized sandbox. Protected and isolated execution environments provide a means of determining whether the associated attachments or applications contain malicious code. While related to the concept of deception nets, the employment of detonation chambers is not intended to maintain a long-term environment in which adversaries can operate and their actions can be observed. Rather, detonation chambers are intended to quickly identify malicious code and either reduce the likelihood that the code is propagated to user environments of operation or prevent such propagation completely. a detonation chamber capability is employed within the {{ insert: param, sc-44_odp }}. System and communications protection policy
-
-procedures addressing detonation chambers
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing the detonation chamber capability
 
 **FedRAMP Baseline:** L2 | **Domain:** SC
 
@@ -10175,180 +5851,6 @@ other relevant documents or records System/network administrators
 organizational personnel with information security responsibilities
 
 organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing system time synchronization
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-46: Implement a policy enforcement mechanism {{ insert: param, sc-46_odp }} between the physical and/or network interfaces for the connecting security domains. For logical policy enforcement mechanisms, organizations avoid creating a logical path between interfaces to prevent the ability to bypass the policy enforcement mechanism. For physical policy enforcement mechanisms, the robustness of physical isolation afforded by the physical implementation of policy enforcement to preclude the presence of logical covert channels penetrating the security domain may be needed. Contact [ncdsmo@nsa.gov](mailto:ncdsmo@nsa.gov) for more information. a policy enforcement mechanism is {{ insert: param, sc-46_odp }} implemented between the physical and/or network interfaces for the connecting security domains. System and communications protection policy
-
-procedures addressing cross-domain policy enforcement
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing cross-domain policy enforcement
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-47: Establish {{ insert: param, sc-47_odp }} for system operations organizational command and control. An incident, whether adversarial- or nonadversarial-based, can disrupt established communications paths used for system operations and organizational command and control. Alternate communications paths reduce the risk of all communications paths being affected by the same incident. To compound the problem, the inability of organizational officials to obtain timely information about disruptions or to provide timely direction to operational elements after a communications path incident, can impact the ability of the organization to respond to such incidents in a timely manner. Establishing alternate communications paths for command and control purposes, including designating alternative decision makers if primary decision makers are unavailable and establishing the extent and limitations of their actions, can greatly facilitate the organization’s ability to continue to operate and take appropriate actions during an incident. {{ insert: param, sc-47_odp }} are established for system operations and operational command and control. System and communications protection policy
-
-procedures addressing communication paths
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-system developers Mechanisms supporting and/or implementing alternate communication paths for system operations
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-48: Relocate {{ insert: param, sc-48_odp.01 }} to {{ insert: param, sc-48_odp.02 }} under the following conditions or circumstances: {{ insert: param, sc-48_odp.03 }}. Adversaries may take various paths and use different approaches as they move laterally through an organization (including its systems) to reach their target or as they attempt to exfiltrate information from the organization. The organization often only has a limited set of monitoring and detection capabilities, and they may be focused on the critical or likely infiltration or exfiltration paths. By using communications paths that the organization typically does not monitor, the adversary can increase its chances of achieving its desired goals. By relocating its sensors or monitoring capabilities to new locations, the organization can impede the adversary’s ability to achieve its goals. The relocation of the sensors or monitoring capabilities might be done based on threat information that the organization has acquired or randomly to confuse the adversary and make its lateral transition through the system or organization more challenging. {{ insert: param, sc-48_odp.01 }} are relocated to {{ insert: param, sc-48_odp.02 }} under {{ insert: param, sc-48_odp.03 }}. System and communications protection policy
-
-procedures addressing sensor and monitoring capability relocation
-
-list of sensors/monitoring capabilities to be relocated
-
-change control records
-
-configuration management records
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing sensor relocation
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-49: Implement hardware-enforced separation and policy enforcement mechanisms between {{ insert: param, sc-49_odp }}. System owners may require additional strength of mechanism and robustness to ensure domain separation and policy enforcement for specific types of threats and environments of operation. Hardware-enforced separation and policy enforcement provide greater strength of mechanism than software-enforced separation and policy enforcement. hardware-enforced separation and policy enforcement mechanisms are implemented between {{ insert: param, sc-49_odp }}. System and communications protection policy
-
-procedures addressing cross-domain policy enforcement
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing hardware-enforced security domain separation and policy enforcement
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-50: Implement software-enforced separation and policy enforcement mechanisms between {{ insert: param, sc-50_odp }}. System owners may require additional strength of mechanism to ensure domain separation and policy enforcement for specific types of threats and environments of operation. software-enforced separation and policy enforcement mechanisms are implemented between {{ insert: param, sc-50_odp }}. System and communications protection policy
-
-procedures addressing cross-domain policy enforcement
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system Mechanisms supporting and/or implementing software-enforced separation and policy enforcement
-
-**FedRAMP Baseline:** L2 | **Domain:** SC
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SC-51: Employ hardware-based, write-protect for {{ insert: param, sc-51_odp.01 }} ; and Implement specific procedures for {{ insert: param, sc-51_odp.02 }} to manually disable hardware write-protect for firmware modifications and re-enable the write-protect prior to returning to operational mode. None. hardware-based write-protect for {{ insert: param, sc-51_odp.01 }} is employed; specific procedures are implemented for {{ insert: param, sc-51_odp.02 }} to manually disable hardware write-protect for firmware modifications; specific procedures are implemented for {{ insert: param, sc-51_odp.02 }} to re-enable the write-protect prior to returning to operational mode. System and communications protection policy
-
-procedures addressing firmware modifications
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system architecture
-
-system audit records
-
-system security plan
-
-other relevant documents or records System/network administrators
-
-organizational personnel with information security responsibilities
-
-organizational personnel installing, configuring, and/or maintaining the system
-
-system developers/integrators Organizational processes for modifying system firmware
-
-mechanisms supporting and/or implementing hardware-based write-protection for system firmware
 
 **FedRAMP Baseline:** L2 | **Domain:** SC
 
@@ -10499,17 +6001,6 @@ mechanisms supporting and/or implementing spam protection
 
 ---
 
-##### Control SI-9: 
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SI-10: Check the validity of the following information inputs: {{ insert: param, si-10_odp }}. Checking the valid syntax and semantics of system inputs—including character set, length, numerical range, and acceptable values—verifies that inputs match specified definitions for format and content. For example, if the organization specifies that numerical values between 1-100 are the only acceptable inputs for a field in a given application, inputs of "387," "abc," or "%K%" are invalid inputs and are not accepted as input to the system. Valid inputs are likely to vary from field to field within a software application. Applications typically follow well-defined protocols that use structured messages (i.e., commands or queries) to communicate between software modules or system components. Structured messages can contain raw or unstructured data interspersed with metadata or control information. If software applications use attacker-supplied inputs to construct structured messages without properly encoding such messages, then the attacker could insert malicious commands or special characters that can cause the data to be interpreted as control information or metadata. Consequently, the module or component that receives the corrupted output will perform the wrong operations or otherwise interpret the data incorrectly. Prescreening inputs prior to passing them to interpreters prevents the content from being unintentionally interpreted as commands. Input validation ensures accurate and correct inputs and prevents attacks such as cross-site scripting and a variety of injection attacks. the validity of the {{ insert: param, si-10_odp }} is checked. System and information integrity policy
 
 system and information integrity procedures
@@ -10633,105 +6124,6 @@ automated mechanisms supporting and/or implementing information management, rete
 
 ---
 
-##### Control SI-13: Determine mean time to failure (MTTF) for the following system components in specific environments of operation: {{ insert: param, si-13_odp.01 }} ; and Provide substitute system components and a means to exchange active and standby components in accordance with the following criteria: {{ insert: param, si-13_odp.02 }}. While MTTF is primarily a reliability issue, predictable failure prevention is intended to address potential failures of system components that provide security capabilities. Failure rates reflect installation-specific consideration rather than the industry-average. Organizations define the criteria for the substitution of system components based on the MTTF value with consideration for the potential harm from component failures. The transfer of responsibilities between active and standby components does not compromise safety, operational readiness, or security capabilities. The preservation of system state variables is also critical to help ensure a successful transfer process. Standby components remain available at all times except for maintenance issues or recovery failures in progress. mean time to failure (MTTF) is determined for {{ insert: param, si-13_odp.01 }} in specific environments of operation; substitute system components and a means to exchange active and standby components are provided in accordance with {{ insert: param, si-13_odp.02 }}. System and information integrity policy
-
-system and information integrity procedures
-
-procedures addressing predictable failure prevention
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of MTTF substitution criteria
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel responsible for MTTF determinations and activities
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-organizational personnel with contingency planning responsibilities Organizational processes for managing MTTF
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-14: Implement non-persistent {{ insert: param, si-14_odp.01 }} that are initiated in a known state and terminated {{ insert: param, si-14_odp.02 }}. Implementation of non-persistent components and services mitigates risk from advanced persistent threats (APTs) by reducing the targeting capability of adversaries (i.e., window of opportunity and available attack surface) to initiate and complete attacks. By implementing the concept of non-persistence for selected system components, organizations can provide a trusted, known state computing resource for a specific time period that does not give adversaries sufficient time to exploit vulnerabilities in organizational systems or operating environments. Since the APT is a high-end, sophisticated threat with regard to capability, intent, and targeting, organizations assume that over an extended period, a percentage of attacks will be successful. Non-persistent system components and services are activated as required using protected information and terminated periodically or at the end of sessions. Non-persistence increases the work factor of adversaries attempting to compromise or breach organizational systems.
-
-Non-persistence can be achieved by refreshing system components, periodically reimaging components, or using a variety of common virtualization techniques. Non-persistent services can be implemented by using virtualization techniques as part of virtual machines or as new instances of processes on physical machines (either persistent or non-persistent). The benefit of periodic refreshes of system components and services is that it does not require organizations to first determine whether compromises of components or services have occurred (something that may often be difficult to determine). The refresh of selected system components and services occurs with sufficient frequency to prevent the spread or intended impact of attacks, but not with such frequency that it makes the system unstable. Refreshes of critical components and services may be done periodically to hinder the ability of adversaries to exploit optimum windows of vulnerabilities. non-persistent {{ insert: param, si-14_odp.01 }} that are initiated in a known state are implemented; non-persistent {{ insert: param, si-14_odp.01 }} are terminated {{ insert: param, si-14_odp.02 }}. System and information integrity policy
-
-system and information integrity procedures
-
-procedures addressing non-persistence for system components
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel responsible for non-persistence
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developer Automated mechanisms supporting and/or implementing the initiation and termination of non-persistent components
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-15: Validate information output from the following software programs and/or applications to ensure that the information is consistent with the expected content: {{ insert: param, si-15_odp }}. Certain types of attacks, including SQL injections, produce output results that are unexpected or inconsistent with the output results that would be expected from software programs or applications. Information output filtering focuses on detecting extraneous content, preventing such extraneous content from being displayed, and then alerting monitoring tools that anomalous behavior has been discovered. information output from {{ insert: param, si-15_odp }} is validated to ensure that the information is consistent with the expected content. System and information integrity policy
-
-system and information integrity procedures
-
-procedures addressing information output filtering
-
-system design documentation
-
-system configuration settings and associated documentation
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel responsible for validating information output
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developer Organizational processes for validating information output
-
-automated mechanisms supporting and/or implementing information output validation
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SI-16: Implement the following controls to protect the system memory from unauthorized code execution: {{ insert: param, si-16_odp }}. Some adversaries launch attacks with the intent of executing code in non-executable regions of memory or in memory locations that are prohibited. Controls employed to protect memory include data execution prevention and address space layout randomization. Data execution prevention controls can either be hardware-enforced or software-enforced with hardware enforcement providing the greater strength of mechanism. {{ insert: param, si-16_odp }} are implemented to protect the system memory from unauthorized code execution. System and information integrity policy
 
 system and information integrity procedures
@@ -10765,269 +6157,6 @@ system developer Automated mechanisms supporting and/or implementing safeguards 
 
 ---
 
-##### Control SI-17: Implement the indicated fail-safe procedures when the indicated failures occur: {{ insert: param, si-17_prm_1 }}. Failure conditions include the loss of communications among critical system components or between system components and operational facilities. Fail-safe procedures include alerting operator personnel and providing specific instructions on subsequent steps to take. Subsequent steps may include doing nothing, reestablishing system settings, shutting down processes, restarting the system, or contacting designated organizational personnel. {{ insert: param, si-17_odp.01 }} are implemented when {{ insert: param, si-17_odp.02 }} occur. System and information integrity policy
-
-system and information integrity procedures
-
-documentation addressing fail-safe procedures for the system
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of security safeguards protecting the system memory from unauthorized code execution
-
-system audit records
-
-system security plan
-
-other relevant documents or records Organizational personnel responsible for fail-safe procedures
-
-organizational personnel with information security responsibilities
-
-system/network administrators
-
-system developer Organizational fail-safe procedures
-
-automated mechanisms supporting and/or implementing fail-safe procedures
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-18: Check the accuracy, relevance, timeliness, and completeness of personally identifiable information across the information life cycle {{ insert: param, si-18_prm_1 }} ; and Correct or delete inaccurate or outdated personally identifiable information. Personally identifiable information quality operations include the steps that organizations take to confirm the accuracy and relevance of personally identifiable information throughout the information life cycle. The information life cycle includes the creation, collection, use, processing, storage, maintenance, dissemination, disclosure, and disposal of personally identifiable information. Personally identifiable information quality operations include editing and validating addresses as they are collected or entered into systems using automated address verification look-up application programming interfaces. Checking personally identifiable information quality includes the tracking of updates or changes to data over time, which enables organizations to know how and what personally identifiable information was changed should erroneous information be identified. The measures taken to protect personally identifiable information quality are based on the nature and context of the personally identifiable information, how it is to be used, how it was obtained, and the potential de-identification methods employed. The measures taken to validate the accuracy of personally identifiable information used to make determinations about the rights, benefits, or privileges of individuals covered under federal programs may be more comprehensive than the measures used to validate personally identifiable information used for less sensitive purposes. the accuracy of personally identifiable information across the information life cycle is checked {{ insert: param, si-18_odp.01 }}; the relevance of personally identifiable information across the information life cycle is checked {{ insert: param, si-18_odp.02 }}; the timeliness of personally identifiable information across the information life cycle is checked {{ insert: param, si-18_odp.03 }}; the completeness of personally identifiable information across the information life cycle is checked {{ insert: param, si-18_odp.04 }}; inaccurate or outdated personally identifiable information is corrected or deleted. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-documentation addressing personally identifiable information quality operations
-
-quality reports
-
-maintenance logs
-
-system audit records
-
-audit findings
-
-system security plan
-
-privacy plan
-
-privacy impact assessment
-
-privacy risk assessment documentation
-
-other relevant documents or records Organizational personnel responsible for performing personally identifiable information quality inspections
-
-organizational personnel with information security responsibilities
-
-organizational personnel with privacy responsibilities Organizational processes for personally identifiable information quality inspection
-
-automated mechanisms supporting and/or implementing personally identifiable information quality operations
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-19: Remove the following elements of personally identifiable information from datasets: {{ insert: param, si-19_odp.01 }} ; and Evaluate {{ insert: param, si-19_odp.02 }} for effectiveness of de-identification. De-identification is the general term for the process of removing the association between a set of identifying data and the data subject. Many datasets contain information about individuals that can be used to distinguish or trace an individual’s identity, such as name, social security number, date and place of birth, mother’s maiden name, or biometric records. Datasets may also contain other information that is linked or linkable to an individual, such as medical, educational, financial, and employment information. Personally identifiable information is removed from datasets by trained individuals when such information is not (or no longer) necessary to satisfy the requirements envisioned for the data. For example, if the dataset is only used to produce aggregate statistics, the identifiers that are not needed for producing those statistics are removed. Removing identifiers improves privacy protection since information that is removed cannot be inadvertently disclosed or improperly used. Organizations may be subject to specific de-identification definitions or methods under applicable laws, regulations, or policies. Re-identification is a residual risk with de-identified data. Re-identification attacks can vary, including combining new datasets or other improvements in data analytics. Maintaining awareness of potential attacks and evaluating for the effectiveness of the de-identification over time support the management of this residual risk. {{ insert: param, si-19_odp.01 }} are removed from datasets; the effectiveness of de-identification is evaluated {{ insert: param, si-19_odp.02 }}. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-de-identification procedures
-
-system configuration
-
-datasets with personally identifiable information removed
-
-system security plan
-
-privacy plan
-
-privacy impact assessment
-
-privacy risk assessment documentation
-
-other relevant documents or records Organizational personnel responsible for identifying unnecessary identifiers
-
-organizational personnel responsible for removing personally identifiable information from datasets
-
-organizational personnel with information security and privacy responsibilities Automated mechanisms supporting and/or implementing the removal of personally identifiable information elements
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-20: Embed data or capabilities in the following systems or system components to determine if organizational data has been exfiltrated or improperly removed from the organization: {{ insert: param, si-20_odp }}. Many cyber-attacks target organizational information, or information that the organization holds on behalf of other entities (e.g., personally identifiable information), and exfiltrate that data. In addition, insider attacks and erroneous user procedures can remove information from the system that is in violation of the organizational policies. Tainting approaches can range from passive to active. A passive tainting approach can be as simple as adding false email names and addresses to an internal database. If the organization receives email at one of the false email addresses, it knows that the database has been compromised. Moreover, the organization knows that the email was sent by an unauthorized entity, so any packets it includes potentially contain malicious code, and that the unauthorized entity may have potentially obtained a copy of the database. Another tainting approach can include embedding false data or steganographic data in files to enable the data to be found via open-source analysis. Finally, an active tainting approach can include embedding software in the data that is able to "call home," thereby alerting the organization to its "capture," and possibly its location, and the path by which it was exfiltrated or removed. data or capabilities are embedded in {{ insert: param, si-20_odp }} to determine if organizational data has been exfiltrated or improperly removed from the organization. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-procedures addressing software and information integrity
-
-system design documentation
-
-system configuration settings and associated documentation
-
-policy and procedures addressing the systems security engineering technique of deception
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel responsible for detecting tainted data
-
-organizational personnel with systems security engineering responsibilities
-
-organizational personnel with information security and privacy responsibilities Automated mechanisms for post-breach detection
-
-decoys, traps, lures, and methods for deceiving adversaries
-
-detection and notification mechanisms
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-21: Refresh {{ insert: param, si-21_odp.01 }} at {{ insert: param, si-21_odp.02 }} or generate the information on demand and delete the information when no longer needed. Retaining information for longer than it is needed makes it an increasingly valuable and enticing target for adversaries. Keeping information available for the minimum period of time needed to support organizational missions or business functions reduces the opportunity for adversaries to compromise, capture, and exfiltrate that information. the {{ insert: param, si-21_odp.01 }} is refreshed {{ insert: param, si-21_odp.02 }} or is generated on demand and deleted when no longer needed. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-procedures addressing software and information integrity
-
-system design documentation
-
-system configuration settings and associated documentation
-
-information refresh procedures
-
-list of information to be refreshed
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel responsible for refreshing information
-
-organizational personnel with information security and privacy responsibilities
-
-organizational personnel with systems security engineering responsibilities
-
-system developers Mechanisms for information refresh
-
-organizational processes for information refresh
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-22: Identify the following alternative sources of information for {{ insert: param, si-22_odp.02 }}: {{ insert: param, si-22_odp.01 }} ; and Use an alternative information source for the execution of essential functions or services on {{ insert: param, si-22_odp.03 }} when the primary source of information is corrupted or unavailable. Actions taken by a system service or a function are often driven by the information it receives. Corruption, fabrication, modification, or deletion of that information could impact the ability of the service function to properly carry out its intended actions. By having multiple sources of input, the service or function can continue operation if one source is corrupted or no longer available. It is possible that the alternative sources of information may be less precise or less accurate than the primary source of information. But having such sub-optimal information sources may still provide a sufficient level of quality that the essential service or function can be carried out, even in a degraded or debilitated manner. {{ insert: param, si-22_odp.01 }} for {{ insert: param, si-22_odp.02 }} are identified; an alternative information source is used for the execution of essential functions or services on {{ insert: param, si-22_odp.03 }} when the primary source of information is corrupted or unavailable. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-system design documentation
-
-system configuration settings and associated documentation
-
-list of information sources
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with information security and privacy responsibilities
-
-organizational personnel with systems security engineering responsibilities
-
-system developers Automated methods and mechanisms to convert information from an analog to digital medium
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SI-23: Based on {{ insert: param, si-23_odp.01 }}: Fragment the following information: {{ insert: param, si-23_odp.02 }} ; and Distribute the fragmented information across the following systems or system components: {{ insert: param, si-23_odp.03 }}. One objective of the advanced persistent threat is to exfiltrate valuable information. Once exfiltrated, there is generally no way for the organization to recover the lost information. Therefore, organizations may consider dividing the information into disparate elements and distributing those elements across multiple systems or system components and locations. Such actions will increase the adversary’s work factor to capture and exfiltrate the desired information and, in so doing, increase the probability of detection. The fragmentation of information impacts the organization’s ability to access the information in a timely manner. The extent of the fragmentation is dictated by the impact or classification level (and value) of the information, threat intelligence information received, and whether data tainting is used (i.e., data tainting-derived information about the exfiltration of some information could result in the fragmentation of the remaining information). under {{ insert: param, si-23_odp.01 }}, {{ insert: param, si-23_odp.02 }} is fragmented; under {{ insert: param, si-23_odp.01 }} , the fragmented information is distributed across {{ insert: param, si-23_odp.03 }}. System and information integrity policy
-
-system and information integrity procedures
-
-personally identifiable information processing policy
-
-procedures addressing software and information integrity
-
-system design documentation
-
-system configuration settings and associated documentation
-
-procedures to identify information for fragmentation and distribution across systems/system components
-
-list of distributed and fragmented information
-
-list of circumstances requiring information fragmentation
-
-enterprise architecture
-
-system security architecture
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with information security and privacy responsibilities
-
-organizational personnel with systems security engineering responsibilities
-
-system developers
-
-security architects Organizational processes to identify information for fragmentation and distribution across systems/system components
-
-automated mechanisms supporting and/or implementing information fragmentation and distribution across systems/system components
-
-**FedRAMP Baseline:** L2 | **Domain:** SI
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 #### SR — Supply Chain Risk Management (Manual Controls)
 
 ##### Control SR-1: Develop, document, and disseminate to {{ insert: param, sr-1_prm_1 }}: {{ insert: param, sr-01_odp.03 }} supply chain risk management policy that: Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and Procedures to facilitate the implementation of the supply chain risk management policy and the associated supply chain risk management controls; Designate an {{ insert: param, sr-01_odp.04 }} to manage the development, documentation, and dissemination of the supply chain risk management policy and procedures; and Review and update the current supply chain risk management: Policy {{ insert: param, sr-01_odp.05 }} and following {{ insert: param, sr-01_odp.06 }} ; and Procedures {{ insert: param, sr-01_odp.07 }} and following {{ insert: param, sr-01_odp.08 }}. Supply chain risk management policy and procedures address the controls in the SR family as well as supply chain-related controls in other families that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of supply chain risk management policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies that reflect the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to supply chain risk management policy and procedures include assessment or audit findings, security incidents or breaches, or changes in applicable laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure. a supply chain risk management policy is developed and documented; the supply chain risk management policy is disseminated to {{ insert: param, sr-01_odp.01 }}; supply chain risk management procedures to facilitate the implementation of the supply chain risk management policy and the associated supply chain risk management controls are developed and documented; the supply chain risk management procedures are disseminated to {{ insert: param, sr-01_odp.02 }}. the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses purpose; the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses scope;  {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses roles; the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses responsibilities; the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses management commitment; the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses coordination among organizational entities; the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy addresses compliance. the {{ insert: param, sr-01_odp.03 }} supply chain risk management policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines; the {{ insert: param, sr-01_odp.04 }} is designated to manage the development, documentation, and dissemination of the supply chain risk management policy and procedures; the current supply chain risk management policy is reviewed and updated {{ insert: param, sr-01_odp.05 }}; the current supply chain risk management policy is reviewed and updated following {{ insert: param, sr-01_odp.06 }}; the current supply chain risk management procedures are reviewed and updated {{ insert: param, sr-01_odp.07 }}; the current supply chain risk management procedures are reviewed and updated following {{ insert: param, sr-01_odp.08 }}. Supply chain risk management policy
@@ -11045,45 +6174,6 @@ organizational personnel with information security and privacy responsibilities
 organizational personnel with acquisition responsibilities
 
 organizational personnel with enterprise risk management responsibilities
-
-**FedRAMP Baseline:** L2 | **Domain:** SR
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SR-4: Document, monitor, and maintain valid provenance of the following systems, system components, and associated data: {{ insert: param, sr-04_odp }}. Every system and system component has a point of origin and may be changed throughout its existence. Provenance is the chronology of the origin, development, ownership, location, and changes to a system or system component and associated data. It may also include personnel and processes used to interact with or make modifications to the system, component, or associated data. Organizations consider developing procedures (see [SR-1](#sr-1) ) for allocating responsibilities for the creation, maintenance, and monitoring of provenance for systems and system components; transferring provenance documentation and responsibility between organizations; and preventing and monitoring for unauthorized changes to the provenance records. Organizations have methods to document, monitor, and maintain valid provenance baselines for systems, system components, and related data. These actions help track, assess, and document any changes to the provenance, including changes in supply chain elements or configuration, and help ensure non-repudiation of provenance information and the provenance change records. Provenance considerations are addressed throughout the system development life cycle and incorporated into contracts and other arrangements, as appropriate. valid provenance is documented for {{ insert: param, sr-04_odp }}; valid provenance is monitored for {{ insert: param, sr-04_odp }}; valid provenance is maintained for {{ insert: param, sr-04_odp }}. Supply chain risk management policy
-
-supply chain risk management procedures
-
-supply chain risk management plan
-
-documentation of critical systems, critical system components, and associated data
-
-documentation showing the history of ownership, custody, and location of and changes to critical systems or critical system components
-
-system architecture
-
-inter-organizational agreements and procedures
-
-contracts
-
-system security plan
-
-privacy plan
-
-personally identifiable information processing policy
-
-other relevant documents or records Organizational personnel with acquisition responsibilities
-
-organizational personnel with information security and privacy responsibilities
-
-organizational personnel with supply chain risk management responsibilities Organizational processes for identifying the provenance of critical systems and critical system components
-
-mechanisms used to document, monitor, or maintain provenance
 
 **FedRAMP Baseline:** L2 | **Domain:** SR
 
@@ -11172,49 +6262,6 @@ mechanisms supporting and/or implementing supplier reviews
 
 ---
 
-##### Control SR-7: Employ the following Operations Security (OPSEC) controls to protect supply chain-related information for the system, system component, or system service: {{ insert: param, sr-07_odp }}. Supply chain OPSEC expands the scope of OPSEC to include suppliers and potential suppliers. OPSEC is a process that includes identifying critical information, analyzing friendly actions related to operations and other activities to identify actions that can be observed by potential adversaries, determining indicators that potential adversaries might obtain that could be interpreted or pieced together to derive information in sufficient time to cause harm to organizations, implementing safeguards or countermeasures to eliminate or reduce exploitable vulnerabilities and risk to an acceptable level, and considering how aggregated information may expose users or specific uses of the supply chain. Supply chain information includes user identities; uses for systems, system components, and system services; supplier identities; security and privacy requirements; system and component configurations; supplier processes; design specifications; and testing and evaluation results. Supply chain OPSEC may require organizations to withhold mission or business information from suppliers and may include the use of intermediaries to hide the end use or users of systems, system components, or system services. {{ insert: param, sr-07_odp }} are employed to protect supply chain-related information for the system, system component, or system service. Supply chain risk management plan
-
-supply chain risk management procedures
-
-system and services acquisition policy
-
-system and services acquisition procedures
-
-procedures addressing supply chain protection
-
-list of OPSEC controls to be employed
-
-solicitation documentation
-
-acquisition documentation
-
-acquisition contracts for the system, system component, or system service
-
-records of all-source intelligence analyses
-
-system security plan
-
-privacy plan
-
-other relevant documents or records Organizational personnel with acquisition responsibilities
-
-organizational personnel with information security and privacy responsibilities
-
-organizational personnel with OPSEC responsibilities
-
-organizational personnel with supply chain risk management responsibilities Organizational processes for defining and employing OPSEC safeguards
-
-mechanisms supporting and/or implementing the definition and employment of OPSEC safeguards
-
-**FedRAMP Baseline:** L2 | **Domain:** SR
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
 ##### Control SR-8: Establish agreements and procedures with entities involved in the supply chain for the system, system component, or system service for the {{ insert: param, sr-08_odp.01 }}. The establishment of agreements and procedures facilitates communications among supply chain entities. Early notification of compromises and potential compromises in the supply chain that can potentially adversely affect or have adversely affected organizational systems or system components is essential for organizations to effectively respond to such incidents. The results of assessments or audits may include open-source information that contributed to a decision or result and could be used to help the supply chain entity resolve a concern or improve its processes. agreements and procedures are established with entities involved in the supply chain for the system, system components, or system service for {{ insert: param, sr-08_odp.01 }}. Supply chain risk management policy and procedures
 
 supply chain risk management plan
@@ -11238,47 +6285,6 @@ other relevant documents or records Organizational personnel with system and ser
 organizational personnel with information security responsibilities
 
 organizational personnel with supply chain risk management responsibilities Organizational processes for establishing inter-organizational agreements and procedures with supply chain entities
-
-**FedRAMP Baseline:** L2 | **Domain:** SR
-
-**Determination Criteria:**
-
-- **Met:** All 0 assessment objectives are satisfied with documented evidence
-- **Not Met:** One or more objectives lack sufficient evidence or are demonstrably not implemented
-
----
-
-##### Control SR-9: Implement a tamper protection program for the system, system component, or system service. Anti-tamper technologies, tools, and techniques provide a level of protection for systems, system components, and services against many threats, including reverse engineering, modification, and substitution. Strong identification combined with tamper resistance and/or tamper detection is essential to protecting systems and components during distribution and when in use. a tamper protection program is implemented for the system, system component, or system service. Supply chain risk management policy and procedures
-
-supply chain risk management plan
-
-system and services acquisition policy
-
-procedures addressing supply chain protection
-
-procedures addressing tamper resistance and detection
-
-tamper protection program documentation
-
-tamper protection tools and techniques documentation
-
-tamper resistance and detection tools and techniques documentation
-
-acquisition documentation
-
-service level agreements
-
-acquisition contracts for the system, system component, or system service
-
-system security plan
-
-other relevant documents or records Organizational personnel with tamper protection program responsibilities
-
-organizational personnel with information security responsibilities
-
-organizational personnel with supply chain risk management responsibilities Organizational processes for the implementation of the tamper protection program
-
-mechanisms supporting and/or implementing the tamper protection program
 
 **FedRAMP Baseline:** L2 | **Domain:** SR
 
@@ -11370,16 +6376,16 @@ mechanisms supporting and/or implementing system component disposal
 
 Complete list of unique cloud API calls made by the scanner, organized by provider.
 
-### AWS (117 unique API calls across 43 services)
+### AWS (114 unique API calls across 42 services)
 
 | Service | API Call | Used By (Controls) |
 |---------|---------|---------------------|
 | ACM | `acm.list_certificates` | SC-12, SC-23 |
-| API Gateway | `apigateway.get_rest_apis` | PT-4, SA-9(2), SC-10 |
+| API Gateway | `apigateway.get_rest_apis` | SA-9(2), SC-10 |
 | Athena | `athena.list_named_queries` | AU-7 |
 | Backup | `backup.describe_backup_vault` | CP-9(8) |
-| Backup | `backup.get_backup_vault_access_policy` | MP-4(2) |
-| Backup | `backup.list_backup_vaults` | CP-9, CP-9(3), MP-4(2) |
+| Backup | `backup.get_backup_vault_access_policy` | SC-28(1) |
+| Backup | `backup.list_backup_vaults` | CP-9, SC-28(1) |
 | Backup | `backup.list_restore_jobs` | CP-9(1) |
 | CloudFormation | `cloudformation.list_stacks` | SA-10 |
 | CloudFront | `cloudfront.list_distributions` | SC-8 |
@@ -11403,15 +6409,15 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | EC2 | `ec2.describe_flow_logs` | PL-8 |
 | EC2 | `ec2.describe_images` | CM-2 |
 | EC2 | `ec2.describe_images()` | SC-7(8) |
-| EC2 | `ec2.describe_instances` | AC-4(4), IA-2 |
+| EC2 | `ec2.describe_instances` | IA-2, SC-7(5) |
 | EC2 | `ec2.describe_instances()` | AU-8 |
 | EC2 | `ec2.describe_regions + ec2.describe_instances` | CP-7 |
-| EC2 | `ec2.describe_security_groups` | AC-17(3), CM-7, CM-7(1), SA-4(9), SC-7(21) |
+| EC2 | `ec2.describe_security_groups` | AC-17(3), CM-7, CM-7(1), SA-4(9), SC-7(4) |
 | EC2 | `ec2.describe_snapshot_attribute` | SC-7(8) |
 | EC2 | `ec2.describe_snapshots` | CP-9 |
 | EC2 | `ec2.describe_volumes` | MP-4 |
 | EC2 | `ec2.get_ebs_encryption_by_default` | AC-20(1), MP-4, SC-28(1) |
-| EC2 + RDS | `ec2.describe_instances + rds.describe_db_instances` | CP-2, CP-10, PL-8, PT-3 |
+| EC2 + RDS | `ec2.describe_instances + rds.describe_db_instances` | CP-2, CP-10, PL-8 |
 | ECR | `ecr.describe_repositories` | RA-5 |
 | ECR | `ecr.describe_repositories + ecr.get_registry_scanning_configuration` | SR-2 |
 | ECR | `ecr.get_registry_policy + ecr.describe_repositories` | SR-11 |
@@ -11421,8 +6427,8 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | ELB | `elbv2.describe_load_balancers() + describe_listeners()` | AC-17(2) |
 | EventBridge | `events.list_rules` | IR-2 |
 | GuardDuty | `events.list_rules()` | SI-5 |
-| GuardDuty | `guardduty.get_detector` | CA-7, SC-7, SI-3, SI-3(1), SI-3(2) (+1 more) |
-| GuardDuty | `guardduty.get_detector()` | SI-3, SI-3(2) |
+| GuardDuty | `guardduty.get_detector` | CA-7, RA-5, SC-7, SI-3, SI-4 |
+| GuardDuty | `guardduty.get_detector()` | RA-5, SI-3 |
 | GuardDuty | `guardduty.list_detectors` | AC-7, IR-2 |
 | GuardDuty | `guardduty.list_findings` | SI-4(4) |
 | Health | `health.describe_events` | SI-5 |
@@ -11436,7 +6442,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | IAM | `iam.list_entities_for_policy` | AC-6, AU-9(4) |
 | IAM | `iam.list_mfa_devices` | IA-2(2) |
 | IAM | `iam.list_policies` | AC-3 |
-| IAM | `iam.list_roles` | AC-5, AC-6(3), AC-12, CM-5, CM-7 (+1 more) |
+| IAM | `iam.list_roles` | AC-5, AC-6(1), AC-12, CM-5, CM-7 (+1 more) |
 | IAM | `iam.list_saml_providers/list_open_id_connect_providers` | AC-20 |
 | IAM | `iam.list_user_policies` | AC-6 |
 | IAM | `iam.list_users` | AC-3, IA-2, IA-4 |
@@ -11445,21 +6451,19 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | IAM | `sts.get_caller_identity` | SC-13 |
 | IAM Identity Center | `sso-admin.describe_instance` | AC-12 |
 | IAM Identity Center | `sso-admin.list_instances()` | AC-7, IA-5(2) |
-| Inspector | `inspector2.list_account_permissions` | RA-5, SI-3(2) |
+| Inspector | `inspector2.list_account_permissions` | RA-5 |
 | Inspector | `inspector2.list_findings` | RA-5, RA-5(5), SI-2 |
 | Inspector2 | `inspector2.list_coverage` | SR-2 |
 | Inspector2 | `inspector2.list_findings` | SA-22 |
 | KMS | `kms.get_key_policy` | SC-12 |
 | KMS | `kms.get_key_rotation_status` | SC-12 |
 | Lambda | `lambda.list_functions` | SR-11 |
-| Macie2 | `macie2.get_macie_session` | PT-2 |
 | Multiple | `ec2/guardduty/cloudtrail/kms` | SC-7(5) |
 | Network Firewall | `network-firewall.list_firewall_policies` | SI-4 |
 | Network Firewall | `network-firewall.list_firewalls` | SC-7 |
 | Organizations | `organizations.list_policies` | AC-2(9), AU-9(4), CM-7(1) |
 | RDS | `rds.describe_db_instances` | CP-6, CP-9, CP-10(2), IA-8, MA-2 (+3 more) |
 | RDS | `rds.describe_db_snapshots` | CP-9(8) |
-| RDS | `rds.list_tags_for_resource` | PT-2 |
 | ResilienceHub | `resiliencehub.list_app_assessments` | CP-4 |
 | Route 53 | `route53.list_hosted_zones` | SC-23 |
 | Route53 | `route53.list_health_checks` | CP-7 |
@@ -11467,16 +6471,15 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | S3 | `s3.get_bucket_lifecycle_configuration` | AU-2 |
 | S3 | `s3.get_bucket_logging` | AU-9 |
 | S3 | `s3.get_bucket_policy` | MP-4, SC-8 |
-| S3 | `s3.get_bucket_policy_status` | AC-4(4) |
-| S3 | `s3.get_bucket_replication` | CP-6, MP-4(2) |
-| S3 | `s3.get_bucket_tagging` | PT-2 |
+| S3 | `s3.get_bucket_policy_status` | SC-7(5) |
+| S3 | `s3.get_bucket_replication` | CP-6, SC-28(1) |
 | S3 | `s3.get_bucket_versioning` | AU-9 |
-| S3 | `s3control.get_public_access_block` | AC-3(8), AC-4 |
+| S3 | `s3control.get_public_access_block` | AC-4, SC-7(4) |
 | SNS | `sns.list_topics()` | AU-5 |
 | SSM | `iam.get_policy_version` | MA-4 |
 | SSM | `ssm.describe_document` | AC-17(1) |
 | SSM | `ssm.describe_instance_information` | AC-18, CM-2, SC-7(7) |
-| SSM | `ssm.describe_instance_information()` | CM-8, SI-3(1) |
+| SSM | `ssm.describe_instance_information()` | CM-8, SI-3 |
 | SSM | `ssm.describe_instance_patch_states` | MA-2, RA-5(5), SI-2 |
 | SSM | `ssm.describe_patch_baselines` | MA-2, SI-2 |
 | SSM | `ssm.get_inventory` | SA-22 |
@@ -11489,7 +6492,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | VPC | `ec2.describe_client_vpn_endpoints` | AC-17(3), MA-4, SC-7(7) |
 | VPC | `ec2.describe_flow_logs` | AC-4, SC-7, SI-4 |
 | VPC | `ec2.describe_nat_gateways` | SC-7(4) |
-| VPC | `ec2.describe_network_acls` | SC-7(21) |
+| VPC | `ec2.describe_network_acls` | SC-7(4) |
 | VPC | `ec2.describe_subnets` | SC-7(4), SC-7(7) |
 | VPC | `ec2.describe_transit_gateway_attachments` | AC-21 |
 | VPC | `ec2.describe_vpc_peering_connections` | AC-21 |
@@ -11497,7 +6500,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | VPC | `ec2.describe_vpn_connections/describe_client_vpn_endpoints` | AC-19 |
 | WAFv2 | `wafv2.list_web_acls` | SC-7, SC-18 |
 
-### Azure (88 unique API calls across 19 services)
+### Azure (87 unique API calls across 19 services)
 
 | Service | API Call | Used By (Controls) |
 |---------|---------|---------------------|
@@ -11524,11 +6527,11 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Azure AD | `graph.sign_in_logs.list` | AU-3 |
 | Azure AD | `graph.token_lifetime_policies.list` | AC-12 |
 | Azure AD | `graph.users.list` | IA-2, IA-4(4), IA-5(2) |
-| Azure AD | `graph/directoryRoles/*/members` | AC-6(3) |
+| Azure AD | `graph/directoryRoles/*/members` | AC-6(1) |
 | Azure AD | `graph/roleManagement/directory/roleAssignmentScheduleInstances` | AC-3 |
 | Compute | `StorageManagementClient.storage_accounts.list` | SC-13 |
 | Compute | `compute.disks.list` | AC-20(1), MP-4, SC-7(8), SC-28(1) |
-| Compute | `compute.virtual_machine_extensions.list` | SI-3, SI-3(2) |
+| Compute | `compute.virtual_machine_extensions.list` | RA-5, SI-3 |
 | Compute | `compute.virtual_machines.list` | AU-8, IA-2, MA-2, SI-2 |
 | Compute | `compute.virtual_machines.list_all` | CP-7 |
 | Key Vault | `KeyVaultManagementClient.vaults.list + get` | SC-12 |
@@ -11542,9 +6545,9 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Network | `NetworkManagementClient.flow_logs.list` | PL-8 |
 | Network | `NetworkManagementClient.network_security_groups.list_all` | SA-4(9) |
 | Network | `network.application_gateways.list` | SC-10 |
-| Network | `network.azure_firewalls.list` | AC-4, SC-7, SC-7(21), SI-4 |
+| Network | `network.azure_firewalls.list` | AC-4, SC-7, SC-7(4), SI-4 |
 | Network | `network.bastion_hosts.list` | AC-17(1) |
-| Network | `network.network_security_groups.list` | AC-17(3), CM-7(1), SC-7(21) |
+| Network | `network.network_security_groups.list` | AC-17(3), CM-7(1), SC-7(4) |
 | Network | `network.virtual_network_gateway_connections.list` | AC-17(2) |
 | Network | `network.virtual_network_gateways.list` | AC-19, SC-7(7) |
 | Network | `network.virtual_network_peerings.list` | AC-21 |
@@ -11557,27 +6560,26 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Recovery Services | `RecoveryServicesBackupClient.backup_protected_items.list` | CP-9 |
 | Recovery Services | `RecoveryServicesBackupClient.restore_jobs.list` | CP-9(1) |
 | Recovery Services | `RecoveryServicesClient.replication_protected_items.list` | CP-10 |
-| Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | CP-9(3) |
+| Recovery Services | `RecoveryServicesClient.vaults.list_by_subscription_id` | CP-9 |
 | Recovery Services | `backup.backup_jobs.list` | CP-4 |
-| Recovery Services | `recoveryservices.vaults.list` | CP-9(8), MP-4(2) |
+| Recovery Services | `recoveryservices.vaults.list` | CP-9(8), SC-28(1) |
 | Resource Graph | `resourcegraph.resources` | CM-2 |
-| Resources | `ResourceManagementClient.resources.list` | CP-2, PL-8, PT-3 |
-| Resources | `resource.resources.list` | CP-7, PT-2, PT-4, SA-3, SA-9(2) (+2 more) |
+| Resources | `ResourceManagementClient.resources.list` | CP-2, PL-8 |
+| Resources | `resource.resources.list` | CP-7, SA-3, SA-9(2), SR-2, SR-11 |
 | Resources | `resources.management_locks.list` | CM-5 |
 | SQL | `SqlManagementClient.restorable_dropped_databases.list` | CP-10(2) |
 | SQL | `sql.encryption_protectors.get` | SC-28(1) |
 | SQL | `sql.server_vulnerability_assessments.get` | RA-5 |
-| SQL | `sql.servers.list` | PT-2 |
 | SQL | `sql.servers.list + sql.backup_short_term_retention_policies.get` | CP-9 |
 | SQL | `sql.servers.list + sql.replication_links.list_by_database` | CP-6 |
 | SQL | `sql.transparent_data_encryptions.get` | MP-5 |
 | Security Center | `ResourceManagementClient.providers.get('Microsoft.Security')` | SI-4 |
 | Security Center | `SecurityCenter.assessments.list` | SA-22 |
-| Security Center | `assessments.list` | SI-3(2) |
+| Security Center | `assessments.list` | RA-5 |
 | Security Center | `security.assessments.list` | CA-7, CM-7(5), RA-5(5), SR-3 |
 | Security Center | `security.dev_ops_configurations.list` | SA-11(1) |
 | Security Center | `security.jit_network_access_policies.list` | AC-6 |
-| Security Center | `security.pricings.get` | RA-5, SI-3, SI-3(1) |
+| Security Center | `security.pricings.get` | RA-5, SI-3 |
 | Security Center | `security.pricings.list` | IR-2 |
 | Security Center | `security.secure_scores.list` | CM-6 |
 | Security Center | `security.security_contacts.list` | SI-5 |
@@ -11587,11 +6589,11 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Sentinel | `securityinsight.sentinel_onboarding_states.list` | AU-6, IR-2 |
 | Sentinel | `sentinel_onboarding_states.list` | SI-4(4) |
 | Storage | `StorageManagementClient.blob_services.get_service_properties` | CP-9 |
-| Storage | `StorageManagementClient.storage_accounts.list` | CP-6, PT-2 |
-| Storage | `storage.storage_accounts.list` | AC-3(8), AC-4(4), MP-4, MP-5, SC-8 (+1 more) |
+| Storage | `StorageManagementClient.storage_accounts.list` | CP-6 |
+| Storage | `storage.storage_accounts.list` | MP-4, MP-5, SC-7(4), SC-7(5), SC-8 (+1 more) |
 | Storage | `storage_accounts.list` | AU-9 |
 
-### GCP (66 unique API calls across 33 services)
+### GCP (63 unique API calls across 31 services)
 
 | Service | API Call | Used By (Controls) |
 |---------|---------|---------------------|
@@ -11599,8 +6601,8 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Artifact Registry | `artifactregistry.projects.locations.repositories.list` | SR-2 |
 | Artifact Registry | `containeranalysis.projects.occurrences.list` | MA-2 |
 | Asset Inventory | `cloudasset.assets.list` | CM-2 |
-| Backup and DR | `backupdr.projects.locations.backupVaults.list` | MP-4(2) |
-| BigQuery | `bigquery.datasets.list` | PT-2, SC-28(1) |
+| Backup and DR | `backupdr.projects.locations.backupVaults.list` | SC-28(1) |
+| BigQuery | `bigquery.datasets.list` | SC-28(1) |
 | Binary Authorization | `binaryauthorization.projects.getPolicy` | CM-7(5) |
 | Binary Authorization | `binaryauthorization.projects.policy.get` | SR-11 |
 | Cloud Armor | `compute.securityPolicies.list` | SC-7, SC-18 |
@@ -11613,7 +6615,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Compute | `compute.disks.list` | MP-4 |
 | Compute | `compute.firewalls.list` | AC-17(1) |
 | Compute | `compute.images.getIamPolicy` | SC-7(8) |
-| Compute | `compute.instances.list` | AU-8, SI-3, SI-3(1) |
+| Compute | `compute.instances.list` | AU-8, SI-3 |
 | Compute | `compute.projects.get` | AC-18 |
 | Compute | `compute.sslCertificates.list` | SC-23 |
 | Compute | `compute.sslPolicies.list` | SC-8 |
@@ -11621,14 +6623,12 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | Compute Engine | `compute.firewalls.list` | SA-4(9) |
 | Compute Engine | `compute.instanceGroupManagers.aggregatedList` | CP-7 |
 | Compute Engine | `compute.instances.aggregatedList` | CP-2, CP-10, PL-8 |
-| Compute Engine | `compute.instances.aggregatedList + storage.buckets.list` | PT-3 |
 | Compute Engine | `compute.resourcePolicies.list` | CP-9 |
-| Compute Engine | `compute.snapshots.list` | CP-9(1), CP-9(3), CP-9(8) |
+| Compute Engine | `compute.snapshots.list` | CP-9, CP-9(1), CP-9(8) |
 | Compute Engine | `compute.subnetworks.list` | PL-8 |
-| Container Analysis | `containeranalysis.projects.occurrences.list` | RA-5, SI-2, SI-3(2) |
-| DLP | `dlp.projects.dlpJobs.list` | PT-2 |
+| Container Analysis | `containeranalysis.projects.occurrences.list` | RA-5, SI-2 |
 | GKE | `container.projects.locations.clusters.list` | SI-2 |
-| IAM | `cloudresourcemanager.projects.getIamPolicy` | AC-2, AC-3, AC-5, AC-6, AC-6(3) (+2 more) |
+| IAM | `cloudresourcemanager.projects.getIamPolicy` | AC-2, AC-3, AC-5, AC-6, AC-6(1) (+2 more) |
 | IAM | `compute.instances.list` | AC-2 |
 | IAM | `iam.projects.roles.list` | AC-3 |
 | IAM | `iam.projects.serviceAccounts.keys.list` | AC-2, IA-4(4) |
@@ -11648,7 +6648,7 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | OS Config | `osconfig.patchDeployments.list` | CM-8, RA-5(5) |
 | OS Config | `osconfig.projects.patchDeployments.list` | MA-2, SI-2 |
 | OrgPolicy | `BeyondCorp / session management` | AC-11 |
-| OrgPolicy | `orgpolicy.projects.policies.get` | AC-3(8), AC-20 |
+| OrgPolicy | `orgpolicy.projects.policies.get` | AC-20, SC-7(4) |
 | OrgPolicy/Compute | `orgpolicy/compute.disks.list` | AC-20(1) |
 | Organization Policy | `cloudresourcemanager.projects.getEffectiveOrgPolicy` | PL-2 |
 | Organization Policy | `orgpolicy.projects.policies.list` | CA-7, CM-6 |
@@ -11656,13 +6656,12 @@ Complete list of unique cloud API calls made by the scanner, organized by provid
 | SCC | `securitycenter.organizations.getOrganizationSettings` | CA-7, IR-2 |
 | SCC | `securitycenter.organizations.notificationConfigs.list` | IR-2, SI-5 |
 | SCC | `securitycenter.securityHealthAnalyticsSettings` | AU-6, CM-6, IR-2, RA-5, RA-5(5) (+2 more) |
-| SCC | `websecurityscanner.projects.scanConfigs.list` | RA-5, SI-3(2) |
+| SCC | `websecurityscanner.projects.scanConfigs.list` | RA-5 |
 | Security Command Center | `securitycenter.organizations.findings.list` | SA-22 |
-| Service Usage | `serviceusage.services.list` | PT-4 |
-| Storage | `storage.buckets.get` | AU-9, CP-9, MP-5, PT-2, SC-28(1) |
-| Storage | `storage.buckets.getIamPolicy` | AC-4(4), AU-9, MP-4 |
+| Storage | `storage.buckets.get` | AU-9, CP-9, MP-5, SC-28(1) |
+| Storage | `storage.buckets.getIamPolicy` | AU-9, MP-4, SC-7(5) |
 | Storage | `storage.buckets.list` | CP-6, SI-3 |
-| VPC | `compute.firewalls.list` | AC-4, AC-17(3), CM-7, CM-7(1), SC-7(21) |
+| VPC | `compute.firewalls.list` | AC-4, AC-17(3), CM-7, CM-7(1), SC-7(4) |
 | VPC | `compute.networks.listPeering` | AC-21 |
 | VPC | `compute.packetMirrorings.list` | SC-7 |
 | VPC | `compute.subnetworks.list` | AC-4, SC-7, SC-7(4), SC-7(7), SI-4 |
